@@ -122,6 +122,8 @@ body {
   flex: 1;
   padding: 32px 36px;
   min-height: 100vh;
+  overflow-x: hidden;
+  max-width: calc(100% - 240px);
 }
 
 .admin-topbar {
@@ -761,7 +763,9 @@ label {
 
   .admin-main {
     margin-left: 0;
+    max-width: 100%;
     padding: 20px 16px;
+    overflow-x: hidden;
   }
 }
 
