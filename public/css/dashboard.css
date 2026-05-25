@@ -749,3 +749,92 @@ label {
   flex-shrink: 0;
   margin-top: 2px;
 }
+
+/* ── Mobile Hamburger ─────────────────────────────── */
+.mobile-topbar {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: #fff;
+  border-bottom: 1px solid #e9ecef;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+
+.mobile-logo {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #1a56db;
+  letter-spacing: -0.5px;
+}
+
+.hamburger-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.hamburger-btn:hover {
+  background: #f1f5f9;
+}
+
+/* Overlay behind sidebar */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 60;
+}
+
+.sidebar-overlay.open {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .mobile-topbar {
+    display: flex;
+  }
+
+  .sidebar {
+    display: flex;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    z-index: 70;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .dashboard-main {
+    margin-left: 0;
+    padding: 20px 16px;
+  }
+
+  .dash-cards .col-md-5,
+  .dash-cards .col-md-7 {
+    margin-bottom: 16px;
+  }
+
+  .quick-actions {
+    gap: 8px;
+  }
+
+  .quick-btn {
+    font-size: 0.82rem;
+    padding: 10px 14px;
+  }
+
+  .deposit-detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
