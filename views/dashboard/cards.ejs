@@ -45,9 +45,14 @@
             </div>
           </div>
 
-          <div class="card-number">
-            <%= card.cardNumber.slice(0,4) %> &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull;
-          </div>
+    <div class="card-number" 
+     data-full="<%= card.cardNumber.slice(0,4) %> <%= card.cardNumber.slice(4,8) %> <%= card.cardNumber.slice(8,12) %> <%= card.cardNumber.slice(12,16) %>"
+     data-masked="<%= card.cardNumber.slice(0,4) %> &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull;"
+     data-revealed="false"
+     onclick="toggleCardNumber(this)">
+  <%= card.cardNumber.slice(0,4) %> &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull;
+</div>
+<p class="card-reveal-hint">Tap number to reveal</p>
 
           <div class="card-bottom-row">
             <div class="card-holder-wrap">
@@ -115,5 +120,18 @@
 
   </main>
 </div>
+
+<script>
+  function toggleCardNumber(el) {
+    var revealed = el.getAttribute('data-revealed') === 'true';
+    if (revealed) {
+      el.innerHTML = el.getAttribute('data-masked');
+      el.setAttribute('data-revealed', 'false');
+    } else {
+      el.innerHTML = el.getAttribute('data-full');
+      el.setAttribute('data-revealed', 'true');
+    }
+  }
+</script>
 
 <%- include('../partials/footer') %>

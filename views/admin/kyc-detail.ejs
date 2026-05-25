@@ -71,22 +71,20 @@
 
       <div class="col-md-8">
         <div class="admin-card">
-          <h5 class="admin-card-title">Uploaded Documents</h5>
-          <div class="kyc-doc-grid">
-            <div class="kyc-doc-item">
-              <p class="kyc-doc-label">Front of ID</p>
-              <a href="<%= kyc.frontImage %>" target="_blank">
-                <img src="<%= kyc.frontImage %>" alt="Front ID" class="kyc-doc-img"/>
-              </a>
+         <h5 class="admin-card-title">Uploaded Documents</h5>
+         <div class="kyc-doc-grid">
+           <div class="kyc-doc-item">
+             <p class="kyc-doc-label">Front of ID</p>
+             <img src="<%= kyc.frontImage %>" alt="Front ID" class="kyc-doc-img"/>
+             <a href="<%= kyc.frontImage %>" target="_blank" class="kyc-doc-view-link">View Full Size</a>
             </div>
-            <div class="kyc-doc-item">
-              <p class="kyc-doc-label">Back of ID</p>
-              <a href="<%= kyc.backImage %>" target="_blank">
-                <img src="<%= kyc.backImage %>" alt="Back ID" class="kyc-doc-img"/>
-              </a>
-            </div>
-          </div>
-        </div>
+           <div class="kyc-doc-item">
+             <p class="kyc-doc-label">Back of ID</p>
+             <img src="<%= kyc.backImage %>" alt="Back ID" class="kyc-doc-img"/>
+             <a href="<%= kyc.backImage %>" target="_blank" class="kyc-doc-view-link">View Full Size</a>
+           </div>
+         </div>
+       </div>       
 
         <% if (kyc.status === 'pending') { %>
         <div class="admin-card">

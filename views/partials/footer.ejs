@@ -1,33 +1,42 @@
 
 <footer class="main-footer">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-4">
-          <p class="footer-brand">NovBank</p>
-          <p class="footer-tagline">Secure. Simple. Smart.</p>
-        </div>
-        <div class="col-md-4">
-          <p class="footer-heading">Quick Links</p>
-          <ul class="footer-links">
-            <li><a href="/">Home</a></li>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4">
+        <p class="footer-brand">NovBank</p>
+        <p class="footer-tagline">Secure. Simple. Smart.</p>
+      </div>
+      <div class="col-md-4">
+        <p class="footer-heading">Quick Links</p>
+        <ul class="footer-links">
+          <li><a href="/">Home</a></li>
+          <% if (user) { %>
+            <li><a href="/dashboard">Dashboard</a></li>
+            <li><a href="/logout">Logout</a></li>
+          <% } else { %>
             <li><a href="/login">Login</a></li>
             <li><a href="/register">Open Account</a></li>
-          </ul>
-        </div>
-        <div class="col-md-4">
-          <p class="footer-heading">Legal</p>
-          <ul class="footer-links">
-            <li><a href="#">Privacy Policy</a></li>
-            <li><a href="#">Terms of Service</a></li>
-            <li><a href="#">Cookie Policy</a></li>
-          </ul>
-        </div>
+          <% } %>
+        </ul>
       </div>
-      <hr/>
-      <p class="footer-copy">&copy; <%= new Date().getFullYear() %> NovBank. All rights reserved.</p>
+      <div class="col-md-4">
+        <p class="footer-heading">Legal</p>
+        <ul class="footer-links">
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Cookie Policy</a></li>
+        </ul>
+      </div>
     </div>
-  </footer>
-   <script>
+    <hr/>
+    <p class="footer-copy">&copy; <%= new Date().getFullYear() %> NovBank. All rights reserved.</p>
+  </div>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
   var hamburgerBtn = document.getElementById('hamburgerBtn');
   var sidebar      = document.querySelector('.sidebar');
   var overlay      = document.getElementById('sidebarOverlay');
@@ -37,16 +46,21 @@
       sidebar.classList.toggle('open');
       overlay.classList.toggle('open');
     });
-
     overlay.addEventListener('click', function () {
       sidebar.classList.remove('open');
       overlay.classList.remove('open');
     });
   }
+
+  // Receipt modal close on backdrop click
+  var receiptModal = document.getElementById('receiptModal');
+  if (receiptModal) {
+    receiptModal.addEventListener('click', function (e) {
+      if (e.target === receiptModal) {
+        receiptModal.style.display = 'none';
+      }
+    });
+  }
 </script>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-  <%- typeof extraJS !== 'undefined' ? extraJS : '' %>
-  
 </body>
 </html>
