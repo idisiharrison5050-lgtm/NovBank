@@ -11,15 +11,17 @@ require('./config/passport')(passport);
 
 var app = express();
 
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useCreateIndex: true
-}).then(function () {
-  console.log('MongoDB connected');
-}).catch(function (err) {
-  console.log('MongoDB connection error:', err);
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,     // ✅ use new URL parser
+  useUnifiedTopology: true   // ✅ use the new Server Discovery and Monitoring engine
+})
+.then(function() {
+  console.log("✅ Server connected to MongoDB Atlas");
+})
+.catch(function(err) {
+  console.error("❌ Mongoose connection error:", err);
 });
+
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
