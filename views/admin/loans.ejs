@@ -1,0 +1,84 @@
+<%- include('partials/admin-header') %>
+<div class="admin-layout">
+  <%- include('partials/admin-sidebar') %>
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <h1 class="admin-page-title">Loan Requests</h1>
+    </div>
+
+    <% if (success_msg && success_msg.length > 0) { %>
+      <div class="alert alert-success"><%= success_msg %></div>
+    <% } %>
+
+    <div class="admin-filter-row">
+      <div class="admin-filter-group">
+        <a href="?filter=pending"  class="admin-filter-btn <%= filter === 'pending'  ? 'active' : '' %>">Pending</a>
+        <a href="?filter=approved" class="admin-filter-btn <%= filter === 'approved' ? 'active' : '' %>">Approved</a>
+        <a href="?filter=declined" class="admin-filter-btn <%= filter === 'declined' ? 'active' : '' %>">Declined</a>
+        <a href="?filter=all"      class="admin-filter-btn <%= filter === 'all'      ? 'active' : '' %>">All</a>
+      </div>
+    </div>
+
+    <div class="admin-card">
+      <% if (loans.length === 0) { %>
+        <p class="admin-empty">No loan requests found.</p>
+      <% } else { %>
+        <div class="table-responsive">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Applicant</th>
+                <th>Amount</th>
+                <th>Purpose</th>
+                <th>Period</th>
+                <th>Applied</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% loans.forEach(function(loan) { %>
+                <tr>
+                  <td>
+                    <% if (loan.user) { %>
+                      <a href="/admin/users/<%= loan.user._id %>"><%= loan.user.firstName %> <%= loan.user.lastName %></a>
+                    <% } else { %>N/A<% } %>
+                  </td>
+                  <td>€<%= loan.amount.toFixed(2) %></td>
+                  <td><%= loan.purpose %></td>
+                  <td><%= loan.repaymentPeriod %> months</td>
+                  <td><%= new Date(loan.createdAt).toLocaleDateString('en-GB') %></td>
+                  <td><span class="admin-status-badge status-<%= loan.status %>"><%= loan.status %></span></td>
+                  <td>
+                    <% if (loan.status === 'pending') { %>
+                      <form action="/admin/loans/<%= loan._id %>/approve" method="POST" style="display:inline">
+                        <button class="admin-btn-approve">Approve</button>
+                      </form>
+                      <form action="/admin/loans/<%= loan._id %>/decline" method="POST" style="display:inline" onsubmit="return promptReason(this)">
+                        <input type="hidden" name="reason" class="decline-reason-input"/>
+                        <button type="submit" class="admin-btn-decline">Decline</button>
+                      </form>
+                    <% } else { %>
+                      <span class="admin-processed"><%= loan.status %></span>
+                    <% } %>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
+    </div>
+  </main>
+</div>
+
+<script>
+  function promptReason(form) {
+    var reason = prompt('Enter decline reason:');
+    if (!reason) return false;
+    form.querySelector('.decline-reason-input').value = reason;
+    return true;
+  }
+</script>
+
+<%- include('partials/admin-footer') %>

@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var bcrypt = require('bcryptjs');
+var bcrypt   = require('bcryptjs');
 
 function generateAccountNumber() {
   return 'EU' + Math.floor(1000000000 + Math.random() * 9000000000).toString();
@@ -31,10 +31,12 @@ var UserSchema = new mongoose.Schema({
     country: { type: String },
     zip:     { type: String }
   },
+
   accountNumber:  { type: String, unique: true, default: generateAccountNumber },
   balance:        { type: Number, default: 0.00 },
   currency:       { type: String, default: 'EUR' },
   accountStatus:  { type: String, enum: ['active', 'suspended', 'closed'], default: 'active' },
+  kycStatus:      { type: String, enum: ['none', 'pending', 'approved', 'declined'], default: 'none' },
   isVerified:     { type: Boolean, default: false },
   avatar:         { type: String, default: '' },
 
@@ -62,7 +64,6 @@ var UserSchema = new mongoose.Schema({
 UserSchema.pre('save', function (next) {
   var user = this;
 
-  // Generate bank details on first save
   if (!user.bankDetails || !user.bankDetails.iban) {
     user.bankDetails = {
       iban:          generateIBAN(user.accountNumber),

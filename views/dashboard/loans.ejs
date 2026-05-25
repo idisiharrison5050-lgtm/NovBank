@@ -1,0 +1,91 @@
+<%- include('../partials/header') %>
+<link rel="stylesheet" href="/css/dashboard.css"/>
+
+<div class="mobile-topbar">
+  <span class="mobile-logo">NovBank</span>
+  <button class="hamburger-btn" id="hamburgerBtn">
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+</div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="dashboard-layout">
+  <%- include('../partials/sidebar') %>
+
+  <main class="dashboard-main">
+    <div class="dash-topbar">
+      <h1 class="dash-greeting">Loan</h1>
+    </div>
+
+    <% if (success_msg && success_msg.length > 0) { %>
+      <div class="alert alert-success"><%= success_msg %></div>
+    <% } %>
+    <% if (error_msg && error_msg.length > 0) { %>
+      <div class="alert alert-danger"><%= error_msg %></div>
+    <% } %>
+
+    <% if (activeLoan) { %>
+      <div class="loan-status-card status-<%= activeLoan.status %>">
+        <div class="loan-status-header">
+          <h4>Active Loan</h4>
+          <span class="txn-status status-<%= activeLoan.status %>"><%= activeLoan.status %></span>
+        </div>
+        <p class="loan-amount">€<%= activeLoan.amount.toFixed(2) %></p>
+        <div class="loan-details-grid">
+          <div class="loan-detail-item">
+            <p class="loan-detail-label">Purpose</p>
+            <p class="loan-detail-value"><%= activeLoan.purpose %></p>
+          </div>
+          <div class="loan-detail-item">
+            <p class="loan-detail-label">Repayment Period</p>
+            <p class="loan-detail-value"><%= activeLoan.repaymentPeriod %> months</p>
+          </div>
+          <div class="loan-detail-item">
+            <p class="loan-detail-label">Applied On</p>
+            <p class="loan-detail-value"><%= new Date(activeLoan.createdAt).toLocaleDateString('en-GB') %></p>
+          </div>
+          <% if (activeLoan.approvedAt) { %>
+          <div class="loan-detail-item">
+            <p class="loan-detail-label">Approved On</p>
+            <p class="loan-detail-value"><%= new Date(activeLoan.approvedAt).toLocaleDateString('en-GB') %></p>
+          </div>
+          <% } %>
+        </div>
+        <% if (activeLoan.status === 'pending') { %>
+          <p class="loan-pending-note">Your loan is under review. You will be notified once a decision is made.</p>
+        <% } %>
+      </div>
+    <% } else { %>
+      <div class="form-card">
+        <h5 class="form-section-heading">Request a Loan</h5>
+        <p class="form-card-sub">Fill in the details below to apply for a loan. Loans are subject to approval.</p>
+        <form action="/loans/request" method="POST">
+          <div class="form-group">
+            <label>Loan Amount (€)</label>
+            <input type="number" name="amount" class="form-control" placeholder="e.g. 5000" min="100" step="0.01" required/>
+          </div>
+          <div class="form-group">
+            <label>Purpose</label>
+            <input type="text" name="purpose" class="form-control" placeholder="e.g. Home renovation, Business, Education" required/>
+          </div>
+          <div class="form-group">
+            <label>Repayment Period</label>
+            <select name="repaymentPeriod" class="form-control" required>
+              <option value="" disabled selected>Select period</option>
+              <option value="3">3 months</option>
+              <option value="6">6 months</option>
+              <option value="12">12 months</option>
+              <option value="24">24 months</option>
+              <option value="36">36 months</option>
+              <option value="48">48 months</option>
+              <option value="60">60 months</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Submit Loan Request</button>
+        </form>
+      </div>
+    <% } %>
+  </main>
+</div>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,70 @@
+var express = require('express');
+var router  = express.Router();
+var Card    = require('../models/Card');
+var Notification = require('../models/Notification');
+
+function isAuth(req, res, next) {
+  if (req.isAuthenticated()) return next();
+  req.flash('error_msg', 'Please log in.');
+  res.redirect('/login');
+}
+
+// View cards
+router.get('/', isAuth, function (req, res) {
+  Card.find({ user: req.user._id }).sort({ createdAt: -1 })
+    .then(function (cards) {
+      res.render('dashboard/cards', {
+        title: 'My Cards',
+        cards: cards,
+        unreadCount: 0
+      });
+    }).catch(function (err) {
+      console.error(err);
+      res.redirect('/dashboard');
+    });
+});
+
+// Request card
+router.post('/request', isAuth, function (req, res) {
+  var cardType = req.body.cardType;
+
+  if (!cardType || !['visa', 'mastercard'].includes(cardType)) {
+    req.flash('error_msg', 'Please select a valid card type.');
+    return res.redirect('/cards');
+  }
+
+  // Check if user already has this card type pending or active
+  Card.findOne({ user: req.user._id, cardType: cardType, status: { $in: ['pending', 'active'] } })
+    .then(function (existing) {
+      if (existing) {
+        req.flash('error_msg', 'You already have an active or pending ' + cardType + ' card.');
+        return res.redirect('/cards');
+      }
+
+      var card = new Card({
+        user:       req.user._id,
+        cardType:   cardType,
+        cardHolder: req.user.firstName + ' ' + req.user.lastName,
+        status:     'pending'
+      });
+
+      return card.save().then(function () {
+        var notif = new Notification({
+          user:    req.user._id,
+          title:   'Card Request Received',
+          message: 'Your ' + cardType.charAt(0).toUpperCase() + cardType.slice(1) + ' card request has been received and is pending approval.',
+          type:    'info'
+        });
+        return notif.save();
+      }).then(function () {
+        req.flash('success_msg', 'Card request submitted successfully.');
+        res.redirect('/cards');
+      });
+    }).catch(function (err) {
+      console.error(err);
+      req.flash('error_msg', 'Failed to request card.');
+      res.redirect('/cards');
+    });
+});
+
+module.exports = router;

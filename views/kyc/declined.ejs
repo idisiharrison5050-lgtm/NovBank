@@ -1,0 +1,20 @@
+<%- include('../partials/header') %>
+<link rel="stylesheet" href="/css/kyc.css"/>
+
+<div class="kyc-wrapper">
+  <div class="kyc-box kyc-status-box">
+    <div class="kyc-status-icon declined-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+    </div>
+    <h2 class="kyc-title">Verification Declined</h2>
+    <% if (declineReason) { %>
+      <div class="kyc-decline-reason">
+        <strong>Reason:</strong> <%= declineReason %>
+      </div>
+    <% } %>
+    <p class="kyc-subtitle">Please review the reason above, correct your documents, and resubmit.</p>
+    <a href="/kyc/verify" class="btn btn-primary btn-block kyc-submit-btn">Resubmit Documents</a>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,228 @@
+.kyc-wrapper {
+  min-height: 100vh;
+  background: #f4f7fe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 16px;
+}
+
+.kyc-box {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0,0,0,0.07);
+  padding: 40px 36px;
+  width: 100%;
+  max-width: 600px;
+}
+
+.kyc-logo {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #1a56db;
+  margin-bottom: 8px;
+}
+
+.kyc-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 6px;
+}
+
+.kyc-subtitle {
+  color: #64748b;
+  font-size: 0.9rem;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+.kyc-section-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #94a3b8;
+  margin: 22px 0 12px;
+}
+
+.kyc-upload-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.kyc-upload-box {
+  border: 2px dashed #c7d2fe;
+  border-radius: 10px;
+  padding: 24px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.kyc-upload-box:hover {
+  border-color: #1a56db;
+  background: #f8faff;
+}
+
+.kyc-upload-box label {
+  cursor: pointer;
+  display: block;
+}
+
+.kyc-upload-label {
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: #334155;
+  margin: 8px 0 4px;
+}
+
+.kyc-upload-hint {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.kyc-file-name {
+  font-size: 0.75rem;
+  color: #1a56db;
+  margin-top: 6px;
+  word-break: break-all;
+}
+
+.kyc-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: #fef3c7;
+  border: 1px solid #fde68a;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.83rem;
+  color: #92400e;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.kyc-submit-btn {
+  padding: 12px;
+  font-weight: 600;
+  border-radius: 8px;
+}
+
+/* Status pages */
+.kyc-status-box {
+  text-align: center;
+  max-width: 480px;
+}
+
+.kyc-status-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+
+.pending-icon  { background: #fef3c7; }
+.declined-icon { background: #fee2e2; }
+
+.kyc-status-steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 28px 0;
+  gap: 0;
+}
+
+.kyc-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.kyc-step p {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.kyc-step.done p, .kyc-step.active p {
+  color: #1a56db;
+  font-weight: 600;
+}
+
+.kyc-step-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #e2e8f0;
+}
+
+.kyc-step.done .kyc-step-dot  { background: #1a56db; }
+.kyc-step.active .kyc-step-dot { background: #1a56db; box-shadow: 0 0 0 4px #c7d2fe; }
+
+.kyc-step-line {
+  width: 60px;
+  height: 2px;
+  background: #e2e8f0;
+  margin-bottom: 20px;
+}
+
+.kyc-footer-note {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin-top: 10px;
+}
+
+.kyc-decline-reason {
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 0.88rem;
+  color: #991b1b;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+/* Admin KYC detail */
+.kyc-doc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.kyc-doc-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #64748b;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.kyc-doc-img {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  object-fit: cover;
+  max-height: 200px;
+}
+
+.kyc-decision-row {
+  display: flex;
+  gap: 16px;
+}
+
+@media (max-width: 600px) {
+  .kyc-upload-grid { grid-template-columns: 1fr; }
+  .kyc-doc-grid    { grid-template-columns: 1fr; }
+  .kyc-decision-row { flex-direction: column; }
+}

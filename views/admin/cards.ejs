@@ -1,0 +1,65 @@
+<%- include('partials/admin-header') %>
+<div class="admin-layout">
+  <%- include('partials/admin-sidebar') %>
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <h1 class="admin-page-title">Card Requests</h1>
+    </div>
+
+    <% if (success_msg && success_msg.length > 0) { %>
+      <div class="alert alert-success"><%= success_msg %></div>
+    <% } %>
+
+    <div class="admin-card">
+      <% if (cards.length === 0) { %>
+        <p class="admin-empty">No card requests found.</p>
+      <% } else { %>
+        <div class="table-responsive">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Cardholder</th>
+                <th>Type</th>
+                <th>First 4 Digits</th>
+                <th>Expiry</th>
+                <th>Requested</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% cards.forEach(function(card) { %>
+                <tr>
+                  <td>
+                    <% if (card.user) { %>
+                      <a href="/admin/users/<%= card.user._id %>"><%= card.user.firstName %> <%= card.user.lastName %></a>
+                    <% } else { %>N/A<% } %>
+                  </td>
+                  <td><span class="admin-type-badge"><%= card.cardType %></span></td>
+                  <td class="mono"><%= card.cardNumber.slice(0,4) %> ••••••••••••</td>
+                  <td><%= card.expiry %></td>
+                  <td><%= new Date(card.createdAt).toLocaleDateString('en-GB') %></td>
+                  <td><span class="admin-status-badge status-<%= card.status %>"><%= card.status %></span></td>
+                  <td>
+                    <% if (card.status === 'pending') { %>
+                      <form action="/admin/cards/<%= card._id %>/approve" method="POST" style="display:inline">
+                        <button class="admin-btn-approve">Approve</button>
+                      </form>
+                    <% } else if (card.status === 'active') { %>
+                      <form action="/admin/cards/<%= card._id %>/block" method="POST" style="display:inline">
+                        <button class="admin-btn-decline">Block</button>
+                      </form>
+                    <% } else { %>
+                      <span class="admin-processed"><%= card.status %></span>
+                    <% } %>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
+    </div>
+  </main>
+</div>
+<%- include('partials/admin-footer') %>

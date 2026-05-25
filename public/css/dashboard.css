@@ -849,3 +849,119 @@ label {
     grid-template-columns: 1fr;
   }
 }
+
+/* Loan */
+.loan-status-card {
+  background: #fff;
+  border: 1px solid #e9ecef;
+  border-radius: 14px;
+  padding: 28px;
+  margin-bottom: 24px;
+  max-width: 600px;
+}
+
+.loan-status-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.loan-status-header h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.loan-amount {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 8px 0 20px;
+}
+
+.loan-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.loan-detail-item {
+  background: #f8fafc;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.loan-detail-label {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 4px;
+}
+
+.loan-detail-value {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0;
+}
+
+.loan-pending-note {
+  font-size: 0.85rem;
+  color: #d97706;
+  background: #fef3c7;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin: 0;
+}
+
+/* Airtime */
+.airtime-history-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.airtime-history-item:last-child { border-bottom: none; }
+
+.airtime-network-badge {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #eef2ff;
+  color: #1a56db;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.airtime-info { flex: 1; }
+
+.airtime-phone {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0 0 2px;
+}
+
+.airtime-meta {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.airtime-amount {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #ef4444;
+  margin: 0;
+}

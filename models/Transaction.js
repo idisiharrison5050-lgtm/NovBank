@@ -6,7 +6,7 @@ var TransactionSchema = new mongoose.Schema({
 
   type: {
     type: String,
-    enum: ['internal_transfer', 'wire_transfer', 'deposit', 'withdrawal'],
+    enum: ['internal_transfer', 'wire_transfer', 'deposit', 'withdrawal', 'airtime', 'loan_credit'],
     required: true
   },
 
@@ -15,7 +15,7 @@ var TransactionSchema = new mongoose.Schema({
   description: { type: String, default: '' },
   category: {
     type: String,
-    enum: ['Transfer', 'Food', 'Rent', 'Utilities', 'Shopping', 'Healthcare', 'Entertainment', 'Other'],
+    enum: ['Transfer', 'Food', 'Rent', 'Utilities', 'Shopping', 'Healthcare', 'Entertainment', 'Airtime', 'Loan', 'Other'],
     default: 'Transfer'
   },
 

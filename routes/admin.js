@@ -7,6 +7,9 @@ var User = require('../models/User');
 var Transaction = require('../models/Transaction');
 var Notification = require('../models/Notification');
 var AuditLog = require('../models/AuditLog');
+var KYC  = require('../models/KYC');
+var Card = require('../models/Card');
+var Loan = require('../models/Loan');
 
 // ─── Middleware ───────────────────────────────────────────────
 function isAdmin(req, res, next) {
@@ -493,6 +496,258 @@ router.get('/audit-log', isAdmin, function (req, res) {
     }).catch(function (err) {
       console.error(err);
       res.redirect('/admin/dashboard');
+    });
+});
+
+
+// ─── KYC Management ──────────────────────────────────────────
+router.get('/kyc', isAdmin, function (req, res) {
+  var filter = req.query.filter || 'pending';
+  var query  = filter === 'all' ? {} : { status: filter };
+
+  KYC.find(query).sort({ submittedAt: -1 })
+    .populate('user', 'firstName lastName email username accountNumber')
+    .then(function (kycs) {
+      res.render('admin/kyc', {
+        title: 'KYC Verification',
+        kycs:  kycs,
+        filter: filter
+      });
+    }).catch(function (err) {
+      console.error(err);
+      res.redirect('/admin/dashboard');
+    });
+});
+
+router.get('/kyc/:id', isAdmin, function (req, res) {
+  KYC.findById(req.params.id)
+    .populate('user', 'firstName lastName email username phone accountNumber address dateOfBirth')
+    .then(function (kyc) {
+      if (!kyc) {
+        req.flash('error_msg', 'KYC record not found.');
+        return res.redirect('/admin/kyc');
+      }
+      res.render('admin/kyc-detail', {
+        title: 'KYC Detail',
+        kyc:   kyc
+      });
+    }).catch(function (err) {
+      console.error(err);
+      res.redirect('/admin/kyc');
+    });
+});
+
+router.post('/kyc/:id/approve', isAdmin, function (req, res) {
+  KYC.findById(req.params.id)
+    .then(function (kyc) {
+      kyc.status     = 'approved';
+      kyc.reviewedAt = new Date();
+      return kyc.save()
+        .then(function () {
+          return User.findByIdAndUpdate(kyc.user, { kycStatus: 'approved', isVerified: true });
+        })
+        .then(function () {
+          return logAction(req.user._id, 'Approved KYC', 'User', kyc.user, 'KYC approved');
+        })
+        .then(function () {
+          var notif = new Notification({
+            user:    kyc.user,
+            title:   'Identity Verified',
+            message: 'Your identity has been verified. You now have full access to NovBank.',
+            type:    'success'
+          });
+          return notif.save();
+        })
+        .then(function () {
+          req.flash('success_msg', 'KYC approved.');
+          res.redirect('/admin/kyc');
+        });
+    }).catch(function (err) {
+      console.error(err);
+      req.flash('error_msg', 'Failed to approve KYC.');
+      res.redirect('/admin/kyc');
+    });
+});
+
+router.post('/kyc/:id/decline', isAdmin, function (req, res) {
+  var reason = req.body.reason || 'Your submission did not meet our requirements.';
+  KYC.findById(req.params.id)
+    .then(function (kyc) {
+      kyc.status        = 'declined';
+      kyc.declineReason = reason;
+      kyc.reviewedAt    = new Date();
+      return kyc.save()
+        .then(function () {
+          return User.findByIdAndUpdate(kyc.user, { kycStatus: 'declined' });
+        })
+        .then(function () {
+          return logAction(req.user._id, 'Declined KYC', 'User', kyc.user, reason);
+        })
+        .then(function () {
+          var notif = new Notification({
+            user:    kyc.user,
+            title:   'Verification Declined',
+            message: 'Your identity verification was declined. Reason: ' + reason + '. Please resubmit with correct documents.',
+            type:    'warning'
+          });
+          return notif.save();
+        })
+        .then(function () {
+          req.flash('success_msg', 'KYC declined.');
+          res.redirect('/admin/kyc');
+        });
+    }).catch(function (err) {
+      console.error(err);
+      req.flash('error_msg', 'Failed to decline KYC.');
+      res.redirect('/admin/kyc');
+    });
+});
+
+// ─── Card Management ──────────────────────────────────────────
+router.get('/cards', isAdmin, function (req, res) {
+  Card.find().sort({ createdAt: -1 })
+    .populate('user', 'firstName lastName email username')
+    .then(function (cards) {
+      res.render('admin/cards', { title: 'Card Requests', cards: cards });
+    }).catch(function (err) {
+      console.error(err);
+      res.redirect('/admin/dashboard');
+    });
+});
+
+router.post('/cards/:id/approve', isAdmin, function (req, res) {
+  Card.findByIdAndUpdate(req.params.id, { status: 'active' })
+    .then(function (card) {
+      return logAction(req.user._id, 'Approved Card', 'User', card.user, card.cardType + ' card approved')
+        .then(function () {
+          var notif = new Notification({
+            user:    card.user,
+            title:   'Card Approved',
+            message: 'Your ' + card.cardType + ' card has been approved and is now active.',
+            type:    'success'
+          });
+          return notif.save();
+        });
+    })
+    .then(function () {
+      req.flash('success_msg', 'Card approved.');
+      res.redirect('/admin/cards');
+    }).catch(function (err) {
+      console.error(err);
+      req.flash('error_msg', 'Failed to approve card.');
+      res.redirect('/admin/cards');
+    });
+});
+
+router.post('/cards/:id/block', isAdmin, function (req, res) {
+  Card.findByIdAndUpdate(req.params.id, { status: 'blocked' })
+    .then(function (card) {
+      return logAction(req.user._id, 'Blocked Card', 'User', card.user, card.cardType + ' card blocked')
+        .then(function () {
+          var notif = new Notification({
+            user:    card.user,
+            title:   'Card Blocked',
+            message: 'Your ' + card.cardType + ' card has been blocked. Contact support for assistance.',
+            type:    'warning'
+          });
+          return notif.save();
+        });
+    })
+    .then(function () {
+      req.flash('success_msg', 'Card blocked.');
+      res.redirect('/admin/cards');
+    }).catch(function (err) {
+      console.error(err);
+      req.flash('error_msg', 'Failed to block card.');
+      res.redirect('/admin/cards');
+    });
+});
+
+// ─── Loan Management ─────────────────────────────────────────
+router.get('/loans', isAdmin, function (req, res) {
+  var filter = req.query.filter || 'pending';
+  var query  = filter === 'all' ? {} : { status: filter };
+
+  Loan.find(query).sort({ createdAt: -1 })
+    .populate('user', 'firstName lastName email username accountNumber')
+    .then(function (loans) {
+      res.render('admin/loans', { title: 'Loan Requests', loans: loans, filter: filter });
+    }).catch(function (err) {
+      console.error(err);
+      res.redirect('/admin/dashboard');
+    });
+});
+
+router.post('/loans/:id/approve', isAdmin, function (req, res) {
+  Loan.findById(req.params.id)
+    .then(function (loan) {
+      loan.status     = 'approved';
+      loan.approvedAt = new Date();
+      return loan.save()
+        .then(function () {
+          return User.findByIdAndUpdate(loan.user, { $inc: { balance: loan.amount } });
+        })
+        .then(function () {
+          var txn = new Transaction({
+            sender:      loan.user,
+            type:        'loan_credit',
+            amount:      loan.amount,
+            description: 'Loan credited to account',
+            category:    'Loan',
+            status:      'completed'
+          });
+          return txn.save();
+        })
+        .then(function () {
+          return logAction(req.user._id, 'Approved Loan', 'User', loan.user, '€' + loan.amount + ' loan approved');
+        })
+        .then(function () {
+          var notif = new Notification({
+            user:    loan.user,
+            title:   'Loan Approved',
+            message: 'Your loan of €' + loan.amount.toFixed(2) + ' has been approved and credited to your account.',
+            type:    'success'
+          });
+          return notif.save();
+        })
+        .then(function () {
+          req.flash('success_msg', 'Loan approved and credited.');
+          res.redirect('/admin/loans');
+        });
+    }).catch(function (err) {
+      console.error(err);
+      req.flash('error_msg', 'Failed to approve loan.');
+      res.redirect('/admin/loans');
+    });
+});
+
+router.post('/loans/:id/decline', isAdmin, function (req, res) {
+  var reason = req.body.reason || 'Your loan request did not meet our criteria.';
+  Loan.findById(req.params.id)
+    .then(function (loan) {
+      loan.status        = 'declined';
+      loan.declineReason = reason;
+      return loan.save()
+        .then(function () {
+          return logAction(req.user._id, 'Declined Loan', 'User', loan.user, reason);
+        })
+        .then(function () {
+          var notif = new Notification({
+            user:    loan.user,
+            title:   'Loan Declined',
+            message: 'Your loan request of €' + loan.amount.toFixed(2) + ' was declined. Reason: ' + reason,
+            type:    'warning'
+          });
+          return notif.save();
+        })
+        .then(function () {
+          req.flash('success_msg', 'Loan declined.');
+          res.redirect('/admin/loans');
+        });
+    }).catch(function (err) {
+      console.error(err);
+      req.flash('error_msg', 'Failed to decline loan.');
+      res.redirect('/admin/loans');
     });
 });
 

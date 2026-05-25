@@ -1,0 +1,111 @@
+<%- include('partials/admin-header') %>
+<div class="admin-layout">
+  <%- include('partials/admin-sidebar') %>
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div>
+        <a href="/admin/kyc" class="admin-back-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          Back to KYC
+        </a>
+        <h1 class="admin-page-title">KYC Review</h1>
+      </div>
+    </div>
+
+    <% if (success_msg && success_msg.length > 0) { %>
+      <div class="alert alert-success"><%= success_msg %></div>
+    <% } %>
+
+    <div class="row">
+      <div class="col-md-4">
+        <div class="admin-card">
+          <h5 class="admin-card-title">Applicant Details</h5>
+          <div class="admin-detail-row">
+            <span class="admin-detail-label">Full Name</span>
+            <span class="admin-detail-value"><%= kyc.user.firstName %> <%= kyc.user.lastName %></span>
+          </div>
+          <div class="admin-detail-row">
+            <span class="admin-detail-label">Username</span>
+            <span class="admin-detail-value">@<%= kyc.user.username %></span>
+          </div>
+          <div class="admin-detail-row">
+            <span class="admin-detail-label">Email</span>
+            <span class="admin-detail-value"><%= kyc.user.email %></span>
+          </div>
+          <div class="admin-detail-row">
+            <span class="admin-detail-label">Phone</span>
+            <span class="admin-detail-value"><%= kyc.user.phone %></span>
+          </div>
+          <div class="admin-detail-row">
+            <span class="admin-detail-label">Account No.</span>
+            <span class="admin-detail-value mono"><%= kyc.user.accountNumber %></span>
+          </div>
+          <hr class="admin-divider"/>
+          <h5 class="admin-card-title">Document Details</h5>
+          <div class="admin-detail-row">
+            <span class="admin-detail-label">ID Type</span>
+            <span class="admin-detail-value"><%= kyc.idType.replace('_', ' ') %></span>
+          </div>
+          <div class="admin-detail-row">
+            <span class="admin-detail-label">ID Number</span>
+            <span class="admin-detail-value"><%= kyc.idNumber %></span>
+          </div>
+          <div class="admin-detail-row">
+            <span class="admin-detail-label">Date of Issue</span>
+            <span class="admin-detail-value"><%= new Date(kyc.dateOfIssue).toLocaleDateString('en-GB') %></span>
+          </div>
+          <div class="admin-detail-row">
+            <span class="admin-detail-label">Date of Expiry</span>
+            <span class="admin-detail-value"><%= new Date(kyc.dateOfExpiry).toLocaleDateString('en-GB') %></span>
+          </div>
+          <div class="admin-detail-row">
+            <span class="admin-detail-label">Status</span>
+            <span class="admin-status-badge status-<%= kyc.status %>"><%= kyc.status %></span>
+          </div>
+          <div class="admin-detail-row">
+            <span class="admin-detail-label">Submitted</span>
+            <span class="admin-detail-value"><%= new Date(kyc.submittedAt).toLocaleDateString('en-GB') %></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-8">
+        <div class="admin-card">
+          <h5 class="admin-card-title">Uploaded Documents</h5>
+          <div class="kyc-doc-grid">
+            <div class="kyc-doc-item">
+              <p class="kyc-doc-label">Front of ID</p>
+              <a href="<%= kyc.frontImage %>" target="_blank">
+                <img src="<%= kyc.frontImage %>" alt="Front ID" class="kyc-doc-img"/>
+              </a>
+            </div>
+            <div class="kyc-doc-item">
+              <p class="kyc-doc-label">Back of ID</p>
+              <a href="<%= kyc.backImage %>" target="_blank">
+                <img src="<%= kyc.backImage %>" alt="Back ID" class="kyc-doc-img"/>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <% if (kyc.status === 'pending') { %>
+        <div class="admin-card">
+          <h5 class="admin-card-title">Decision</h5>
+          <div class="kyc-decision-row">
+            <form action="/admin/kyc/<%= kyc._id %>/approve" method="POST" style="flex:1">
+              <button type="submit" class="btn btn-success btn-block">Approve KYC</button>
+            </form>
+            <form action="/admin/kyc/<%= kyc._id %>/decline" method="POST" style="flex:1" class="ml-3">
+              <div class="form-group">
+                <input type="text" name="reason" class="form-control" placeholder="Decline reason (required)" required/>
+              </div>
+              <button type="submit" class="btn btn-danger btn-block">Decline KYC</button>
+            </form>
+          </div>
+        </div>
+        <% } %>
+      </div>
+    </div>
+  </main>
+</div>
+<%- include('partials/admin-footer') %>
