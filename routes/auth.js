@@ -144,10 +144,13 @@ router.post('/register/step3', isGuest, function (req, res) {
 });
 
 // Logout
-router.get('/logout', function (req, res) {
-  req.logout();
-  req.flash('success_msg', 'You have been logged out.');
-  res.redirect('/login');
+router.get('/logout', function (req, res, next) {
+  req.logout(function (err) {
+    if (err) { 
+      return next(err); 
+    }
+    res.redirect('/login');
+  });
 });
 
 module.exports = router;
