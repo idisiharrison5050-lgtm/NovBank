@@ -163,4 +163,51 @@ router.post('/wire', isAuth, function (req, res) {
     });
 });
 
+var Notification = require('../models/Notification');
+
+// Deposit Page
+router.get('/deposit', isAuth, function (req, res) {
+  res.render('dashboard/deposit', {
+    title: 'Deposit Funds',
+    unreadCount: 0
+  });
+});
+
+// Deposit Submission
+router.post('/deposit', isAuth, function (req, res) {
+  var amount      = parseFloat(req.body.amount);
+  var description = req.body.description || '';
+
+  if (!amount || isNaN(amount) || amount <= 0) {
+    req.flash('error_msg', 'Please enter a valid amount.');
+    return res.redirect('/transfer/deposit');
+  }
+
+  var txn = new Transaction({
+    sender:      req.user._id,
+    type:        'deposit',
+    amount:      amount,
+    description: description,
+    category:    'Transfer',
+    status:      'pending'
+  });
+
+  txn.save().then(function () {
+    var notif = new Notification({
+      user:    req.user._id,
+      title:   'Deposit Request Received',
+      message: 'Your deposit of €' + amount.toFixed(2) + ' is pending verification. It will be credited once confirmed.',
+      type:    'info'
+    });
+    return notif.save();
+  }).then(function () {
+    req.flash('success_msg', 'Deposit request submitted. Your balance will be updated once we verify the transfer.');
+    res.redirect('/dashboard/transactions');
+  }).catch(function (err) {
+    console.error(err);
+    req.flash('error_msg', 'Something went wrong. Please try again.');
+    res.redirect('/transfer/deposit');
+  });
+});
+
 module.exports = router;

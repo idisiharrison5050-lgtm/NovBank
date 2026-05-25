@@ -326,26 +326,39 @@ router.post('/transactions/:id/approve', isAdmin, function (req, res) {
         req.flash('error_msg', 'Transaction not found or already processed.');
         return res.redirect('/admin/transactions');
       }
+
       txn.status = 'completed';
-      return txn.save().then(function () {
-        return logAction(
-          req.user._id, 'Approved Transaction', 'Transaction', txn._id,
-          'Approved ' + txn.type + ' of €' + txn.amount.toFixed(2)
-        );
-      }).then(function () {
-        if (txn.sender) {
-          var notif = new Notification({
-            user:    txn.sender,
-            title:   'Transfer Approved',
-            message: 'Your ' + txn.type.replace('_', ' ') + ' of €' + txn.amount.toFixed(2) + ' has been approved.',
-            type:    'success'
-          });
-          return notif.save();
-        }
-      }).then(function () {
-        req.flash('success_msg', 'Transaction approved.');
-        res.redirect('/admin/transactions');
-      });
+
+      return txn.save()
+        .then(function () {
+          // Credit balance if it is a deposit
+          if (txn.type === 'deposit' && txn.sender) {
+            return User.findByIdAndUpdate(txn.sender, { $inc: { balance: txn.amount } });
+          }
+        })
+        .then(function () {
+          return logAction(
+            req.user._id, 'Approved Transaction', 'Transaction', txn._id,
+            'Approved ' + txn.type + ' of €' + txn.amount.toFixed(2)
+          );
+        })
+        .then(function () {
+          if (txn.sender) {
+            var notif = new Notification({
+              user:    txn.sender,
+              title:   txn.type === 'deposit' ? 'Deposit Approved' : 'Transfer Approved',
+              message: txn.type === 'deposit'
+                ? 'Your deposit of €' + txn.amount.toFixed(2) + ' has been approved and credited to your account.'
+                : 'Your ' + txn.type.replace('_', ' ') + ' of €' + txn.amount.toFixed(2) + ' has been approved.',
+              type: 'success'
+            });
+            return notif.save();
+          }
+        })
+        .then(function () {
+          req.flash('success_msg', 'Transaction approved successfully.');
+          res.redirect('/admin/transactions');
+        });
     }).catch(function (err) {
       console.error(err);
       req.flash('error_msg', 'Failed to approve transaction.');
