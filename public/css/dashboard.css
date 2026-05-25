@@ -818,6 +818,17 @@ label {
   .dashboard-main {
     margin-left: 0;
     padding: 20px 16px;
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
+  .txn-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .txn-table {
+    min-width: 600px;
   }
 
   .dash-cards .col-md-5,
