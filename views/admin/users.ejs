@@ -1,0 +1,78 @@
+<%- include('partials/admin-header') %>
+
+<div class="admin-layout">
+  <%- include('partials/admin-sidebar') %>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <h1 class="admin-page-title">All Users</h1>
+    </div>
+
+    <% if (success_msg && success_msg.length > 0) { %>
+      <div class="alert alert-success"><%= success_msg %></div>
+    <% } %>
+    <% if (error_msg && error_msg.length > 0) { %>
+      <div class="alert alert-danger"><%= error_msg %></div>
+    <% } %>
+
+    <!-- Search -->
+    <div class="admin-search-bar">
+      <form action="/admin/users" method="GET">
+        <div class="input-group">
+          <input type="text" name="search" class="form-control" placeholder="Search by name, email, username or account number..." value="<%= search %>"/>
+          <div class="input-group-append">
+            <button class="btn btn-primary" type="submit">Search</button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="admin-card">
+      <p class="admin-result-count"><%= users.length %> user(s) found</p>
+      <% if (users.length === 0) { %>
+        <p class="admin-empty">No users found.</p>
+      <% } else { %>
+        <div class="table-responsive">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Account No.</th>
+                <th>Balance</th>
+                <th>Status</th>
+                <th>Joined</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% users.forEach(function(u) { %>
+                <tr>
+                  <td><%= u.firstName %> <%= u.lastName %></td>
+                  <td>@<%= u.username %></td>
+                  <td><%= u.email %></td>
+                  <td><%= u.phone %></td>
+                  <td class="mono"><%= u.accountNumber %></td>
+                  <td>€<%= u.balance.toFixed(2) %></td>
+                  <td>
+                    <span class="admin-status-badge status-<%= u.accountStatus %>">
+                      <%= u.accountStatus %>
+                    </span>
+                  </td>
+                  <td><%= new Date(u.createdAt).toLocaleDateString('en-GB') %></td>
+                  <td>
+                    <a href="/admin/users/<%= u._id %>" class="admin-btn-view">View</a>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
+    </div>
+  </main>
+</div>
+
+<%- include('partials/admin-footer') %>

@@ -1,0 +1,107 @@
+<%- include('partials/admin-header') %>
+
+<div class="admin-layout">
+  <%- include('partials/admin-sidebar') %>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <h1 class="admin-page-title">Transactions</h1>
+    </div>
+
+    <% if (success_msg && success_msg.length > 0) { %>
+      <div class="alert alert-success"><%= success_msg %></div>
+    <% } %>
+    <% if (error_msg && error_msg.length > 0) { %>
+      <div class="alert alert-danger"><%= error_msg %></div>
+    <% } %>
+
+    <!-- Filters -->
+    <div class="admin-filter-row">
+      <div class="admin-filter-group">
+        <span class="filter-label">Type:</span>
+        <a href="?filter=all&status=<%= status %>" class="admin-filter-btn <%= filter === 'all' ? 'active' : '' %>">All</a>
+        <a href="?filter=internal_transfer&status=<%= status %>" class="admin-filter-btn <%= filter === 'internal_transfer' ? 'active' : '' %>">Internal</a>
+        <a href="?filter=wire_transfer&status=<%= status %>" class="admin-filter-btn <%= filter === 'wire_transfer' ? 'active' : '' %>">Wire</a>
+        <a href="?filter=deposit&status=<%= status %>" class="admin-filter-btn <%= filter === 'deposit' ? 'active' : '' %>">Deposit</a>
+      </div>
+      <div class="admin-filter-group">
+        <span class="filter-label">Status:</span>
+        <a href="?filter=<%= filter %>&status=all" class="admin-filter-btn <%= status === 'all' ? 'active' : '' %>">All</a>
+        <a href="?filter=<%= filter %>&status=pending" class="admin-filter-btn <%= status === 'pending' ? 'active' : '' %>">Pending</a>
+        <a href="?filter=<%= filter %>&status=completed" class="admin-filter-btn <%= status === 'completed' ? 'active' : '' %>">Completed</a>
+        <a href="?filter=<%= filter %>&status=failed" class="admin-filter-btn <%= status === 'failed' ? 'active' : '' %>">Failed</a>
+      </div>
+    </div>
+
+    <div class="admin-card">
+      <% if (transactions.length === 0) { %>
+        <p class="admin-empty">No transactions found.</p>
+      <% } else { %>
+        <div class="table-responsive">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Sender</th>
+                <th>Receiver</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% transactions.forEach(function(txn) { %>
+                <tr>
+                  <td><%= new Date(txn.createdAt).toLocaleDateString('en-GB') %></td>
+                  <td>
+                    <% if (txn.sender) { %>
+                      <a href="/admin/users/<%= txn.sender._id %>"><%= txn.sender.firstName %> <%= txn.sender.lastName %></a>
+                    <% } else { %> - <% } %>
+                  </td>
+                  <td>
+                    <% if (txn.receiver) { %>
+                      <a href="/admin/users/<%= txn.receiver._id %>"><%= txn.receiver.firstName %> <%= txn.receiver.lastName %></a>
+                    <% } else if (txn.wireDetails && txn.wireDetails.recipientName) { %>
+                      <%= txn.wireDetails.recipientName %> (Wire)
+                    <% } else { %> - <% } %>
+                  </td>
+                  <td><span class="admin-type-badge"><%= txn.type.replace('_', ' ') %></span></td>
+                  <td>€<%= txn.amount.toFixed(2) %></td>
+                  <td><%= txn.category %></td>
+                  <td><span class="admin-status-badge status-<%= txn.status %>"><%= txn.status %></span></td>
+                  <td>
+                    <% if (txn.status === 'pending') { %>
+                      <form action="/admin/transactions/<%= txn._id %>/approve" method="POST" style="display:inline">
+                        <button class="admin-btn-approve">Approve</button>
+                      </form>
+                      <form action="/admin/transactions/<%= txn._id %>/decline" method="POST" style="display:inline">
+                        <button class="admin-btn-decline">Decline</button>
+                      </form>
+                    <% } else { %>
+                      <span class="admin-processed">Processed</span>
+                    <% } %>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="admin-pagination">
+          <% if (currentPage > 1) { %>
+            <a href="?page=<%= currentPage - 1 %>&filter=<%= filter %>&status=<%= status %>" class="admin-page-btn">Previous</a>
+          <% } %>
+          <span class="admin-page-info">Page <%= currentPage %> of <%= totalPages %></span>
+          <% if (currentPage < totalPages) { %>
+            <a href="?page=<%= currentPage + 1 %>&filter=<%= filter %>&status=<%= status %>" class="admin-page-btn">Next</a>
+          <% } %>
+        </div>
+      <% } %>
+    </div>
+  </main>
+</div>
+
+<%- include('partials/admin-footer') %>

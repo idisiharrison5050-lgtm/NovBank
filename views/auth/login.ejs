@@ -1,0 +1,36 @@
+<%- include('../partials/header') %>
+<link rel="stylesheet" href="/css/auth.css"/>
+
+<div class="auth-wrapper">
+  <div class="auth-box">
+    <div class="auth-logo">NovBank</div>
+    <h2 class="auth-title">Welcome back</h2>
+    <p class="auth-subtitle">Sign in to your account</p>
+
+    <% if (success_msg.length > 0) { %>
+      <div class="alert alert-success"><%= success_msg %></div>
+    <% } %>
+    <% if (error_msg.length > 0) { %>
+      <div class="alert alert-danger"><%= error_msg %></div>
+    <% } %>
+    <% if (error.length > 0) { %>
+      <div class="alert alert-danger"><%= error %></div>
+    <% } %>
+
+    <form action="/login" method="POST">
+      <div class="form-group">
+        <label>Email or Username</label>
+        <input type="text" name="identifier" class="form-control" placeholder="Enter email or username" required/>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" name="password" class="form-control" placeholder="Enter password" required/>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block btn-auth">Sign In</button>
+    </form>
+
+    <p class="auth-footer-text">Don't have an account? <a href="/register">Create one</a></p>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

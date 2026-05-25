@@ -1,0 +1,58 @@
+<%- include('partials/admin-header') %>
+
+<div class="admin-auth-wrap">
+  <div class="admin-auth-box">
+    <div class="admin-auth-logo">NovBank</div>
+    <p class="admin-auth-sub">Admin Panel</p>
+    <h2 class="admin-auth-title">Create Admin Account</h2>
+
+    <% if (error_msg && error_msg.length > 0) { %>
+      <div class="alert alert-danger"><%= error_msg %></div>
+    <% } %>
+    <% if (success_msg && success_msg.length > 0) { %>
+      <div class="alert alert-success"><%= success_msg %></div>
+    <% } %>
+
+    <form action="/admin/register" method="POST">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" name="firstName" class="form-control" required/>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" name="lastName" class="form-control" required/>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" name="username" class="form-control" required/>
+      </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" name="email" class="form-control" required/>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" name="password" class="form-control" required/>
+      </div>
+      <div class="form-group">
+        <label>Confirm Password</label>
+        <input type="password" name="confirmPassword" class="form-control" required/>
+      </div>
+      <div class="form-group">
+        <label>Admin Secret Key</label>
+        <input type="password" name="secretKey" class="form-control" placeholder="Enter the secret registration key" required/>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block admin-btn">Create Admin Account</button>
+    </form>
+
+    <p class="admin-auth-footer">Already have an account? <a href="/admin/login">Sign in</a></p>
+  </div>
+</div>
+
+<%- include('partials/admin-footer') %>

@@ -1,0 +1,50 @@
+<%- include('../partials/header') %>
+<link rel="stylesheet" href="/css/auth.css"/>
+
+<div class="auth-wrapper">
+  <div class="auth-box auth-box-wide">
+    <div class="auth-logo">NovBank</div>
+    <h2 class="auth-title">Create your account</h2>
+
+    <div class="step-indicator">
+      <div class="step completed">1</div>
+      <div class="step-line active"></div>
+      <div class="step active">2</div>
+      <div class="step-line"></div>
+      <div class="step">3</div>
+    </div>
+    <p class="step-label">Home Address</p>
+
+    <% if (error_msg.length > 0) { %>
+      <div class="alert alert-danger"><%= error_msg %></div>
+    <% } %>
+
+    <form action="/register/step2" method="POST">
+      <div class="form-group">
+        <label>Street Address</label>
+        <input type="text" name="street" class="form-control" placeholder="123 Main Street" required/>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label>City</label>
+            <input type="text" name="city" class="form-control" placeholder="Berlin" required/>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label>Zip / Postal Code</label>
+            <input type="text" name="zip" class="form-control" placeholder="10115" required/>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Country</label>
+        <input type="text" name="country" class="form-control" placeholder="Germany" required/>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block btn-auth">Continue</button>
+    </form>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

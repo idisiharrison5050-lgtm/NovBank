@@ -1,0 +1,54 @@
+<%- include('partials/admin-header') %>
+
+<div class="admin-layout">
+  <%- include('partials/admin-sidebar') %>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <h1 class="admin-page-title">Audit Log</h1>
+    </div>
+
+    <div class="admin-card">
+      <% if (logs.length === 0) { %>
+        <p class="admin-empty">No audit entries yet.</p>
+      <% } else { %>
+        <div class="table-responsive">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Date & Time</th>
+                <th>Admin</th>
+                <th>Action</th>
+                <th>Target</th>
+                <th>Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% logs.forEach(function(log) { %>
+                <tr>
+                  <td><%= new Date(log.createdAt).toLocaleString('en-GB') %></td>
+                  <td><%= log.admin ? log.admin.firstName + ' ' + log.admin.lastName : 'Unknown' %></td>
+                  <td><strong><%= log.action %></strong></td>
+                  <td><%= log.targetType %></td>
+                  <td class="admin-log-detail"><%= log.details %></td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="admin-pagination">
+          <% if (currentPage > 1) { %>
+            <a href="?page=<%= currentPage - 1 %>" class="admin-page-btn">Previous</a>
+          <% } %>
+          <span class="admin-page-info">Page <%= currentPage %> of <%= totalPages %></span>
+          <% if (currentPage < totalPages) { %>
+            <a href="?page=<%= currentPage + 1 %>" class="admin-page-btn">Next</a>
+          <% } %>
+        </div>
+      <% } %>
+    </div>
+  </main>
+</div>
+
+<%- include('partials/admin-footer') %>

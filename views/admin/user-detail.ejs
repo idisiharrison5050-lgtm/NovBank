@@ -1,0 +1,143 @@
+<%- include('partials/admin-header') %>
+
+<div class="admin-layout">
+  <%- include('partials/admin-sidebar') %>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div>
+        <a href="/admin/users" class="admin-back-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          Back to Users
+        </a>
+        <h1 class="admin-page-title"><%= targetUser.firstName %> <%= targetUser.lastName %></h1>
+      </div>
+    </div>
+
+    <% if (success_msg && success_msg.length > 0) { %>
+      <div class="alert alert-success"><%= success_msg %></div>
+    <% } %>
+    <% if (error_msg && error_msg.length > 0) { %>
+      <div class="alert alert-danger"><%= error_msg %></div>
+    <% } %>
+
+    <div class="row">
+      <!-- Profile Info -->
+      <div class="col-md-4">
+        <div class="admin-card">
+          <div class="admin-profile-avatar">
+            <%= targetUser.firstName.charAt(0) %><%= targetUser.lastName.charAt(0) %>
+          </div>
+          <h4 class="admin-profile-name"><%= targetUser.firstName %> <%= targetUser.lastName %></h4>
+          <p class="admin-profile-meta">@<%= targetUser.username %></p>
+          <p class="admin-profile-meta"><%= targetUser.email %></p>
+          <p class="admin-profile-meta"><%= targetUser.phone %></p>
+
+          <hr class="admin-divider"/>
+
+          <div class="admin-detail-row">
+            <span class="admin-detail-label">Account Number</span>
+            <span class="admin-detail-value mono"><%= targetUser.accountNumber %></span>
+          </div>
+          <div class="admin-detail-row">
+            <span class="admin-detail-label">Balance</span>
+            <span class="admin-detail-value">€<%= targetUser.balance.toFixed(2) %></span>
+          </div>
+          <div class="admin-detail-row">
+            <span class="admin-detail-label">Currency</span>
+            <span class="admin-detail-value"><%= targetUser.currency %></span>
+          </div>
+          <div class="admin-detail-row">
+            <span class="admin-detail-label">Status</span>
+            <span class="admin-status-badge status-<%= targetUser.accountStatus %>"><%= targetUser.accountStatus %></span>
+          </div>
+          <div class="admin-detail-row">
+            <span class="admin-detail-label">Joined</span>
+            <span class="admin-detail-value"><%= new Date(targetUser.createdAt).toLocaleDateString('en-GB') %></span>
+          </div>
+          <% if (targetUser.address) { %>
+            <div class="admin-detail-row">
+              <span class="admin-detail-label">Address</span>
+              <span class="admin-detail-value"><%= targetUser.address.street %>, <%= targetUser.address.city %>, <%= targetUser.address.country %></span>
+            </div>
+          <% } %>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="col-md-8">
+
+        <!-- Edit Balance -->
+        <div class="admin-card">
+          <h5 class="admin-card-title">Edit Balance</h5>
+          <form action="/admin/users/<%= targetUser._id %>/edit-balance" method="POST" class="form-inline-row">
+            <div class="form-group mb-0 mr-3" style="flex:1">
+              <input type="number" name="balance" class="form-control w-100" value="<%= targetUser.balance.toFixed(2) %>" step="0.01" min="0" required/>
+            </div>
+            <button type="submit" class="btn btn-primary">Update Balance</button>
+          </form>
+        </div>
+
+        <!-- Change Status -->
+        <div class="admin-card">
+          <h5 class="admin-card-title">Account Status</h5>
+          <form action="/admin/users/<%= targetUser._id %>/status" method="POST" class="form-inline-row">
+            <div class="form-group mb-0 mr-3" style="flex:1">
+              <select name="status" class="form-control w-100">
+                <option value="active"    <%= targetUser.accountStatus === 'active'    ? 'selected' : '' %>>Active</option>
+                <option value="suspended" <%= targetUser.accountStatus === 'suspended' ? 'selected' : '' %>>Suspended</option>
+                <option value="closed"    <%= targetUser.accountStatus === 'closed'    ? 'selected' : '' %>>Closed</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-warning">Update Status</button>
+          </form>
+        </div>
+
+        <!-- Delete User -->
+        <div class="admin-card admin-danger-zone">
+          <h5 class="admin-card-title danger-title">Danger Zone</h5>
+          <p class="admin-danger-text">Permanently delete this user and all their transaction history. This cannot be undone.</p>
+          <form action="/admin/users/<%= targetUser._id %>/delete" method="POST" onsubmit="return confirm('Are you sure you want to delete this user? This is permanent.');">
+            <button type="submit" class="btn btn-danger">Delete User</button>
+          </form>
+        </div>
+
+        <!-- Transaction History -->
+        <div class="admin-card">
+          <h5 class="admin-card-title">Transaction History</h5>
+          <% if (transactions.length === 0) { %>
+            <p class="admin-empty">No transactions.</p>
+          <% } else { %>
+            <div class="table-responsive">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% transactions.forEach(function(txn) { %>
+                    <tr>
+                      <td><%= new Date(txn.createdAt).toLocaleDateString('en-GB') %></td>
+                      <td><%= txn.type.replace('_', ' ') %></td>
+                      <td>€<%= txn.amount.toFixed(2) %></td>
+                      <td><%= txn.description || '-' %></td>
+                      <td><span class="admin-status-badge status-<%= txn.status %>"><%= txn.status %></span></td>
+                    </tr>
+                  <% }); %>
+                </tbody>
+              </table>
+            </div>
+          <% } %>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+<%- include('partials/admin-footer') %>

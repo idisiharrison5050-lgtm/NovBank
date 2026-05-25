@@ -1,0 +1,140 @@
+<%- include('partials/admin-header') %>
+
+<div class="admin-layout">
+  <%- include('partials/admin-sidebar') %>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <h1 class="admin-page-title">Dashboard</h1>
+      <p class="admin-date"><%= new Date().toDateString() %></p>
+    </div>
+
+    <% if (success_msg && success_msg.length > 0) { %>
+      <div class="alert alert-success"><%= success_msg %></div>
+    <% } %>
+    <% if (error_msg && error_msg.length > 0) { %>
+      <div class="alert alert-danger"><%= error_msg %></div>
+    <% } %>
+
+    <!-- Stats -->
+    <div class="row admin-stats">
+      <div class="col-md-3 col-sm-6">
+        <div class="admin-stat-card">
+          <div class="admin-stat-icon icon-blue">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div>
+            <p class="admin-stat-label">Total Users</p>
+            <h3 class="admin-stat-value"><%= totalUsers %></h3>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <div class="admin-stat-card">
+          <div class="admin-stat-icon icon-yellow">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div>
+            <p class="admin-stat-label">Pending Transactions</p>
+            <h3 class="admin-stat-value"><%= pendingCount %></h3>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <div class="admin-stat-card">
+          <div class="admin-stat-icon icon-green">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <div>
+            <p class="admin-stat-label">Total Transacted</p>
+            <h3 class="admin-stat-value">€<%= totalTransacted.toFixed(2) %></h3>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <div class="admin-stat-card">
+          <div class="admin-stat-icon icon-purple">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <div>
+            <p class="admin-stat-label">Total Platform Balance</p>
+            <h3 class="admin-stat-value">€<%= totalBalance.toFixed(2) %></h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <!-- Pending Transactions -->
+      <div class="col-md-7">
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h5>Pending Transactions</h5>
+            <a href="/admin/transactions?status=pending" class="admin-view-all">View All</a>
+          </div>
+          <% if (pendingTxns.length === 0) { %>
+            <p class="admin-empty">No pending transactions.</p>
+          <% } else { %>
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Type</th>
+                  <th>Amount</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% pendingTxns.forEach(function(txn) { %>
+                  <tr>
+                    <td><%= txn.sender ? txn.sender.firstName + ' ' + txn.sender.lastName : 'N/A' %></td>
+                    <td><span class="admin-type-badge"><%= txn.type.replace('_', ' ') %></span></td>
+                    <td>€<%= txn.amount.toFixed(2) %></td>
+                    <td><%= new Date(txn.createdAt).toLocaleDateString('en-GB') %></td>
+                    <td>
+                      <form action="/admin/transactions/<%= txn._id %>/approve" method="POST" style="display:inline">
+                        <button class="admin-btn-approve">Approve</button>
+                      </form>
+                      <form action="/admin/transactions/<%= txn._id %>/decline" method="POST" style="display:inline">
+                        <button class="admin-btn-decline">Decline</button>
+                      </form>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          <% } %>
+        </div>
+      </div>
+
+      <!-- Recent Users -->
+      <div class="col-md-5">
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h5>Recent Registrations</h5>
+            <a href="/admin/users" class="admin-view-all">View All</a>
+          </div>
+          <% if (recentUsers.length === 0) { %>
+            <p class="admin-empty">No users yet.</p>
+          <% } else { %>
+            <% recentUsers.forEach(function(u) { %>
+              <div class="admin-user-row">
+                <div class="admin-user-avatar">
+                  <%= u.firstName.charAt(0) %><%= u.lastName.charAt(0) %>
+                </div>
+                <div class="admin-user-info-col">
+                  <p class="admin-user-name-sm"><%= u.firstName %> <%= u.lastName %></p>
+                  <p class="admin-user-meta"><%= u.email %></p>
+                </div>
+                <a href="/admin/users/<%= u._id %>" class="admin-view-link">View</a>
+              </div>
+            <% }); %>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<%- include('partials/admin-footer') %>

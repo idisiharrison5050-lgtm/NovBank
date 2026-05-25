@@ -1,0 +1,55 @@
+<%- include('../partials/header') %>
+<link rel="stylesheet" href="/css/auth.css"/>
+
+<div class="auth-wrapper">
+  <div class="auth-box auth-box-wide">
+    <div class="auth-logo">NovBank</div>
+    <h2 class="auth-title">Create your account</h2>
+
+    <div class="step-indicator">
+      <div class="step active">1</div>
+      <div class="step-line"></div>
+      <div class="step">2</div>
+      <div class="step-line"></div>
+      <div class="step">3</div>
+    </div>
+    <p class="step-label">Personal Information</p>
+
+    <% if (error_msg.length > 0) { %>
+      <div class="alert alert-danger"><%= error_msg %></div>
+    <% } %>
+
+    <form action="/register/step1" method="POST">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" name="firstName" class="form-control" placeholder="John" required/>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" name="lastName" class="form-control" placeholder="Doe" required/>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" name="email" class="form-control" placeholder="you@example.com" required/>
+      </div>
+      <div class="form-group">
+        <label>Phone Number</label>
+        <input type="tel" name="phone" class="form-control" placeholder="+49 000 0000000" required/>
+      </div>
+      <div class="form-group">
+        <label>Date of Birth</label>
+        <input type="date" name="dateOfBirth" class="form-control" required/>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block btn-auth">Continue</button>
+    </form>
+    <p class="auth-footer-text">Already have an account? <a href="/login">Sign in</a></p>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

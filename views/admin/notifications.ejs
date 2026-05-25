@@ -1,0 +1,81 @@
+<%- include('partials/admin-header') %>
+
+<div class="admin-layout">
+  <%- include('partials/admin-sidebar') %>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <h1 class="admin-page-title">Notifications</h1>
+    </div>
+
+    <% if (success_msg && success_msg.length > 0) { %>
+      <div class="alert alert-success"><%= success_msg %></div>
+    <% } %>
+    <% if (error_msg && error_msg.length > 0) { %>
+      <div class="alert alert-danger"><%= error_msg %></div>
+    <% } %>
+
+    <div class="row">
+      <!-- Send Form -->
+      <div class="col-md-5">
+        <div class="admin-card">
+          <h5 class="admin-card-title">Send Notification</h5>
+          <form action="/admin/notifications/send" method="POST">
+            <div class="form-group">
+              <label>Recipient</label>
+              <select name="target" class="form-control">
+                <option value="all">All Users (Broadcast)</option>
+                <% users.forEach(function(u) { %>
+                  <option value="<%= u._id %>"><%= u.firstName %> <%= u.lastName %> (@<%= u.username %>)</option>
+                <% }); %>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Type</label>
+              <select name="type" class="form-control">
+                <option value="info">Info</option>
+                <option value="success">Success</option>
+                <option value="warning">Warning</option>
+                <option value="error">Error</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Title</label>
+              <input type="text" name="title" class="form-control" placeholder="Notification title" required/>
+            </div>
+            <div class="form-group">
+              <label>Message</label>
+              <textarea name="message" class="form-control" rows="4" placeholder="Notification message..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Send Notification</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Recent Notifications -->
+      <div class="col-md-7">
+        <div class="admin-card">
+          <h5 class="admin-card-title">Recent Notifications Sent</h5>
+          <% if (notifications.length === 0) { %>
+            <p class="admin-empty">No notifications sent yet.</p>
+          <% } else { %>
+            <% notifications.forEach(function(n) { %>
+              <div class="admin-notif-item admin-notif-<%= n.type %>">
+                <div class="admin-notif-header">
+                  <strong><%= n.title %></strong>
+                  <span class="admin-notif-meta">
+                    <%= n.user ? n.user.username : 'Unknown' %> &bull;
+                    <%= new Date(n.createdAt).toLocaleDateString('en-GB') %>
+                  </span>
+                </div>
+                <p class="admin-notif-msg"><%= n.message %></p>
+              </div>
+            <% }); %>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<%- include('partials/admin-footer') %>
