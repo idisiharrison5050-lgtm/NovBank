@@ -68,7 +68,9 @@
       <div class="col-md-5">
         <div class="balance-card">
           <p class="balance-label">Available Balance</p>
-          <h2 class="balance-amount">€ <%= user.balance.toFixed(2) %></h2>
+           <p class="balance-amount">
+             € <%= (user.balance !== undefined && user.balance !== null) ? user.balance.toFixed(2) : '0.00' %>
+           </p>
           <p class="balance-account"><%= user.accountNumber %></p>
           <p class="balance-name"><%= user.firstName %> <%= user.lastName %></p>
         </div>

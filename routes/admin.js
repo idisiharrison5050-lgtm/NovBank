@@ -101,10 +101,14 @@ router.post('/login', isAdminGuest, passport.authenticate('admin-local', {
 }));
 
 // ─── Admin Logout ─────────────────────────────────────────────
-router.get('/logout', function (req, res) {
-  req.logout();
-  req.flash('success_msg', 'Logged out of admin panel.');
-  res.redirect('/admin/login');
+// Change your old logout route to look like this:
+router.get('/logout', function (req, res, next) {
+  req.logout(function (err) {
+    if (err) { 
+      return next(err); 
+    }
+    res.redirect('/admin/login'); 
+  });
 });
 
 // ─── Dashboard ────────────────────────────────────────────────
