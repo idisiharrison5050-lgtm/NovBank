@@ -5,7 +5,7 @@ var MongoStore = require('connect-mongo')(session);
 var passport = require('passport');
 var flash = require('connect-flash');
 var path = require('path');
-var morgan = require('morgan');
+// var morgan = require('morgan');
 require('dotenv').config();
 require('./config/passport')(passport);
 
@@ -27,7 +27,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(morgan('dev'));
+// app.use(morgan('dev'));
 
 app.use(session({
   secret: process.env.SESSION_SECRET,
