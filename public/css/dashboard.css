@@ -800,28 +800,41 @@ label {
 }
 
 @media (max-width: 768px) {
+  .mobile-topbar {
+    display: flex;
+  }
+
   .sidebar {
     display: flex;
     transform: translateX(-100%);
     transition: transform 0.25s ease;
     z-index: 70;
   }
+
   .sidebar.open {
     transform: translateX(0);
   }
+
   .dashboard-main {
     margin-left: 0;
     padding: 20px 16px;
-    width: 100%;
-    max-width: 100vw;
-    overflow-x: hidden;
   }
-  .txn-table-wrap {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    width: 100%;
+
+  .dash-cards .col-md-5,
+  .dash-cards .col-md-7 {
+    margin-bottom: 16px;
   }
-  .txn-table {
-    min-width: 600px;
+
+  .quick-actions {
+    gap: 8px;
+  }
+
+  .quick-btn {
+    font-size: 0.82rem;
+    padding: 10px 14px;
+  }
+
+  .deposit-detail-grid {
+    grid-template-columns: 1fr;
   }
 }
