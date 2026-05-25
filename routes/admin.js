@@ -379,9 +379,10 @@ router.post('/transactions/:id/decline', isAdmin, function (req, res) {
       return txn.save()
         .then(function () {
           // Refund sender balance
-          if (txn.sender) {
-            return User.findByIdAndUpdate(txn.sender, { $inc: { balance: txn.amount } });
-          }
+          // Only refund if it's a wire transfer or internal transfer
+        if (txn.type !== 'deposit' && txn.sender) {
+          return User.findByIdAndUpdate(txn.sender, { $inc: { balance: txn.amount } });
+        }
         })
         .then(function () {
           return logAction(
