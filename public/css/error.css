@@ -1,0 +1,64 @@
+/* Container takes up the full viewport height */
+.error-container {
+  display: flex;
+  justify-content: center; /* Centers horizontally */
+  align-items: center;     /* Centers vertically */
+  min-height: 80vh;        /* Keeps space for headers/footers if present */
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Styled content block inside */
+.error-content {
+  text-align: center;
+  max-width: 480px;
+}
+
+/* Huge bold 404 text */
+.error-code {
+  font-size: 6rem;
+  font-weight: 800;
+  margin: 0;
+  line-height: 1;
+  color: #e11d48; /* Your application theme accent color */
+}
+
+/* Sub-heading */
+.error-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-top: 10px;
+  margin-bottom: 15px;
+}
+
+/* Descriptive text */
+.error-message {
+  font-size: 1rem;
+  color: #64748b;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+/* Interactive navigation button */
+.btn-back-home {
+  display: inline-flex;
+  align-items: center;
+  background-color: #1e293b; /* Dark theme contrast color */
+  color: #ffffff;
+  text-decoration: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-back-home:hover {
+  background-color: #0f172a;
+}
+
+.btn-back-home:active {
+  transform: scale(0.98);
+}
