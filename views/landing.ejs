@@ -13,13 +13,13 @@
         <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
         <li class="nav-item"><a class="nav-link" href="#how-it-works">How It Works</a></li>
         <li class="nav-item"><a class="nav-link" href="#security">Security</a></li>
-        % if (user) { %>
+        <% if (user) { %>
           <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
           <li class="nav-item"><a class="btn btn-outline-secondary btn-nav-cta" href="/logout">Logout</a></li>
-        % } else { %>
+        <% } else { %>
           <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
           <li class="nav-item"><a class="btn btn-primary btn-nav-cta" href="/register">Open Account</a></li>
-        % } %>
+        <% } %>
       </ul>
     </div>
   </div>
@@ -33,12 +33,12 @@
         <p class="hero-badge">Trusted by thousands across Europe</p>
         <h1 class="hero-title">Banking that works<br/><span>for your life.</span></h1>
         <p class="hero-subtitle">Send money, manage your finances, and track spending — all in one secure place.</p>
-        % if (user) { %>
+        <% if (user) { %>
           <a href="/dashboard" class="btn btn-primary btn-lg hero-cta">Go to Dashboard</a>
-        % } else { %>
+        <% } else { %>
           <a href="/register" class="btn btn-primary btn-lg hero-cta">Get Started Free</a>
           <a href="#how-it-works" class="btn btn-outline-secondary btn-lg ml-2">Learn More</a>
-        % } %>
+        <% } %>
       </div>
       <div class="col-md-6 hero-right">
         <div class="hero-card-mockup">
