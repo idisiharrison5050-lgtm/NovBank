@@ -149,7 +149,7 @@ router.get('/logout', function (req, res, next) {
     if (err) { 
       return next(err); 
     }
-    res.redirect('/login');
+    res.redirect('/');
   });
 });
 
