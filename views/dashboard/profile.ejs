@@ -96,6 +96,47 @@
         <button type="submit" class="btn btn-primary">Update Password</button>
       </form>
     </div>
+    <!-- Set / Change PIN -->
+  <div class="form-card">
+  <h5 class="form-section-heading"><%= user.pinSet ? 'Change PIN' : 'Set Transaction PIN' %></h5>
+  <% if (user.pinSet) { %>
+    <form action="/change-pin" method="POST">
+      <div class="form-group">
+        <label>Current PIN</label>
+        <input type="password" name="currentPin" class="form-control" maxlength="4" inputmode="numeric" required/>
+      </div>
+      <div class="form-group">
+        <label>New PIN</label>
+        <input type="password" name="newPin" class="form-control" maxlength="4" inputmode="numeric" required/>
+      </div>
+      <div class="form-group">
+        <label>Confirm New PIN</label>
+        <input type="password" name="confirmPin" class="form-control" maxlength="4" inputmode="numeric" required/>
+      </div>
+      <button type="submit" class="btn btn-primary">Change PIN</button>
+    </form>
+    <hr style="border-color:#f1f5f9; margin: 20px 0;"/>
+    <h5 class="form-section-heading">Reset PIN with Password</h5>
+    <form action="/reset-pin" method="POST">
+      <div class="form-group">
+        <label>Account Password</label>
+        <input type="password" name="password" class="form-control" required/>
+      </div>
+      <div class="form-group">
+        <label>New PIN</label>
+        <input type="password" name="newPin" class="form-control" maxlength="4" inputmode="numeric" required/>
+      </div>
+      <div class="form-group">
+        <label>Confirm New PIN</label>
+        <input type="password" name="confirmPin" class="form-control" maxlength="4" inputmode="numeric" required/>
+      </div>
+      <button type="submit" class="btn btn-warning">Reset PIN</button>
+    </form>
+  <% } else { %>
+    <p style="font-size:0.88rem; color:#64748b; margin-bottom:16px;">You have not set a transaction PIN yet. Set one to enable transfers.</p>
+    <a href="/set-pin" class="btn btn-primary">Set PIN Now</a>
+    <% } %>
+  </div>  
   </main>
 </div>
 

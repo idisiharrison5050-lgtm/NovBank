@@ -1,0 +1,85 @@
+<%- include('../partials/header') %>
+<link rel="stylesheet" href="/css/auth.css"/>
+
+<div class="auth-wrapper">
+  <div class="auth-box">
+    <div class="auth-logo">NovBank</div>
+    <h2 class="auth-title">Enter your PIN</h2>
+    <p class="auth-subtitle">Enter your 4-digit transaction PIN to continue</p>
+
+    <% if (error_msg && error_msg.length > 0) { %>
+      <div class="alert alert-danger"><%= error_msg %></div>
+    <% } %>
+
+    <div class="pin-dots" style="justify-content:center; margin-bottom:24px;">
+      <div class="pin-dot" id="dot-0"></div>
+      <div class="pin-dot" id="dot-1"></div>
+      <div class="pin-dot" id="dot-2"></div>
+      <div class="pin-dot" id="dot-3"></div>
+    </div>
+
+    <form action="/pin" method="POST" id="pinPageForm">
+      <input type="hidden" name="pin" id="pinPageValue"/>
+    </form>
+
+    <div class="pin-keypad">
+      <button class="pin-key" onclick="pinPageKey('1')">1</button>
+      <button class="pin-key" onclick="pinPageKey('2')">2</button>
+      <button class="pin-key" onclick="pinPageKey('3')">3</button>
+      <button class="pin-key" onclick="pinPageKey('4')">4</button>
+      <button class="pin-key" onclick="pinPageKey('5')">5</button>
+      <button class="pin-key" onclick="pinPageKey('6')">6</button>
+      <button class="pin-key" onclick="pinPageKey('7')">7</button>
+      <button class="pin-key" onclick="pinPageKey('8')">8</button>
+      <button class="pin-key" onclick="pinPageKey('9')">9</button>
+      <button class="pin-key pin-key-clear" onclick="pinPageClear()">C</button>
+      <button class="pin-key" onclick="pinPageKey('0')">0</button>
+      <button class="pin-key pin-key-del" onclick="pinPageDelete()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>
+      </button>
+    </div>
+
+    <% if (!user.pinSet) { %>
+      <p style="text-align:center; margin-top:16px; font-size:0.82rem; color:#94a3b8;">
+        You haven't set a PIN yet. <a href="/set-pin" style="color:#1a56db; font-weight:600;">Set one now</a> or <a href="/dashboard" style="color:#1a56db; font-weight:600;">skip for now</a>.
+      </p>
+    <% } %>
+
+    <a href="/logout" style="display:block; text-align:center; margin-top:16px; font-size:0.82rem; color:#ef4444;">Not you? Log out</a>
+  </div>
+</div>
+
+<script>
+  var pinPageVal = '';
+
+  function pinPageKey(digit) {
+    if (pinPageVal.length >= 4) return;
+    pinPageVal += digit;
+    updatePageDots();
+    if (pinPageVal.length === 4) {
+      setTimeout(function () {
+        document.getElementById('pinPageValue').value = pinPageVal;
+        document.getElementById('pinPageForm').submit();
+      }, 200);
+    }
+  }
+
+  function pinPageDelete() {
+    pinPageVal = pinPageVal.slice(0, -1);
+    updatePageDots();
+  }
+
+  function pinPageClear() {
+    pinPageVal = '';
+    updatePageDots();
+  }
+
+  function updatePageDots() {
+    for (var i = 0; i < 4; i++) {
+      var dot = document.getElementById('dot-' + i);
+      if (dot) dot.classList.toggle('filled', i < pinPageVal.length);
+    }
+  }
+</script>
+
+<%- include('../partials/footer') %>

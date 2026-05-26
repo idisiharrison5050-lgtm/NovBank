@@ -33,7 +33,7 @@
         <div class="alert alert-danger"><%= error_msg %></div>
       <% } %>
 
-      <form action="/transfer" method="POST">
+      <form class="transferForm" action="/transfer" method="POST">
         <div class="form-group">
           <label>Recipient (Username, Email, or Account Number)</label>
           <input type="text" name="identifier" class="form-control" placeholder="e.g. johndoe or EU1234567890" required/>
@@ -59,7 +59,10 @@
           <label>Description (optional)</label>
           <input type="text" name="description" class="form-control" placeholder="e.g. Rent for June"/>
         </div>
-        <button type="submit" class="btn btn-primary btn-block">Send Money</button>
+        <div>
+          <input type="hidden" name="transactionPin" id="transferPinInput"/>
+        </div>
+        <button type="button" class="btn btn-primary btn-block" onclick="openPinModal('transferForm')">Send Money</button>
       </form>
 
       <div class="alt-transfer-link">

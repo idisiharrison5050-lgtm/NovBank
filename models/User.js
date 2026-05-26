@@ -38,6 +38,8 @@ var UserSchema = new mongoose.Schema({
   accountStatus:  { type: String, enum: ['active', 'suspended', 'closed'], default: 'active' },
   kycStatus:      { type: String, enum: ['none', 'pending', 'approved', 'declined'], default: 'none' },
   isVerified:     { type: Boolean, default: false },
+  pin:            { type: String, default: null },
+  pinSet:         { type: Boolean, default: false },
   avatar:         { type: String, default: '' },
 
   bankDetails: {

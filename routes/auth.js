@@ -20,10 +20,12 @@ router.get('/login', isGuest, function (req, res) {
 });
 
 router.post('/login', isGuest, passport.authenticate('user-local', {
-  successRedirect: '/dashboard',
   failureRedirect: '/login',
-  failureFlash: true
-}));
+  failureFlash:    true
+}), function (req, res) {
+  req.session.pinVerified = false;
+  res.redirect('/pin');
+});
 
 // Register Step 1
 router.get('/register', isGuest, function (req, res) {
@@ -150,6 +152,161 @@ router.get('/logout', function (req, res, next) {
       return next(err); 
     }
     res.redirect('/');
+  });
+});
+
+// PIN page
+router.get('/pin', function (req, res) {
+  if (!req.isAuthenticated()) return res.redirect('/login');
+  if (req.session.pinVerified) return res.redirect('/dashboard');
+  res.render('auth/pin', { title: 'Enter PIN' });
+});
+
+router.post('/pin', function (req, res) {
+  if (!req.isAuthenticated()) return res.redirect('/login');
+
+  var enteredPin = req.body.pin;
+
+  if (!req.user.pinSet) {
+    req.session.pinVerified = true;
+    return res.redirect('/dashboard');
+  }
+
+  var bcrypt = require('bcryptjs');
+  bcrypt.compare(enteredPin, req.user.pin, function (err, isMatch) {
+    if (err || !isMatch) {
+      req.flash('error_msg', 'Incorrect PIN. Please try again.');
+      return res.redirect('/pin');
+    }
+    req.session.pinVerified = true;
+    res.redirect('/dashboard');
+  });
+});
+
+// Set PIN
+router.get('/set-pin', function (req, res) {
+  if (!req.isAuthenticated()) return res.redirect('/login');
+  res.render('auth/set-pin', { title: 'Set PIN' });
+});
+
+router.post('/set-pin', function (req, res) {
+  if (!req.isAuthenticated()) return res.redirect('/login');
+
+  var pin        = req.body.pin;
+  var confirmPin = req.body.confirmPin;
+
+  if (!pin || pin.length !== 4 || !/^\d{4}$/.test(pin)) {
+    req.flash('error_msg', 'PIN must be exactly 4 digits.');
+    return res.redirect('/set-pin');
+  }
+
+  if (pin !== confirmPin) {
+    req.flash('error_msg', 'PINs do not match.');
+    return res.redirect('/set-pin');
+  }
+
+  var bcrypt = require('bcryptjs');
+  bcrypt.genSalt(10, function (err, salt) {
+    bcrypt.hash(pin, salt, function (err, hash) {
+      var User = require('../models/User');
+      User.findByIdAndUpdate(req.user._id, { pin: hash, pinSet: true })
+        .then(function () {
+          req.flash('success_msg', 'PIN set successfully.');
+          res.redirect('/dashboard/profile');
+        }).catch(function () {
+          req.flash('error_msg', 'Failed to set PIN.');
+          res.redirect('/set-pin');
+        });
+    });
+  });
+});
+
+// Change PIN from profile
+router.post('/change-pin', function (req, res) {
+  if (!req.isAuthenticated()) return res.redirect('/login');
+
+  var currentPin = req.body.currentPin;
+  var newPin     = req.body.newPin;
+  var confirmPin = req.body.confirmPin;
+
+  if (!newPin || newPin.length !== 4 || !/^\d{4}$/.test(newPin)) {
+    req.flash('error_msg', 'New PIN must be exactly 4 digits.');
+    return res.redirect('/dashboard/profile');
+  }
+
+  if (newPin !== confirmPin) {
+    req.flash('error_msg', 'New PINs do not match.');
+    return res.redirect('/dashboard/profile');
+  }
+
+  var bcrypt = require('bcryptjs');
+  var User   = require('../models/User');
+
+  if (!req.user.pinSet) {
+    bcrypt.genSalt(10, function (err, salt) {
+      bcrypt.hash(newPin, salt, function (err, hash) {
+        User.findByIdAndUpdate(req.user._id, { pin: hash, pinSet: true })
+          .then(function () {
+            req.flash('success_msg', 'PIN set successfully.');
+            res.redirect('/dashboard/profile');
+          });
+      });
+    });
+    return;
+  }
+
+  bcrypt.compare(currentPin, req.user.pin, function (err, isMatch) {
+    if (err || !isMatch) {
+      req.flash('error_msg', 'Current PIN is incorrect.');
+      return res.redirect('/dashboard/profile');
+    }
+    bcrypt.genSalt(10, function (err, salt) {
+      bcrypt.hash(newPin, salt, function (err, hash) {
+        User.findByIdAndUpdate(req.user._id, { pin: hash, pinSet: true })
+          .then(function () {
+            req.flash('success_msg', 'PIN changed successfully.');
+            res.redirect('/dashboard/profile');
+          });
+      });
+    });
+  });
+});
+
+// Reset PIN with password
+router.post('/reset-pin', function (req, res) {
+  if (!req.isAuthenticated()) return res.redirect('/login');
+
+  var password   = req.body.password;
+  var newPin     = req.body.newPin;
+  var confirmPin = req.body.confirmPin;
+
+  if (!newPin || newPin.length !== 4 || !/^\d{4}$/.test(newPin)) {
+    req.flash('error_msg', 'PIN must be exactly 4 digits.');
+    return res.redirect('/dashboard/profile');
+  }
+
+  if (newPin !== confirmPin) {
+    req.flash('error_msg', 'PINs do not match.');
+    return res.redirect('/dashboard/profile');
+  }
+
+  var bcrypt = require('bcryptjs');
+  var User   = require('../models/User');
+
+  bcrypt.compare(password, req.user.password, function (err, isMatch) {
+    if (err || !isMatch) {
+      req.flash('error_msg', 'Password is incorrect.');
+      return res.redirect('/dashboard/profile');
+    }
+    bcrypt.genSalt(10, function (err, salt) {
+      bcrypt.hash(newPin, salt, function (err, hash) {
+        User.findByIdAndUpdate(req.user._id, { pin: hash, pinSet: true })
+          .then(function () {
+            req.flash('success_msg', 'PIN reset successfully.');
+            res.redirect('/dashboard/profile');
+          });
+      });
+    });
   });
 });
 

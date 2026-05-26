@@ -57,8 +57,8 @@
                 <td><%= txn.type.replace('_', ' ') %></td>
                 <td><%= txn.description || '-' %></td>
                 <td><%= txn.category %></td>
-                <td class="<%= txn.sender && txn.sender._id && txn.sender._id.toString() === user._id.toString() ? 'debit' : 'credit' %>">
-                  <%= txn.sender && txn.sender._id && txn.sender._id.toString() === user._id.toString() ? '-' : '+' %>€<%= txn.amount.toFixed(2) %>
+                <td class="<%= txn.type === 'deposit' || txn.type === 'loan_credit' ? 'credit' : (txn.sender && txn.sender._id && txn.sender._id.toString() === user._id.toString() ? 'debit' : 'credit') %>">
+                  <%= txn.type === 'deposit' || txn.type === 'loan_credit' ? '+' : (txn.sender && txn.sender._id && txn.sender._id.toString() === user._id.toString() ? '-' : '+') %>€<%= txn.amount.toFixed(2) %>
                 </td>
                 <td><span class="txn-status status-<%= txn.status %>"><%= txn.status %></span></td>
               </tr>

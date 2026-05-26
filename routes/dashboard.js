@@ -10,7 +10,12 @@ function isAuth(req, res, next) {
   res.redirect('/login');
 }
 
-router.get('/', isAuth, kycGate, function (req, res) {
+function isPinVerified(req, res, next) {
+  if (req.session.pinVerified) return next();
+  res.redirect('/pin');
+}
+
+router.get('/', isAuth, isPinVerified, kycGate, function (req, res) {
   var userId = req.user._id;
 
   Transaction.find({ $or: [{ sender: userId }, { receiver: userId }] })
@@ -49,7 +54,7 @@ router.get('/', isAuth, kycGate, function (req, res) {
     });
 });
 
-router.get('/transactions', isAuth, kycGate, function (req, res) {
+router.get('/transactions', isAuth, isPinVerified, kycGate, function (req, res) {
   var userId = req.user._id;
   var page   = parseInt(req.query.page) || 1;
   var limit  = 15;
@@ -81,7 +86,7 @@ router.get('/transactions', isAuth, kycGate, function (req, res) {
     });
 });
 
-router.get('/notifications', isAuth, kycGate, function (req, res) {
+router.get('/notifications', isAuth, isPinVerified, kycGate, function (req, res) {
   Notification.find({ user: req.user._id }).sort({ createdAt: -1 })
     .then(function (notifications) {
       return Notification.updateMany(
@@ -97,7 +102,7 @@ router.get('/notifications', isAuth, kycGate, function (req, res) {
     });
 });
 
-router.get('/profile', isAuth, kycGate, function (req, res) {
+router.get('/profile', isAuth, isPinVerified, kycGate, function (req, res) {
   res.render('dashboard/profile', { title: 'My Profile', unreadCount: 0 });
 });
 
