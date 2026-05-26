@@ -965,3 +965,29 @@ label {
   color: #ef4444;
   margin: 0;
 }
+
+/* Receipt page */
+.receipt-page-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+}
+
+.receipt-page-card {
+  background: #fff;
+  border: 1px solid #e9ecef;
+  border-radius: 16px;
+  padding: 32px;
+  width: 100%;
+  max-width: 480px;
+}
+
+/* Clickable table rows */
+.txn-clickable {
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.txn-clickable:hover td {
+  background: #f8faff;
+}

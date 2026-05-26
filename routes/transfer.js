@@ -81,8 +81,23 @@ router.post('/', isAuth, function (req, res) {
         return Promise.all([senderNotif.save(), recipientNotif.save()]);
       })
       .then(function () {
-        req.flash('success_msg', 'Transfer of €' + amount.toFixed(2) + ' completed successfully.');
-        res.redirect('/dashboard');
+        return Transaction.findOne({ sender: senderId, type: 'internal_transfer' })
+          .sort({ createdAt: -1 })
+          .populate('sender receiver', 'firstName lastName accountNumber');
+      })
+      .then(function (txn) {
+        req.session.receipt = {
+          amount:      txn.amount,
+          reference:   txn.reference,
+          date:        new Date(txn.createdAt).toLocaleString('en-GB'),
+          type:        'Internal Transfer',
+          from:        txn.sender.firstName + ' ' + txn.sender.lastName + ' (' + txn.sender.accountNumber + ')',
+          to:          txn.receiver.firstName + ' ' + txn.receiver.lastName + ' (' + txn.receiver.accountNumber + ')',
+          description: txn.description || '-',
+          category:    txn.category,
+          status:      txn.status
+        };
+        res.redirect('/transfer/receipt');
       });
   })
   .catch(function (err) {
@@ -152,9 +167,19 @@ router.post('/wire', isAuth, function (req, res) {
       });
       return notif.save();
     })
-    .then(function () {
-      req.flash('success_msg', 'Wire transfer submitted and is pending approval.');
-      res.redirect('/dashboard');
+      .then(function (txn) {
+      req.session.receipt = {
+        amount:      amount,
+        reference:   'TXN' + Date.now(),
+        date:        new Date().toLocaleString('en-GB'),
+        type:        'Wire Transfer',
+        from:        req.user.firstName + ' ' + req.user.lastName + ' (' + req.user.accountNumber + ')',
+        to:          recipientName + ' — ' + iban + ' (' + bankName + ')',
+        description: description || '-',
+        category:    category,
+        status:      'pending'
+      };
+      res.redirect('/transfer/receipt');
     })
     .catch(function (err) {
       console.error(err);
@@ -163,7 +188,6 @@ router.post('/wire', isAuth, function (req, res) {
     });
 });
 
-var Notification = require('../models/Notification');
 
 // Deposit Page
 router.get('/deposit', isAuth, function (req, res) {
@@ -208,6 +232,13 @@ router.post('/deposit', isAuth, function (req, res) {
     req.flash('error_msg', 'Something went wrong. Please try again.');
     res.redirect('/transfer/deposit');
   });
+});
+
+router.get('/receipt', isAuth, function (req, res) {
+  if (!req.session.receipt) return res.redirect('/dashboard');
+  var receipt = req.session.receipt;
+  delete req.session.receipt;
+  res.render('dashboard/receipt', { title: 'Receipt', receipt: receipt, unreadCount: 0 });
 });
 
 module.exports = router;

@@ -13,5 +13,138 @@
     .sidebar { display: flex; transform: translateX(-100%); }
   }
 </style>
+<style>
+  .receipt-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .receipt-modal-overlay.open {
+    display: flex;
+  }
+
+  .receipt-modal {
+    background: #fff;
+    border-radius: 16px;
+    padding: 32px;
+    width: 100%;
+    max-width: 440px;
+    max-height: 90vh;
+    overflow-y: auto;
+    margin: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  }
+
+  .receipt-header {
+    text-align: center;
+    margin-bottom: 24px;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 16px;
+  }
+
+  .receipt-bank-name {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #1a56db;
+    margin-bottom: 4px;
+  }
+
+  .receipt-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #94a3b8;
+    margin: 0;
+  }
+
+  .receipt-amount {
+    text-align: center;
+    margin: 20px 0;
+  }
+
+  .receipt-amount-value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #0f172a;
+  }
+
+  .receipt-amount-label {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-top: 2px;
+  }
+
+  .receipt-status-badge {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: capitalize;
+    margin-top: 8px;
+  }
+
+  .receipt-status-completed { background: #dcfce7; color: #16a34a; }
+  .receipt-status-pending   { background: #fef3c7; color: #d97706; }
+  .receipt-status-failed    { background: #fee2e2; color: #ef4444; }
+
+  .receipt-rows {
+    border-top: 1px dashed #e2e8f0;
+    border-bottom: 1px dashed #e2e8f0;
+    padding: 16px 0;
+    margin-bottom: 20px;
+  }
+
+  .receipt-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 7px 0;
+    font-size: 0.86rem;
+  }
+
+  .receipt-row-label {
+    color: #94a3b8;
+    font-weight: 500;
+    flex-shrink: 0;
+    margin-right: 12px;
+  }
+
+  .receipt-row-value {
+    color: #0f172a;
+    font-weight: 600;
+    text-align: right;
+    word-break: break-all;
+  }
+
+  .receipt-actions {
+    display: flex;
+    gap: 10px;
+  }
+
+  .receipt-actions .btn {
+    flex: 1;
+    font-size: 0.88rem;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: 600;
+  }
+
+  .receipt-divider {
+    border: none;
+    border-top: 1px dashed #e2e8f0;
+    margin: 4px 0;
+  }
+
+  @media (max-width: 480px) {
+    .receipt-modal { padding: 24px 18px; }
+    .receipt-amount-value { font-size: 1.6rem; }
+  }
+</style>
 </head>
 <body>
