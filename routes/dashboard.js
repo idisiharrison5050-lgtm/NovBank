@@ -20,7 +20,7 @@ router.get('/', isAuth, isPinVerified, kycGate, function (req, res) {
 
   Transaction.find({ $or: [{ sender: userId }, { receiver: userId }] })
     .sort({ createdAt: -1 })
-    .limit(10)
+    .limit(6)
     .populate('sender receiver', 'firstName lastName accountNumber')
     .then(function (transactions) {
       return Notification.countDocuments({ user: userId, isRead: false })
