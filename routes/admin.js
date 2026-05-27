@@ -540,6 +540,7 @@ router.get('/kyc/:id', isAdmin, function (req, res) {
 
 router.post('/kyc/:id/approve', isAdmin, function (req, res) {
   KYC.findById(req.params.id)
+    .populate('user', 'firstName lastName email username phone accountNumber address dateOfBirth')
     .then(function (kyc) {
       kyc.status     = 'approved';
       kyc.reviewedAt = new Date();
@@ -574,6 +575,7 @@ router.post('/kyc/:id/approve', isAdmin, function (req, res) {
 router.post('/kyc/:id/decline', isAdmin, function (req, res) {
   var reason = req.body.reason || 'Your submission did not meet our requirements.';
   KYC.findById(req.params.id)
+    .populate('user', 'firstName lastName email username phone accountNumber address dateOfBirth')
     .then(function (kyc) {
       kyc.status        = 'declined';
       kyc.declineReason = reason;
