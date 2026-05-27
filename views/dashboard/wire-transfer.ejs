@@ -35,7 +35,7 @@
         <div class="alert alert-danger"><%= error_msg %></div>
       <% } %>
 
-      <form class="wireForm" action="/transfer/wire" method="POST">
+      <form id="wireForm" class="wireForm" action="/transfer/wire" method="POST">
         <h5 class="form-section-heading">Recipient Details</h5>
         <div class="form-group">
           <label>Recipient Full Name</label>
@@ -89,9 +89,7 @@
           <label>Description (optional)</label>
           <input type="text" name="description" class="form-control" placeholder="Short note about this transfer"/>
         </div>
-        <div>
           <input type="hidden" name="transactionPin" id="wirePinInput"/>
-        </div>
 
         <button type="button" class="btn btn-primary btn-block" onclick="openPinModal('wireForm')">Submit Wire Transfer</button>
       </form>

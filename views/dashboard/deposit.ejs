@@ -117,7 +117,7 @@
       <h5 class="form-section-heading">Confirm Your Transfer</h5>
       <p class="form-card-sub">After completing your bank transfer, fill in the details below.</p>
 
-      <form action="/transfer/deposit" method="POST">
+      <form id="depositForm" action="/transfer/deposit" method="POST">
         <div class="form-group">
           <label>Amount Transferred (€)</label>
           <input type="number" name="amount" class="form-control" placeholder="0.00" min="0.01" step="0.01" required/>
@@ -126,7 +126,8 @@
           <label>Description (optional)</label>
           <input type="text" name="description" class="form-control" placeholder="e.g. Salary deposit, savings transfer"/>
         </div>
-        <button type="submit" class="btn btn-primary btn-block">Submit Deposit Request</button>
+        <button type="button" class="btn btn-primary btn-block" onclick="openPinModal('depositForm')">Submit Deposit Request</button>
+        <input type="hidden" name="transactionPin" id="depositPinInput"/>
       </form>
     </div>
 

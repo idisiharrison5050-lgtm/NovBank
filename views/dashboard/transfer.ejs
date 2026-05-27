@@ -33,7 +33,7 @@
         <div class="alert alert-danger"><%= error_msg %></div>
       <% } %>
 
-      <form class="transferForm" action="/transfer" method="POST">
+      <form id="transferForm" class="transferForm" action="/transfer" method="POST">
         <div class="form-group">
           <label>Recipient (Username, Email, or Account Number)</label>
           <input type="text" name="identifier" class="form-control" placeholder="e.g. johndoe or EU1234567890" required/>
