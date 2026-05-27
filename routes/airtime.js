@@ -39,8 +39,8 @@ router.post('/recharge', isAuth, checkAccountActive, function (req, res) {
   var amount  = parseFloat(req.body.amount);
 
   if (req.user.accountStatus !== 'active') {
-  req.flash('error_msg', 'Your account is suspended or closed. You cannot request a loan.');
-  return res.redirect('/loans');
+  req.flash('error_msg', 'Your account is suspended or closed. You cannot buy airtime.');
+  return res.redirect('/airtime');
 }
 
   if (req.user.accountStatus !== 'active') {

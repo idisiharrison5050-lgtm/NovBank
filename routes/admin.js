@@ -10,6 +10,7 @@ var AuditLog = require('../models/AuditLog');
 var KYC  = require('../models/KYC');
 var Card = require('../models/Card');
 var Loan = require('../models/Loan');
+var mailer = require('../config/mailer');
 
 // ─── Middleware ───────────────────────────────────────────────
 function isAdmin(req, res, next) {
@@ -559,6 +560,7 @@ router.post('/kyc/:id/approve', isAdmin, function (req, res) {
           return notif.save();
         })
         .then(function () {
+          mailer.kycApprovedEmail(kyc.user);
           req.flash('success_msg', 'KYC approved.');
           res.redirect('/admin/kyc');
         });
@@ -593,6 +595,7 @@ router.post('/kyc/:id/decline', isAdmin, function (req, res) {
           return notif.save();
         })
         .then(function () {
+          mailer.kycDeclinedEmail(kyc.user, reason);
           req.flash('success_msg', 'KYC declined.');
           res.redirect('/admin/kyc');
         });

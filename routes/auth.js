@@ -3,6 +3,7 @@ var router = express.Router();
 var passport = require('passport');
 var User = require('../models/User');
 var Notification = require('../models/Notification');
+var mailer = require('../config/mailer');
 
 function isGuest(req, res, next) {
   if (!req.isAuthenticated()) return next();
@@ -144,6 +145,7 @@ router.post('/register/step3', isGuest, function (req, res) {
       res.redirect('/register');
     });
 });
+mailer.welcomeEmail(user);
 
 // Logout
 router.get('/logout', function (req, res, next) {

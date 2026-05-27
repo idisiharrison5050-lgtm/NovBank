@@ -3,6 +3,7 @@ var router = express.Router();
 var User = require('../models/User');
 var Transaction = require('../models/Transaction');
 var Notification = require('../models/Notification');
+var mailer = require('../config/mailer');
 
 function isAuth(req, res, next) {
   if (req.isAuthenticated()) return next();
@@ -115,7 +116,12 @@ router.post('/', isAuth, isPinVerified, function (req, res) {
             message: 'You received €' + amount.toFixed(2) + ' from ' + req.user.firstName + ' ' + req.user.lastName + '.',
             type:    'success'
           });
-          return Promise.all([senderNotif.save(), recipientNotif.save()]).then(function () {
+          return Promise.all([
+            senderNotif.save(),
+            recipientNotif.save(),
+            mailer.transferSentEmail(req.user, amount, recipient.firstName + ' ' + recipient.lastName),
+            mailer.transferReceivedEmail(recipient, amount, req.user.firstName + ' ' + req.user.lastName)
+          ]).then(function () {
             req.session.receipt = {
               amount:      txn.amount,
               reference:   txn.reference,
@@ -203,6 +209,7 @@ router.post('/wire', isAuth, isPinVerified, function (req, res) {
         return notif.save();
       })
       .then(function () {
+        mailer.wireTransferEmail(req.user, amount, recipientName, iban, bankName);
         req.session.receipt = {
           amount:      amount,
           reference:   'TXN' + Date.now(),
@@ -263,6 +270,7 @@ router.post('/deposit', isAuth, isPinVerified, function (req, res) {
       });
       return notif.save();
     }).then(function () {
+      mailer.depositRequestEmail(req.user, amount);
       req.flash('success_msg', 'Deposit request submitted. Your balance will be updated once we verify the transfer.');
       res.redirect('/dashboard/transactions');
     }).catch(function (err) {
