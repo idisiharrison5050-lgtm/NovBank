@@ -360,6 +360,11 @@ router.post('/transactions/:id/approve', isAdmin, function (req, res) {
           }
         })
         .then(function () {
+          if (txn.type === 'deposit') {
+          User.findById(txn.sender).then(function (u) {
+           if (u) mailer.depositApprovedEmail(u, txn.amount);
+        });
+       }
           req.flash('success_msg', 'Transaction approved successfully.');
           res.redirect('/admin/transactions');
         });
@@ -406,6 +411,11 @@ router.post('/transactions/:id/decline', isAdmin, function (req, res) {
           }
         })
         .then(function () {
+          if (txn.type === 'deposit') {
+           User.findById(txn.sender).then(function (u) {
+          if (u) mailer.depositDeclinedEmail(u, txn.amount);
+         });
+         }
           req.flash('success_msg', 'Transaction declined and amount refunded.');
           res.redirect('/admin/transactions');
         });
@@ -635,6 +645,9 @@ router.post('/cards/:id/approve', isAdmin, function (req, res) {
         });
     })
     .then(function () {
+      User.findById(card.user).then(function (u) {
+     if (u) mailer.cardApprovedEmail(u, card.cardType);
+     });
       req.flash('success_msg', 'Card approved.');
       res.redirect('/admin/cards');
     }).catch(function (err) {
@@ -716,6 +729,9 @@ router.post('/loans/:id/approve', isAdmin, function (req, res) {
           return notif.save();
         })
         .then(function () {
+          User.findById(loan.user).then(function (u) {
+         if (u) mailer.loanApprovedEmail(u, loan.amount);
+         });
           req.flash('success_msg', 'Loan approved and credited.');
           res.redirect('/admin/loans');
         });
@@ -746,6 +762,9 @@ router.post('/loans/:id/decline', isAdmin, function (req, res) {
           return notif.save();
         })
         .then(function () {
+          User.findById(loan.user).then(function (u) {
+          if (u) mailer.loanDeclinedEmail(u, loan.amount, reason);
+         });
           req.flash('success_msg', 'Loan declined.');
           res.redirect('/admin/loans');
         });

@@ -4,6 +4,7 @@ var User         = require('../models/User');
 var Transaction  = require('../models/Transaction');
 var Airtime      = require('../models/Airtime');
 var Notification = require('../models/Notification');
+var mailer = require('../config/mailer');
 
 function isAuth(req, res, next) {
   if (req.isAuthenticated()) return next();
@@ -100,6 +101,7 @@ router.post('/recharge', isAuth, checkAccountActive, function (req, res) {
       return notif.save();
     })
     .then(function () {
+      mailer.airtimeEmail(req.user, amount, phone, network);
       req.flash('success_msg', 'Airtime recharge of €' + amount.toFixed(2) + ' to ' + phone + ' was successful.');
       res.redirect('/airtime');
     })
