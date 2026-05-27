@@ -125,6 +125,7 @@ router.post('/register/step3', isGuest, function (req, res) {
       });
 
       return newUser.save().then(function (user) {
+  
         var notif = new Notification({
           user:    user._id,
           title:   'Welcome!',
@@ -145,7 +146,6 @@ router.post('/register/step3', isGuest, function (req, res) {
       res.redirect('/register');
     });
 });
-mailer.welcomeEmail(user);
 
 // Logout
 router.get('/logout', function (req, res, next) {
