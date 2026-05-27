@@ -11,6 +11,14 @@ function isAuth(req, res, next) {
   res.redirect('/login');
 }
 
+function checkAccountActive(req, res, redirectOnFail, callback) {
+  if (req.user.accountStatus !== 'active') {
+    req.flash('error_msg', 'Your account is suspended or closed. You cannot make transactions. Please contact support.');
+    return res.redirect(redirectOnFail);
+  }
+  callback();
+}
+
 router.get('/', isAuth, function (req, res) {
   Airtime.find({ user: req.user._id }).sort({ createdAt: -1 }).limit(10)
     .then(function (history) {
@@ -25,10 +33,20 @@ router.get('/', isAuth, function (req, res) {
     });
 });
 
-router.post('/recharge', isAuth, function (req, res) {
+router.post('/recharge', isAuth, checkAccountActive, function (req, res) {
   var phone   = req.body.phone;
   var network = req.body.network;
   var amount  = parseFloat(req.body.amount);
+
+  if (req.user.accountStatus !== 'active') {
+  req.flash('error_msg', 'Your account is suspended or closed. You cannot request a loan.');
+  return res.redirect('/loans');
+}
+
+  if (req.user.accountStatus !== 'active') {
+  req.flash('error_msg', 'Your account is suspended or closed. You cannot make transactions.');
+  return res.redirect('/airtime');
+}
 
   if (!phone || !network || !amount) {
     req.flash('error_msg', 'Please fill in all fields.');

@@ -32,6 +32,14 @@ function verifyPin(req, res, redirectOnFail, callback) {
   });
 }
 
+function checkAccountActive(req, res, redirectOnFail, callback) {
+  if (req.user.accountStatus !== 'active') {
+    req.flash('error_msg', 'Your account is suspended or closed. You cannot make transactions. Please contact support.');
+    return res.redirect(redirectOnFail);
+  }
+  callback();
+}
+
 // Internal Transfer
 router.get('/', isAuth, isPinVerified, function (req, res) {
   res.render('dashboard/transfer', { title: 'Send Money', unreadCount: 0 });
@@ -39,6 +47,7 @@ router.get('/', isAuth, isPinVerified, function (req, res) {
 
 router.post('/', isAuth, isPinVerified, function (req, res) {
   verifyPin(req, res, '/transfer', function () {
+  checkAccountActive(req, res, '/transfer', function () {
     var identifier  = req.body.identifier;
     var amount      = parseFloat(req.body.amount);
     var description = req.body.description || '';
@@ -129,6 +138,7 @@ router.post('/', isAuth, isPinVerified, function (req, res) {
     });
   });
 });
+});
 
 // Wire Transfer
 router.get('/wire', isAuth, isPinVerified, function (req, res) {
@@ -137,6 +147,7 @@ router.get('/wire', isAuth, isPinVerified, function (req, res) {
 
 router.post('/wire', isAuth, isPinVerified, function (req, res) {
   verifyPin(req, res, '/transfer/wire', function () {
+  checkAccountActive(req, res, '/transfer/wire', function () {
     var amount        = parseFloat(req.body.amount);
     var recipientName = req.body.recipientName;
     var iban          = req.body.iban;
@@ -211,6 +222,7 @@ router.post('/wire', isAuth, isPinVerified, function (req, res) {
         res.redirect('/transfer/wire');
       });
   });
+});
 });
 
 

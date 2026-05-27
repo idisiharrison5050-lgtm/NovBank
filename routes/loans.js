@@ -11,6 +11,14 @@ function isAuth(req, res, next) {
   res.redirect('/login');
 }
 
+function checkAccountActive(req, res, redirectOnFail, callback) {
+  if (req.user.accountStatus !== 'active') {
+    req.flash('error_msg', 'Your account is suspended or closed. You cannot make transactions. Please contact support.');
+    return res.redirect(redirectOnFail);
+  }
+  callback();
+}
+
 // Loan page
 router.get('/', isAuth, function (req, res) {
   Loan.findOne({ user: req.user._id, status: { $in: ['pending', 'approved'] } })
