@@ -360,11 +360,30 @@ router.post('/transactions/:id/approve', isAdmin, function (req, res) {
           }
         })
         .then(function () {
-          if (txn.type === 'deposit') {
-          User.findById(txn.sender).then(function (u) {
-           if (u) mailer.depositApprovedEmail(u, txn.amount);
-        });
-       }
+          if (txn.type === 'wire_transfer' && txn.sender) {
+            return User.findById(txn.sender).then(function (user) {
+              if (user && txn.wireDetails) {
+                return mailer.wireTransferSuccessEmail(
+                  user,
+                  txn.amount,
+                  txn.wireDetails.recipientName,
+                  txn.wireDetails.iban,
+                  txn.wireDetails.bankName
+                );
+              }
+            });
+          }
+        })
+        .then(function () {
+          if (txn.type === 'deposit' && txn.sender) {
+            return User.findById(txn.sender).then(function (user) {
+              if (user) {
+                return mailer.depositApprovedEmail(user, txn.amount);
+              }
+            });
+          }
+        })
+        .then(function () {
           req.flash('success_msg', 'Transaction approved successfully.');
           res.redirect('/admin/transactions');
         });
