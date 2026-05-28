@@ -650,8 +650,12 @@ router.get('/cards', isAdmin, function (req, res) {
 });
 
 router.post('/cards/:id/approve', isAdmin, function (req, res) {
-  Card.findByIdAndUpdate(req.params.id, { status: 'active' })
+  Card.findByIdAndUpdate(req.params.id, { status: 'active' }, { new: true })
     .then(function (card) {
+      if (!card) {
+        req.flash('error_msg', 'Card request not found.');
+        return res.redirect('/admin/cards');
+      }
       return logAction(req.user._id, 'Approved Card', 'User', card.user, card.cardType + ' card approved')
         .then(function () {
           var notif = new Notification({
@@ -661,14 +665,16 @@ router.post('/cards/:id/approve', isAdmin, function (req, res) {
             type:    'success'
           });
           return notif.save();
+        })
+        .then(function () {
+          return User.findById(card.user).then(function (u) {
+            if (u) return mailer.cardApprovedEmail(u, card.cardType);
+          });
+        })
+        .then(function () {
+          req.flash('success_msg', 'Card approved.');
+          res.redirect('/admin/cards');
         });
-    })
-    .then(function () {
-      User.findById(card.user).then(function (u) {
-     if (u) mailer.cardApprovedEmail(u, card.cardType);
-     });
-      req.flash('success_msg', 'Card approved.');
-      res.redirect('/admin/cards');
     }).catch(function (err) {
       console.error(err);
       req.flash('error_msg', 'Failed to approve card.');
