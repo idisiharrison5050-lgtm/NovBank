@@ -147,6 +147,34 @@
      
 </section>
 
+<!-- MID SECTION IMAGE -->
+<section class="mid-image-section reveal-section">
+  <div class="mid-image-wrap">
+    <img src="/images/second-img.jpg" alt="NovBank experience" class="mid-image parallax-img"/>
+    <div class="mid-image-overlay">
+      <div class="mid-image-text">
+        <p class="mid-image-badge">Built for real people</p>
+        <h2 class="mid-image-title">Simple banking,<br/>powerful results.</h2>
+        <p class="mid-image-sub">Whether you are sending money across the street or across the continent, NovBank makes it seamless, secure and instant.</p>
+        <div class="mid-image-stats">
+          <div class="mid-stat">
+            <h3>250K+</h3>
+            <p>Active Users</p>
+          </div>
+          <div class="mid-stat">
+            <h3>€2B+</h3>
+            <p>Transferred</p>
+          </div>
+          <div class="mid-stat">
+            <h3>99.9%</h3>
+            <p>Uptime</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- HOW IT WORKS -->
 <section class="how-section" id="how-it-works">
   <div class="container">
@@ -173,6 +201,7 @@
     </div>
   </div>
 </section>
+
 
 <!-- SECURITY -->
 <section class="security-section" id="security">
@@ -225,83 +254,6 @@
           <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1a56db" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         </div>
         <p class="trust-label">24/7 Account Monitoring</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- TESTIMONIALS -->
-<section class="testimonials-section">
-  <div class="container">
-    <div class="section-header text-center">
-      <h2>Trusted by our customers</h2>
-      <p>Here is what people are saying about NovBank.</p>
-    </div>
-    <div class="row">
-      <div class="col-md-4">
-        <div class="testimonial-card">
-          <div class="testimonial-stars">★★★★★</div>
-          <p class="testimonial-text">"I transferred money to my family in the US within minutes. I trust NovBank completely."</p>
-          <div class="testimonial-author">
-            <div class="testimonial-avatar">MH</div>
-            <div>
-              <p class="testimonial-name">Marcus H.</p>
-              <p class="testimonial-location">Paris, France</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="testimonial-card">
-          <div class="testimonial-stars">★★★★★</div>
-          <p class="testimonial-text">"Setting up my account took less than 5 minutes. The KYC process was simple and I was verified the same day."</p>
-          <div class="testimonial-author">
-            <div class="testimonial-avatar">AL</div>
-            <div>
-              <p class="testimonial-name">Anna L.</p>
-              <p class="testimonial-location">Berlin, Germany</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="testimonial-card">
-          <div class="testimonial-stars">★★★★★</div>
-          <p class="testimonial-text">"I applied for a loan and it was approved the next morning. The money was in my account before I even finished my coffee. Absolutely brilliant service."</p>
-          <div class="testimonial-author">
-            <div class="testimonial-avatar">TK</div>
-            <div>
-              <p class="testimonial-name">Thomas K.</p>
-              <p class="testimonial-location">Rome, Italy</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="testimonial-card">
-          <div class="testimonial-stars">★★★★★</div>
-          <p class="testimonial-text">"The virtual card feature is exactly what I needed for my online shopping. Easy to request and it arrived in my account within a day. Very impressed."</p>
-          <div class="testimonial-author">
-            <div class="testimonial-avatar">SR</div>
-            <div>
-              <p class="testimonial-name">Sophie R.</p>
-              <p class="testimonial-location">Barcelona, Spain</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="testimonial-card">
-          <div class="testimonial-stars">★★★★★</div>
-          <p class="testimonial-text">"I had an issue with an international transfer at 1AM and support replied within minutes. That level of service is rare these days."</p>
-          <div class="testimonial-author">
-            <div class="testimonial-avatar">FM</div>
-            <div>
-              <p class="testimonial-name">Felix M.</p>
-              <p class="testimonial-location">Cologne, Germany</p>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -385,6 +337,35 @@
       answer.style.maxHeight = answer.scrollHeight + 'px';
     }
   }
+  // Scroll reveal
+var revealSections = document.querySelectorAll('.reveal-section');
+
+function revealOnScroll() {
+  revealSections.forEach(function (section) {
+    var rect = section.getBoundingClientRect();
+    if (rect.top < window.innerHeight - 80) {
+      section.classList.add('revealed');
+    }
+  });
+}
+
+window.addEventListener('scroll', revealOnScroll);
+revealOnScroll();
+
+// Parallax
+var parallaxImgs = document.querySelectorAll('.parallax-img');
+
+function handleParallax() {
+  parallaxImgs.forEach(function (img) {
+    var rect    = img.closest('section').getBoundingClientRect();
+    var centerY = rect.top + rect.height / 2 - window.innerHeight / 2;
+    var offset  = centerY * 0.15;
+    img.style.transform = 'translateY(' + offset + 'px) scale(1.08)';
+  });
+}
+
+window.addEventListener('scroll', handleParallax);
+handleParallax();
 </script>
 
 <script>
