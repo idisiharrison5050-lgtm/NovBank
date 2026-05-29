@@ -34,17 +34,26 @@
   </div>
 </nav>
 
-<section class="landing-main-banner">
-  
-  <img src="/images/landing-hero.jpg" alt="Banking with NovBank" class="landing-page-img" id="landingBannerImg">
-  
-  <div class="landing-text-overlay">
-    <div class="container-fluid">
-      <h1 class="landing-display-title">Banking Built Around Your Life</h1>
-      <p class="landing-display-subtitle">Manage payments, track transactions, and secure your financial future right from the palm of your hand.</p>
+<section class="human-banner-section">
+  <div class="human-banner-image">
+    <img src="/images/landing-hero.jpg" alt="Happy user using phone">
+
+    <div class="human-banner-overlay">
+      <span class="banner-tag">Trusted Platform</span>
+
+      <h2>
+        Your finances, connected in one secure place.
+      </h2>
+
+      <p>
+         Track balances, transfer funds and manage your banking experience with ease and confidence.
+      </p>
+
+      <a href="/register" class="banner-btn">
+        Start Banking
+      </a>
     </div>
   </div>
-
 </section>
 
 <!-- HERO -->
@@ -58,19 +67,18 @@
         <% if (user) { %>
           <a href="/dashboard" class="btn btn-primary btn-lg hero-cta">Go to Dashboard</a>
         <% } else { %>
-          <a href="/register" class="btn btn-primary btn-lg hero-cta">Get Started Free</a>
           <a href="#how-it-works" class="btn btn-outline-secondary btn-lg ml-2">Learn More</a>
         <% } %>
       </div>
       <div class="col-md-6 hero-right">
-        <div class="hero-card-mockup">
-          <div class="mockup-card">
-            <p class="mockup-label">Total Balance</p>
-            <p class="mockup-amount">€ 12,450.00</p>
-            <p class="mockup-account">EU •••• •••• 4821</p>
-          </div>
-        </div>
-      </div>
+       <div class="hero-card-mockup">
+         <div class="mockup-card">
+           <p class="mockup-label">Total Balance</p>
+           <p class="mockup-amount">€ 12,450.00</p>
+           <p class="mockup-account">EU •••• •••• 4821</p>
+         </div>
+       </div>
+     </div>
     </div>
   </div>
 </section>
@@ -285,7 +293,7 @@
       <div class="col-md-4">
         <div class="testimonial-card">
           <div class="testimonial-stars">★★★★★</div>
-          <p class="testimonial-text">"I love the customer support..."</p>
+          <p class="testimonial-text">"I had an issue with an international transfer at 1AM and support replied within minutes. That level of service is rare these days."</p>
           <div class="testimonial-author">
             <div class="testimonial-avatar">FM</div>
             <div>
@@ -320,26 +328,6 @@
 
       <div class="faq-item">
         <button class="faq-question" onclick="toggleFaq(this)">
-          What is KYC and why do I need it?
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="faq-answer">
-          <p>KYC stands for Know Your Customer. It is a standard identity verification process required by financial institutions under European anti-money laundering regulations. You will need to upload a valid government-issued ID such as a passport, national ID card or driver's licence. Verification is typically completed within 1 to 2 business days.</p>
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <button class="faq-question" onclick="toggleFaq(this)">
-          How long do wire transfers take?
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="faq-answer">
-          <p>International wire transfers typically take 1 to 3 business days depending on the destination bank and country. Internal transfers between NovBank accounts are instant. You will receive an email notification as soon as your transfer is processed.</p>
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <button class="faq-question" onclick="toggleFaq(this)">
           Is my money safe with NovBank?
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
@@ -355,46 +343,6 @@
         </button>
         <div class="faq-answer">
           <p>We accept the following government-issued identity documents: International Passport, National Identity Card, Driver's Licence, and Residence Permit. You will need to upload a clear photo of the front and back of the document. Blurry, cropped or expired documents will be rejected.</p>
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <button class="faq-question" onclick="toggleFaq(this)">
-          How do I apply for a loan?
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="faq-answer">
-          <p>Log in to your NovBank dashboard and navigate to the Loan section from the sidebar. Fill in the loan amount, purpose and your preferred repayment period. Our team will review your application and respond within 1 to 2 business days. If approved, the funds will be credited directly to your account balance.</p>
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <button class="faq-question" onclick="toggleFaq(this)">
-          Can I have both a Visa and Mastercard?
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="faq-answer">
-          <p>Yes. You can request one Visa card and one Mastercard. Each card request is reviewed and approved by our team. Once approved your card will appear in the Cards section of your dashboard where you can view your card details securely.</p>
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <button class="faq-question" onclick="toggleFaq(this)">
-          What is a transaction PIN and how do I set one?
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="faq-answer">
-          <p>A transaction PIN is a 4-digit code required to authorise every transfer, wire transfer, and deposit request. It adds an extra layer of security to your account. You can set your PIN from the Profile section of your dashboard. If you forget your PIN you can reset it using your account password.</p>
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <button class="faq-question" onclick="toggleFaq(this)">
-          How do I deposit money into my NovBank account?
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="faq-answer">
-          <p>Go to the Deposit section in your dashboard. You will find your unique bank details including your IBAN, SWIFT code, sort code and routing number for both local and international transfers. Make the transfer from your external bank using those details, then submit a deposit request on the platform so our team can verify and credit your account.</p>
         </div>
       </div>
 
@@ -440,30 +388,26 @@
 </script>
 
 <script>
-  document.addEventListener("DOMContentLoaded", function() {
-    var bannerImg = document.getElementById("landingBannerImg");
-    
-    // 1. Instantly triggers the fade-in for the image on load
-    if (bannerImg) {
-      setTimeout(function() {
-        bannerImg.classList.add("img-loaded");
-      }, 50);
-    }
-    
-    // 2. Dynamic Scroll Engine
-    window.addEventListener("scroll", function() {
-      if (bannerImg) {
-        var scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
-        if (scrollPosition > 80) {
-          var activeScroll = scrollPosition - 80;
-          var yOffset = activeScroll * 0.35;
-          
-          bannerImg.style.transform = "translate3d(0px, " + yOffset + "px, 0px)";
-        } else {
-          bannerImg.style.transform = "translate3d(0px, 0px, 0px)";
-        }
+  const banner = document.querySelector('.human-banner-image');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        banner.classList.add('show');
       }
     });
+  }, {
+    threshold: 0.3
+  });
+
+  observer.observe(banner);
+
+  // PARALLAX EFFECT
+  window.addEventListener('scroll', () => {
+    const scrolled = window.pageYOffset;
+
+    banner.style.transform =
+      `translateY(${scrolled * 0.05}px)`;
   });
 </script>
 

@@ -33,6 +33,7 @@
 
 /* HERO */
 .hero-section {
+  background-color: #0ea5e9;
   padding: 90px 0 80px;
   background: #ffffff;
 }
@@ -88,6 +89,7 @@
 }
 
 .mockup-card {
+  margin-top: 70px;
   background: linear-gradient(135deg, #1a56db, #0ea5e9);
   border-radius: 18px;
   padding: 36px 40px;
@@ -480,4 +482,234 @@
   font-size: 0.88rem;
   line-height: 1.7;
   margin: 0;
+}
+
+.testimonial-card {
+  transition:
+    transform 0.4s ease,
+    box-shadow 0.4s ease;
+}
+
+.testimonial-card:hover {
+  transform: translateY(-10px);
+
+  box-shadow:
+    0 20px 40px rgba(0,0,0,0.08);
+}
+
+.testimonial-card {
+  background: rgba(255,255,255,0.7);
+
+  backdrop-filter: blur(18px);
+
+  border: 1px solid rgba(255,255,255,0.5);
+
+  border-radius: 28px;
+
+  padding: 30px;
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.05);
+}
+
+/* SECTION */
+.human-banner-section {
+  width: 100%;
+  overflow: hidden;
+  background: #f8f9fb;
+}
+
+/* IMAGE CONTAINER */
+.human-banner-image {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  margin: auto;
+  border-radius: 28px;
+  overflow: hidden;
+
+  opacity: 0;
+  transform: translateY(80px) scale(1.03);
+
+  transition:
+    opacity 1s ease,
+    transform 1.2s ease;
+}
+
+/* ACTIVE ANIMATION */
+.human-banner-image.show {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* IMAGE */
+.human-banner-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+
+  transform: scale(1.08);
+  transition: transform 8s ease;
+}
+
+/* SLOW ZOOM EFFECT */
+.human-banner-image.show img {
+  transform: scale(1);
+}
+
+/* DARK OVERLAY */
+.human-banner-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  padding: 50px;
+
+  background:
+    linear-gradient(
+      to top,
+      rgba(0,0,0,0.78),
+      rgba(0,0,0,0.4),
+      transparent
+    );
+
+  color: white;
+}
+
+/* TAG */
+.banner-tag {
+  display: inline-block;
+  margin-bottom: 15px;
+  padding: 8px 16px;
+
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(10px);
+
+  border-radius: 30px;
+  font-size: 14px;
+}
+
+/* TITLE */
+.human-banner-overlay h2 {
+  font-size: 42px;
+  line-height: 1.2;
+  margin-bottom: 15px;
+  max-width: 650px;
+}
+
+/* TEXT */
+.human-banner-overlay p {
+  font-size: 17px;
+  line-height: 1.7;
+  max-width: 520px;
+  margin-bottom: 25px;
+
+  color: rgba(255,255,255,0.9);
+}
+
+/* BUTTON */
+.banner-btn {
+  display: inline-block;
+  padding: 14px 28px;
+
+  background: white;
+  color: black;
+
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 600;
+
+  transition: 0.3s ease;
+}
+
+.banner-btn:hover {
+  transform: translateY(-3px);
+}
+
+/* MOBILE */
+@media(max-width: 768px) {
+
+  .human-banner-image {
+    height: 520px;
+    width: 95%;
+  }
+
+  .human-banner-overlay {
+    padding: 25px;
+  }
+
+  .human-banner-overlay h2 {
+    font-size: 28px;
+  }
+
+  .human-banner-overlay p {
+    font-size: 15px;
+  }
+}
+
+.feature-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 25px;
+  transition: all 0.3s ease;
+  cursor: default;
+  border: 1px solid rgba(0,0,0,0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Lift + shadow on hover */
+.feature-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+/* Soft glow effect */
+.feature-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(0, 123, 255, 0.08),
+    transparent
+  );
+  transition: 0.5s;
+}
+
+.feature-card:hover::before {
+  left: 100%;
+}
+
+/* Icon animation */
+.feature-icon-wrap {
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.feature-card:hover .feature-icon-wrap {
+  transform: scale(1.1) rotate(3deg);
+}
+
+/* Title color shift */
+.feature-card h4 {
+  transition: color 0.3s ease;
+}
+
+.feature-card:hover h4 {
+  color: #007bff;
+}
+
+/* Paragraph slight movement */
+.feature-card p {
+  transition: 0.3s ease;
+}
+
+.feature-card:hover p {
+  opacity: 0.9;
 }
