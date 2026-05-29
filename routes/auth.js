@@ -312,4 +312,16 @@ router.post('/reset-pin', function (req, res) {
   });
 });
 
+router.get('/terms', function (req, res) {
+  res.render('terms', { title: 'Terms of Service' });
+});
+
+router.get('/privacy', function (req, res) {
+  res.render('privacy', { title: 'Privacy Policy' });
+});
+
+router.get('/cookies', function (req, res) {
+  res.render('cookies', { title: 'Cookie Policy' });
+});
+
 module.exports = router;

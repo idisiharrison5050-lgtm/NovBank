@@ -184,3 +184,146 @@ a {
 .pin-cancel-btn:hover {
   color: #ef4444;
 }
+
+/* ── Policy Pages ─────────────────────────────────── */
+.policy-page {
+  min-height: 100vh;
+  background: #f8fafc;
+  padding: 60px 0 80px;
+}
+
+.policy-header {
+  text-align: center;
+  margin-bottom: 48px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.policy-brand {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #1a56db;
+  margin-bottom: 10px;
+}
+
+.policy-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.policy-date {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.policy-body {
+  max-width: 780px;
+  margin: 0 auto;
+  background: #fff;
+  border: 1px solid #e9ecef;
+  border-radius: 14px;
+  padding: 48px;
+}
+
+.policy-section {
+  margin-bottom: 36px;
+  padding-bottom: 36px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.policy-section:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.policy-section h2 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 12px;
+}
+
+.policy-section p {
+  font-size: 0.9rem;
+  color: #475569;
+  line-height: 1.8;
+  margin-bottom: 10px;
+}
+
+.policy-section p:last-child {
+  margin-bottom: 0;
+}
+
+.policy-section ul {
+  padding-left: 20px;
+  margin: 10px 0;
+}
+
+.policy-section ul li {
+  font-size: 0.9rem;
+  color: #475569;
+  line-height: 1.8;
+  margin-bottom: 6px;
+}
+
+.policy-section strong {
+  color: #334155;
+}
+
+/* Cookie table */
+.cookie-table-wrap {
+  overflow-x: auto;
+  margin: 16px 0;
+}
+
+.cookie-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.cookie-table th {
+  padding: 10px 14px;
+  background: #f8fafc;
+  color: #64748b;
+  font-weight: 600;
+  text-align: left;
+  border-bottom: 1px solid #e9ecef;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cookie-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #475569;
+  vertical-align: top;
+  line-height: 1.6;
+}
+
+.cookie-table tr:last-child td {
+  border-bottom: none;
+}
+
+.cookie-table code {
+  background: #f1f5f9;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.82rem;
+  color: #1a56db;
+}
+
+@media (max-width: 768px) {
+  .policy-body {
+    padding: 28px 20px;
+  }
+
+  .policy-title {
+    font-size: 1.5rem;
+  }
+}
