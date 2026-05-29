@@ -750,6 +750,10 @@
   object-position: center;
   display: block;
   will-change: transform;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
   transition: transform 0.1s linear;
 }
 

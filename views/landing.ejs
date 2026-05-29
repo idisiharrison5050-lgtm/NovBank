@@ -356,11 +356,14 @@ revealOnScroll();
 var parallaxImgs = document.querySelectorAll('.parallax-img');
 
 function handleParallax() {
+  var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  if (isIOS) return;
+
   parallaxImgs.forEach(function (img) {
     var rect    = img.closest('section').getBoundingClientRect();
     var centerY = rect.top + rect.height / 2 - window.innerHeight / 2;
     var offset  = centerY * 0.15;
-    img.style.transform = 'translateY(' + offset + 'px) scale(1.08)';
+    img.style.transform = 'translateZ(0) translateY(' + offset + 'px) scale(1.08)';
   });
 }
 
