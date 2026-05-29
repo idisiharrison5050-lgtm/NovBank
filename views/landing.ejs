@@ -34,6 +34,19 @@
   </div>
 </nav>
 
+<section class="landing-main-banner">
+  
+  <img src="/images/landing-hero.jpg" alt="Banking with NovBank" class="landing-page-img" id="landingBannerImg">
+  
+  <div class="landing-text-overlay">
+    <div class="container-fluid">
+      <h1 class="landing-display-title">Banking Built Around Your Life</h1>
+      <p class="landing-display-subtitle">Manage payments, track transactions, and secure your financial future right from the palm of your hand.</p>
+    </div>
+  </div>
+
+</section>
+
 <!-- HERO -->
 <section class="hero-section">
   <div class="container">
@@ -424,6 +437,34 @@
       answer.style.maxHeight = answer.scrollHeight + 'px';
     }
   }
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    var bannerImg = document.getElementById("landingBannerImg");
+    
+    // 1. Instantly triggers the fade-in for the image on load
+    if (bannerImg) {
+      setTimeout(function() {
+        bannerImg.classList.add("img-loaded");
+      }, 50);
+    }
+    
+    // 2. Dynamic Scroll Engine
+    window.addEventListener("scroll", function() {
+      if (bannerImg) {
+        var scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+        if (scrollPosition > 80) {
+          var activeScroll = scrollPosition - 80;
+          var yOffset = activeScroll * 0.35;
+          
+          bannerImg.style.transform = "translate3d(0px, " + yOffset + "px, 0px)";
+        } else {
+          bannerImg.style.transform = "translate3d(0px, 0px, 0px)";
+        }
+      }
+    });
+  });
 </script>
 
 <%- include('partials/footer') %>
