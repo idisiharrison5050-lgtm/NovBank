@@ -1,9 +1,10 @@
 var nodemailer = require('nodemailer');
 
 var transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
+  // Direct IPv4 address for Google SMTP to bypass Render's IPv6 network errors
+  host: '74.125.142.108',
   port: 587,
-  secure: true,
+  secure: false, 
   auth: {
     user: process.env.GMAIL_USER,
     pass: process.env.GMAIL_APP_PASSWORD
