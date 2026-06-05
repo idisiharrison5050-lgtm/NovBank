@@ -1,17 +1,19 @@
 var nodemailer = require('nodemailer');
 
 var transporter = nodemailer.createTransport({
-  // Direct IPv4 address for Google SMTP to bypass Render's IPv6 network errors
-  host: '74.125.142.108',
-  port: 587,
-  secure: false, 
+  host: 'smtp.gmail.com',
+  port: 465, // Using implicit SSL/TLS port
+  secure: true, // Must be true when using port 465
   auth: {
     user: process.env.GMAIL_USER,
     pass: process.env.GMAIL_APP_PASSWORD
   },
   tls: {
     rejectUnauthorized: false
-  }
+  },
+  connectionTimeout: 15000, // Gives the cloud server 15 seconds to establish the handshake
+  greetingTimeout: 15000,
+  socketTimeout: 15000
 });
 
 function sendMail(to, subject, html) {
