@@ -1,9 +1,11 @@
 var nodemailer = require('nodemailer');
 
+var dns = require('dns');
+
 var transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
-  port: 465, // Using implicit SSL/TLS port
-  secure: true, // Must be true when using port 465
+  port: 465,
+  secure: true, // Required for port 465
   auth: {
     user: process.env.GMAIL_USER,
     pass: process.env.GMAIL_APP_PASSWORD
@@ -11,9 +13,16 @@ var transporter = nodemailer.createTransport({
   tls: {
     rejectUnauthorized: false
   },
-  connectionTimeout: 15000, // Gives the cloud server 15 seconds to establish the handshake
-  greetingTimeout: 15000,
-  socketTimeout: 15000
+  // FORCES NODE.JS TO PREFER IPV4 OVER IPV6 FOR THE CONNECTION HANDSHAKE
+  connectionTimeout: 20000,
+  greetingTimeout: 20000,
+  socketTimeout: 20000,
+  dnsTimeout: 10000,
+  // This forces Node to resolve the domain to a classic IPv4 address structure
+  lookup: function(hostname, options, callback) {
+    options.family = 4;
+    return dns.lookup(hostname, options, callback);
+  }
 });
 
 function sendMail(to, subject, html) {
