@@ -1,17 +1,16 @@
 var nodemailer = require('nodemailer');
 
 var transporter = nodemailer.createTransport({
-  host: 'sandbox.smtp.mailtrap.io',
-  port: 2525,
+  service: 'gmail',
   auth: {
-    user: process.env.MAILTRAP_USER,
-    pass: process.env.MAILTRAP_PASS
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_APP_PASSWORD
   }
 });
 
 function sendMail(to, subject, html) {
   var mailOptions = {
-    from: '"NovBank" <no-reply@novbank.com>',
+    from: '"NovBank" <' + process.env.GMAIL_USER + '>',
     to:   to,
     subject: subject,
     html: html
