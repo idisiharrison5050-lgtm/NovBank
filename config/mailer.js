@@ -13,17 +13,6 @@ function sendMail(to, subject, html) {
   });
 }
 
-function sendMail(to, subject, html) {
-  var mailOptions = {
-    from: '"NovBank" <' + process.env.GMAIL_USER + '>',
-    to:   to,
-    subject: subject,
-    html: html
-  };
-  return transporter.sendMail(mailOptions).catch(function (err) {
-    console.error('Mail error:', err);
-  });
-}
 
 // ── Email Templates ───────────────────────────────
 
