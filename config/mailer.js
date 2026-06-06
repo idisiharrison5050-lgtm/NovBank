@@ -1,29 +1,17 @@
-var nodemailer = require('nodemailer');
+var { Resend } = require('resend');
 
-var dns = require('dns');
+var resend = new Resend(process.env.RESEND_API_KEY);
 
-var transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 465,
-  secure: true, // Required for port 465
-  auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_APP_PASSWORD
-  },
-  tls: {
-    rejectUnauthorized: false
-  },
-  // FORCES NODE.JS TO PREFER IPV4 OVER IPV6 FOR THE CONNECTION HANDSHAKE
-  connectionTimeout: 20000,
-  greetingTimeout: 20000,
-  socketTimeout: 20000,
-  dnsTimeout: 10000,
-  // This forces Node to resolve the domain to a classic IPv4 address structure
-  lookup: function(hostname, options, callback) {
-    options.family = 4;
-    return dns.lookup(hostname, options, callback);
-  }
-});
+function sendMail(to, subject, html) {
+  return resend.emails.send({
+    from:    process.env.RESEND_FROM,
+    to:      to,
+    subject: subject,
+    html:    html
+  }).catch(function (err) {
+    console.error('Mail error:', err);
+  });
+}
 
 function sendMail(to, subject, html) {
   var mailOptions = {
