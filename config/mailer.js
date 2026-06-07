@@ -187,18 +187,6 @@ function cardApprovedEmail(user, cardType) {
   );
 }
 
-function airtimeEmail(user, amount, phone, network) {
-  return sendMail(
-    user.email,
-    'Airtime Recharge Successful — NovBank',
-    layout('\
-      <h2>Airtime Recharge Successful</h2>\
-      <p>Hi ' + user.firstName + ', your airtime recharge was successful.</p>\
-      <p><strong>Amount:</strong> -€' + amount.toFixed(2) + '</p>\
-      <p><strong>Phone:</strong> ' + phone + ' (' + network + ')</p>' )
-  );
-}
-
 function forgotPasswordEmail(user, resetUrl) {
   return sendMail(
     user.email,
@@ -279,7 +267,6 @@ module.exports = {
   loanApprovedEmail,
   loanDeclinedEmail,
   cardApprovedEmail,
-  airtimeEmail,
   forgotPasswordEmail,
   forgotPinEmail,
   adminKycNotification,

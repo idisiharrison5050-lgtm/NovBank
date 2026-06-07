@@ -101,7 +101,6 @@ router.post('/recharge', isAuth, checkAccountActive, function (req, res) {
       return notif.save();
     })
     .then(function () {
-      mailer.airtimeEmail(req.user, amount, phone, network);
       req.flash('success_msg', 'Airtime recharge of €' + amount.toFixed(2) + ' to ' + phone + ' was successful.');
       res.redirect('/airtime');
     })
