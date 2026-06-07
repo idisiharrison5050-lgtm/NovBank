@@ -83,24 +83,12 @@ function transferReceivedEmail(user, amount, sender) {
   return sendMail(
     user.email,
     'Money Received — NovBank',
-    '\
-    <div style="font-family:Segoe UI,Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e9ecef;">\
-      <div style="background:#1a56db;padding:32px 40px;">\
-        <h1 style="color:#fff;margin:0;font-size:1.5rem;">NovBank</h1>\
-      </div>\
-      <div style="padding:32px 40px;">\
-        <h2 style="color:#0f172a;font-size:1.2rem;">Money Received</h2>\
-        <p style="color:#64748b;line-height:1.7;">Hi ' + user.firstName + ', you have received a payment.</p>\
-        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:20px;margin:20px 0;">\
-          <p style="margin:0 0 8px;font-size:0.9rem;"><strong style="color:#64748b;">Amount:</strong> <span style="color:#16a34a;font-weight:700;">+€' + amount.toFixed(2) + '</span></p>\
-          <p style="margin:0 0 8px;font-size:0.9rem;"><strong style="color:#64748b;">From:</strong> <span style="color:#0f172a;">' + sender + '</span></p>\
-          <p style="margin:0;font-size:0.9rem;"><strong style="color:#64748b;">Date:</strong> <span style="color:#0f172a;">' + new Date().toLocaleString('en-GB') + '</span></p>\
-        </div>\
-      </div>\
-      <div style="background:#f8fafc;padding:20px 40px;border-top:1px solid #e9ecef;">\
-        <p style="color:#94a3b8;font-size:0.78rem;margin:0;">© ' + new Date().getFullYear() + ' NovBank. All rights reserved.</p>\
-      </div>\
-    </div>'
+    layout('\
+      <h2>Money Received</h2>\
+      <p>Hi ' + user.firstName + ', you have received a payment.</p>\
+      <p><strong>Amount:</strong> +€' + amount.toFixed(2) + '</p>\
+      <p><strong>From:</strong> ' + sender + '</p>\
+      <p><strong>Date:</strong> ' + new Date().toLocaleString('en-GB') + '</p>' )
   );
 }
 
