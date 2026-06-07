@@ -80,7 +80,14 @@ router.post('/login', isGuest, function (req, res, next) {
       if (!user.emailVerified) {
         req.session.verifyUserId = user._id.toString();
         req.flash('error_msg', 'Please verify your email address before logging in.');
-        req.logout();
+        router.get('/logout', function(req, res, next) {
+        req.logout(function(err) {
+             if (err) { 
+                 return next(err); 
+             }
+             res.redirect('/login'); // Redirect inside the callback
+         });
+     });
         return res.redirect('/verify-email');
       }
       req.session.pinVerified = false;
