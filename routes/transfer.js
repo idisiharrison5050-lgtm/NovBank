@@ -210,6 +210,14 @@ router.post('/wire', isAuth, isPinVerified, function (req, res) {
       })
       .then(function () {
         mailer.wireTransferEmail(req.user, amount, recipientName, iban, bankName);
+        // Notify admin about the new wire transfer
+        mailer.adminWithdrawalNotification(
+         req.user.firstName + ' ' + req.user.lastName,
+         req.user.email,
+         req.user.accountNumber,
+         amount,
+         'Wire Transfer'
+       );
         req.session.receipt = {
           amount:      amount,
           reference:   'TXN' + Date.now(),

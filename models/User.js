@@ -40,6 +40,10 @@ var UserSchema = new mongoose.Schema({
   isVerified:     { type: Boolean, default: false },
   pin:            { type: String, default: null },
   pinSet:         { type: Boolean, default: false },
+  resetPasswordToken:   { type: String },
+  resetPasswordExpires: { type: Date },
+  resetPinToken:        { type: String },
+  resetPinExpires:      { type: Date },
   avatar:         { type: String, default: '' },
 
   bankDetails: {

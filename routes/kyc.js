@@ -4,6 +4,7 @@ var KYC      = require('../models/KYC');
 var User     = require('../models/User');
 var Notification = require('../models/Notification');
 var { upload } = require('../config/cloudinary');
+var mailer   = require('../config/mailer');
 
 function isAuth(req, res, next) {
   if (req.isAuthenticated()) return next();
@@ -73,6 +74,16 @@ router.post('/verify', isAuth, upload.fields([
       return User.findByIdAndUpdate(req.user._id, { kycStatus: 'pending' });
     })
     .then(function () {
+      // notify admins of new KYC submission
+      try {
+        mailer.adminKycNotification(
+          req.user.firstName + ' ' + req.user.lastName,
+          req.user.email,
+          req.user.accountNumber
+        );
+      } catch (e) {
+        console.error('Admin KYC notification failed:', e);
+      }
       res.redirect('/kyc/pending');
     })
     .catch(function (err) {

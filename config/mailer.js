@@ -13,6 +13,17 @@ function sendMail(to, subject, html) {
   });
 }
 
+// Minimal layout wrapper for emails. Keeps styling simple and adds a disclaimer.
+function layout(content) {
+  return '\
+    <div style="font-family:Segoe UI,Arial,sans-serif;max-width:600px;margin:0 auto;color:#0f172a;">\
+      <div style="padding:24px;">' + content + '\
+        <p style="color:#94a3b8;font-size:0.78rem;margin-top:20px;">Disclaimer: This email was sent by NovBank. Do not share sensitive account information via email.</p>\
+        <p style="color:#94a3b8;font-size:0.78rem;margin-top:8px;">© ' + new Date().getFullYear() + ' NovBank</p>\
+      </div>\
+    </div>';
+}
+
 
 // ── Email Templates ───────────────────────────────
 
@@ -362,6 +373,72 @@ function airtimeEmail(user, amount, phone, network) {
   );
 }
 
+function forgotPasswordEmail(user, resetUrl) {
+  return sendMail(
+    user.email,
+    'Password Reset Request — NovBank',
+    layout('\
+      <p>Dear ' + user.firstName + ' ' + user.lastName + ',</p>\
+      <p>We received a request to reset the password for your NovBank account.</p>\
+      <p>Please click the link below to reset your password. This link will expire in 1 hour.</p>\
+      <p><a href="' + resetUrl + '" style="color:#1a56db;">' + resetUrl + '</a></p>\
+      <p>If you did not request a password reset, please ignore this email. Your password will remain unchanged.</p>\
+      <p>Regards,<br/>NovBank Team</p>'
+    )
+  );
+}
+
+function forgotPinEmail(user, resetUrl) {
+  return sendMail(
+    user.email,
+    'PIN Reset Request — NovBank',
+    layout('\
+      <p>Dear ' + user.firstName + ' ' + user.lastName + ',</p>\
+      <p>We received a request to reset the transaction PIN for your NovBank account.</p>\
+      <p>Please click the link below to reset your PIN. This link will expire in 1 hour.</p>\
+      <p><a href="' + resetUrl + '" style="color:#1a56db;">' + resetUrl + '</a></p>\
+      <p>If you did not request a PIN reset, please ignore this email. Your PIN will remain unchanged.</p>\
+      <p>Regards,<br/>NovBank Team</p>'
+    )
+  );
+}
+
+function adminKycNotification(applicantName, applicantEmail, accountNumber) {
+  return sendMail(
+    process.env.ADMIN_EMAIL,
+    'New KYC Submission — NovBank',
+    layout('\
+      <p>A new KYC verification request has been submitted and is pending review.</p>\
+      <p>\
+        Name: ' + applicantName + '<br/>\
+        Email: ' + applicantEmail + '<br/>\
+        Account Number: ' + accountNumber + '\
+      </p>\
+      <p>Please log in to the admin panel to review and process this submission.</p>\
+      <p>Regards,<br/>NovBank System</p>'
+    )
+  );
+}
+
+function adminWithdrawalNotification(userName, userEmail, accountNumber, amount, type) {
+  return sendMail(
+    process.env.ADMIN_EMAIL,
+    'New Withdrawal Request — NovBank',
+    layout('\
+      <p>A new withdrawal request has been submitted and requires processing.</p>\
+      <p>\
+        Name: ' + userName + '<br/>\
+        Email: ' + userEmail + '<br/>\
+        Account Number: ' + accountNumber + '<br/>\
+        Amount: €' + amount.toFixed(2) + '<br/>\
+        Type: ' + type + '\
+      </p>\
+      <p>Please log in to the admin panel to review and process this transaction.</p>\
+      <p>Regards,<br/>NovBank System</p>'
+    )
+  );
+}
+
 module.exports = {
   welcomeEmail,
   kycApprovedEmail,
@@ -376,5 +453,9 @@ module.exports = {
   loanApprovedEmail,
   loanDeclinedEmail,
   cardApprovedEmail,
-  airtimeEmail
+  airtimeEmail,
+  forgotPasswordEmail,
+  forgotPinEmail,
+  adminKycNotification,
+  adminWithdrawalNotification
 };

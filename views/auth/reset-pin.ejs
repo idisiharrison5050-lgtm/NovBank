@@ -1,0 +1,28 @@
+<%- include('../partials/header') %>
+<link rel="stylesheet" href="/css/auth.css"/>
+
+<div class="auth-wrapper">
+  <div class="auth-box">
+    <div class="auth-logo">NovBank</div>
+    <h2 class="auth-title">Set New PIN</h2>
+    <p class="auth-subtitle">Enter your new 4-digit transaction PIN.</p>
+
+    <% if (error_msg && error_msg.length > 0) { %>
+      <div class="alert alert-danger"><%= error_msg %></div>
+    <% } %>
+
+    <form action="/reset-pin/<%= token %>" method="POST">
+      <div class="form-group">
+        <label>New PIN</label>
+        <input type="password" name="newPin" class="form-control" maxlength="4" inputmode="numeric" pattern="\d{4}" placeholder="••••" required/>
+      </div>
+      <div class="form-group">
+        <label>Confirm New PIN</label>
+        <input type="password" name="confirmPin" class="form-control" maxlength="4" inputmode="numeric" pattern="\d{4}" placeholder="••••" required/>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block btn-auth">Set New PIN</button>
+    </form>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

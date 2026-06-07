@@ -45,6 +45,7 @@ app.use(function (req, res, next) {
   res.locals.error_msg   = req.flash('error_msg');
   res.locals.error       = req.flash('error');
   res.locals.recaptchaSiteKey = process.env.RECAPTCHA_SITE_KEY || '';
+  res.locals.adminEmail = process.env.ADMIN_EMAIL || '';
   next();
 });
 

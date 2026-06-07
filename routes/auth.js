@@ -5,6 +5,7 @@ var User = require('../models/User');
 var Notification = require('../models/Notification');
 var mailer = require('../config/mailer');
 var https = require('https');
+var crypto = require("crypto");
 
 function verifyRecaptcha(token, callback) {
   var secret = process.env.RECAPTCHA_SECRET_KEY;
@@ -388,6 +389,212 @@ router.get('/privacy', function (req, res) {
 
 router.get('/cookies', function (req, res) {
   res.render('cookies', { title: 'Cookie Policy' });
+});
+
+// Forgot Password
+router.get('/forgot-password', isGuest, function (req, res) {
+  res.render('auth/forgot-password', { title: 'Forgot Password' });
+});
+
+router.post('/forgot-password', isGuest, function (req, res) {
+  var email = req.body.email;
+  if (!email) {
+    req.flash('error_msg', 'Please enter your email address.');
+    return res.redirect('/forgot-password');
+  }
+
+  User.findOne({ email: email.toLowerCase() })
+    .then(function (user) {
+      if (!user) {
+        req.flash('error_msg', 'No account found with that email address.');
+        return res.redirect('/forgot-password');
+      }
+
+      var token   = crypto.randomBytes(32).toString('hex');
+      var expires = Date.now() + 3600000; // 1 hour
+
+      return User.findByIdAndUpdate(user._id, {
+        resetPasswordToken:   token,
+        resetPasswordExpires: expires
+      }).then(function () {
+        var resetUrl = req.protocol + '://' + req.get('host') + '/reset-password/' + token;
+        var mailer   = require('../config/mailer');
+        return mailer.forgotPasswordEmail(user, resetUrl);
+      }).then(function () {
+        req.flash('success_msg', 'A password reset link has been sent to your email address.');
+        res.redirect('/forgot-password');
+      });
+    })
+    .catch(function (err) {
+      console.error(err);
+      req.flash('error_msg', 'Something went wrong. Please try again.');
+      res.redirect('/forgot-password');
+    });
+});
+
+// Reset Password
+router.get('/reset-password/:token', isGuest, function (req, res) {
+  User.findOne({
+    resetPasswordToken:   req.params.token,
+    resetPasswordExpires: { $gt: Date.now() }
+  }).then(function (user) {
+    if (!user) {
+      req.flash('error_msg', 'Password reset link is invalid or has expired.');
+      return res.redirect('/forgot-password');
+    }
+    res.render('auth/reset-password', { title: 'Reset Password', token: req.params.token });
+  }).catch(function (err) {
+    console.error(err);
+    res.redirect('/forgot-password');
+  });
+});
+
+router.post('/reset-password/:token', isGuest, function (req, res) {
+  var password        = req.body.password;
+  var confirmPassword = req.body.confirmPassword;
+
+  if (!password || password.length < 8) {
+    req.flash('error_msg', 'Password must be at least 8 characters.');
+    return res.redirect('/reset-password/' + req.params.token);
+  }
+
+  if (password !== confirmPassword) {
+    req.flash('error_msg', 'Passwords do not match.');
+    return res.redirect('/reset-password/' + req.params.token);
+  }
+
+  User.findOne({
+    resetPasswordToken:   req.params.token,
+    resetPasswordExpires: { $gt: Date.now() }
+  }).then(function (user) {
+    if (!user) {
+      req.flash('error_msg', 'Password reset link is invalid or has expired.');
+      return res.redirect('/forgot-password');
+    }
+
+    var bcrypt = require('bcryptjs');
+    bcrypt.genSalt(10, function (err, salt) {
+      bcrypt.hash(password, salt, function (err, hash) {
+        User.findByIdAndUpdate(user._id, {
+          password:             hash,
+          resetPasswordToken:   undefined,
+          resetPasswordExpires: undefined
+        }).then(function () {
+          req.flash('success_msg', 'Your password has been reset. You can now log in.');
+          res.redirect('/login');
+        });
+      });
+    });
+  }).catch(function (err) {
+    console.error(err);
+    req.flash('error_msg', 'Something went wrong. Please try again.');
+    res.redirect('/forgot-password');
+  });
+});
+
+// Forgot PIN
+router.get('/forgot-pin', function (req, res) {
+  res.render('auth/forgot-pin', { title: 'Reset PIN' });
+});
+
+router.post('/forgot-pin', function (req, res) {
+  var email         = req.body.email;
+  var accountNumber = req.body.accountNumber;
+
+  if (!email || !accountNumber) {
+    req.flash('error_msg', 'Please enter your email and account number.');
+    return res.redirect('/forgot-pin');
+  }
+
+  User.findOne({
+    email:         email.toLowerCase(),
+    accountNumber: accountNumber
+  }).then(function (user) {
+    if (!user) {
+      req.flash('error_msg', 'No account found with those details.');
+      return res.redirect('/forgot-pin');
+    }
+
+    var token   = crypto.randomBytes(32).toString('hex');
+    var expires = Date.now() + 3600000;
+
+    return User.findByIdAndUpdate(user._id, {
+      resetPinToken:   token,
+      resetPinExpires: expires
+    }).then(function () {
+      var resetUrl = req.protocol + '://' + req.get('host') + '/reset-pin/' + token;
+      var mailer   = require('../config/mailer');
+      return mailer.forgotPinEmail(user, resetUrl);
+    }).then(function () {
+      req.flash('success_msg', 'A PIN reset link has been sent to your email address.');
+      res.redirect('/forgot-pin');
+    });
+  }).catch(function (err) {
+    console.error(err);
+    req.flash('error_msg', 'Something went wrong. Please try again.');
+    res.redirect('/forgot-pin');
+  });
+});
+
+// Reset PIN
+router.get('/reset-pin/:token', function (req, res) {
+  User.findOne({
+    resetPinToken:   req.params.token,
+    resetPinExpires: { $gt: Date.now() }
+  }).then(function (user) {
+    if (!user) {
+      req.flash('error_msg', 'PIN reset link is invalid or has expired.');
+      return res.redirect('/forgot-pin');
+    }
+    res.render('auth/reset-pin', { title: 'Reset PIN', token: req.params.token });
+  }).catch(function (err) {
+    console.error(err);
+    res.redirect('/forgot-pin');
+  });
+});
+
+router.post('/reset-pin/:token', function (req, res) {
+  var newPin     = req.body.newPin;
+  var confirmPin = req.body.confirmPin;
+
+  if (!newPin || newPin.length !== 4 || !/^\d{4}$/.test(newPin)) {
+    req.flash('error_msg', 'PIN must be exactly 4 digits.');
+    return res.redirect('/reset-pin/' + req.params.token);
+  }
+
+  if (newPin !== confirmPin) {
+    req.flash('error_msg', 'PINs do not match.');
+    return res.redirect('/reset-pin/' + req.params.token);
+  }
+
+  User.findOne({
+    resetPinToken:   req.params.token,
+    resetPinExpires: { $gt: Date.now() }
+  }).then(function (user) {
+    if (!user) {
+      req.flash('error_msg', 'PIN reset link is invalid or has expired.');
+      return res.redirect('/forgot-pin');
+    }
+
+    var bcrypt = require('bcryptjs');
+    bcrypt.genSalt(10, function (err, salt) {
+      bcrypt.hash(newPin, salt, function (err, hash) {
+        User.findByIdAndUpdate(user._id, {
+          pin:             hash,
+          pinSet:          true,
+          resetPinToken:   undefined,
+          resetPinExpires: undefined
+        }).then(function () {
+          req.flash('success_msg', 'Your PIN has been reset successfully. You can now log in.');
+          res.redirect('/login');
+        });
+      });
+    });
+  }).catch(function (err) {
+    console.error(err);
+    req.flash('error_msg', 'Something went wrong. Please try again.');
+    res.redirect('/forgot-pin');
+  });
 });
 
 module.exports = router;
