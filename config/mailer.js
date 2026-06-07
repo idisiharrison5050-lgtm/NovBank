@@ -15,13 +15,16 @@ function sendMail(to, subject, html) {
 
 // Minimal layout wrapper for emails. Keeps styling simple and adds a disclaimer.
 function layout(content) {
-  return '\
-    <div style="font-family:Segoe UI,Arial,sans-serif;max-width:600px;margin:0 auto;color:#0f172a;">\
-      <div style="padding:24px;">' + content + '\
-        <p style="color:#94a3b8;font-size:0.78rem;margin-top:20px;">Disclaimer: This email was sent by NovBank. Do not share sensitive account information via email.</p>\
-        <p style="color:#94a3b8;font-size:0.78rem;margin-top:8px;">© ' + new Date().getFullYear() + ' NovBank</p>\
-      </div>\
-    </div>';
+  return '<div style="font-family:Segoe UI,Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e9ecef;">' +
+    '<div style="background:#1a56db;padding:32px 40px;">' +
+      '<h1 style="color:#fff;margin:0;font-size:1.5rem;">NovBank</h1>' +
+    '</div>' +
+    '<div style="padding:32px 40px;color:#0f172a;">' + content + '</div>' +
+    '<div style="background:#f8fafc;padding:20px 40px;border-top:1px solid #e9ecef;">' +
+      '<p style="color:#94a3b8;font-size:0.78rem;margin:0;">Disclaimer: This email was sent by NovBank. Do not share sensitive account information via email.</p>' +
+      '<p style="color:#94a3b8;font-size:0.78rem;margin-top:8px;">© ' + new Date().getFullYear() + ' NovBank. All rights reserved.</p>' +
+    '</div>' +
+  '</div>';
 }
 
 
@@ -31,26 +34,12 @@ function welcomeEmail(user) {
   return sendMail(
     user.email,
     'Welcome to NovBank',
-    '\
-    <div style="font-family:Segoe UI,Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e9ecef;">\
-      <div style="background:#1a56db;padding:32px 40px;">\
-        <h1 style="color:#fff;margin:0;font-size:1.5rem;">NovBank</h1>\
-      </div>\
-      <div style="padding:32px 40px;">\
-        <h2 style="color:#0f172a;font-size:1.2rem;">Welcome, ' + user.firstName + '!</h2>\
-        <p style="color:#64748b;line-height:1.7;">Your NovBank account has been created successfully. Here are your account details:</p>\
-        <div style="background:#f8faff;border:1px solid #e0e7ff;border-radius:8px;padding:20px;margin:20px 0;">\
-          <p style="margin:0 0 8px;font-size:0.9rem;"><strong style="color:#64748b;">Account Number:</strong> <span style="color:#0f172a;font-family:monospace;">' + user.accountNumber + '</span></p>\
-          <p style="margin:0 0 8px;font-size:0.9rem;"><strong style="color:#64748b;">Username:</strong> <span style="color:#0f172a;">@' + user.username + '</span></p>\
-          <p style="margin:0;font-size:0.9rem;"><strong style="color:#64748b;">Email:</strong> <span style="color:#0f172a;">' + user.email + '</span></p>\
-        </div>\
-        <p style="color:#64748b;line-height:1.7;">Please complete your identity verification to unlock all features.</p>\
-        <p style="color:#94a3b8;font-size:0.82rem;margin-top:32px;">If you did not create this account, please contact support immediately.</p>\
-      </div>\
-      <div style="background:#f8fafc;padding:20px 40px;border-top:1px solid #e9ecef;">\
-        <p style="color:#94a3b8;font-size:0.78rem;margin:0;">© ' + new Date().getFullYear() + ' NovBank. All rights reserved.</p>\
-      </div>\
-    </div>'
+    layout('\
+      <h2>Welcome, ' + user.firstName + '!</h2>\
+      <p>Your NovBank account has been created successfully.</p>\
+      <p><strong>Account Number:</strong> ' + user.accountNumber + '</p>\
+      <p><strong>Username:</strong> @' + user.username + '</p>\
+      <p>If you did not create this account, contact support.</p>' )
   );
 }
 
@@ -58,20 +47,10 @@ function kycApprovedEmail(user) {
   return sendMail(
     user.email,
     'Your Identity Has Been Verified — NovBank',
-    '\
-    <div style="font-family:Segoe UI,Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e9ecef;">\
-      <div style="background:#1a56db;padding:32px 40px;">\
-        <h1 style="color:#fff;margin:0;font-size:1.5rem;">NovBank</h1>\
-      </div>\
-      <div style="padding:32px 40px;">\
-        <h2 style="color:#0f172a;font-size:1.2rem;">Identity Verified ✓</h2>\
-        <p style="color:#64748b;line-height:1.7;">Hi ' + user.firstName + ', your identity verification has been approved. You now have full access to all NovBank features.</p>\
-        <p style="color:#94a3b8;font-size:0.82rem;margin-top:32px;">If you have any questions, contact our support team.</p>\
-      </div>\
-      <div style="background:#f8fafc;padding:20px 40px;border-top:1px solid #e9ecef;">\
-        <p style="color:#94a3b8;font-size:0.78rem;margin:0;">© ' + new Date().getFullYear() + ' NovBank. All rights reserved.</p>\
-      </div>\
-    </div>'
+    layout('\
+      <h2>Identity Verified ✓</h2>\
+      <p>Hi ' + user.firstName + ', your identity verification has been approved. You now have full access to all features.</p>\
+      <p>If you have questions, contact support.</p>' )
   );
 }
 
@@ -79,24 +58,11 @@ function kycDeclinedEmail(user, reason) {
   return sendMail(
     user.email,
     'Identity Verification Declined — NovBank',
-    '\
-    <div style="font-family:Segoe UI,Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e9ecef;">\
-      <div style="background:#1a56db;padding:32px 40px;">\
-        <h1 style="color:#fff;margin:0;font-size:1.5rem;">NovBank</h1>\
-      </div>\
-      <div style="padding:32px 40px;">\
-        <h2 style="color:#0f172a;font-size:1.2rem;">Verification Declined</h2>\
-        <p style="color:#64748b;line-height:1.7;">Hi ' + user.firstName + ', unfortunately your identity verification was declined.</p>\
-        <div style="background:#fee2e2;border:1px solid #fecaca;border-radius:8px;padding:16px;margin:20px 0;">\
-          <p style="margin:0;color:#991b1b;font-size:0.9rem;"><strong>Reason:</strong> ' + reason + '</p>\
-        </div>\
-        <p style="color:#64748b;line-height:1.7;">Please log in and resubmit your documents with the correct information.</p>\
-        <p style="color:#94a3b8;font-size:0.82rem;margin-top:32px;">If you believe this is a mistake, please contact support.</p>\
-      </div>\
-      <div style="background:#f8fafc;padding:20px 40px;border-top:1px solid #e9ecef;">\
-        <p style="color:#94a3b8;font-size:0.78rem;margin:0;">© ' + new Date().getFullYear() + ' NovBank. All rights reserved.</p>\
-      </div>\
-    </div>'
+    layout('\
+      <h2>Verification Declined</h2>\
+      <p>Hi ' + user.firstName + ', your identity verification was declined.</p>\
+      <p><strong>Reason:</strong> ' + reason + '</p>\
+      <p>Please log in and resubmit your documents, or contact support.</p>' )
   );
 }
 
@@ -104,25 +70,12 @@ function transferSentEmail(user, amount, recipient) {
   return sendMail(
     user.email,
     'Transfer Sent — NovBank',
-    '\
-    <div style="font-family:Segoe UI,Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e9ecef;">\
-      <div style="background:#1a56db;padding:32px 40px;">\
-        <h1 style="color:#fff;margin:0;font-size:1.5rem;">NovBank</h1>\
-      </div>\
-      <div style="padding:32px 40px;">\
-        <h2 style="color:#0f172a;font-size:1.2rem;">Transfer Sent</h2>\
-        <p style="color:#64748b;line-height:1.7;">Hi ' + user.firstName + ', your transfer has been completed successfully.</p>\
-        <div style="background:#f8faff;border:1px solid #e0e7ff;border-radius:8px;padding:20px;margin:20px 0;">\
-          <p style="margin:0 0 8px;font-size:0.9rem;"><strong style="color:#64748b;">Amount:</strong> <span style="color:#ef4444;font-weight:700;">-€' + amount.toFixed(2) + '</span></p>\
-          <p style="margin:0 0 8px;font-size:0.9rem;"><strong style="color:#64748b;">To:</strong> <span style="color:#0f172a;">' + recipient + '</span></p>\
-          <p style="margin:0;font-size:0.9rem;"><strong style="color:#64748b;">Date:</strong> <span style="color:#0f172a;">' + new Date().toLocaleString('en-GB') + '</span></p>\
-        </div>\
-        <p style="color:#94a3b8;font-size:0.82rem;margin-top:32px;">If you did not authorize this transaction, contact support immediately.</p>\
-      </div>\
-      <div style="background:#f8fafc;padding:20px 40px;border-top:1px solid #e9ecef;">\
-        <p style="color:#94a3b8;font-size:0.78rem;margin:0;">© ' + new Date().getFullYear() + ' NovBank. All rights reserved.</p>\
-      </div>\
-    </div>'
+    layout('\
+      <h2>Transfer Sent</h2>\
+      <p>Hi ' + user.firstName + ', your transfer completed successfully.</p>\
+      <p><strong>Amount:</strong> -€' + amount.toFixed(2) + '</p>\
+      <p><strong>To:</strong> ' + recipient + '</p>\
+      <p>If you did not authorize this, contact support.</p>' )
   );
 }
 
@@ -155,28 +108,13 @@ function wireTransferEmail(user, amount, recipientName, iban, bankName) {
   return sendMail(
     user.email,
     'Wire Transfer Initiated — NovBank',
-    '\
-    <div style="font-family:Segoe UI,Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e9ecef;">\
-      <div style="background:#1a56db;padding:32px 40px;">\
-        <h1 style="color:#fff;margin:0;font-size:1.5rem;">NovBank</h1>\
-      </div>\
-      <div style="padding:32px 40px;">\
-        <h2 style="color:#0f172a;font-size:1.2rem;">Wire Transfer Initiated</h2>\
-        <p style="color:#64748b;line-height:1.7;">Hi ' + user.firstName + ', your wire transfer has been submitted and is pending processing.</p>\
-        <div style="background:#f8faff;border:1px solid #e0e7ff;border-radius:8px;padding:20px;margin:20px 0;">\
-          <p style="margin:0 0 8px;font-size:0.9rem;"><strong style="color:#64748b;">Amount:</strong> <span style="color:#ef4444;font-weight:700;">-€' + amount.toFixed(2) + '</span></p>\
-          <p style="margin:0 0 8px;font-size:0.9rem;"><strong style="color:#64748b;">Recipient:</strong> <span style="color:#0f172a;">' + recipientName + '</span></p>\
-          <p style="margin:0 0 8px;font-size:0.9rem;"><strong style="color:#64748b;">IBAN:</strong> <span style="color:#0f172a;font-family:monospace;">' + iban + '</span></p>\
-          <p style="margin:0 0 8px;font-size:0.9rem;"><strong style="color:#64748b;">Bank:</strong> <span style="color:#0f172a;">' + bankName + '</span></p>\
-          <p style="margin:0;font-size:0.9rem;"><strong style="color:#64748b;">Date:</strong> <span style="color:#0f172a;">' + new Date().toLocaleString('en-GB') + '</span></p>\
-        </div>\
-        <p style="color:#64748b;line-height:1.7;">Wire transfers typically take 1 to 3 business days to process.</p>\
-        <p style="color:#94a3b8;font-size:0.82rem;margin-top:32px;">If you did not authorize this transaction, contact support immediately.</p>\
-      </div>\
-      <div style="background:#f8fafc;padding:20px 40px;border-top:1px solid #e9ecef;">\
-        <p style="color:#94a3b8;font-size:0.78rem;margin:0;">© ' + new Date().getFullYear() + ' NovBank. All rights reserved.</p>\
-      </div>\
-    </div>'
+    layout('\
+      <h2>Wire Transfer Initiated</h2>\
+      <p>Hi ' + user.firstName + ', your wire transfer has been submitted and is pending.</p>\
+      <p><strong>Amount:</strong> -€' + amount.toFixed(2) + '</p>\
+      <p><strong>Recipient:</strong> ' + recipientName + '</p>\
+      <p><strong>IBAN:</strong> ' + iban + '</p>\
+      <p><strong>Bank:</strong> ' + bankName + '</p>' )
   );
 }
 
@@ -184,27 +122,13 @@ function wireTransferSuccessEmail(user, amount, recipientName, iban, bankName) {
   return sendMail(
     user.email,
     'Wire Transfer Processed Successfully — NovBank',
-    '\
-    <div style="font-family:Segoe UI,Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e9ecef;">\
-      <div style="background:#1a56db;padding:32px 40px;">\
-        <h1 style="color:#fff;margin:0;font-size:1.5rem;">NovBank</h1>\
-      </div>\
-      <div style="padding:32px 40px;">\
-        <h2 style="color:#0f172a;font-size:1.2rem;">Wire Transfer Successful ✓</h2>\
-        <p style="color:#64748b;line-height:1.7;">Hi ' + user.firstName + ', your wire transfer has been processed and successfully sent to the recipient\'s bank.</p>\
-        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:20px;margin:20px 0;">\
-          <p style="margin:0 0 8px;font-size:0.9rem;"><strong style="color:#64748b;">Amount Debited:</strong> <span style="color:#ef4444;font-weight:700;">-€' + amount.toFixed(2) + '</span></p>\
-          <p style="margin:0 0 8px;font-size:0.9rem;"><strong style="color:#64748b;">Recipient:</strong> <span style="color:#0f172a;">' + recipientName + '</span></p>\
-          <p style="margin:0 0 8px;font-size:0.9rem;"><strong style="color:#64748b;">IBAN:</strong> <span style="color:#0f172a;font-family:monospace;">' + iban + '</span></p>\
-          <p style="margin:0 0 8px;font-size:0.9rem;"><strong style="color:#64748b;">Destination Bank:</strong> <span style="color:#0f172a;">' + bankName + '</span></p>\
-          <p style="margin:0;font-size:0.9rem;"><strong style="color:#64748b;">Completion Date:</strong> <span style="color:#0f172a;">' + new Date().toLocaleString('en-GB') + '</span></p>\
-        </div>\
-        <p style="color:#94a3b8;font-size:0.82rem;margin-top:32px;">If you notice any discrepancies with this transaction, please contact support immediately.</p>\
-      </div>\
-      <div style="background:#f8fafc;padding:20px 40px;border-top:1px solid #e9ecef;">\
-        <p style="color:#94a3b8;font-size:0.78rem;margin:0;">© ' + new Date().getFullYear() + ' NovBank. All rights reserved.</p>\
-      </div>\
-    </div>'
+    layout('\
+      <h2>Wire Transfer Successful ✓</h2>\
+      <p>Hi ' + user.firstName + ', your wire transfer was processed successfully.</p>\
+      <p><strong>Amount:</strong> -€' + amount.toFixed(2) + '</p>\
+      <p><strong>Recipient:</strong> ' + recipientName + '</p>\
+      <p><strong>IBAN:</strong> ' + iban + '</p>\
+      <p><strong>Destination Bank:</strong> ' + bankName + '</p>' )
   );
 }
 
@@ -212,24 +136,11 @@ function depositRequestEmail(user, amount) {
   return sendMail(
     user.email,
     'Deposit Request Received — NovBank',
-    '\
-    <div style="font-family:Segoe UI,Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e9ecef;">\
-      <div style="background:#1a56db;padding:32px 40px;">\
-        <h1 style="color:#fff;margin:0;font-size:1.5rem;">NovBank</h1>\
-      </div>\
-      <div style="padding:32px 40px;">\
-        <h2 style="color:#0f172a;font-size:1.2rem;">Deposit Request Received</h2>\
-        <p style="color:#64748b;line-height:1.7;">Hi ' + user.firstName + ', we have received your deposit request.</p>\
-        <div style="background:#f8faff;border:1px solid #e0e7ff;border-radius:8px;padding:20px;margin:20px 0;">\
-          <p style="margin:0 0 8px;font-size:0.9rem;"><strong style="color:#64748b;">Amount:</strong> <span style="color:#0f172a;font-weight:700;">€' + amount.toFixed(2) + '</span></p>\
-          <p style="margin:0;font-size:0.9rem;"><strong style="color:#64748b;">Status:</strong> <span style="color:#d97706;font-weight:600;">Pending Verification</span></p>\
-        </div>\
-        <p style="color:#64748b;line-height:1.7;">Your balance will be updated once our team verifies and approves the transfer.</p>\
-      </div>\
-      <div style="background:#f8fafc;padding:20px 40px;border-top:1px solid #e9ecef;">\
-        <p style="color:#94a3b8;font-size:0.78rem;margin:0;">© ' + new Date().getFullYear() + ' NovBank. All rights reserved.</p>\
-      </div>\
-    </div>'
+    layout('\
+      <h2>Deposit Request Received</h2>\
+      <p>Hi ' + user.firstName + ', we have received your deposit request.</p>\
+      <p><strong>Amount:</strong> €' + amount.toFixed(2) + '</p>\
+      <p>Status: Pending Verification</p>' )
   );
 }
 
@@ -237,23 +148,10 @@ function depositApprovedEmail(user, amount) {
   return sendMail(
     user.email,
     'Deposit Approved — NovBank',
-    '\
-    <div style="font-family:Segoe UI,Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e9ecef;">\
-      <div style="background:#1a56db;padding:32px 40px;">\
-        <h1 style="color:#fff;margin:0;font-size:1.5rem;">NovBank</h1>\
-      </div>\
-      <div style="padding:32px 40px;">\
-        <h2 style="color:#0f172a;font-size:1.2rem;">Deposit Approved</h2>\
-        <p style="color:#64748b;line-height:1.7;">Hi ' + user.firstName + ', your deposit has been approved and credited to your account.</p>\
-        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:20px;margin:20px 0;">\
-          <p style="margin:0 0 8px;font-size:0.9rem;"><strong style="color:#64748b;">Amount Credited:</strong> <span style="color:#16a34a;font-weight:700;">+€' + amount.toFixed(2) + '</span></p>\
-          <p style="margin:0;font-size:0.9rem;"><strong style="color:#64748b;">Date:</strong> <span style="color:#0f172a;">' + new Date().toLocaleString('en-GB') + '</span></p>\
-        </div>\
-      </div>\
-      <div style="background:#f8fafc;padding:20px 40px;border-top:1px solid #e9ecef;">\
-        <p style="color:#94a3b8;font-size:0.78rem;margin:0;">© ' + new Date().getFullYear() + ' NovBank. All rights reserved.</p>\
-      </div>\
-    </div>'
+    layout('\
+      <h2>Deposit Approved</h2>\
+      <p>Hi ' + user.firstName + ', your deposit has been approved and credited to your account.</p>\
+      <p><strong>Amount Credited:</strong> +€' + amount.toFixed(2) + '</p>' )
   );
 }
 
@@ -261,20 +159,10 @@ function depositDeclinedEmail(user, amount) {
   return sendMail(
     user.email,
     'Deposit Declined — NovBank',
-    '\
-    <div style="font-family:Segoe UI,Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e9ecef;">\
-      <div style="background:#1a56db;padding:32px 40px;">\
-        <h1 style="color:#fff;margin:0;font-size:1.5rem;">NovBank</h1>\
-      </div>\
-      <div style="padding:32px 40px;">\
-        <h2 style="color:#0f172a;font-size:1.2rem;">Deposit Declined</h2>\
-        <p style="color:#64748b;line-height:1.7;">Hi ' + user.firstName + ', your deposit request of €' + amount.toFixed(2) + ' was not approved.</p>\
-        <p style="color:#64748b;line-height:1.7;">Please contact support if you have any questions or if you believe this is an error.</p>\
-      </div>\
-      <div style="background:#f8fafc;padding:20px 40px;border-top:1px solid #e9ecef;">\
-        <p style="color:#94a3b8;font-size:0.78rem;margin:0;">© ' + new Date().getFullYear() + ' NovBank. All rights reserved.</p>\
-      </div>\
-    </div>'
+    layout('\
+      <h2>Deposit Declined</h2>\
+      <p>Hi ' + user.firstName + ', your deposit request of €' + amount.toFixed(2) + ' was not approved.</p>\
+      <p>Please contact support if you have questions.</p>' )
   );
 }
 
@@ -282,24 +170,10 @@ function loanApprovedEmail(user, amount) {
   return sendMail(
     user.email,
     'Loan Approved — NovBank',
-    '\
-    <div style="font-family:Segoe UI,Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e9ecef;">\
-      <div style="background:#1a56db;padding:32px 40px;">\
-        <h1 style="color:#fff;margin:0;font-size:1.5rem;">NovBank</h1>\
-      </div>\
-      <div style="padding:32px 40px;">\
-        <h2 style="color:#0f172a;font-size:1.2rem;">Loan Approved</h2>\
-        <p style="color:#64748b;line-height:1.7;">Hi ' + user.firstName + ', your loan request has been approved and credited to your account.</p>\
-        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:20px;margin:20px 0;">\
-          <p style="margin:0 0 8px;font-size:0.9rem;"><strong style="color:#64748b;">Amount Credited:</strong> <span style="color:#16a34a;font-weight:700;">+€' + amount.toFixed(2) + '</span></p>\
-          <p style="margin:0;font-size:0.9rem;"><strong style="color:#64748b;">Date:</strong> <span style="color:#0f172a;">' + new Date().toLocaleString('en-GB') + '</span></p>\
-        </div>\
-        <p style="color:#94a3b8;font-size:0.82rem;margin-top:32px;">Please ensure timely repayment as per your agreed schedule.</p>\
-      </div>\
-      <div style="background:#f8fafc;padding:20px 40px;border-top:1px solid #e9ecef;">\
-        <p style="color:#94a3b8;font-size:0.78rem;margin:0;">© ' + new Date().getFullYear() + ' NovBank. All rights reserved.</p>\
-      </div>\
-    </div>'
+    layout('\
+      <h2>Loan Approved</h2>\
+      <p>Hi ' + user.firstName + ', your loan request has been approved and credited.</p>\
+      <p><strong>Amount:</strong> +€' + amount.toFixed(2) + '</p>' )
   );
 }
 
@@ -307,22 +181,10 @@ function loanDeclinedEmail(user, amount, reason) {
   return sendMail(
     user.email,
     'Loan Request Declined — NovBank',
-    '\
-    <div style="font-family:Segoe UI,Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e9ecef;">\
-      <div style="background:#1a56db;padding:32px 40px;">\
-        <h1 style="color:#fff;margin:0;font-size:1.5rem;">NovBank</h1>\
-      </div>\
-      <div style="padding:32px 40px;">\
-        <h2 style="color:#0f172a;font-size:1.2rem;">Loan Request Declined</h2>\
-        <p style="color:#64748b;line-height:1.7;">Hi ' + user.firstName + ', your loan request of €' + amount.toFixed(2) + ' was declined.</p>\
-        <div style="background:#fee2e2;border:1px solid #fecaca;border-radius:8px;padding:16px;margin:20px 0;">\
-          <p style="margin:0;color:#991b1b;font-size:0.9rem;"><strong>Reason:</strong> ' + reason + '</p>\
-        </div>\
-      </div>\
-      <div style="background:#f8fafc;padding:20px 40px;border-top:1px solid #e9ecef;">\
-        <p style="color:#94a3b8;font-size:0.78rem;margin:0;">© ' + new Date().getFullYear() + ' NovBank. All rights reserved.</p>\
-      </div>\
-    </div>'
+    layout('\
+      <h2>Loan Request Declined</h2>\
+      <p>Hi ' + user.firstName + ', your loan request of €' + amount.toFixed(2) + ' was declined.</p>\
+      <p><strong>Reason:</strong> ' + reason + '</p>' )
   );
 }
 
@@ -330,20 +192,10 @@ function cardApprovedEmail(user, cardType) {
   return sendMail(
     user.email,
     'Card Approved — NovBank',
-    '\
-    <div style="font-family:Segoe UI,Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e9ecef;">\
-      <div style="background:#1a56db;padding:32px 40px;">\
-        <h1 style="color:#fff;margin:0;font-size:1.5rem;">NovBank</h1>\
-      </div>\
-      <div style="padding:32px 40px;">\
-        <h2 style="color:#0f172a;font-size:1.2rem;">Your Card Is Ready</h2>\
-        <p style="color:#64748b;line-height:1.7;">Hi ' + user.firstName + ', your ' + cardType.charAt(0).toUpperCase() + cardType.slice(1) + ' card has been approved and is now active.</p>\
-        <p style="color:#64748b;line-height:1.7;">You can view your card details by logging into your NovBank account.</p>\
-      </div>\
-      <div style="background:#f8fafc;padding:20px 40px;border-top:1px solid #e9ecef;">\
-        <p style="color:#94a3b8;font-size:0.78rem;margin:0;">© ' + new Date().getFullYear() + ' NovBank. All rights reserved.</p>\
-      </div>\
-    </div>'
+    layout('\
+      <h2>Your Card Is Ready</h2>\
+      <p>Hi ' + user.firstName + ', your ' + cardType.charAt(0).toUpperCase() + cardType.slice(1) + ' card has been approved and is now active.</p>\
+      <p>Log in to your account to view card details.</p>' )
   );
 }
 
@@ -351,25 +203,11 @@ function airtimeEmail(user, amount, phone, network) {
   return sendMail(
     user.email,
     'Airtime Recharge Successful — NovBank',
-    '\
-    <div style="font-family:Segoe UI,Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e9ecef;">\
-      <div style="background:#1a56db;padding:32px 40px;">\
-        <h1 style="color:#fff;margin:0;font-size:1.5rem;">NovBank</h1>\
-      </div>\
-      <div style="padding:32px 40px;">\
-        <h2 style="color:#0f172a;font-size:1.2rem;">Airtime Recharge Successful</h2>\
-        <p style="color:#64748b;line-height:1.7;">Hi ' + user.firstName + ', your airtime recharge was successful.</p>\
-        <div style="background:#f8faff;border:1px solid #e0e7ff;border-radius:8px;padding:20px;margin:20px 0;">\
-          <p style="margin:0 0 8px;font-size:0.9rem;"><strong style="color:#64748b;">Amount:</strong> <span style="color:#ef4444;font-weight:700;">-€' + amount.toFixed(2) + '</span></p>\
-          <p style="margin:0 0 8px;font-size:0.9rem;"><strong style="color:#64748b;">Phone:</strong> <span style="color:#0f172a;">' + phone + '</span></p>\
-          <p style="margin:0 0 8px;font-size:0.9rem;"><strong style="color:#64748b;">Network:</strong> <span style="color:#0f172a;">' + network + '</span></p>\
-          <p style="margin:0;font-size:0.9rem;"><strong style="color:#64748b;">Date:</strong> <span style="color:#0f172a;">' + new Date().toLocaleString('en-GB') + '</span></p>\
-        </div>\
-      </div>\
-      <div style="background:#f8fafc;padding:20px 40px;border-top:1px solid #e9ecef;">\
-        <p style="color:#94a3b8;font-size:0.78rem;margin:0;">© ' + new Date().getFullYear() + ' NovBank. All rights reserved.</p>\
-      </div>\
-    </div>'
+    layout('\
+      <h2>Airtime Recharge Successful</h2>\
+      <p>Hi ' + user.firstName + ', your airtime recharge was successful.</p>\
+      <p><strong>Amount:</strong> -€' + amount.toFixed(2) + '</p>\
+      <p><strong>Phone:</strong> ' + phone + ' (' + network + ')</p>' )
   );
 }
 
