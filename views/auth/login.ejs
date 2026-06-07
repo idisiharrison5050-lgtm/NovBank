@@ -26,7 +26,8 @@
         <label>Password</label>
         <input type="password" name="password" class="form-control" placeholder="Enter password" required/>
       </div>
-      <button type="submit" class="btn btn-primary btn-block btn-auth">Sign In</button>
+      <div class="g-recaptcha mb-3" data-sitekey="<%= recaptchaSiteKey %>"></div>
+       <button type="submit" class="btn btn-primary btn-block btn-auth">Sign In</button>
     </form>
 
     <p class="auth-footer-text">Don't have an account? <a href="/register">Create one</a></p>

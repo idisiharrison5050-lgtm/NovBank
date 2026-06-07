@@ -4,6 +4,39 @@ var passport = require('passport');
 var User = require('../models/User');
 var Notification = require('../models/Notification');
 var mailer = require('../config/mailer');
+var https = require('https');
+
+function verifyRecaptcha(token, callback) {
+  var secret = process.env.RECAPTCHA_SECRET_KEY;
+  var postData = 'secret=' + secret + '&response=' + token;
+
+  var options = {
+    hostname: 'www.google.com',
+    path:     '/recaptcha/api/siteverify',
+    method:   'POST',
+    headers: {
+      'Content-Type':   'application/x-www-form-urlencoded',
+      'Content-Length': Buffer.byteLength(postData)
+    }
+  };
+
+  var req = https.request(options, function (res) {
+    var data = '';
+    res.on('data', function (chunk) { data += chunk; });
+    res.on('end', function () {
+      try {
+        var parsed = JSON.parse(data);
+        callback(parsed.success);
+      } catch (e) {
+        callback(false);
+      }
+    });
+  });
+
+  req.on('error', function () { callback(false); });
+  req.write(postData);
+  req.end();
+}
 
 function isGuest(req, res, next) {
   if (!req.isAuthenticated()) return next();
@@ -20,12 +53,34 @@ router.get('/login', isGuest, function (req, res) {
   res.render('auth/login', { title: 'Login' });
 });
 
-router.post('/login', isGuest, passport.authenticate('user-local', {
-  failureRedirect: '/login',
-  failureFlash:    true
-}), function (req, res) {
-  req.session.pinVerified = false;
-  res.redirect('/pin');
+router.post('/login', isGuest, function (req, res, next) {
+  var token = req.body['g-recaptcha-response'];
+  if (!token) {
+    req.flash('error_msg', 'Please complete the reCAPTCHA.');
+    return res.redirect('/login');
+  }
+  verifyRecaptcha(token, function (success) {
+    if (!success) {
+      req.flash('error_msg', 'reCAPTCHA verification failed. Please try again.');
+      return res.redirect('/login');
+    }
+    passport.authenticate('user-local', {
+      failureRedirect: '/login',
+      failureFlash:    true
+    }, function (err, user, info) {
+      if (err) return next(err);
+      if (!user) {
+        var message = (info && info.message) ? info.message : 'Login failed. Please try again.';
+        req.flash('error_msg', message);
+        return res.redirect('/login');
+      }
+      req.logIn(user, function (err) {
+        if (err) return next(err);
+        req.session.pinVerified = false;
+        res.redirect('/pin');
+      });
+    })(req, res, next);
+  });
 });
 
 // Register Step 1
@@ -77,7 +132,17 @@ router.get('/register/step3', isGuest, function (req, res) {
 });
 
 router.post('/register/step3', isGuest, function (req, res) {
-  if (!req.session.regStep1 || !req.session.regStep2) return res.redirect('/register');
+  var token = req.body['g-recaptcha-response'];
+  if (!token) {
+    req.flash('error_msg', 'Please complete the reCAPTCHA.');
+    return res.redirect('/register/step3');
+  }
+  verifyRecaptcha(token, function (success) {
+    if (!success) {
+      req.flash('error_msg', 'reCAPTCHA verification failed. Please try again.');
+      return res.redirect('/register/step3');
+    }
+    if (!req.session.regStep1 || !req.session.regStep2) return res.redirect('/register');
 
   var username        = req.body.username;
   var password        = req.body.password;
@@ -145,6 +210,7 @@ router.post('/register/step3', isGuest, function (req, res) {
       req.flash('error_msg', 'Something went wrong. Please try again.');
       res.redirect('/register');
     });
+});
 });
 
 // Logout
