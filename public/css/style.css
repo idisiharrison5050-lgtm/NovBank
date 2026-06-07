@@ -22,6 +22,31 @@ a {
   margin-top: 60px;
 }
 
+.main-footer .container {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.main-footer .row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+}
+
+.main-footer .col-md-4 {
+  flex: 1 1 250px;
+  max-width: 320px;
+  text-align: center;
+}
+
+.main-footer .footer-links {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
 .footer-brand {
   font-size: 1.2rem;
   font-weight: 700;
