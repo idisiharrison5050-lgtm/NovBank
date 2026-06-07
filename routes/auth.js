@@ -199,6 +199,9 @@ router.post('/register/step3', isGuest, function (req, res) {
           type:    'success'
         });
         return notif.save().then(function () {
+          mailer.welcomeEmail(user).catch(function (err) {
+            console.error('Welcome email error:', err);
+          });
           delete req.session.regStep1;
           delete req.session.regStep2;
           req.flash('success_msg', 'Account created! You can now log in.');

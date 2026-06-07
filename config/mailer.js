@@ -3,6 +3,15 @@ var { Resend } = require('resend');
 var resend = new Resend(process.env.RESEND_API_KEY);
 
 function sendMail(to, subject, html) {
+  if (!to) {
+    console.error('Mail error: missing recipient address for subject:', subject);
+    return Promise.resolve();
+  }
+  if (!process.env.RESEND_API_KEY || !process.env.RESEND_FROM) {
+    console.error('Mail error: missing RESEND_API_KEY or RESEND_FROM environment variable. Subject:', subject);
+    return Promise.resolve();
+  }
+
   return resend.emails.send({
     from:    process.env.RESEND_FROM,
     to:      to,
