@@ -1,0 +1,83 @@
+<%- include('../partials/header') %>
+<link rel="stylesheet" href="/css/auth.css"/>
+
+<div class="auth-wrapper">
+  <div class="auth-box">
+    <div class="auth-logo">NovBank</div>
+    <h2 class="auth-title">Verify Your Email</h2>
+    <p class="auth-subtitle">We sent a 6-digit verification code to your email address. Enter it below to confirm your account.</p>
+
+    <% if (success_msg && success_msg.length > 0) { %>
+      <div class="alert alert-success"><%= success_msg %></div>
+    <% } %>
+    <% if (error_msg && error_msg.length > 0) { %>
+      <div class="alert alert-danger"><%= error_msg %></div>
+    <% } %>
+
+    <div class="verify-notice">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      This code will expire in 15 minutes.
+    </div>
+
+    <form action="/verify-email" method="POST">
+      <div class="form-group">
+        <label>Verification Code</label>
+        <input
+          type="text"
+          name="code"
+          class="form-control verify-code-input"
+          placeholder="000000"
+          maxlength="6"
+          inputmode="numeric"
+          pattern="\d{6}"
+          autocomplete="one-time-code"
+          required
+        />
+      </div>
+      <button type="submit" class="btn btn-primary btn-block btn-auth">Verify Email</button>
+    </form>
+
+    <div class="resend-wrap">
+      <p class="resend-text">Didn't receive a code?</p>
+      <form action="/verify-email/resend" method="POST">
+        <button type="submit" class="resend-btn" id="resendBtn">Resend Code</button>
+      </form>
+      <p class="resend-timer" id="resendTimer" style="display:none;">
+        You can request a new code in <span id="timerCount">120</span>s
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // If there was a successful resend, start the 2 min countdown
+  <% if (success_msg && success_msg.length > 0) { %>
+    startResendTimer();
+  <% } %>
+
+  function startResendTimer() {
+    var btn   = document.getElementById('resendBtn');
+    var timer = document.getElementById('resendTimer');
+    var count = document.getElementById('timerCount');
+    var secs  = 120;
+
+    if (!btn || !timer || !count) return;
+
+    btn.disabled         = true;
+    btn.style.opacity    = '0.4';
+    timer.style.display  = 'block';
+
+    var interval = setInterval(function () {
+      secs--;
+      count.textContent = secs;
+      if (secs <= 0) {
+        clearInterval(interval);
+        btn.disabled        = false;
+        btn.style.opacity   = '1';
+        timer.style.display = 'none';
+      }
+    }, 1000);
+  }
+</script>
+
+<%- include('../partials/footer') %>

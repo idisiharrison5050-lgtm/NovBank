@@ -76,10 +76,16 @@ router.post('/login', isGuest, function (req, res, next) {
         return res.redirect('/login');
       }
       req.logIn(user, function (err) {
-        if (err) return next(err);
-        req.session.pinVerified = false;
-        res.redirect('/pin');
-      });
+      if (err) return next(err);
+      if (!user.emailVerified) {
+        req.session.verifyUserId = user._id.toString();
+        req.flash('error_msg', 'Please verify your email address before logging in.');
+        req.logout();
+        return res.redirect('/verify-email');
+      }
+      req.session.pinVerified = false;
+      res.redirect('/pin');
+    });
     })(req, res, next);
   });
 });
@@ -198,15 +204,29 @@ router.post('/register/step3', isGuest, function (req, res) {
           message: 'Your account has been created. Account number: ' + user.accountNumber,
           type:    'success'
         });
-        return notif.save().then(function () {
-          mailer.welcomeEmail(user).catch(function (err) {
-            console.error('Welcome email error:', err);
+
+        var code     = Math.floor(100000 + Math.random() * 900000).toString();
+        var expires  = new Date(Date.now() + 15 * 60 * 1000);
+        var resendAt = new Date(Date.now() + 2 * 60 * 1000);
+
+        return notif.save()
+          .then(function () {
+            return User.findByIdAndUpdate(user._id, {
+              emailVerifyCode:     code,
+              emailVerifyExpires:  expires,
+              emailVerifyResendAt: resendAt
+            });
+          })
+          .then(function () {
+            return mailer.emailVerificationCode(user, code);
+          })
+          .then(function () {
+            delete req.session.regStep1;
+            delete req.session.regStep2;
+            req.session.verifyUserId = user._id.toString();
+            req.flash('success_msg', 'Account created! Check your email for the verification code.');
+            res.redirect('/verify-email');
           });
-          delete req.session.regStep1;
-          delete req.session.regStep2;
-          req.flash('success_msg', 'Account created! You can now log in.');
-          res.redirect('/login');
-        });
       });
     })
     .catch(function (err) {
@@ -597,6 +617,91 @@ router.post('/reset-pin/:token', function (req, res) {
     console.error(err);
     req.flash('error_msg', 'Something went wrong. Please try again.');
     res.redirect('/forgot-pin');
+  });
+});
+
+// Verify Email page
+router.get('/verify-email', function (req, res) {
+  if (!req.session.verifyUserId) return res.redirect('/register');
+  res.render('auth/verify-email', { title: 'Verify Your Email' });
+});
+
+router.post('/verify-email', function (req, res) {
+  if (!req.session.verifyUserId) return res.redirect('/register');
+
+  var code   = req.body.code;
+  var userId = req.session.verifyUserId;
+
+  User.findById(userId).then(function (user) {
+    if (!user) {
+      req.flash('error_msg', 'Something went wrong. Please register again.');
+      return res.redirect('/register');
+    }
+
+    if (!user.emailVerifyCode || user.emailVerifyCode !== code) {
+      req.flash('error_msg', 'Incorrect verification code. Please try again.');
+      return res.redirect('/verify-email');
+    }
+
+    if (new Date() > user.emailVerifyExpires) {
+      req.flash('error_msg', 'Your verification code has expired. Please request a new one.');
+      return res.redirect('/verify-email');
+    }
+
+    return User.findByIdAndUpdate(userId, {
+      emailVerified:       true,
+      emailVerifyCode:     undefined,
+      emailVerifyExpires:  undefined,
+      emailVerifyResendAt: undefined
+    }).then(function () {
+      var mailer = require('../config/mailer');
+      return mailer.welcomeEmail(user).then(function () {
+        delete req.session.verifyUserId;
+        req.flash('success_msg', 'Email verified successfully. You can now log in.');
+        res.redirect('/login');
+      });
+    });
+  }).catch(function (err) {
+    console.error(err);
+    req.flash('error_msg', 'Something went wrong. Please try again.');
+    res.redirect('/verify-email');
+  });
+});
+
+// Resend verification code
+router.post('/verify-email/resend', function (req, res) {
+  if (!req.session.verifyUserId) return res.redirect('/register');
+
+  var userId = req.session.verifyUserId;
+
+  User.findById(userId).then(function (user) {
+    if (!user) return res.redirect('/register');
+
+    if (user.emailVerifyResendAt && new Date() < user.emailVerifyResendAt) {
+      var secondsLeft = Math.ceil((user.emailVerifyResendAt - new Date()) / 1000);
+      req.flash('error_msg', 'Please wait ' + secondsLeft + ' seconds before requesting a new code.');
+      return res.redirect('/verify-email');
+    }
+
+    var code     = Math.floor(100000 + Math.random() * 900000).toString();
+    var expires  = new Date(Date.now() + 15 * 60 * 1000);
+    var resendAt = new Date(Date.now() + 2 * 60 * 1000);
+
+    return User.findByIdAndUpdate(userId, {
+      emailVerifyCode:     code,
+      emailVerifyExpires:  expires,
+      emailVerifyResendAt: resendAt
+    }).then(function () {
+      var mailer = require('../config/mailer');
+      return mailer.emailVerificationCode(user, code);
+    }).then(function () {
+      req.flash('success_msg', 'A new verification code has been sent to your email.');
+      res.redirect('/verify-email');
+    });
+  }).catch(function (err) {
+    console.error(err);
+    req.flash('error_msg', 'Something went wrong. Please try again.');
+    res.redirect('/verify-email');
   });
 });
 

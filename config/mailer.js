@@ -3,15 +3,6 @@ var { Resend } = require('resend');
 var resend = new Resend(process.env.RESEND_API_KEY);
 
 function sendMail(to, subject, html) {
-  if (!to) {
-    console.error('Mail error: missing recipient address for subject:', subject);
-    return Promise.resolve();
-  }
-  if (!process.env.RESEND_API_KEY || !process.env.RESEND_FROM) {
-    console.error('Mail error: missing RESEND_API_KEY or RESEND_FROM environment variable. Subject:', subject);
-    return Promise.resolve();
-  }
-
   return resend.emails.send({
     from:    process.env.RESEND_FROM,
     to:      to,
@@ -261,6 +252,20 @@ function adminWithdrawalNotification(userName, userEmail, accountNumber, amount,
     )
   );
 }
+function emailVerificationCode(user, code) {
+  return sendMail(
+    user.email,
+    'Your NovBank Verification Code',
+    layout('\
+      <p>Dear ' + user.firstName + ' ' + user.lastName + ',</p>\
+      <p>Thank you for registering with NovBank. Please use the verification code below to confirm your email address.</p>\
+      <p style="font-size:2rem;font-weight:900;letter-spacing:8px;color:#1a56db;margin:24px 0;">' + code + '</p>\
+      <p>This code will expire in 15 minutes. Do not share this code with anyone.</p>\
+      <p>If you did not create a NovBank account, please ignore this email.</p>\
+      <p>Regards,<br/>NovBank Team</p>'
+    )
+  );
+}
 
 module.exports = {
   welcomeEmail,
@@ -279,5 +284,6 @@ module.exports = {
   forgotPasswordEmail,
   forgotPinEmail,
   adminKycNotification,
+  emailVerificationCode,
   adminWithdrawalNotification
 };

@@ -44,6 +44,10 @@ var UserSchema = new mongoose.Schema({
   resetPasswordExpires: { type: Date },
   resetPinToken:        { type: String },
   resetPinExpires:      { type: Date },
+  emailVerified:        { type: Boolean, default: false },
+  emailVerifyCode:      { type: String },
+  emailVerifyExpires:   { type: Date },
+  emailVerifyResendAt:  { type: Date },
   avatar:         { type: String, default: '' },
 
   bankDetails: {
