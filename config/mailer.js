@@ -73,7 +73,7 @@ function transferSentEmail(user, amount, recipient) {
     layout('\
       <h2>Transfer Sent</h2>\
       <p>Hi ' + user.firstName + ', your transfer completed successfully.</p>\
-      <p><strong>Amount:</strong> -€' + amount.toFixed(2) + '</p>\
+      <p><strong>Amount:</strong> -€' + Number(amount).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</p>\
       <p><strong>To:</strong> ' + recipient + '</p>\
       <p>If you did not authorize this, contact support.</p>' )
   );
@@ -86,7 +86,7 @@ function transferReceivedEmail(user, amount, sender) {
     layout('\
       <h2>Money Received</h2>\
       <p>Hi ' + user.firstName + ', you have received a payment.</p>\
-      <p><strong>Amount:</strong> +€' + amount.toFixed(2) + '</p>\
+      <p><strong>Amount:</strong> +€' + Number(amount).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</p>\
       <p><strong>From:</strong> ' + sender + '</p>\
       <p><strong>Date:</strong> ' + new Date().toLocaleString('en-GB') + '</p>' )
   );
@@ -99,7 +99,7 @@ function wireTransferEmail(user, amount, recipientName, iban, bankName) {
     layout('\
       <h2>Wire Transfer Initiated</h2>\
       <p>Hi ' + user.firstName + ', your wire transfer has been submitted and is pending.</p>\
-      <p><strong>Amount:</strong> -€' + amount.toFixed(2) + '</p>\
+      <p><strong>Amount:</strong> -€' + Number(amount).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</p>\
       <p><strong>Recipient:</strong> ' + recipientName + '</p>\
       <p><strong>IBAN:</strong> ' + iban + '</p>\
       <p><strong>Bank:</strong> ' + bankName + '</p>' )
@@ -113,7 +113,7 @@ function wireTransferSuccessEmail(user, amount, recipientName, iban, bankName) {
     layout('\
       <h2>Wire Transfer Successful ✓</h2>\
       <p>Hi ' + user.firstName + ', your wire transfer was processed successfully.</p>\
-      <p><strong>Amount:</strong> -€' + amount.toFixed(2) + '</p>\
+      <p><strong>Amount:</strong> -€' + Number(amount).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</p>\
       <p><strong>Recipient:</strong> ' + recipientName + '</p>\
       <p><strong>IBAN:</strong> ' + iban + '</p>\
       <p><strong>Destination Bank:</strong> ' + bankName + '</p>' )
@@ -127,7 +127,7 @@ function depositRequestEmail(user, amount) {
     layout('\
       <h2>Deposit Request Received</h2>\
       <p>Hi ' + user.firstName + ', we have received your deposit request.</p>\
-      <p><strong>Amount:</strong> €' + amount.toFixed(2) + '</p>\
+      <p><strong>Amount:</strong> €' + Number(amount).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</p>\
       <p>Status: Pending Verification</p>' )
   );
 }
@@ -139,7 +139,7 @@ function depositApprovedEmail(user, amount) {
     layout('\
       <h2>Deposit Approved</h2>\
       <p>Hi ' + user.firstName + ', your deposit has been approved and credited to your account.</p>\
-      <p><strong>Amount Credited:</strong> +€' + amount.toFixed(2) + '</p>' )
+      <p><strong>Amount Credited:</strong> +€' + Number(amount).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</p>' )
   );
 }
 
@@ -149,7 +149,7 @@ function depositDeclinedEmail(user, amount) {
     'Deposit Declined — NovBank',
     layout('\
       <h2>Deposit Declined</h2>\
-      <p>Hi ' + user.firstName + ', your deposit request of €' + amount.toFixed(2) + ' was not approved.</p>\
+      <p>Hi ' + user.firstName + ', your deposit request of €' + Number(amount).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' was not approved.</p>\
       <p>Please contact support if you have questions.</p>' )
   );
 }
@@ -161,7 +161,7 @@ function loanApprovedEmail(user, amount) {
     layout('\
       <h2>Loan Approved</h2>\
       <p>Hi ' + user.firstName + ', your loan request has been approved and credited.</p>\
-      <p><strong>Amount:</strong> +€' + amount.toFixed(2) + '</p>' )
+      <p><strong>Amount:</strong> +€' + Number(amount).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</p>' )
   );
 }
 
@@ -171,7 +171,7 @@ function loanDeclinedEmail(user, amount, reason) {
     'Loan Request Declined — NovBank',
     layout('\
       <h2>Loan Request Declined</h2>\
-      <p>Hi ' + user.firstName + ', your loan request of €' + amount.toFixed(2) + ' was declined.</p>\
+      <p>Hi ' + user.firstName + ', your loan request of €' + Number(amount).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' was declined.</p>\
       <p><strong>Reason:</strong> ' + reason + '</p>' )
   );
 }
@@ -244,7 +244,7 @@ function adminWithdrawalNotification(userName, userEmail, accountNumber, amount,
         Name: ' + userName + '<br/>\
         Email: ' + userEmail + '<br/>\
         Account Number: ' + accountNumber + '<br/>\
-        Amount: €' + amount.toFixed(2) + '<br/>\
+        Amount: €' + Number(amount).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '<br/>\
         Type: ' + type + '\
       </p>\
       <p>Please log in to the admin panel to review and process this transaction.</p>\
