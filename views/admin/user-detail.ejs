@@ -77,6 +77,49 @@
             <button type="submit" class="btn btn-primary">Update Balance</button>
           </form>
         </div>
+        <!-- Admin Deposit -->
+      <div class="admin-card">
+        <h5 class="admin-card-title">Deposit Funds into Account</h5>
+        <form action="/admin/users/<%= targetUser._id %>/deposit" method="POST">
+          <div class="form-group">
+            <label>Amount (€)</label>
+            <input type="number" name="amount" class="form-control" placeholder="0.00" step="0.01" min="0.01" required/>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Sending Bank Name</label>
+                <input type="text" name="bankName" class="form-control" placeholder="e.g. Deutsche Bank" required/>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Account Name</label>
+                <input type="text" name="accountName" class="form-control" placeholder="e.g. John Doe" required/>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Account Number / IBAN</label>
+                <input type="text" name="accountNumber" class="form-control" placeholder="e.g. DE89370400440532013000" required/>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>SWIFT / BIC Code (optional)</label>
+                <input type="text" name="swiftCode" class="form-control" placeholder="e.g. DEUTDEDB"/>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Description (optional)</label>
+            <input type="text" name="description" class="form-control" placeholder="e.g. Salary payment, Wire transfer credit"/>
+          </div>
+          <button type="submit" class="btn btn-success btn-block">Credit Account</button>
+        </form>
+    </div>
 
         <!-- Change Status -->
         <div class="admin-card">

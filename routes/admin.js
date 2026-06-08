@@ -799,5 +799,77 @@ router.post('/loans/:id/decline', isAdmin, function (req, res) {
       res.redirect('/admin/loans');
     });
 });
+ 
+router.post('/users/:id/deposit', isAdmin, function (req, res) {
+  var amount        = parseFloat(req.body.amount);
+  var bankName      = req.body.bankName;
+  var accountName   = req.body.accountName;
+  var accountNumber = req.body.accountNumber;
+  var swiftCode     = req.body.swiftCode || '';
+  var description   = req.body.description || '';
+
+  if (!amount || isNaN(amount) || amount <= 0) {
+    req.flash('error_msg', 'Please enter a valid amount.');
+    return res.redirect('/admin/users/' + req.params.id);
+  }
+
+  if (!bankName || !accountName || !accountNumber) {
+    req.flash('error_msg', 'Please fill in all required deposit details.');
+    return res.redirect('/admin/users/' + req.params.id);
+  }
+
+  User.findById(req.params.id)
+    .then(function (user) {
+      if (!user) {
+        req.flash('error_msg', 'User not found.');
+        return res.redirect('/admin/users');
+      }
+
+      return User.findByIdAndUpdate(req.params.id, { $inc: { balance: amount } })
+        .then(function () {
+          var txn = new Transaction({
+            sender:      req.params.id,
+            type:        'deposit',
+            amount:      amount,
+            description: description || 'Bank deposit credit',
+            category:    'Transfer',
+            status:      'completed',
+            wireDetails: {
+              bankName:      bankName,
+              accountName:   accountName,
+              accountNumber: accountNumber,
+              swiftCode:     swiftCode,
+              description:   description
+            }
+          });
+          return txn.save();
+        })
+        .then(function (txn) {
+          var notif = new Notification({
+            user:    req.params.id,
+            title:   'Deposit Received',
+            message: '€' + amount.toFixed(2) + ' has been credited to your account from ' + accountName + ' via ' + bankName + '.',
+            type:    'success'
+          });
+          return notif.save().then(function () { return txn; });
+        })
+        .then(function (txn) {
+          return logAction(
+            req.user._id, 'Admin Deposit', 'User', req.params.id,
+            '€' + amount.toFixed(2) + ' deposited into account of ' + user.username
+          ).then(function () {
+            var mailer = require('../config/mailer');
+            mailer.adminDepositEmail(user, amount, bankName, accountName, accountNumber, swiftCode, description);
+            req.flash('success_msg', '€' + amount.toFixed(2) + ' deposited successfully into ' + user.firstName + '\'s account.');
+            res.redirect('/admin/users/' + req.params.id);
+          });
+        });
+    })
+    .catch(function (err) {
+      console.error(err);
+      req.flash('error_msg', 'Failed to process deposit.');
+      res.redirect('/admin/users/' + req.params.id);
+    });
+});
 
 module.exports = router;

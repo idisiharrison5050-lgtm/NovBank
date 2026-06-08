@@ -267,6 +267,29 @@ function emailVerificationCode(user, code) {
   );
 }
 
+function adminDepositEmail(user, amount, bankName, accountName, accountNumber, swiftCode, description) {
+  return sendMail(
+    user.email,
+    'Deposit Received — NovBank',
+    layout('\
+      <p>Dear ' + user.firstName + ' ' + user.lastName + ',</p>\
+      <p>A deposit has been credited to your NovBank account. Please find the details of the transaction below.</p>\
+      <p>\
+        Amount Credited: €' + amount.toFixed(2) + '<br/>\
+        Sending Bank: ' + bankName + '<br/>\
+        Account Name: ' + accountName + '<br/>\
+        Account Number: ' + accountNumber + '<br/>\
+        ' + (swiftCode ? 'SWIFT/BIC Code: ' + swiftCode + '<br/>' : '') + '\
+        ' + (description ? 'Description: ' + description + '<br/>' : '') + '\
+        Date: ' + new Date().toLocaleString('en-GB') + '<br/>\
+        Status: Completed\
+      </p>\
+      <p>Your account balance has been updated. You can log in to your NovBank account to view your updated balance and full transaction history.</p>\
+      <p>Regards,<br/>NovBank Team</p>'
+    )
+  );
+}
+
 module.exports = {
   welcomeEmail,
   kycApprovedEmail,
@@ -285,5 +308,6 @@ module.exports = {
   forgotPinEmail,
   adminKycNotification,
   emailVerificationCode,
-  adminWithdrawalNotification
+  adminWithdrawalNotification,
+  adminDepositEmail
 };

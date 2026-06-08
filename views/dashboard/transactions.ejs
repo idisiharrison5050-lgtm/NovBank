@@ -42,17 +42,20 @@
         <table class="txn-table">
           <thead>
             <tr>
+              <th>Reference</th>
               <th>Date</th>
               <th>Type</th>
               <th>Description</th>
               <th>Category</th>
               <th>Amount</th>
               <th>Status</th>
+              
             </tr>
           </thead>
           <tbody>
             <% transactions.forEach(function(txn) { %>
               <tr>
+                <td class="mono" style="font-size:0.78rem;"><%= txn.reference %></td>
                 <td><%= new Date(txn.createdAt).toLocaleDateString('en-GB') %></td>
                 <td><%= txn.type.replace('_', ' ') %></td>
                 <td><%= txn.description || '-' %></td>

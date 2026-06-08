@@ -4,11 +4,11 @@ var TransactionSchema = new mongoose.Schema({
   sender:   { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   receiver: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
 
-  type: {
+   type: {
     type: String,
     enum: ['internal_transfer', 'wire_transfer', 'deposit', 'withdrawal', 'airtime', 'loan_credit'],
     required: true
-  },
+ },
 
   amount:      { type: Number, required: true },
   currency:    { type: String, default: 'EUR' },
