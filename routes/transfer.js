@@ -120,14 +120,7 @@ router.post('/', isAuth, isPinVerified, function (req, res) {
             senderNotif.save(),
             recipientNotif.save(),
             mailer.transferSentEmail(req.user, amount, recipient.firstName + ' ' + recipient.lastName),
-            mailer.transferReceivedEmail(recipient, amount, req.user.firstName + ' ' + req.user.lastName),
-            mailer.adminWithdrawalNotification(
-              req.user.firstName + ' ' + req.user.lastName,
-              req.user.email,
-              req.user.accountNumber,
-              amount,
-              'Internal Transfer'
-            )
+            mailer.transferReceivedEmail(recipient, amount, req.user.firstName + ' ' + req.user.lastName)
           ]).then(function () {
             req.session.receipt = {
               amount:      txn.amount,
@@ -285,19 +278,9 @@ router.post('/deposit', isAuth, isPinVerified, function (req, res) {
       });
       return notif.save();
     }).then(function () {
-      return Promise.all([
-        mailer.depositRequestEmail(req.user, amount),
-        mailer.adminWithdrawalNotification(
-          req.user.firstName + ' ' + req.user.lastName,
-          req.user.email,
-          req.user.accountNumber,
-          amount,
-          'Deposit Request'
-        )
-      ]);
-    }).then(function () {
+      mailer.depositRequestEmail(req.user, amount);
       req.flash('success_msg', 'Deposit request submitted. Your balance will be updated once we verify the transfer.');
-      res.redirect('/dashboard/transactions');
+      res.redirect('/dashboard');
     }).catch(function (err) {
       console.error(err);
       req.flash('error_msg', 'Something went wrong. Please try again.');
