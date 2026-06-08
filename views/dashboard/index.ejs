@@ -57,7 +57,7 @@
         <div class="balance-card">
           <p class="balance-label">Available Balance</p>
            <p class="balance-amount">
-             € <%= (user.balance !== undefined && user.balance !== null) ? user.balance.toFixed(2) : '0.00' %>
+             € <%= (user.balance !== undefined && user.balance !== null) ? Number(user.balance).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00' %>
            </p>
           <p class="balance-account"><%= user.accountNumber %></p>
           <p class="balance-name"><%= user.firstName %> <%= user.lastName %></p>
