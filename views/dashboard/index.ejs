@@ -117,7 +117,7 @@
         <% spending.forEach(function(item) { %>
           <div class="spending-item">
             <p class="spending-category"><%= item._id %></p>
-            <p class="spending-amount">€ <%= item.total.toFixed(2) %></p>
+            <p class="spending-amount">€ <%= Number(item.total).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></p>
           </div>
         <% }); %>
       </div>
@@ -157,7 +157,7 @@
               </div>
               <div class="txn-right">
                 <p class="<%= txn.type === 'deposit' || txn.type === 'loan_credit' ? 'credit' : (txn.sender && txn.sender._id && txn.sender._id.toString() === user._id.toString() ? 'debit' : 'credit') %>">
-                  <%= txn.type === 'deposit' || txn.type === 'loan_credit' ? '+' : (txn.sender && txn.sender._id && txn.sender._id.toString() === user._id.toString() ? '-' : '+') %>€<%= txn.amount.toFixed(2) %>
+                  <%= txn.type === 'deposit' || txn.type === 'loan_credit' ? '+' : (txn.sender && txn.sender._id && txn.sender._id.toString() === user._id.toString() ? '-' : '+') %>€<%= Number(txn.amount).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %>
                 </p>
                 <span class="txn-status status-<%= txn.status %>"><%= txn.status %></span>
               </div>
