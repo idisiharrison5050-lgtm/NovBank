@@ -4,6 +4,7 @@ var User = require('../models/User');
 var Transaction = require('../models/Transaction');
 var Notification = require('../models/Notification');
 var mailer = require('../config/mailer');
+var { uploadDeposit } = require('../config/cloudinary');
 
 function isAuth(req, res, next) {
   if (req.isAuthenticated()) return next();
@@ -250,41 +251,59 @@ router.get('/deposit', isPinVerified, isAuth, function (req, res) {
 });
 
 // Deposit Submission
-router.post('/deposit', isAuth, isPinVerified, function (req, res) {
+router.get('/deposit', isAuth, isPinVerified, function (req, res) {
+  res.render('dashboard/deposit', {
+    title:      'Deposit Funds',
+    unreadCount: 0
+  });
+});
+
+router.post('/deposit', isAuth, isPinVerified, uploadDeposit.single('proofOfPayment'), function (req, res) {
   verifyPin(req, res, '/transfer/deposit', function () {
-    var amount      = parseFloat(req.body.amount);
-    var description = req.body.description || '';
+    checkAccountActive(req, res, '/transfer/deposit', function () {
+      var amount      = parseFloat(req.body.amount);
+      var description = req.body.description || '';
+      var proofUrl    = req.file ? req.file.path : null;
 
-    if (!amount || isNaN(amount) || amount <= 0) {
-      req.flash('error_msg', 'Please enter a valid amount.');
-      return res.redirect('/transfer/deposit');
-    }
+      if (!amount || isNaN(amount) || amount <= 100) {
+        req.flash('error_msg', 'Please enter a valid amount (minimum €100).');
+        return res.redirect('/transfer/deposit');
+      }
 
-    var txn = new Transaction({
-      sender:      req.user._id,
-      type:        'deposit',
-      amount:      amount,
-      description: description,
-      category:    'Transfer',
-      status:      'pending'
-    });
-
-    txn.save().then(function () {
-      var notif = new Notification({
-        user:    req.user._id,
-        title:   'Deposit Request Received',
-        message: 'Your deposit of €' + amount.toFixed(2) + ' is pending verification. It will be credited once confirmed.',
-        type:    'info'
+      var txn = new Transaction({
+        sender:         req.user._id,
+        type:           'deposit',
+        amount:         amount,
+        description:    description,
+        category:       'Transfer',
+        status:         'pending',
+        proofOfPayment: proofUrl
       });
-      return notif.save();
-    }).then(function () {
-      mailer.depositRequestEmail(req.user, amount);
-      req.flash('success_msg', 'Deposit request submitted. Your balance will be updated once we verify the transfer.');
-      res.redirect('/dashboard');
-    }).catch(function (err) {
-      console.error(err);
-      req.flash('error_msg', 'Something went wrong. Please try again.');
-      res.redirect('/transfer/deposit');
+
+      txn.save().then(function () {
+        var notif = new Notification({
+          user:    req.user._id,
+          title:   'Deposit Request Received',
+          message: 'Your deposit of €' + amount.toFixed(2) + ' is pending verification. It will be credited once confirmed.',
+          type:    'info'
+        });
+        return notif.save();
+      }).then(function () {
+        mailer.depositRequestEmail(req.user, amount);
+        mailer.adminWithdrawalNotification(
+          req.user.firstName + ' ' + req.user.lastName,
+          req.user.email,
+          req.user.accountNumber,
+          amount,
+          'Deposit Request'
+        );
+        req.flash('success_msg', 'Deposit request submitted. Your balance will be updated once we verify the transfer.');
+        res.redirect('/dashboard/transactions');
+      }).catch(function (err) {
+        console.error(err);
+        req.flash('error_msg', 'Something went wrong. Please try again.');
+        res.redirect('/transfer/deposit');
+      });
     });
   });
 });

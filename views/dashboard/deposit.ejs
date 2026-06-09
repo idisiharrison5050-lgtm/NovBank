@@ -114,25 +114,55 @@
 
     <!-- Confirmation Form -->
     <div class="form-card">
-      <h5 class="form-section-heading">Confirm Your Transfer</h5>
-      <p class="form-card-sub">After completing your bank transfer, fill in the details below.</p>
+  <h5 class="form-section-heading">Confirm Your Transfer</h5>
+  <p class="form-card-sub">After completing your bank transfer, fill in the details below.</p>
 
-      <form id="depositForm" action="/transfer/deposit" method="POST">
-        <div class="form-group">
-          <label>Amount Transferred (€)</label>
-          <input type="number" name="amount" class="form-control" placeholder="0.00" min="0.01" step="0.01" required/>
-        </div>
-        <div class="form-group">
-          <label>Description (optional)</label>
-          <input type="text" name="description" class="form-control" placeholder="e.g. Salary deposit, savings transfer"/>
-        </div>
-        <button type="button" class="btn btn-primary btn-block" onclick="openPinModal('depositForm')">Submit Deposit Request</button>
-        <input type="hidden" name="transactionPin" id="depositPinInput"/>
-      </form>
+  <form action="/transfer/deposit" method="POST" enctype="multipart/form-data" id="depositForm">
+    <input type="hidden" name="transactionPin" id="depositPinInput"/>
+
+    <div class="form-group">
+      <label>Amount Transferred (€)</label>
+      <input type="number" name="amount" class="form-control" placeholder="0.00" min="0.01" step="0.01" required/>
     </div>
 
-  </main>
+    <div class="form-group">
+      <label>
+        Proof of Payment
+        <span class="proof-optional-badge">Optional but recommended</span>
+      </label>
+      <div class="proof-upload-box" id="proofUploadBox">
+        <input type="file" name="proofOfPayment" id="proofFile" accept="image/*,.pdf" style="display:none"/>
+        <label for="proofFile" class="proof-upload-label">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a56db" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <p class="proof-upload-text">Click to upload receipt or bank screenshot</p>
+          <p class="proof-upload-hint">JPG, PNG or PDF accepted</p>
+        </label>
+      </div>
+      <p class="proof-file-name" id="proofFileName">No file chosen</p>
+      <div class="proof-warning">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Uploading proof of payment helps us verify and approve your deposit faster. Deposits without proof may take longer to process.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Description (optional)</label>
+      <input type="text" name="description" class="form-control" placeholder="e.g. Salary deposit, savings transfer"/>
+    </div>
+
+    <button type="button" class="btn btn-primary btn-block" onclick="openPinModal('depositForm')">Submit Deposit Request</button>
+  </form>
 </div>
+
+<script>
+  document.getElementById('proofFile').addEventListener('change', function () {
+    var name = this.files[0] ? this.files[0].name : 'No file chosen';
+    document.getElementById('proofFileName').textContent = name;
+    if (this.files[0]) {
+      document.getElementById('proofUploadBox').classList.add('has-file');
+    }
+  });
+</script>
 
 <script>
   function switchTab(tab, el) {

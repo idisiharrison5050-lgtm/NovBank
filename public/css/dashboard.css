@@ -991,3 +991,75 @@ label {
 .txn-clickable:hover td {
   background: #f8faff;
 }
+
+/* ── Proof Upload ─────────────────────────────────── */
+.proof-optional-badge {
+  font-size: 0.72rem;
+  background: #fef3c7;
+  color: #d97706;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 600;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.proof-upload-box {
+  border: 2px dashed #c7d2fe;
+  border-radius: 10px;
+  padding: 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  margin-bottom: 6px;
+}
+
+.proof-upload-box:hover,
+.proof-upload-box.has-file {
+  border-color: #1a56db;
+  background: #f8faff;
+}
+
+.proof-upload-label {
+  cursor: pointer;
+  display: block;
+  margin: 0;
+}
+
+.proof-upload-text {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #334155;
+  margin: 10px 0 4px;
+}
+
+.proof-upload-hint {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.proof-file-name {
+  font-size: 0.78rem;
+  color: #1a56db;
+  margin-bottom: 8px;
+  word-break: break-all;
+}
+
+.proof-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 0.82rem;
+  color: #9a3412;
+  line-height: 1.5;
+}
+
+.proof-warning svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+}

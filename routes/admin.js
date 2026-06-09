@@ -872,4 +872,22 @@ router.post('/users/:id/deposit', isAdmin, function (req, res) {
     });
 });
 
+router.get('/deposits/:id', isAdmin, function (req, res) {
+  Transaction.findById(req.params.id)
+    .populate('sender', 'firstName lastName email username accountNumber phone')
+    .then(function (txn) {
+      if (!txn || txn.type !== 'deposit') {
+        req.flash('error_msg', 'Deposit not found.');
+        return res.redirect('/admin/transactions');
+      }
+      res.render('admin/deposit-detail', {
+        title: 'Deposit Review',
+        txn:   txn
+      });
+    }).catch(function (err) {
+      console.error(err);
+      res.redirect('/admin/transactions');
+    });
+});
+
 module.exports = router;

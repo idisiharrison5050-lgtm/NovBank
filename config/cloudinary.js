@@ -17,6 +17,16 @@ var storage = new CloudinaryStorage({
   }
 });
 
-var upload = multer({ storage: storage });
+var depositStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder:          'novbank-deposits',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'pdf'],
+    transformation:  [{ width: 1200, crop: 'limit' }]
+  }
+});
 
-module.exports = { cloudinary, upload };
+var upload = multer({ storage: storage });
+var uploadDeposit = multer({ storage: depositStorage });
+
+module.exports = { cloudinary, upload, uploadDeposit };

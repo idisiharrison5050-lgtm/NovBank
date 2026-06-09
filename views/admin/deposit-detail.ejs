@@ -1,0 +1,123 @@
+<%- include('partials/admin-header') %>
+<div class="admin-layout">
+  <%- include('partials/admin-sidebar') %>
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div>
+        <a href="/admin/transactions" class="admin-back-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          Back to Transactions
+        </a>
+        <h1 class="admin-page-title">Deposit Review</h1>
+      </div>
+    </div>
+
+    <% if (success_msg && success_msg.length > 0) { %>
+      <div class="alert alert-success"><%= success_msg %></div>
+    <% } %>
+    <% if (error_msg && error_msg.length > 0) { %>
+      <div class="alert alert-danger"><%= error_msg %></div>
+    <% } %>
+
+    <div class="row">
+      <div class="col-md-5">
+
+        <!-- User Info -->
+        <div class="admin-card">
+          <h5 class="admin-card-title">Account Holder</h5>
+          <div class="admin-detail-row">
+            <span class="admin-detail-label">Name</span>
+            <span class="admin-detail-value"><%= txn.sender.firstName %> <%= txn.sender.lastName %></span>
+          </div>
+          <div class="admin-detail-row">
+            <span class="admin-detail-label">Username</span>
+            <span class="admin-detail-value">@<%= txn.sender.username %></span>
+          </div>
+          <div class="admin-detail-row">
+            <span class="admin-detail-label">Email</span>
+            <span class="admin-detail-value"><%= txn.sender.email %></span>
+          </div>
+          <div class="admin-detail-row">
+            <span class="admin-detail-label">Phone</span>
+            <span class="admin-detail-value"><%= txn.sender.phone %></span>
+          </div>
+          <div class="admin-detail-row">
+            <span class="admin-detail-label">Account No.</span>
+            <span class="admin-detail-value mono"><%= txn.sender.accountNumber %></span>
+          </div>
+        </div>
+
+        <!-- Deposit Info -->
+        <div class="admin-card">
+          <h5 class="admin-card-title">Deposit Details</h5>
+          <div class="admin-detail-row">
+            <span class="admin-detail-label">Reference</span>
+            <span class="admin-detail-value mono"><%= txn.reference %></span>
+          </div>
+          <div class="admin-detail-row">
+            <span class="admin-detail-label">Amount</span>
+            <span class="admin-detail-value" style="color:#16a34a;font-weight:700;">€<%= txn.amount.toFixed(2) %></span>
+          </div>
+          <div class="admin-detail-row">
+            <span class="admin-detail-label">Date</span>
+            <span class="admin-detail-value"><%= new Date(txn.createdAt).toLocaleString('en-GB') %></span>
+          </div>
+          <div class="admin-detail-row">
+            <span class="admin-detail-label">Description</span>
+            <span class="admin-detail-value"><%= txn.description || '-' %></span>
+          </div>
+          <div class="admin-detail-row">
+            <span class="admin-detail-label">Status</span>
+            <span class="admin-status-badge status-<%= txn.status %>"><%= txn.status %></span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="col-md-7">
+
+        <!-- Proof of Payment -->
+        <div class="admin-card">
+          <h5 class="admin-card-title">Proof of Payment</h5>
+          <% if (txn.proofOfPayment) { %>
+            <% if (txn.proofOfPayment.endsWith('.pdf')) { %>
+              <div class="deposit-proof-pdf">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1a56db" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <p>PDF Document uploaded</p>
+                <a href="<%= txn.proofOfPayment %>" target="_blank" class="btn btn-primary btn-sm mt-2">View PDF</a>
+              </div>
+            <% } else { %>
+              <img src="<%= txn.proofOfPayment %>" alt="Proof of Payment" class="deposit-proof-img"/>
+              <a href="<%= txn.proofOfPayment %>" target="_blank" class="kyc-doc-view-link">View Full Size</a>
+            <% } %>
+          <% } else { %>
+            <div class="deposit-no-proof">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+              <p>No proof of payment uploaded by user.</p>
+            </div>
+          <% } %>
+        </div>
+
+        <!-- Decision -->
+        <% if (txn.status === 'pending') { %>
+        <div class="admin-card">
+          <h5 class="admin-card-title">Decision</h5>
+          <div class="kyc-decision-row">
+            <form action="/admin/transactions/<%= txn._id %>/approve" method="POST" style="flex:1">
+              <button type="submit" class="btn btn-success btn-block">Approve Deposit</button>
+            </form>
+            <form action="/admin/transactions/<%= txn._id %>/decline" method="POST" style="flex:1" class="ml-3">
+              <div class="form-group">
+                <input type="text" name="reason" class="form-control" placeholder="Decline reason (optional)"/>
+              </div>
+              <button type="submit" class="btn btn-danger btn-block">Decline Deposit</button>
+            </form>
+          </div>
+        </div>
+        <% } %>
+
+      </div>
+    </div>
+  </main>
+</div>
+<%- include('partials/admin-footer') %>

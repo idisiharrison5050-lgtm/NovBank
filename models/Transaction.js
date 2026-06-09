@@ -19,6 +19,8 @@ var TransactionSchema = new mongoose.Schema({
     default: 'Transfer'
   },
 
+  proofOfPayment: { type: String, default: null },
+
   status: {
     type: String,
     enum: ['pending', 'completed', 'failed', 'cancelled'],
@@ -31,6 +33,7 @@ var TransactionSchema = new mongoose.Schema({
     bic:           { type: String },
     bankName:      { type: String },
     bankCountry:   { type: String },
+    proofOfPayment: { type: String, default: null },
     reference:     { type: String }
   },
 

@@ -72,17 +72,25 @@
                   <td><%= txn.category %></td>
                   <td><span class="admin-status-badge status-<%= txn.status %>"><%= txn.status %></span></td>
                   <td>
-                    <% if (txn.status === 'pending') { %>
-                      <form action="/admin/transactions/<%= txn._id %>/approve" method="POST" style="display:inline">
-                        <button class="admin-btn-approve">Approve</button>
-                      </form>
-                      <form action="/admin/transactions/<%= txn._id %>/decline" method="POST" style="display:inline">
-                        <button class="admin-btn-decline">Decline</button>
-                      </form>
-                    <% } else { %>
-                      <span class="admin-processed">Processed</span>
-                    <% } %>
-                  </td>
+                     <% if (txn.status === 'pending') { %>
+                       <% if (txn.type === 'deposit') { %>
+                         <a href="/admin/deposits/<%= txn._id %>" class="admin-btn-view" style="margin-right:4px;">Review</a>
+                       <% } else { %>
+                         <form action="/admin/transactions/<%= txn._id %>/approve" method="POST" style="display:inline">
+                           <button class="admin-btn-approve">Approve</button>
+                         </form>
+                         <form action="/admin/transactions/<%= txn._id %>/decline" method="POST" style="display:inline">
+                           <button class="admin-btn-decline">Decline</button>
+                         </form>
+                       <% } %>
+                     <% } else { %>
+                       <% if (txn.type === 'deposit') { %>
+                         <a href="/admin/deposits/<%= txn._id %>" class="admin-btn-view">View</a>
+                       <% } else { %>
+                         <span class="admin-processed">Processed</span>
+                       <% } %>
+                     <% } %>
+                   </td>                   
                 </tr>
               <% }); %>
             </tbody>
