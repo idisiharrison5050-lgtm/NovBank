@@ -237,9 +237,9 @@ function adminKycNotification(applicantName, applicantEmail, accountNumber) {
 function adminWithdrawalNotification(userName, userEmail, accountNumber, amount, type) {
   return sendMail(
     process.env.ADMIN_EMAIL,
-    'New Withdrawal Request — NovBank',
+    'New ' + type + ' — NovBank',
     layout('\
-      <p>A new withdrawal request has been submitted and requires processing.</p>\
+      <p>A new ' + type.toLowerCase() + ' has been submitted and requires processing.</p>\
       <p>\
         Name: ' + userName + '<br/>\
         Email: ' + userEmail + '<br/>\
