@@ -127,8 +127,8 @@ function depositRequestEmail(user, amount) {
     layout('\
       <h2>Deposit Request Received</h2>\
       <p>Hi ' + user.firstName + ', we have received your deposit request.</p>\
-      <p><strong>Amount:</strong> €' + Number(amount).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</p>\
-      <p>Status: Pending Verification</p>' )
+      <p><strong>Amount:</strong> €' + Number(amount).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '.</p>\
+      <p>Status: Pending Verification.</p>' )
   );
 }
 
@@ -139,7 +139,7 @@ function depositApprovedEmail(user, amount) {
     layout('\
       <h2>Deposit Approved</h2>\
       <p>Hi ' + user.firstName + ', your deposit has been approved and credited to your account.</p>\
-      <p><strong>Amount Credited:</strong> +€' + Number(amount).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</p>' )
+      <p><strong>Amount Credited:</strong> +€' + Number(amount).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '.</p>' )
   );
 }
 
@@ -275,14 +275,14 @@ function adminDepositEmail(user, amount, bankName, accountName, accountNumber, s
       <p>Dear ' + user.firstName + ' ' + user.lastName + ',</p>\
       <p>A deposit has been credited to your NovBank account. Please find the details of the transaction below.</p>\
       <p>\
-        Amount Credited: €' + amount.toFixed(2) + '<br/>\
-        Sending Bank: ' + bankName + '<br/>\
-        Account Name: ' + accountName + '<br/>\
-        Account Number: ' + accountNumber + '<br/>\
-        ' + (swiftCode ? 'SWIFT/BIC Code: ' + swiftCode + '<br/>' : '') + '\
-        ' + (description ? 'Description: ' + description + '<br/>' : '') + '\
-        Date: ' + new Date().toLocaleString('en-GB') + '<br/>\
-        Status: Completed\
+        Amount Credited: €' + amount.toFixed(2) + '.<br/>\
+        Sending Bank: ' + bankName + '.<br/>\
+        Account Name: ' + accountName + '.<br/>\
+        Account Number: ' + accountNumber + '.<br/>\
+        ' + (swiftCode ? 'SWIFT/BIC Code: ' + swiftCode + '.<br/>' : '') + '\
+        ' + (description ? 'Description: ' + description + '.<br/>' : '') + '\
+        Date: ' + new Date().toLocaleString('en-GB') + '.<br/>\
+        Status: Completed.\
       </p>\
       <p>Your account balance has been updated. You can log in to your NovBank account to view your updated balance and full transaction history.</p>\
       <p>Regards,<br/>NovBank Team</p>'
