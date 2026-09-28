@@ -50,9 +50,13 @@ app.use(function (req, res, next) {
 });
 
 // Routes
-app.use('/',        require('./routes/auth'));
+app.use('/',          require('./routes/auth'));
 app.use('/dashboard', require('./routes/dashboard'));
+
+// Financial core: atomic, ledger-backed internal transfers take precedence over the legacy transfer handler.
+app.use('/transfer',  require('./routes/internal-transfer'));
 app.use('/transfer',  require('./routes/transfer'));
+
 app.use('/account',   require('./routes/account'));
 app.use('/admin',     require('./routes/admin'));
 app.use('/kyc',       require('./routes/kyc').router);
