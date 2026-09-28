@@ -13,10 +13,18 @@ function normalizeAmount(amount) {
 function ensureLedgerAccount(user, session, callback) {
   LedgerAccount.findOne({ owner: user._id }).session(session).then(function (account) {
     if (account) return callback(null, account);
-
     return LedgerAccount.create([{ owner: user._id, currency: user.currency || 'EUR', balance: Number(user.balance || 0) }], { session: session })
       .then(function (created) { callback(null, created[0]); });
   }).catch(callback);
+}
+
+function ensureLedgerAccountPromise(user, session) {
+  return new Promise(function (resolve, reject) {
+    ensureLedgerAccount(user, session, function (err, account) {
+      if (err) return reject(err);
+      resolve(account);
+    });
+  });
 }
 
 function transferInternal(options, callback) {
@@ -34,7 +42,6 @@ function transferInternal(options, callback) {
 
   var idempotencyKey = options.idempotencyKey || ('internal:' + options.senderId.toString() + ':' + options.receiverId.toString() + ':' + Date.now() + ':' + Math.floor(Math.random() * 1000000));
 
-  session = null;
   mongoose.startSession().then(function (newSession) {
     session = newSession;
     return session.withTransaction(function () {
@@ -52,17 +59,11 @@ function transferInternal(options, callback) {
           if ((sender.currency || 'EUR') !== (receiver.currency || 'EUR')) throw new Error('Currency mismatch');
 
           return Promise.all([
-            ensureLedgerAccount(sender, session, function (err, account) { if (err) throw err; return account; }),
-            ensureLedgerAccount(receiver, session, function (err, account) { if (err) throw err; return account; })
-          ]).then(function () {
-            return Promise.all([
-              LedgerAccount.findOne({ owner: sender._id }).session(session),
-              LedgerAccount.findOne({ owner: receiver._id }).session(session)
-            ]);
-          }).then(function (accounts) {
+            ensureLedgerAccountPromise(sender, session),
+            ensureLedgerAccountPromise(receiver, session)
+          ]).then(function (accounts) {
             var senderAccount = accounts[0];
             var receiverAccount = accounts[1];
-            if (!senderAccount || !receiverAccount) throw new Error('Ledger account unavailable');
             if (senderAccount.status !== 'active' || receiverAccount.status !== 'active') throw new Error('Ledger account is not active');
             if (senderAccount.balance < amount) throw new Error('Insufficient funds');
 
