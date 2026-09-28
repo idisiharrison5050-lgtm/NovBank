@@ -32,6 +32,11 @@ function verifyPin(req, res, callback) {
   });
 }
 
+router.get('/', isAuth, isPinVerified, function (req, res) {
+  req.session.transferRequestKey = 'WEB-' + req.user._id.toString() + '-' + Date.now() + '-' + Math.floor(Math.random() * 1000000);
+  res.render('dashboard/transfer', { title: 'Send Money', unreadCount: 0 });
+});
+
 router.post('/', isAuth, isPinVerified, function (req, res) {
   verifyPin(req, res, function () {
     var identifier = req.body.identifier;
