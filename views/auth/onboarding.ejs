@@ -1,0 +1,22 @@
+<link rel="stylesheet" href="/css/onboarding.css">
+<div class="nb-onboarding">
+  <div class="nb-onboarding-top"><a href="/" class="nb-onboarding-brand">NovBank</a><span>Secure account opening</span></div>
+  <main class="nb-onboarding-card">
+    <div class="nb-progress"><span class="active"></span><span></span><span></span><span></span></div>
+    <div class="nb-step-label">STEP 1 OF 4</div>
+    <h1>Let's get your account started.</h1>
+    <p class="nb-onboarding-intro">Create your account details first. We'll guide you through the remaining security and verification steps.</p>
+    <form method="POST" action="/register" autocomplete="on">
+      <div class="nb-form-grid">
+        <label>First name<input type="text" name="firstName" required autocomplete="given-name"></label>
+        <label>Last name<input type="text" name="lastName" required autocomplete="family-name"></label>
+      </div>
+      <label>Email address<input type="email" name="email" required autocomplete="email"></label>
+      <label>Phone number<input type="tel" name="phone" required autocomplete="tel"></label>
+      <label>Password<input type="password" name="password" required minlength="10" autocomplete="new-password"><small>Use at least 10 characters with a mixture of letters, numbers and symbols.</small></label>
+      <label class="nb-check"><input type="checkbox" name="terms" required><span>I agree to the applicable terms and privacy notice.</span></label>
+      <button class="nb-onboarding-button" type="submit">Continue</button>
+    </form>
+    <div class="nb-onboarding-footer">Already have an account? <a href="/login">Sign in</a></div>
+  </main>
+</div>
