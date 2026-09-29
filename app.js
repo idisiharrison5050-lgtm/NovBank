@@ -6,18 +6,26 @@ var passport   = require('passport');
 var flash      = require('connect-flash');
 var path       = require('path');
 require('dotenv').config();
+
+var environment = require('./config/environment');
+
+// Fail closed before any session or financial route is initialized.
+var environmentConfig = environment.assertSafeEnvironment();
+
 require('./config/passport')(passport);
 
 var app = express();
 
-mongoose.connect(process.env.MONGO_URI, {
+mongoose.connect(environmentConfig.uri, {
   useNewUrlParser:    true,
   useUnifiedTopology: true,
-  useCreateIndex:     true
+  useCreateIndex:     true,
+  dbName:             environmentConfig.databaseName
 }).then(function () {
-  console.log('MongoDB connected');
+  console.log('MongoDB connected to ' + environmentConfig.databaseName);
 }).catch(function (err) {
   console.log('MongoDB connection error:', err);
+  process.exit(1);
 });
 
 app.set('view engine', 'ejs');
@@ -32,7 +40,12 @@ app.use(session({
   resave:            false,
   saveUninitialized: false,
   store:             new MongoStore({ mongooseConnection: mongoose.connection }),
-  cookie:            { maxAge: 1000 * 60 * 60 * 24 }
+  cookie:            {
+    maxAge: 1000 * 60 * 60 * 24,
+    httpOnly: true,
+    secure: environment.isProduction(),
+    sameSite: 'lax'
+  }
 }));
 
 app.use(passport.initialize());
@@ -52,11 +65,8 @@ app.use(function (req, res, next) {
 // Routes
 app.use('/',          require('./routes/auth'));
 app.use('/dashboard', require('./routes/dashboard'));
-
-// Financial core: atomic, ledger-backed internal transfers take precedence over the legacy transfer handler.
 app.use('/transfer',  require('./routes/internal-transfer'));
 app.use('/transfer',  require('./routes/transfer'));
-
 app.use('/account',   require('./routes/account'));
 app.use('/admin',     require('./routes/admin'));
 app.use('/kyc',       require('./routes/kyc').router);
