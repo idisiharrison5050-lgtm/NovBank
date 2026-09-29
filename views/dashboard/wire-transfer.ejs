@@ -1,5 +1,5 @@
 <%- include('../partials/header') %>
-<link rel="stylesheet" href="/css/dashboard.css"/>
+<link rel="stylesheet" href="/css/dashboard.css"/><link rel="stylesheet" href="/css/funding-premium.css"/>
 <!-- Mobile topbar -->
 <div class="mobile-topbar">
   <span class="mobile-logo">NovBank</span>
@@ -17,10 +17,8 @@
 <div class="dashboard-layout">
   <%- include('../partials/sidebar') %>
 
-  <main class="dashboard-main">
-    <div class="dash-topbar">
-      <h1 class="dash-greeting">Wire Transfer</h1>
-    </div>
+  <main class="dashboard-main nb-wire-page">
+    <div class="nb-funding-head"><div><span class="nb-funding-kicker">INTERNATIONAL PAYMENTS</span><h1>Wire transfer</h1><p>Send funds using recipient bank details and review the information before confirming.</p></div></div>
 
     <div class="form-card">
       <p class="form-card-sub">Available Balance: <strong>€ <%= user.balance.toFixed(2) %></strong></p>
