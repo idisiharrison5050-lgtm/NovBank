@@ -1,10 +1,10 @@
 <%- include('../partials/header') %>
-<link rel="stylesheet" href="/css/kyc.css"/>
+<link rel="stylesheet" href="/css/kyc.css"/><link rel="stylesheet" href="/css/kyc-premium.css"/>
 
-<div class="kyc-wrapper">
+<div class="nb-kyc-shell"><div class="nb-kyc-card">
   <div class="kyc-box">
-    <div class="kyc-logo">NovBank</div>
-    <h2 class="kyc-title">Verify Your Identity</h2>
+    <div class="nb-kyc-brand"><img src="/images/nav.png" width="28" height="28" alt="NovBank">NovBank</div>
+    <h1 class="nb-kyc-title">Verify Your Identity</h1>
     <p class="kyc-subtitle">To access your account, we need to verify your identity. This is required by financial regulations.</p>
 
     <% if (error_msg && error_msg.length > 0) { %>
