@@ -1,7 +1,9 @@
 var express = require('express');
-var router  = express.Router();
-var Card    = require('../models/Card');
+var router = express.Router();
+var Card = require('../models/Card');
 var Notification = require('../models/Notification');
+var CardToken = require('../models/CardToken');
+var crypto = require('crypto');
 
 function isAuth(req, res, next) {
   if (req.isAuthenticated()) return next();
@@ -9,7 +11,6 @@ function isAuth(req, res, next) {
   res.redirect('/login');
 }
 
-// View cards
 router.get('/', isAuth, function (req, res) {
   Card.find({ user: req.user._id }).sort({ createdAt: -1 })
     .then(function (cards) {
@@ -24,16 +25,14 @@ router.get('/', isAuth, function (req, res) {
     });
 });
 
-// Request card
 router.post('/request', isAuth, function (req, res) {
   var cardType = req.body.cardType;
 
-  if (!cardType || !['visa', 'mastercard'].includes(cardType)) {
+  if (!cardType || ['visa', 'mastercard'].indexOf(cardType) === -1) {
     req.flash('error_msg', 'Please select a valid card type.');
     return res.redirect('/cards');
   }
 
-  // Check if user already has this card type pending or active
   Card.findOne({ user: req.user._id, cardType: cardType, status: { $in: ['pending', 'active'] } })
     .then(function (existing) {
       if (existing) {
@@ -42,18 +41,29 @@ router.post('/request', isAuth, function (req, res) {
       }
 
       var card = new Card({
-        user:       req.user._id,
-        cardType:   cardType,
+        user: req.user._id,
+        cardType: cardType,
         cardHolder: req.user.firstName + ' ' + req.user.lastName,
-        status:     'pending'
+        status: 'pending'
       });
 
       return card.save().then(function () {
+        var token = new CardToken({
+          user: req.user._id,
+          card: card._id,
+          providerToken: 'tok_' + crypto.randomBytes(24).toString('hex'),
+          last4: '0000',
+          brand: cardType,
+          status: 'active'
+        });
+        return token.save();
+      }).then(function () {
         var notif = new Notification({
-          user:    req.user._id,
-          title:   'Card Request Received',
+          user: req.user._id,
+          title: 'Card Request Received',
           message: 'Your ' + cardType.charAt(0).toUpperCase() + cardType.slice(1) + ' card request has been received and is pending approval.',
-          type:    'info'
+          type: 'card',
+          severity: 'info'
         });
         return notif.save();
       }).then(function () {
