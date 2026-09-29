@@ -2,136 +2,42 @@
 <link rel="stylesheet" href="/css/dashboard.css"/>
 <link rel="stylesheet" href="/css/cards.css"/>
 
-<div class="mobile-topbar">
-  <span class="mobile-logo">NovBank</span>
-  <button class="hamburger-btn" id="hamburgerBtn">
-    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-  </button>
-</div>
+<div class="mobile-topbar"><span class="mobile-logo">NovBank</span><button class="hamburger-btn" id="hamburgerBtn">☰</button></div>
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
 <div class="dashboard-layout">
   <%- include('../partials/sidebar') %>
-
   <main class="dashboard-main">
-    <div class="dash-topbar">
-      <h1 class="dash-greeting">My Cards</h1>
-    </div>
+    <div class="dash-topbar"><h1 class="dash-greeting">My Cards</h1></div>
+    <% if (success_msg && success_msg.length > 0) { %><div class="alert alert-success"><%= success_msg %></div><% } %>
+    <% if (error_msg && error_msg.length > 0) { %><div class="alert alert-danger"><%= error_msg %></div><% } %>
 
-    <% if (success_msg && success_msg.length > 0) { %>
-      <div class="alert alert-success"><%= success_msg %></div>
-    <% } %>
-    <% if (error_msg && error_msg.length > 0) { %>
-      <div class="alert alert-danger"><%= error_msg %></div>
-    <% } %>
-
-    <!-- Cards Display -->
     <div class="cards-grid">
       <% cards.forEach(function(card) { %>
         <div class="bank-card card-<%= card.cardType %> card-status-<%= card.status %>">
-          <div class="card-top-row">
-            <div class="card-bank-name">NovBank</div>
-            <div class="card-contactless">
-              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.93 4.93a10 10 0 0 0 0 14.14"/><path d="M7.76 7.76a6 6 0 0 0 0 8.48"/><path d="M10.6 10.6a2 2 0 0 0 0 2.83"/></svg>
-            </div>
-          </div>
-
-          <div class="card-chip">
-            <div class="chip-body">
-              <div class="chip-line"></div>
-              <div class="chip-line"></div>
-              <div class="chip-line"></div>
-              <div class="chip-center"></div>
-            </div>
-          </div>
-
-    <div class="card-number" 
-     data-full="<%= card.cardNumber.slice(0,4) %> <%= card.cardNumber.slice(4,8) %> <%= card.cardNumber.slice(8,12) %> <%= card.cardNumber.slice(12,16) %>"
-     data-masked="<%= card.cardNumber.slice(0,4) %> &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull;"
-     data-revealed="false"
-     onclick="toggleCardNumber(this)">
-  <%= card.cardNumber.slice(0,4) %> &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull;
-</div>
-<p class="card-reveal-hint">Tap number to reveal</p>
-
+          <div class="card-top-row"><div class="card-bank-name">NovBank</div><div class="card-contactless">⌁</div></div>
+          <div class="card-chip"><div class="chip-body"><div class="chip-line"></div><div class="chip-line"></div><div class="chip-line"></div><div class="chip-center"></div></div></div>
+          <div class="card-number">•••• •••• •••• <%= card.last4 %></div>
+          <p class="card-reveal-hint">Card details are securely protected</p>
           <div class="card-bottom-row">
-            <div class="card-holder-wrap">
-              <p class="card-label">Card Holder</p>
-              <p class="card-holder-name"><%= card.cardHolder.toUpperCase() %></p>
-            </div>
-            <div class="card-expiry-wrap">
-              <p class="card-label">Expires</p>
-              <p class="card-expiry"><%= card.expiry %></p>
-            </div>
-            <div class="card-network-logo">
-              <% if (card.cardType === 'mastercard') { %>
-                <div class="mc-logo">
-                  <div class="mc-circle mc-red"></div>
-                  <div class="mc-circle mc-orange"></div>
-                </div>
-              <% } else { %>
-                <div class="visa-logo">VISA</div>
-              <% } %>
-            </div>
+            <div class="card-holder-wrap"><p class="card-label">Card Holder</p><p class="card-holder-name"><%= card.cardHolder.toUpperCase() %></p></div>
+            <div class="card-expiry-wrap"><p class="card-label">Expires</p><p class="card-expiry"><%= card.expiry %></p></div>
+            <div class="card-network-logo"><% if (card.cardType === 'mastercard') { %><div class="mc-logo"><div class="mc-circle mc-red"></div><div class="mc-circle mc-orange"></div></div><% } else { %><div class="visa-logo">VISA</div><% } %></div>
           </div>
-
-          <% if (card.status === 'pending') { %>
-            <div class="card-pending-overlay">
-              <span>Pending Approval</span>
-            </div>
-          <% } else if (card.status === 'blocked') { %>
-            <div class="card-blocked-overlay">
-              <span>Blocked</span>
-            </div>
-          <% } %>
+          <% if (card.status === 'pending') { %><div class="card-pending-overlay"><span>Pending Approval</span></div><% } else if (card.status === 'blocked') { %><div class="card-blocked-overlay"><span>Blocked</span></div><% } %>
         </div>
       <% }); %>
     </div>
 
-    <!-- Request Card -->
-    <div class="form-card" style="max-width: 500px; margin-top: 28px;">
+    <div class="form-card" style="max-width:500px;margin-top:28px;">
       <h5 class="form-section-heading">Request a New Card</h5>
       <form action="/cards/request" method="POST">
-        <div class="form-group">
-          <label>Card Type</label>
-          <div class="card-type-select">
-            <label class="card-type-option">
-              <input type="radio" name="cardType" value="visa" required/>
-              <div class="card-type-box">
-                <div class="visa-logo-sm">VISA</div>
-                <span>Visa</span>
-              </div>
-            </label>
-            <label class="card-type-option">
-              <input type="radio" name="cardType" value="mastercard"/>
-              <div class="card-type-box">
-                <div class="mc-logo-sm">
-                  <div class="mc-circle mc-red"></div>
-                  <div class="mc-circle mc-orange"></div>
-                </div>
-                <span>Mastercard</span>
-              </div>
-            </label>
-          </div>
-        </div>
+        <div class="form-group"><label>Card Type</label><div class="card-type-select">
+          <label class="card-type-option"><input type="radio" name="cardType" value="visa" required/><div class="card-type-box"><div class="visa-logo-sm">VISA</div><span>Visa</span></div></label>
+          <label class="card-type-option"><input type="radio" name="cardType" value="mastercard"/><div class="card-type-box"><div class="mc-logo-sm"><div class="mc-circle mc-red"></div><div class="mc-circle mc-orange"></div></div><span>Mastercard</span></div></label>
+        </div></div>
         <button type="submit" class="btn btn-primary btn-block">Request Card</button>
       </form>
     </div>
-
   </main>
 </div>
-
-<script>
-  function toggleCardNumber(el) {
-    var revealed = el.getAttribute('data-revealed') === 'true';
-    if (revealed) {
-      el.innerHTML = el.getAttribute('data-masked');
-      el.setAttribute('data-revealed', 'false');
-    } else {
-      el.innerHTML = el.getAttribute('data-full');
-      el.setAttribute('data-revealed', 'true');
-    }
-  }
-</script>
-
 <%- include('../partials/footer') %>
