@@ -1,87 +1,11 @@
 <%- include('../partials/header') %>
 <link rel="stylesheet" href="/css/dashboard.css"/>
-<!-- Mobile topbar -->
-<div class="mobile-topbar">
-  <span class="mobile-logo">NovBank</span>
-  <button class="hamburger-btn" id="hamburgerBtn">
-    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <line x1="3" y1="6" x2="21" y2="6"/>
-      <line x1="3" y1="12" x2="21" y2="12"/>
-      <line x1="3" y1="18" x2="21" y2="18"/>
-    </svg>
-  </button>
-</div>
-
-<!-- Overlay -->
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-
-<div class="dashboard-layout">
-  <%- include('../partials/sidebar') %>
-
-  <main class="dashboard-main">
-    <div class="dash-topbar">
-      <h1 class="dash-greeting">Transaction History</h1>
-    </div>
-
-    <!-- Filter Bar -->
-    <div class="filter-bar">
-      <a href="?filter=all" class="filter-btn <%= filter === 'all' ? 'active' : '' %>">All</a>
-      <a href="?filter=internal_transfer" class="filter-btn <%= filter === 'internal_transfer' ? 'active' : '' %>">Internal</a>
-      <a href="?filter=wire_transfer" class="filter-btn <%= filter === 'wire_transfer' ? 'active' : '' %>">Wire</a>
-      <a href="?filter=deposit" class="filter-btn <%= filter === 'deposit' ? 'active' : '' %>">Deposits</a>
-    </div>
-
-    <% if (transactions.length === 0) { %>
-      <div class="empty-state">
-        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-        <p>No transactions found.</p>
-      </div>
-    <% } else { %>
-      <div class="txn-table-wrap">
-        <table class="txn-table">
-          <thead>
-            <tr>
-              <th>Reference</th>
-              <th>Date</th>
-              <th>Type</th>
-              <th>Description</th>
-              <th>Category</th>
-              <th>Amount</th>
-              <th>Status</th>
-              
-            </tr>
-          </thead>
-          <tbody>
-            <% transactions.forEach(function(txn) { %>
-              <tr>
-                <td class="mono" style="font-size:0.78rem;"><%= txn.reference %></td>
-                <td><%= new Date(txn.createdAt).toLocaleDateString('en-GB') %></td>
-                <td><%= txn.type.replace('_', ' ') %></td>
-                <td><%= txn.description || '-' %></td>
-                <td><%= txn.category %></td>
-                <td class="<%= txn.type === 'deposit' || txn.type === 'loan_credit' ? 'credit' : (txn.sender && txn.sender._id && txn.sender._id.toString() === user._id.toString() ? 'debit' : 'credit') %>">
-                  <%= txn.type === 'deposit' || txn.type === 'loan_credit' ? '+' : (txn.sender && txn.sender._id && txn.sender._id.toString() === user._id.toString() ? '-' : '+') %>€<%= Number(txn.amount).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %>
-                </td>
-                <td><span class="txn-status status-<%= txn.status %>"><%= txn.status %></span></td>
-              </tr>
-            <% }); %>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Pagination -->
-      <div class="pagination-wrap">
-        <% if (currentPage > 1) { %>
-          <a href="?page=<%= currentPage - 1 %>&filter=<%= filter %>" class="page-btn">Previous</a>
-        <% } %>
-        <span class="page-info">Page <%= currentPage %> of <%= totalPages %></span>
-        <% if (currentPage < totalPages) { %>
-          <a href="?page=<%= currentPage + 1 %>&filter=<%= filter %>" class="page-btn">Next</a>
-        <% } %>
-      </div>
-    <% } %>
-  </main>
-</div>
-
-<%- include('../partials/footer') %>
+<link rel="stylesheet" href="/css/transactions-premium.css"/>
+<div class="mobile-topbar"><span class="mobile-logo">NovBank</span><button class="hamburger-btn" id="hamburgerBtn">☰</button></div><div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="dashboard-layout"><%- include('../partials/sidebar') %><main class="dashboard-main nb-transactions-page">
+  <div class="nb-transactions-head"><div><span>ACCOUNT ACTIVITY</span><h1>Transactions</h1><p>A clear record of money moving in and out of your account.</p></div><a class="nb-export-btn" href="?filter=<%= filter %>&export=csv">Export</a></div>
+  <div class="nb-filter-bar"><a href="?filter=all" class="<%= filter === 'all' ? 'active' : '' %>">All</a><a href="?filter=internal_transfer" class="<%= filter === 'internal_transfer' ? 'active' : '' %>">Internal</a><a href="?filter=wire_transfer" class="<%= filter === 'wire_transfer' ? 'active' : '' %>">Wire</a><a href="?filter=deposit" class="<%= filter === 'deposit' ? 'active' : '' %>">Deposits</a></div>
+  <% if (transactions.length === 0) { %><div class="nb-no-transactions"><strong>No transactions found.</strong><span>When activity occurs on your account, it will appear here.</span></div><% } else { %>
+  <div class="nb-transactions-list"><% transactions.forEach(function(txn) { var outgoing = txn.sender && txn.sender._id && txn.sender._id.toString() === user._id.toString() && txn.type !== 'deposit'; var credit = txn.type === 'deposit' || txn.type === 'loan_credit' || !outgoing; %><div class="nb-transaction-card"><div class="nb-txn-symbol <%= credit ? 'credit-bg' : '' %>"><%= credit ? '+' : '−' %></div><div class="nb-txn-main"><strong><%= txn.description || txn.type.replace(/_/g,' ') %></strong><span><%= txn.category || 'Account activity' %> · <%= new Date(txn.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) %></span><small>Ref <%= txn.reference %></small></div><div class="nb-txn-value"><b class="<%= credit ? 'credit' : 'debit' %>"><%= credit ? '+' : '-' %>€<%= Number(txn.amount).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></b><span class="txn-status status-<%= txn.status %>"><%= txn.status %></span></div></div><% }); %></div>
+  <div class="nb-pagination"><% if (currentPage > 1) { %><a href="?page=<%= currentPage - 1 %>&filter=<%= filter %>">Previous</a><% } %><span>Page <%= currentPage %> of <%= totalPages %></span><% if (currentPage < totalPages) { %><a href="?page=<%= currentPage + 1 %>&filter=<%= filter %>">Next</a><% } %></div><% } %>
+</main></div><%- include('../partials/footer') %>
