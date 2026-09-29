@@ -17,93 +17,42 @@ function isPinVerified(req, res, next) {
 
 router.get('/', isAuth, isPinVerified, kycGate, function (req, res) {
   var userId = req.user._id;
-
-  Transaction.find({ $or: [{ sender: userId }, { receiver: userId }] })
-    .sort({ createdAt: -1 })
-    .limit(6)
-    .populate('sender receiver', 'firstName lastName accountNumber')
-    .then(function (transactions) {
-      return Notification.countDocuments({ user: userId, isRead: false })
-        .then(function (unreadCount) {
-          var thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-          return Transaction.aggregate([
-            {
-              $match: {
-                sender:  userId,
-                status:  'completed',
-                type:    { $in: ['internal_transfer', 'wire_transfer', 'airtime'] },
-                createdAt: { $gte: thirtyDaysAgo }
-              }
-            },
-            { $group: { _id: '$category', total: { $sum: '$amount' } } }
-          ]).then(function (spending) {
-            res.render('dashboard/index', {
-              title:        'Dashboard',
-              transactions: transactions,
-              unreadCount:  unreadCount,
-              spending:     spending
-            });
-          });
-        });
-    })
-    .catch(function (err) {
-      console.error(err);
-      res.render('dashboard/index', {
-        title: 'Dashboard', transactions: [], unreadCount: 0, spending: []
+  Transaction.find({ $or: [{ sender: userId }, { receiver: userId }] }).sort({ createdAt: -1 }).limit(6).populate('sender receiver', 'firstName lastName accountNumber').then(function (transactions) {
+    return Notification.countDocuments({ user: userId, isRead: false }).then(function (unreadCount) {
+      var thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+      return Transaction.aggregate([{ $match: { sender: userId, status: 'completed', type: { $in: ['internal_transfer', 'wire_transfer', 'airtime'] }, createdAt: { $gte: thirtyDaysAgo } } }, { $group: { _id: '$category', total: { $sum: '$amount' } } }]).then(function (spending) {
+        res.render('dashboard/index', { title: 'Dashboard', transactions: transactions, unreadCount: unreadCount, spending: spending });
       });
     });
+  }).catch(function (err) { console.error(err); res.render('dashboard/index', { title: 'Dashboard', transactions: [], unreadCount: 0, spending: [] }); });
 });
 
 router.get('/transactions', isAuth, isPinVerified, kycGate, function (req, res) {
   var userId = req.user._id;
-  var page   = parseInt(req.query.page) || 1;
-  var limit  = 15;
-  var skip   = (page - 1) * limit;
+  var page = parseInt(req.query.page) || 1;
+  var limit = 15;
+  var skip = (page - 1) * limit;
   var filter = req.query.filter || 'all';
-  var query  = { $or: [{ sender: userId }, { receiver: userId }] };
+  var query = { $or: [{ sender: userId }, { receiver: userId }] };
   if (filter !== 'all') query.type = filter;
-
-  Transaction.find(query)
-    .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(limit)
-    .populate('sender receiver', 'firstName lastName accountNumber')
-    .then(function (transactions) {
-      return Transaction.countDocuments(query).then(function (total) {
-        res.render('dashboard/transactions', {
-          title:        'Transaction History',
-          transactions: transactions,
-          currentPage:  page,
-          totalPages:   Math.ceil(total / limit),
-          filter:       filter,
-          unreadCount:  0
-        });
-      });
-    })
-    .catch(function (err) {
-      console.error(err);
-      res.redirect('/dashboard');
+  Transaction.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit).populate('sender receiver', 'firstName lastName accountNumber').then(function (transactions) {
+    return Transaction.countDocuments(query).then(function (total) {
+      res.render('dashboard/transactions', { title: 'Transaction History', transactions: transactions, currentPage: page, totalPages: Math.ceil(total / limit), filter: filter, unreadCount: 0 });
     });
+  }).catch(function (err) { console.error(err); res.redirect('/dashboard'); });
+});
+
+router.get('/transactions/:id', isAuth, isPinVerified, kycGate, function (req, res) {
+  Transaction.findOne({ _id: req.params.id, $or: [{ sender: req.user._id }, { receiver: req.user._id }] }).populate('sender receiver', 'firstName lastName accountNumber').then(function (transaction) {
+    if (!transaction) return res.status(404).render('404', { title: 'Transaction Not Found' });
+    var isCredit = transaction.type === 'deposit' || transaction.type === 'loan_credit' || !(transaction.sender && transaction.sender._id && transaction.sender._id.toString() === req.user._id.toString());
+    res.render('dashboard/transaction-detail', { title: 'Transaction Details', transaction: transaction, isCredit: isCredit, unreadCount: 0 });
+  }).catch(function (err) { console.error(err); res.status(404).render('404', { title: 'Transaction Not Found' }); });
 });
 
 router.get('/notifications', isAuth, isPinVerified, kycGate, function (req, res) {
-  Notification.find({ user: req.user._id }).sort({ createdAt: -1 })
-    .then(function (notifications) {
-      return Notification.updateMany(
-        { user: req.user._id, isRead: false }, { isRead: true }
-      ).then(function () {
-        res.render('dashboard/notifications', {
-          title: 'Notifications', notifications: notifications, unreadCount: 0
-        });
-      });
-    }).catch(function (err) {
-      console.error(err);
-      res.redirect('/dashboard');
-    });
+  Notification.find({ user: req.user._id }).sort({ createdAt: -1 }).then(function (notifications) { return Notification.updateMany({ user: req.user._id, isRead: false }, { isRead: true }).then(function () { res.render('dashboard/notifications', { title: 'Notifications', notifications: notifications, unreadCount: 0 }); }); }).catch(function (err) { console.error(err); res.redirect('/dashboard'); });
 });
 
-router.get('/profile', isAuth, isPinVerified, kycGate, function (req, res) {
-  res.render('dashboard/profile', { title: 'My Profile', unreadCount: 0 });
-});
-
+router.get('/profile', isAuth, isPinVerified, kycGate, function (req, res) { res.render('dashboard/profile', { title: 'My Profile', unreadCount: 0 }); });
 module.exports = router;
