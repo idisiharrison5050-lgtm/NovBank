@@ -1,0 +1,68 @@
+<link rel="stylesheet" href="/css/premium-dashboard.css">
+
+<div class="nb-shell">
+  <main class="nb-container">
+    <header class="nb-header">
+      <div>
+        <div class="nb-eyebrow">PERSONAL BANKING</div>
+        <h1 class="nb-title">Good morning, <%= user && user.firstName ? user.firstName : 'there' %></h1>
+      </div>
+      <div class="nb-muted"><%= new Date().toLocaleDateString() %></div>
+    </header>
+
+    <section class="nb-grid">
+      <article class="nb-card nb-balance">
+        <div class="nb-balance-label">Total available balance</div>
+        <div class="nb-balance-value"><%= typeof user !== 'undefined' && user.balance != null ? user.balance.toLocaleString(undefined, {minimumFractionDigits: 2}) : '0.00' %></div>
+        <div class="nb-balance-label">Primary account</div>
+      </article>
+
+      <div class="nb-stat">
+        <div class="nb-stat-box"><span class="nb-stat-label">Monthly inflow</span><span class="nb-stat-value">₦0.00</span></div>
+        <div class="nb-stat-box"><span class="nb-stat-label">Monthly spending</span><span class="nb-stat-value">₦0.00</span></div>
+        <div class="nb-stat-box"><span class="nb-stat-label">Savings</span><span class="nb-stat-value">₦0.00</span></div>
+      </div>
+
+      <nav class="nb-actions">
+        <a class="nb-action" href="/transfer">Send money</a>
+        <a class="nb-action" href="/deposit">Add money</a>
+        <a class="nb-action" href="/withdraw">Withdraw</a>
+        <a class="nb-action" href="/cards">Cards</a>
+        <a class="nb-action" href="/transactions">Activity</a>
+      </nav>
+
+      <article class="nb-card nb-wide">
+        <div class="nb-card-head"><h2>Recent activity</h2><a href="/transactions">View all</a></div>
+        <% if (typeof transactions !== 'undefined' && transactions.length) { %>
+          <% transactions.slice(0, 6).forEach(function (tx) { %>
+            <div class="nb-transaction">
+              <div class="nb-tx-left"><div class="nb-tx-icon">$</div><div><div class="nb-tx-name"><%= tx.description || tx.type || 'Transaction' %></div><div class="nb-tx-meta"><%= tx.createdAt ? new Date(tx.createdAt).toLocaleString() : '' %></div></div></div>
+              <div class="<%= tx.type === 'deposit' || tx.type === 'credit' ? 'nb-positive' : 'nb-negative' %>"><%= tx.amount != null ? tx.amount.toLocaleString(undefined, {minimumFractionDigits: 2}) : '0.00' %></div>
+            </div>
+          <% }); %>
+        <% } else { %>
+          <div class="nb-muted">Your latest account activity will appear here.</div>
+        <% } %>
+      </article>
+
+      <aside class="nb-card nb-side">
+        <div class="nb-card-head"><h2>Account security</h2></div>
+        <div class="nb-security-row"><span>Identity verification</span><strong>Protected</strong></div>
+        <div class="nb-security-row"><span>Transaction PIN</span><strong>Enabled</strong></div>
+        <div class="nb-security-row"><span>Active sessions</span><strong>Manage</strong></div>
+      </aside>
+
+      <article class="nb-card nb-wide">
+        <div class="nb-card-head"><h2>Spending overview</h2><span class="nb-muted">This month</span></div>
+        <div class="nb-muted">Your spending insights will become more detailed as account activity grows.</div>
+        <div class="nb-progress"><span></span></div>
+      </article>
+
+      <article class="nb-card nb-side">
+        <div class="nb-card-head"><h2>Primary card</h2><a href="/cards">Manage</a></div>
+        <div class="nb-card-number">•••• •••• •••• 0000</div>
+        <div class="nb-muted">NovBank</div>
+      </article>
+    </section>
+  </main>
+</div>
