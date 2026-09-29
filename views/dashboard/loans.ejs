@@ -1,91 +1,52 @@
 <%- include('../partials/header') %>
 <link rel="stylesheet" href="/css/dashboard.css"/>
-
-<div class="mobile-topbar">
-  <span class="mobile-logo">NovBank</span>
-  <button class="hamburger-btn" id="hamburgerBtn">
-    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-  </button>
-</div>
+<link rel="stylesheet" href="/css/loans-premium.css"/>
+<div class="mobile-topbar"><span class="mobile-logo">NovBank</span><button class="hamburger-btn" id="hamburgerBtn">☰</button></div>
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-<div class="dashboard-layout">
-  <%- include('../partials/sidebar') %>
-
-  <main class="dashboard-main">
-    <div class="dash-topbar">
-      <h1 class="dash-greeting">Loan</h1>
-    </div>
-
-    <% if (success_msg && success_msg.length > 0) { %>
-      <div class="alert alert-success"><%= success_msg %></div>
-    <% } %>
-    <% if (error_msg && error_msg.length > 0) { %>
-      <div class="alert alert-danger"><%= error_msg %></div>
-    <% } %>
-
-    <% if (activeLoan) { %>
-      <div class="loan-status-card status-<%= activeLoan.status %>">
-        <div class="loan-status-header">
-          <h4>Active Loan</h4>
-          <span class="txn-status status-<%= activeLoan.status %>"><%= activeLoan.status %></span>
+<div class="dashboard-layout"><%- include('../partials/sidebar') %>
+<main class="dashboard-main nb-loan-page">
+  <section class="nb-loan-hero">
+    <div><span class="nb-loan-kicker">CREDIT & LENDING</span><h1>Loans</h1><p>Explore your current lending position or submit a new request.</p></div>
+    <% if (activeLoan) { %><span class="nb-loan-pill"><%= activeLoan.status === 'approved' ? 'Active facility' : 'Under review' %></span><% } %>
+  </section>
+  <% if (success_msg && success_msg.length > 0) { %><div class="alert alert-success nb-loan-alert"><%= success_msg %></div><% } %>
+  <% if (error_msg && error_msg.length > 0) { %><div class="alert alert-danger nb-loan-alert"><%= error_msg %></div><% } %>
+  <% if (activeLoan) { %>
+    <section class="nb-loan-grid">
+      <div class="nb-loan-card dark">
+        <span class="nb-loan-label">CURRENT FACILITY</span>
+        <div class="nb-loan-amount">€<%= Number(activeLoan.amount || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></div>
+        <span class="nb-loan-status <%= activeLoan.status %>"><%= activeLoan.status %></span>
+        <div class="nb-loan-details" style="margin-top:18px">
+          <div class="nb-loan-detail"><span>Purpose</span><b><%= activeLoan.purpose %></b></div>
+          <div class="nb-loan-detail"><span>Repayment period</span><b><%= activeLoan.repaymentPeriod %> months</b></div>
+          <div class="nb-loan-detail"><span>Applied</span><b><%= new Date(activeLoan.createdAt).toLocaleDateString('en-GB') %></b></div>
+          <div class="nb-loan-detail"><span>Approved</span><b><%= activeLoan.approvedAt ? new Date(activeLoan.approvedAt).toLocaleDateString('en-GB') : 'Pending' %></b></div>
         </div>
-        <p class="loan-amount">€<%= activeLoan.amount.toFixed(2) %></p>
-        <div class="loan-details-grid">
-          <div class="loan-detail-item">
-            <p class="loan-detail-label">Purpose</p>
-            <p class="loan-detail-value"><%= activeLoan.purpose %></p>
-          </div>
-          <div class="loan-detail-item">
-            <p class="loan-detail-label">Repayment Period</p>
-            <p class="loan-detail-value"><%= activeLoan.repaymentPeriod %> months</p>
-          </div>
-          <div class="loan-detail-item">
-            <p class="loan-detail-label">Applied On</p>
-            <p class="loan-detail-value"><%= new Date(activeLoan.createdAt).toLocaleDateString('en-GB') %></p>
-          </div>
-          <% if (activeLoan.approvedAt) { %>
-          <div class="loan-detail-item">
-            <p class="loan-detail-label">Approved On</p>
-            <p class="loan-detail-value"><%= new Date(activeLoan.approvedAt).toLocaleDateString('en-GB') %></p>
-          </div>
-          <% } %>
+        <% if (activeLoan.status === 'pending') { %><p class="nb-loan-note">Your request is under review. A notification will appear in your Secure Inbox when its status changes.</p><% } %>
+      </div>
+      <div class="nb-loan-card">
+        <span class="nb-loan-label">LOAN OVERVIEW</span>
+        <div class="nb-loan-benefits">
+          <div class="nb-loan-benefit"><i>✓</i><div><b>Clear application status</b><span>Keep track of the request currently associated with your account.</span></div></div>
+          <div class="nb-loan-benefit"><i>◷</i><div><b>Flexible terms</b><span>Choose a repayment period that matches your request.</span></div></div>
+          <div class="nb-loan-benefit"><i>⌁</i><div><b>Secure notifications</b><span>Important lending updates are delivered to your account inbox.</span></div></div>
         </div>
-        <% if (activeLoan.status === 'pending') { %>
-          <p class="loan-pending-note">Your loan is under review. You will be notified once a decision is made.</p>
-        <% } %>
       </div>
-    <% } else { %>
-      <div class="form-card">
-        <h5 class="form-section-heading">Request a Loan</h5>
-        <p class="form-card-sub">Fill in the details below to apply for a loan. Loans are subject to approval.</p>
-        <form action="/loans/request" method="POST">
-          <div class="form-group">
-            <label>Loan Amount (€)</label>
-            <input type="number" name="amount" class="form-control" placeholder="e.g. 5000" min="100" step="0.01" required/>
-          </div>
-          <div class="form-group">
-            <label>Purpose</label>
-            <input type="text" name="purpose" class="form-control" placeholder="e.g. Home renovation, Business, Education" required/>
-          </div>
-          <div class="form-group">
-            <label>Repayment Period</label>
-            <select name="repaymentPeriod" class="form-control" required>
-              <option value="" disabled selected>Select period</option>
-              <option value="3">3 months</option>
-              <option value="6">6 months</option>
-              <option value="12">12 months</option>
-              <option value="24">24 months</option>
-              <option value="36">36 months</option>
-              <option value="48">48 months</option>
-              <option value="60">60 months</option>
-            </select>
-          </div>
-          <button type="submit" class="btn btn-primary btn-block">Submit Loan Request</button>
-        </form>
-      </div>
-    <% } %>
-  </main>
-</div>
-
+    </section>
+  <% } else { %>
+    <section class="nb-loan-card nb-loan-form">
+      <span class="nb-loan-label">NEW LOAN REQUEST</span>
+      <h2 style="margin:8px 0 4px;font-size:22px;letter-spacing:-.03em">Tell us what you need</h2>
+      <p style="color:#667085;font-size:12px;margin-bottom:22px">Provide the requested amount, purpose and preferred repayment period. Requests are subject to review.</p>
+      <form action="/loans/request" method="POST">
+        <div><label>Loan amount (€)<input type="number" name="amount" placeholder="5,000.00" min="100" step="0.01" required></label></div>
+        <div><label>Repayment period<select name="repaymentPeriod" required><option value="" disabled selected>Select period</option><option value="3">3 months</option><option value="6">6 months</option><option value="12">12 months</option><option value="24">24 months</option><option value="36">36 months</option><option value="48">48 months</option><option value="60">60 months</option></select></label></div>
+        <div class="full"><label>Purpose<input type="text" name="purpose" placeholder="Business, education, home improvement, working capital..." required></label></div>
+        <div class="full"><button type="submit">Submit loan request</button></div>
+      </form>
+      <p class="nb-loan-disclaimer">Submitting a request does not guarantee approval. Any applicable terms, fees and repayment obligations are presented through the lending process.</p>
+    </section>
+  <% } %>
+</main></div>
 <%- include('../partials/footer') %>
