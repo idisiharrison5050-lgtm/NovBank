@@ -37,7 +37,7 @@ router.get('/transactions', isAuth, isPinVerified, kycGate, function (req, res) 
   if (filter !== 'all') query.type = filter;
   Transaction.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit).populate('sender receiver', 'firstName lastName accountNumber').then(function (transactions) {
     return Transaction.countDocuments(query).then(function (total) {
-      res.render('dashboard/transactions', { title: 'Transaction History', transactions: transactions, currentPage: page, totalPages: Math.ceil(total / limit), filter: filter, unreadCount: 0 });
+      res.render('dashboard/transactions', { title: 'Transactions', transactions: transactions, currentPage: page, totalPages: Math.ceil(total / limit), filter: filter, unreadCount: 0 });
     });
   }).catch(function (err) { console.error(err); res.redirect('/dashboard'); });
 });
@@ -54,5 +54,5 @@ router.get('/notifications', isAuth, isPinVerified, kycGate, function (req, res)
   Notification.find({ user: req.user._id }).sort({ createdAt: -1 }).then(function (notifications) { return Notification.updateMany({ user: req.user._id, isRead: false }, { isRead: true }).then(function () { res.render('dashboard/notifications', { title: 'Notifications', notifications: notifications, unreadCount: 0 }); }); }).catch(function (err) { console.error(err); res.redirect('/dashboard'); });
 });
 
-router.get('/profile', isAuth, isPinVerified, kycGate, function (req, res) { res.render('dashboard/profile', { title: 'My Profile', unreadCount: 0 }); });
+router.get('/profile', isAuth, isPinVerified, kycGate, function (req, res) { res.render('dashboard/profile', { title: 'Account Center', unreadCount: 0 }); });
 module.exports = router;
