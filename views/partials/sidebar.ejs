@@ -5,16 +5,16 @@
   </div>
   <div class="nb-sidebar-section">BANKING</div>
   <nav class="sidebar-nav">
-    <a href="/dashboard" class="sidebar-link <%= req && req.path === '/dashboard' ? 'active' : '' %>"><span class="nb-nav-icon">⌂</span><span>Overview</span></a>
-    <a href="/dashboard/transactions" class="sidebar-link <%= req && req.path.indexOf('/dashboard/transactions') === 0 ? 'active' : '' %>"><span class="nb-nav-icon">≡</span><span>Transactions</span></a>
-    <a href="/transfer" class="sidebar-link <%= req && req.path === '/transfer' ? 'active' : '' %>"><span class="nb-nav-icon">↗</span><span>Send money</span></a>
-    <a href="/transfer/deposit" class="sidebar-link <%= req && req.path.indexOf('/transfer/deposit') === 0 ? 'active' : '' %>"><span class="nb-nav-icon">↓</span><span>Add money</span></a>
-    <a href="/transfer/wire" class="sidebar-link <%= req && req.path.indexOf('/transfer/wire') === 0 ? 'active' : '' %>"><span class="nb-nav-icon">⇄</span><span>Wire transfer</span></a>
-    <a href="/cards" class="sidebar-link <%= req && req.path.indexOf('/cards') === 0 ? 'active' : '' %>"><span class="nb-nav-icon">▣</span><span>Cards</span></a>
-    <a href="/loans" class="sidebar-link <%= req && req.path.indexOf('/loans') === 0 ? 'active' : '' %>"><span class="nb-nav-icon">₦</span><span>Loans</span></a>
+    <a href="/dashboard" class="sidebar-link <%= title === 'Dashboard' ? 'active' : '' %>"><span class="nb-nav-icon">⌂</span><span>Overview</span></a>
+    <a href="/dashboard/transactions" class="sidebar-link <%= title === 'Transactions' || title === 'Transaction' ? 'active' : '' %>"><span class="nb-nav-icon">≡</span><span>Transactions</span></a>
+    <a href="/transfer" class="sidebar-link <%= title === 'Send Money' ? 'active' : '' %>"><span class="nb-nav-icon">↗</span><span>Send money</span></a>
+    <a href="/transfer/deposit" class="sidebar-link <%= title === 'Deposit Funds' ? 'active' : '' %>"><span class="nb-nav-icon">↓</span><span>Add money</span></a>
+    <a href="/transfer/wire" class="sidebar-link <%= title === 'Wire Transfer' ? 'active' : '' %>"><span class="nb-nav-icon">⇄</span><span>Wire transfer</span></a>
+    <a href="/cards" class="sidebar-link <%= title === 'Cards' ? 'active' : '' %>"><span class="nb-nav-icon">▣</span><span>Cards</span></a>
+    <a href="/loans" class="sidebar-link <%= title === 'Loan' ? 'active' : '' %>"><span class="nb-nav-icon">₦</span><span>Loans</span></a>
     <div class="nb-sidebar-section nb-sidebar-section-spaced">ACCOUNT</div>
-    <a href="/dashboard/profile" class="sidebar-link <%= req && req.path.indexOf('/dashboard/profile') === 0 ? 'active' : '' %>"><span class="nb-nav-icon">◎</span><span>Account center</span></a>
-    <a href="/dashboard/notifications" class="sidebar-link <%= req && req.path.indexOf('/dashboard/notifications') === 0 ? 'active' : '' %>"><span class="nb-nav-icon">◌</span><span>Secure inbox</span><% if (typeof unreadCount !== 'undefined' && unreadCount > 0) { %><em class="nb-nav-count"><%= unreadCount %></em><% } %></a>
+    <a href="/dashboard/profile" class="sidebar-link <%= title === 'Account Center' ? 'active' : '' %>"><span class="nb-nav-icon">◎</span><span>Account center</span></a>
+    <a href="/dashboard/notifications" class="sidebar-link <%= title === 'Notifications' ? 'active' : '' %>"><span class="nb-nav-icon">◌</span><span>Secure inbox</span><% if (typeof unreadCount !== 'undefined' && unreadCount > 0) { %><em class="nb-nav-count"><%= unreadCount %></em><% } %></a>
   </nav>
   <a href="/logout" class="sidebar-logout nb-sidebar-logout"><span class="nb-nav-icon">↪</span><span>Sign out</span></a>
 </aside>
