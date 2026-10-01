@@ -323,3 +323,31 @@ if (pinModalEl) {
   });
 })();
 </script>
+<nav class="nb-mobile-bottom-nav" aria-label="Primary mobile navigation">
+  <a href="/dashboard" class="nb-mobile-nav-link active" data-nav-path="/dashboard" aria-label="Home">
+    <svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5.5 9.5V21h13V9.5"></path><path d="M9.5 21v-6h5v6"></path></svg><span>Home</span>
+  </a>
+  <a href="/transfer" class="nb-mobile-nav-link" data-nav-path="/transfer" aria-label="Payments">
+    <svg viewBox="0 0 24 24"><path d="M4 7h16"></path><path d="M7 4v6"></path><path d="M4 17h16"></path><path d="M17 14v6"></path></svg><span>Payments</span>
+  </a>
+  <a href="/cards" class="nb-mobile-nav-link" data-nav-path="/cards" aria-label="Cards">
+    <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 10h18"></path><path d="M7 15h3"></path></svg><span>Cards</span>
+  </a>
+  <a href="/dashboard/profile" class="nb-mobile-nav-link" data-nav-path="/dashboard/profile" aria-label="Profile">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 21c.8-4 3.1-6 7-6s6.2 2 7 6"></path></svg><span>Profile</span>
+  </a>
+</nav>
+<script>
+(function () {
+  var links = document.querySelectorAll('.nb-mobile-nav-link');
+  var path = window.location.pathname;
+  Array.prototype.forEach.call(links, function (link) {
+    var target = link.getAttribute('data-nav-path');
+    if (target === '/dashboard') {
+      link.classList.toggle('active', path === '/dashboard' || path === '/');
+    } else {
+      link.classList.toggle('active', path === target || path.indexOf(target + '/') === 0);
+    }
+  });
+})();
+</script>
