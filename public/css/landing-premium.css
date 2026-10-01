@@ -251,8 +251,7 @@
     transform:scale(1.04);
   }
   .nb-hero-backdrop:after{
-    background:
-      linear-gradient(180deg,rgba(3,10,20,.46) 0%,rgba(3,10,20,.34) 28%,rgba(3,10,20,.60) 58%,rgba(3,10,20,.93) 100%);
+    background:rgba(3,10,20,.62);
   }
   .nb-hero-inner{text-align:center}
   .nb-hero h1{
