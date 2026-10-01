@@ -4,8 +4,9 @@
   <header class="nb-site-nav">
     <a class="nb-brand" href="/">NovBank</a>
     <nav class="nb-nav-links"><a href="#products">Products</a><a href="#security">Security</a><a href="#business">Business</a><a href="#support">Support</a></nav>
-    <div class="nb-nav-actions"><a class="nb-btn" href="/login">Sign in</a><a class="nb-btn nb-btn-primary" href="/register">Open an account</a></div>
+    <div class="nb-nav-actions"><a class="nb-btn" href="/login">Sign in</a><a class="nb-btn nb-btn-primary" href="/register">Open an account</a></div><button class="nb-mobile-menu-btn" id="nbMobileMenuBtn" type="button" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
   </header>
+  <div class="nb-mobile-menu" id="nbMobileMenu"><a href="#products">Products</a><a href="#security">Security</a><a href="#business">Business</a><a href="#support">Support</a><a href="/login">Sign in</a><a class="nb-mobile-menu-primary" href="/register">Open an account</a></div>
 
   <section class="nb-hero"><div class="nb-hero-visual"><img src="/images/landing-hero.jpg" alt="NovBank banking experience"></div>
     <div class="nb-hero-inner">
@@ -44,3 +45,23 @@
   <section class="nb-cta" id="support"><div class="nb-cta-box"><h2>Build your financial future with confidence.</h2><p>Explore the NovBank experience and discover a more connected way to manage your finances.</p><a class="nb-btn nb-btn-primary" href="/register">Open an account</a></div></section>
   <footer class="nb-footer"><div class="nb-footer-inner"><a class="nb-brand" href="/">NovBank</a><small>© <%= new Date().getFullYear() %> NovBank. All rights reserved.</small></div></footer>
 </div>
+
+<script>
+(function () {
+  var button = document.getElementById('nbMobileMenuBtn');
+  var menu = document.getElementById('nbMobileMenu');
+  if (!button || !menu) return;
+  button.addEventListener('click', function () {
+    var open = menu.classList.toggle('open');
+    button.classList.toggle('open', open);
+    button.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  menu.querySelectorAll('a').forEach(function (link) {
+    link.addEventListener('click', function () {
+      menu.classList.remove('open');
+      button.classList.remove('open');
+      button.setAttribute('aria-expanded', 'false');
+    });
+  });
+})();
+</script>
