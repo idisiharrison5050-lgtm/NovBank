@@ -23,7 +23,7 @@ mongoose.connect(environmentConfig.uri, {
   useCreateIndex:     true,
   dbName:             environmentConfig.databaseName
 }).then(function () {
-  console.log('MongoDB connected to ' + environmentConfig.databaseName);
+  console.log('MongoDB connected');
 }).catch(function (err) {
   console.log('MongoDB connection error:', err);
   process.exit(1);
