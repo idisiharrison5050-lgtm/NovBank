@@ -156,4 +156,11 @@
     <small>Loading secure experience</small>
   </div>
 </div>
+<script>
+(function () {
+  var loader = document.getElementById('nbNavigationLoader');
+  if (!loader) return;
+  window.setTimeout(function () { loader.classList.remove('is-active'); }, 1800);
+})();
+</script>
 <body>
