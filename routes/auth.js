@@ -91,7 +91,10 @@ router.post('/login', isGuest, function (req, res, next) {
         return res.redirect('/verify-email');
       }
       req.session.pinVerified = false;
-      res.redirect('/pin');
+      req.session.save(function (sessionErr) {
+        if (sessionErr) return next(sessionErr);
+        res.redirect('/pin');
+      });
     });
     })(req, res, next);
   });
