@@ -1,38 +1,28 @@
 <%- include('../partials/header') %>
 <link rel="stylesheet" href="/css/auth.css"/>
 
-<div class="auth-wrapper">
+<div class="auth-wrapper nb-auth-premium">
   <div class="auth-box">
-    <div class="auth-logo">NovBank</div>
+    <div class="auth-brand-row"><div class="auth-logo">NovBank</div><span>PRIVATE BANKING</span></div>
+    <div class="auth-kicker">SECURE ACCESS</div>
     <h2 class="auth-title">Welcome back</h2>
-    <p class="auth-subtitle">Sign in to your account</p>
+    <p class="auth-subtitle">Sign in to securely access your account, cards and banking activity.</p>
 
-    <% if (success_msg.length > 0) { %>
-      <div class="alert alert-success"><%= success_msg %></div>
-    <% } %>
-    <% if (error_msg.length > 0) { %>
-      <div class="alert alert-danger"><%= error_msg %></div>
-    <% } %>
-    <% if (error.length > 0) { %>
-      <div class="alert alert-danger"><%= error %></div>
-    <% } %>
+    <% if (success_msg.length > 0) { %><div class="alert alert-success"><%= success_msg %></div><% } %>
+    <% if (error_msg.length > 0) { %><div class="alert alert-danger"><%= error_msg %></div><% } %>
+    <% if (error.length > 0) { %><div class="alert alert-danger"><%= error %></div><% } %>
 
     <form action="/login" method="POST">
-      <div class="form-group">
-        <label>Email or Username</label>
-        <input type="text" name="identifier" class="form-control" placeholder="Enter email or username" required/>
-      </div>
-      <div class="form-group">
-        <label>Password</label>
-        <input type="password" name="password" class="form-control" placeholder="Enter password" required/>
-      </div>
+      <div class="form-group"><label>Email or Username</label><input type="text" name="identifier" class="form-control" placeholder="Enter email or username" autocomplete="username" required/></div>
+      <div class="form-group"><div class="auth-label-row"><label>Password</label><a href="/forgot-password">Forgot?</a></div><input type="password" name="password" id="loginPassword" class="form-control" placeholder="Enter password" autocomplete="current-password" required/></div>
       <div class="g-recaptcha mb-3" data-sitekey="<%= recaptchaSiteKey %>"></div>
-       <button type="submit" class="btn btn-primary btn-block btn-auth">Sign In</button>
+      <button type="submit" class="btn btn-primary btn-block btn-auth">Sign in securely</button>
     </form>
 
-    <p class="auth-footer-text">Don't have an account? <a href="/register">Create one</a></p>
-    <p class="auth-footer-text"><a href="/forgot-password">Forgot your password?</a></p>
-<p class="auth-footer-text"><a href="/forgot-pin">Forgot your PIN?</a></p>
+    <div class="auth-security-strip"><span>✓</span><div><strong>Protected account access</strong><small>Additional verification may be required before entering your banking workspace.</small></div></div>
+    <p class="auth-footer-text">Don't have an account? <a href="/register">Create your account</a></p>
+    <p class="auth-footer-text"><a href="/forgot-pin">Reset transaction PIN</a></p>
+    <p class="auth-home-link"><a href="/">← Back to NovBank</a></p>
   </div>
 </div>
 
