@@ -39,16 +39,6 @@ router.post('/recharge', isAuth, checkAccountActive, function (req, res) {
   var network = req.body.network;
   var amount  = parseFloat(req.body.amount);
 
-  if (req.user.accountStatus !== 'active') {
-  req.flash('error_msg', 'Your account is suspended or closed. You cannot buy airtime.');
-  return res.redirect('/airtime');
-}
-
-  if (req.user.accountStatus !== 'active') {
-  req.flash('error_msg', 'Your account is suspended or closed. You cannot make transactions.');
-  return res.redirect('/airtime');
-}
-
   if (!phone || !network || !amount) {
     req.flash('error_msg', 'Please fill in all fields.');
     return res.redirect('/airtime');
