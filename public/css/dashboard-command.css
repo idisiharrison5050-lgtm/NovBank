@@ -22,3 +22,29 @@
 .nb-portfolio-metrics small{font-size:9px;color:#98a2b3}
 @media(max-width:850px){.nb-portfolio-main{grid-template-columns:1fr}.nb-portfolio-metrics{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:520px){.nb-portfolio-overview{padding:20px;border-radius:20px}.nb-portfolio-top{align-items:flex-start;flex-direction:column;gap:12px}.nb-portfolio-top h2{font-size:24px}.nb-portfolio-main{gap:9px}.nb-portfolio-total{min-height:175px;padding:20px}.nb-portfolio-total>strong{font-size:28px}.nb-portfolio-metrics{grid-template-columns:1fr;gap:8px}.nb-portfolio-metrics>div{padding:14px;min-height:76px}.nb-portfolio-metrics strong{font-size:18px;margin:6px 0 2px}}
+
+.nb-cashflow-overview{margin:15px 0;padding:24px}
+.nb-cashflow-summary{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:10px;color:#98a2b3}
+.nb-cashflow-summary b{color:#039855;font-size:12px}
+.nb-cashflow-summary strong{color:#d92d20;font-size:12px;margin-left:8px}
+.nb-cashflow-chart{height:190px;display:grid;grid-template-columns:repeat(7,1fr);gap:12px;align-items:end;border-bottom:1px solid #e4e7ec;padding:18px 4px 0}
+.nb-cashflow-day{height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:8px}
+.nb-cashflow-columns{height:145px;width:100%;max-width:42px;display:flex;align-items:end;justify-content:center;gap:4px}
+.nb-cashflow-columns i,.nb-cashflow-columns b{display:block;width:9px;min-height:4px;border-radius:5px 5px 2px 2px}
+.nb-cashflow-columns i{background:#155eef}.nb-cashflow-columns b{background:#d0d5dd}
+.nb-cashflow-day small{font-size:9px;color:#667085}
+.nb-cashflow-legend{display:flex;align-items:center;gap:18px;margin-top:14px;font-size:9px;color:#667085}
+.nb-cashflow-legend span{display:flex;align-items:center;gap:5px}
+.nb-cashflow-legend i,.nb-cashflow-legend b{width:7px;height:7px;border-radius:50%;display:inline-block}
+.nb-cashflow-legend i{background:#155eef}.nb-cashflow-legend b{background:#d0d5dd}
+.nb-cashflow-legend a{margin-left:auto;color:#155eef;font-weight:800;text-decoration:none}
+@media(max-width:600px){
+  .nb-cashflow-overview{padding:18px;margin:12px 0}
+  .nb-cashflow-overview .nb-panel-heading{display:block}
+  .nb-cashflow-summary{margin-top:12px}
+  .nb-cashflow-chart{height:155px;gap:5px;padding-top:12px}
+  .nb-cashflow-columns{height:115px}
+  .nb-cashflow-columns i,.nb-cashflow-columns b{width:7px}
+  .nb-cashflow-legend{gap:10px;flex-wrap:wrap}
+  .nb-cashflow-legend a{width:100%;margin-left:0;margin-top:2px}
+}
