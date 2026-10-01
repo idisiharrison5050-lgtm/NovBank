@@ -27,7 +27,7 @@ router.get('/', isAuth, function (req, res) {
           expiry: token && token.expMonth && token.expYear ? String(token.expMonth).padStart(2, '0') + '/' + String(token.expYear).slice(-2) : (card.expiry || '—')
         };
       });
-      res.render('dashboard/cards', { title: 'My Cards', cards: safeCards, unreadCount: 0 });
+      res.render('dashboard/cards', { title: 'Cards', cards: safeCards, unreadCount: 0 });
     });
   }).catch(function (err) {
     console.error(err);
