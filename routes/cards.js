@@ -83,4 +83,73 @@ router.post('/request', isAuth, function (req, res) {
   });
 });
 
+
+function pinGate(req, res, next) {
+  if (req.session.pinVerified) return next();
+  req.flash('error_msg', 'Please verify your transaction PIN first.');
+  return res.redirect('/pin');
+}
+
+router.post('/:id/freeze', isAuth, pinGate, function (req, res) {
+  Card.findOne({ _id: req.params.id, user: req.user._id }).then(function (card) {
+    if (!card) {
+      req.flash('error_msg', 'Card not found.');
+      return res.redirect('/cards');
+    }
+    if (card.status === 'pending') {
+      req.flash('error_msg', 'A pending card cannot be frozen.');
+      return res.redirect('/cards');
+    }
+    card.status = 'blocked';
+    card.frozenAt = new Date();
+    return card.save().then(function () {
+      return new Notification({
+        user: req.user._id,
+        title: 'Card frozen',
+        message: 'Your ' + card.cardType.toUpperCase() + ' card ending in ' + (card.cardNumber ? card.cardNumber.slice(-4) : '0000') + ' has been frozen.',
+        type: 'card',
+        severity: 'warning'
+      }).save();
+    }).then(function () {
+      req.flash('success_msg', 'Your card has been frozen.');
+      res.redirect('/cards');
+    });
+  }).catch(function (err) {
+    console.error(err);
+    req.flash('error_msg', 'Unable to update card status.');
+    res.redirect('/cards');
+  });
+});
+
+router.post('/:id/unfreeze', isAuth, pinGate, function (req, res) {
+  Card.findOne({ _id: req.params.id, user: req.user._id }).then(function (card) {
+    if (!card) {
+      req.flash('error_msg', 'Card not found.');
+      return res.redirect('/cards');
+    }
+    if (card.status !== 'blocked') {
+      req.flash('error_msg', 'This card is not frozen.');
+      return res.redirect('/cards');
+    }
+    card.status = 'active';
+    card.frozenAt = null;
+    return card.save().then(function () {
+      return new Notification({
+        user: req.user._id,
+        title: 'Card unfrozen',
+        message: 'Your ' + card.cardType.toUpperCase() + ' card is active again.',
+        type: 'card',
+        severity: 'info'
+      }).save();
+    }).then(function () {
+      req.flash('success_msg', 'Your card is active again.');
+      res.redirect('/cards');
+    });
+  }).catch(function (err) {
+    console.error(err);
+    req.flash('error_msg', 'Unable to update card status.');
+    res.redirect('/cards');
+  });
+});
+
 module.exports = router;
