@@ -1,0 +1,24 @@
+<%- include('../partials/header') %>
+<link rel="stylesheet" href="/css/dashboard.css"/><link rel="stylesheet" href="/css/funding-premium.css"/>
+<div class="mobile-topbar"><span class="mobile-logo">NovBank</span><button class="hamburger-btn" id="hamburgerBtn">☰</button></div><div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="dashboard-layout"><%- include('../partials/sidebar') %><main class="dashboard-main nb-withdraw-page">
+  <div class="nb-funding-head"><div><span class="nb-funding-kicker">MOVE MONEY OUT</span><h1>Withdraw funds</h1><p>Request a withdrawal to your bank account. Your available balance is debited immediately and the request remains pending until operations completes it.</p></div><div class="nb-funding-balance"><span>AVAILABLE BALANCE</span><b>€ <%= Number(user.balance || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></b></div></div>
+  <% if (success_msg.length > 0) { %><div class="alert alert-success"><%= success_msg %></div><% } %><% if (error_msg.length > 0) { %><div class="alert alert-danger"><%= error_msg %></div><% } %>
+  <div class="nb-withdraw-grid">
+    <section class="nb-funding-panel nb-withdraw-form">
+      <div class="nb-withdraw-section"><span>01</span><div><h2>Destination account</h2><p>Enter the bank account that should receive your funds.</p></div></div>
+      <form action="/transfer/withdraw" method="POST" id="withdrawForm">
+        <div class="form-group"><label>Account holder</label><input class="form-control" name="recipientName" placeholder="Full name" required></div>
+        <div class="form-group"><label>Bank name</label><input class="form-control" name="bankName" placeholder="Bank name" required></div>
+        <div class="form-group"><label>Account number / IBAN</label><input class="form-control" name="accountNumber" placeholder="Account number or IBAN" required></div>
+        <div class="form-group"><label>Bank country</label><input class="form-control" name="bankCountry" placeholder="Country" required></div>
+        <div class="form-group"><label>Amount (€)</label><input class="form-control" name="amount" type="number" min="0.01" step="0.01" placeholder="0.00" required></div>
+        <div class="form-group"><label>Reference <span class="optional">OPTIONAL</span></label><input class="form-control" name="reference" placeholder="Payment reference"></div>
+        <div class="form-group"><label>Note <span class="optional">OPTIONAL</span></label><input class="form-control" name="description" placeholder="Reason for withdrawal"></div>
+        <input type="hidden" name="transactionPin" id="withdrawPinInput">
+        <button type="button" class="nb-send-button" onclick="openPinModal('withdrawForm')">Review withdrawal</button>
+      </form>
+    </section>
+    <aside class="nb-wire-aside nb-withdraw-side"><span>WITHDRAWAL PROTECTION</span><h2>Your PIN protects this request.</h2><p>The withdrawal is recorded as a pending transaction. If operations declines it, the reserved amount is returned through the ledger.</p><div class="nb-withdraw-steps"><div><b>1</b><span>Confirm details</span></div><div><b>2</b><span>Enter PIN</span></div><div><b>3</b><span>Operations processes request</span></div></div></aside>
+  </div>
+</main></div><%- include('../partials/footer') %>
