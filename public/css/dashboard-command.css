@@ -48,3 +48,29 @@
   .nb-cashflow-legend{gap:10px;flex-wrap:wrap}
   .nb-cashflow-legend a{width:100%;margin-left:0;margin-top:2px}
 }
+
+.nb-dashboard-command-row{display:grid;grid-template-columns:1.35fr .65fr;gap:15px;margin:15px 0}
+.nb-attention-panel,.nb-account-snapshot{margin:0}
+.nb-attention-list{display:grid;gap:0}
+.nb-attention-item{display:grid;grid-template-columns:38px minmax(0,1fr) auto;gap:12px;align-items:center;padding:14px 0;border-bottom:1px solid #f0f2f5;text-decoration:none;color:#101828}
+.nb-attention-item:last-child{border-bottom:0}
+.nb-attention-icon{width:36px;height:36px;border-radius:11px;background:#eef4ff;display:grid;place-items:center;color:#155eef}
+.nb-attention-icon i{width:8px;height:8px;border-radius:50%;background:#12b76a}
+.nb-attention-icon.shield{background:#ecfdf3;color:#039855;font-weight:900}
+.nb-attention-icon.inbox{background:#fff7ed;color:#ea580c;font-size:9px}
+.nb-attention-item b{display:block;font-size:12px}
+.nb-attention-item small{display:block;color:#667085;font-size:10px;line-height:1.45;margin-top:3px}
+.nb-attention-item em{font-style:normal;color:#155eef;font-size:10px;font-weight:800;white-space:nowrap}
+.nb-account-snapshot{padding-bottom:18px}
+.nb-snapshot-row{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:14px 0;border-bottom:1px solid #f0f2f5;font-size:11px}
+.nb-snapshot-row>span{color:#667085}.nb-snapshot-row>b{font-size:11px}
+.nb-snapshot-row b i{display:inline-block;width:6px;height:6px;border-radius:50%;background:#12b76a;margin-right:5px}
+.nb-snapshot-link{display:inline-block;margin-top:16px;color:#155eef;font-size:11px;font-weight:800;text-decoration:none}
+@media(max-width:850px){.nb-dashboard-command-row{grid-template-columns:1fr}}
+@media(max-width:600px){
+  .nb-dashboard-command-row{gap:10px;margin:12px 0}
+  .nb-attention-item{grid-template-columns:34px minmax(0,1fr) auto;gap:9px;padding:12px 0}
+  .nb-attention-icon{width:32px;height:32px;border-radius:9px}
+  .nb-attention-item b{font-size:11px}.nb-attention-item small{font-size:9px}
+  .nb-attention-item em{font-size:9px}
+}
