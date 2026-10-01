@@ -21,8 +21,47 @@ router.get('/', isAuth, isPinVerified, kycGate, function (req, res) {
   Transaction.find({ $or: [{ sender: userId }, { receiver: userId }] }).sort({ createdAt: -1 }).limit(6).populate('sender receiver', 'firstName lastName accountNumber').then(function (transactions) {
     return Notification.countDocuments({ user: userId, isRead: false }).then(function (unreadCount) {
       var thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-      return Transaction.aggregate([{ $match: { sender: userId, status: 'completed', type: { $in: ['internal_transfer', 'wire_transfer', 'airtime'] }, createdAt: { $gte: thirtyDaysAgo } } }, { $group: { _id: '$category', total: { $sum: '$amount' } } }]).then(function (spending) {
-        res.render('dashboard/index', { title: 'Dashboard', transactions: transactions, unreadCount: unreadCount, spending: spending });
+      return Promise.all([
+        Transaction.aggregate([{ $match: { sender: userId, status: 'completed', type: { $in: ['internal_transfer', 'wire_transfer', 'airtime'] }, createdAt: { $gte: thirtyDaysAgo } } }, { $group: { _id: '$category', total: { $sum: '$amount' } } }]),
+        Transaction.find({ $or: [{ sender: userId }, { receiver: userId }], status: 'completed', createdAt: { $gte: thirtyDaysAgo } }).sort({ createdAt: 1 }).select('sender receiver amount createdAt type')
+      ]).then(function (results) {
+        var spending = results[0];
+        var cashflowTransactions = results[1];
+        var cashflow = [];
+        for (var day = 6; day >= 0; day--) {
+          var date = new Date();
+          date.setHours(0, 0, 0, 0);
+          date.setDate(date.getDate() - day);
+          var next = new Date(date);
+          next.setDate(next.getDate() + 1);
+          var incoming = 0;
+          var outgoing = 0;
+          cashflowTransactions.forEach(function (txn) {
+            var created = new Date(txn.createdAt);
+            if (created >= date && created < next) {
+              var outgoingTxn = txn.sender && txn.sender.toString() === userId.toString();
+              if (outgoingTxn) outgoing += Number(txn.amount || 0);
+              else incoming += Number(txn.amount || 0);
+            }
+          });
+          cashflow.push({ label: date.toLocaleDateString('en-GB', { weekday: 'short' }).slice(0, 1), incoming: incoming, outgoing: outgoing });
+        }
+        var monthIncoming = 0;
+        var monthOutgoing = 0;
+        cashflowTransactions.forEach(function (txn) {
+          var outgoingTxn = txn.sender && txn.sender.toString() === userId.toString();
+          if (outgoingTxn) monthOutgoing += Number(txn.amount || 0);
+          else monthIncoming += Number(txn.amount || 0);
+        });
+        res.render('dashboard/index', {
+          title: 'Dashboard',
+          transactions: transactions,
+          unreadCount: unreadCount,
+          spending: spending,
+          cashflow: cashflow,
+          monthIncoming: monthIncoming,
+          monthOutgoing: monthOutgoing
+        });
       });
     });
   }).catch(function (err) { console.error(err); res.render('dashboard/index', { title: 'Dashboard', transactions: [], unreadCount: 0, spending: [] }); });
