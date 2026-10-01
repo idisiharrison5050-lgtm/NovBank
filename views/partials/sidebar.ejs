@@ -15,6 +15,7 @@
         <a href="/loans" class="sidebar-link <%= title === 'Loan' ? 'active' : '' %>"><span class="nb-nav-icon">€</span><span>Loans</span></a>
     <div class="nb-sidebar-section nb-sidebar-section-spaced">ACCOUNT</div>
     <a href="/dashboard/profile" class="sidebar-link <%= title === 'Account Center' ? 'active' : '' %>"><span class="nb-nav-icon">◎</span><span>Account center</span></a>
+    <a href="/dashboard/security" class="sidebar-link <%= title === 'Security Center' ? 'active' : '' %>"><span class="nb-nav-icon">◈</span><span>Security center</span></a>
     <a href="/dashboard/notifications" class="sidebar-link <%= title === 'Notifications' ? 'active' : '' %>"><span class="nb-nav-icon">◌</span><span>Secure inbox</span><% if (typeof unreadCount !== 'undefined' && unreadCount > 0) { %><em class="nb-nav-count"><%= unreadCount %></em><% } %></a>
   </nav>
   <a href="/logout" class="sidebar-logout nb-sidebar-logout"><span class="nb-nav-icon">↪</span><span>Sign out</span></a>
