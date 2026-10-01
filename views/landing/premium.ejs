@@ -91,12 +91,16 @@
 (function () {
   var pageLoader = document.getElementById('nbPageLoader');
   if (pageLoader) {
-    window.addEventListener('load', function () {
+    window.addEventListener('DOMContentLoaded', function () {
       window.setTimeout(function () {
         pageLoader.classList.add('is-hidden');
         window.setTimeout(function () { pageLoader.remove(); }, 550);
-      }, 300);
+      }, 650);
     });
+    window.setTimeout(function () {
+      pageLoader.classList.add('is-hidden');
+      window.setTimeout(function () { pageLoader.remove(); }, 550);
+    }, 2200);
   }
 
   var button = document.getElementById('nbMobileMenuBtn');
