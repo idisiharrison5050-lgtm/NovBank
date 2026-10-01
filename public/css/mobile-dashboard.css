@@ -575,3 +575,24 @@
   .nb-portfolio-item strong{display:block;font-size:20px;margin:8px 0 3px;color:#101828}
   .nb-portfolio-item small{font-size:9px;color:#667085}
 }
+
+/* Keep the JivoChat launcher clear of the fixed mobile navigation. */
+@media(max-width:768px){
+  #jivo-iframe-container{
+    bottom:86px!important;
+    right:12px!important;
+    transform:scale(.78)!important;
+    transform-origin:bottom right!important;
+    z-index:1030!important;
+  }
+  .jivo-iframe-container{
+    bottom:86px!important;
+    right:12px!important;
+    transform:scale(.78)!important;
+    transform-origin:bottom right!important;
+    z-index:1030!important;
+  }
+  .nb-mobile-bottom-nav{
+    z-index:1040!important;
+  }
+}
