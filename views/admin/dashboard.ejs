@@ -6,7 +6,7 @@
   <main class="admin-main">
     <div class="admin-topbar">
       <h1 class="admin-page-title">Dashboard</h1>
-      <p class="admin-date"><%= new Date().toDateString() %></p>
+      <div><p class="admin-date"><%= new Date().toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"}) %></p></div>
     </div>
 
     <% if (success_msg && success_msg.length > 0) { %>
