@@ -1,23 +1,27 @@
 <%- include('../partials/header') %>
-<link rel="stylesheet" href="/css/kyc.css"/><link rel="stylesheet" href="/css/kyc-premium.css"/>
+<link rel="stylesheet" href="/css/kyc-premium.css"/>
 
-<div class="nb-kyc-shell"><div class="nb-kyc-card">
-  <div class="kyc-box">
-    <div class="nb-kyc-brand"><img src="/images/nav.png" width="28" height="28" alt="NovBank">NovBank</div>
-    <h1 class="nb-kyc-title">Verify Your Identity</h1>
-    <p class="kyc-subtitle">To access your account, we need to verify your identity. This is required by financial regulations.</p>
+<div class="nb-kyc-shell">
+  <div class="nb-kyc-card">
+    <div class="nb-kyc-brand">
+      <img src="/images/nav.png" width="28" height="28" alt="NovBank">
+      <span>NovBank</span>
+    </div>
+
+    <div class="nb-kyc-kicker">ACCOUNT SECURITY</div>
+    <h1 class="nb-kyc-title">Verify your identity</h1>
+    <p class="nb-kyc-sub">Complete identity verification to keep your account secure and unlock the full banking experience.</p>
 
     <% if (error_msg && error_msg.length > 0) { %>
       <div class="alert alert-danger"><%= error_msg %></div>
     <% } %>
 
     <form action="/kyc/verify" method="POST" enctype="multipart/form-data">
-
-      <div class="kyc-section-title">Document Information</div>
+      <div class="nb-kyc-section">DOCUMENT INFORMATION</div>
 
       <div class="form-group">
-        <label>ID Type</label>
-        <select name="idType" class="form-control" required>
+        <label for="idType">ID Type</label>
+        <select id="idType" name="idType" class="form-control" required>
           <option value="" disabled selected>Select document type</option>
           <option value="passport">Passport</option>
           <option value="national_id">National ID Card</option>
@@ -27,55 +31,57 @@
       </div>
 
       <div class="form-group">
-        <label>ID Number</label>
-        <input type="text" name="idNumber" class="form-control" placeholder="Enter your document number" required/>
+        <label for="idNumber">ID Number</label>
+        <input id="idNumber" type="text" name="idNumber" class="form-control" placeholder="Enter your document number" required/>
       </div>
 
       <div class="row">
         <div class="col-md-6">
           <div class="form-group">
-            <label>Date of Issue</label>
-            <input type="date" name="dateOfIssue" class="form-control" required/>
+            <label for="dateOfIssue">Date of Issue</label>
+            <input id="dateOfIssue" type="date" name="dateOfIssue" class="form-control" required/>
           </div>
         </div>
         <div class="col-md-6">
           <div class="form-group">
-            <label>Date of Expiry</label>
-            <input type="date" name="dateOfExpiry" class="form-control" required/>
+            <label for="dateOfExpiry">Date of Expiry</label>
+            <input id="dateOfExpiry" type="date" name="dateOfExpiry" class="form-control" required/>
           </div>
         </div>
       </div>
 
-      <div class="kyc-section-title">Upload Documents</div>
+      <div class="nb-kyc-section">UPLOAD DOCUMENTS</div>
 
-      <div class="kyc-upload-grid">
-        <div class="kyc-upload-box">
-          <label for="frontImage">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1a56db" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-            <p class="kyc-upload-label">Front of ID</p>
-            <p class="kyc-upload-hint">JPG, PNG or PDF</p>
-          </label>
-          <input type="file" id="frontImage" name="frontImage" accept="image/*,.pdf" required style="display:none"/>
-          <p class="kyc-file-name" id="frontName">No file chosen</p>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="nb-kyc-upload">
+            <label for="frontImage">
+              <strong>Front of ID</strong>
+              <span>JPG, PNG or PDF</span>
+            </label>
+            <input type="file" id="frontImage" name="frontImage" accept="image/*,.pdf" required style="display:none"/>
+            <p class="nb-kyc-file" id="frontName">No file chosen</p>
+          </div>
         </div>
 
-        <div class="kyc-upload-box">
-          <label for="backImage">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1a56db" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-            <p class="kyc-upload-label">Back of ID</p>
-            <p class="kyc-upload-hint">JPG, PNG or PDF</p>
-          </label>
-          <input type="file" id="backImage" name="backImage" accept="image/*,.pdf" required style="display:none"/>
-          <p class="kyc-file-name" id="backName">No file chosen</p>
+        <div class="col-md-6">
+          <div class="nb-kyc-upload">
+            <label for="backImage">
+              <strong>Back of ID</strong>
+              <span>JPG, PNG or PDF</span>
+            </label>
+            <input type="file" id="backImage" name="backImage" accept="image/*,.pdf" required style="display:none"/>
+            <p class="nb-kyc-file" id="backName">No file chosen</p>
+          </div>
         </div>
       </div>
 
-      <div class="kyc-notice">
-        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        Make sure your documents are clear, unobstructed and fully visible. Blurry or cropped images will be rejected.
+      <div class="nb-kyc-note">
+        <span>ⓘ</span>
+        <span>Make sure your documents are clear, unobstructed and fully visible. Blurry or cropped images may require resubmission.</span>
       </div>
 
-      <button type="submit" class="btn btn-primary btn-block kyc-submit-btn">Submit for Verification</button>
+      <button type="submit" class="btn btn-primary btn-block nb-kyc-submit">Submit for verification</button>
     </form>
   </div>
 </div>
