@@ -9,7 +9,49 @@
   <% if (success_msg.length > 0) { %><div class="alert alert-success"><%= success_msg %></div><% } %><% if (error_msg.length > 0) { %><div class="alert alert-danger"><%= error_msg %></div><% } %>
   <section class="nb-command-grid"><div class="nb-networth-card"><div class="nb-networth-top"><span>AVAILABLE BALANCE</span><a href="/dashboard/profile">Account details →</a></div><strong>€ <%= Number(user.balance || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong><div class="nb-networth-meta"><span><i></i><%= user.accountStatus.charAt(0).toUpperCase()+user.accountStatus.slice(1) %> account</span><span>•••• <%= String(user.accountNumber).slice(-4) %></span></div></div><div class="nb-health-card"><span>ACCOUNT HEALTH</span><div class="nb-health-ring"><b><%= user.kycStatus === 'approved' ? '100%' : user.kycStatus === 'pending' ? '75%' : '50%' %></b></div><strong><%= user.kycStatus === 'approved' ? 'Verification complete' : user.kycStatus === 'pending' ? 'Verification in progress' : 'Complete your profile' %></strong><p><%= user.kycStatus === 'approved' ? 'Your account is fully set up.' : 'Finish the remaining steps to unlock your full banking experience.' %></p><a href="/kyc">Review account →</a></div></section>
   
-  <section class="nb-command-two-col"><div class="nb-command-panel"><div class="nb-panel-heading"><div><span>RECENT ACTIVITY</span><h2>Your latest transactions</h2></div><a href="/dashboard/transactions">View all</a></div><% if (transactions.length === 0) { %><div class="nb-empty-state"><b>No activity yet</b><span>Your account activity will appear here.</span></div><% } else { transactions.forEach(function(txn) { var outgoing = txn.sender && txn.sender._id && txn.sender._id.toString() === user._id.toString(); var credit = txn.type === 'deposit' || txn.type === 'loan_credit' || !outgoing; %><a class="nb-command-txn" href="/dashboard/transactions/<%= txn._id %>"><span class="nb-command-txn-icon <%= credit ? 'credit' : '' %>"><%= credit ? '+' : '−' %></span><div><b><%= txn.description || txn.type.replace(/_/g,' ') %></b><small><%= txn.category || 'Account activity' %> · <%= new Date(txn.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) %></small></div><strong class="<%= credit ? 'credit' : '' %>"><%= credit ? '+' : '-' %>€<%= Number(txn.amount).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong></a><% }); } %></div></div><div class="nb-command-panel"><div class="nb-panel-heading"><div><span>MONTHLY SPENDING</span><h2>Where your money goes</h2></div></div><% if (spending.length === 0) { %><div class="nb-empty-state"><b>No spending data yet</b><span>Completed spending will be grouped here.</span></div><% } else { var spendTotal = spending.reduce(function(sum,item){return sum + Number(item.total || 0);},0); spending.forEach(function(item){ var pct = spendTotal ? Math.round((Number(item.total)/spendTotal)*100) : 0; %><div class="nb-spend-row"><div><b><%= item._id || 'Other' %></b><span>€ <%= Number(item.total).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></span></div><div class="nb-spend-track"><i style="width:<%= pct %>%"></i></div></div><% }); } %></div></section>
+  <section class="nb-command-two-col">
+    <div class="nb-command-panel nb-activity-panel">
+      <div class="nb-panel-heading">
+        <div><span>RECENT ACTIVITY</span><h2>Money movement</h2></div>
+        <a href="/dashboard/transactions">View all →</a>
+      </div>
+      <div class="nb-activity-list">
+      <% if (transactions.length === 0) { %>
+        <div class="nb-empty-state"><b>No activity yet</b><span>Your account activity will appear here.</span></div>
+      <% } else { transactions.forEach(function(txn) {
+        var outgoing = txn.sender && txn.sender._id && txn.sender._id.toString() === user._id.toString();
+        var credit = txn.type === 'deposit' || txn.type === 'loan_credit' || !outgoing;
+        var other = outgoing ? txn.receiver : txn.sender;
+        var otherName = other && other.firstName ? (other.firstName + ' ' + (other.lastName || '')) : (txn.description || txn.type.replace(/_/g,' '));
+        var icon = txn.type === 'airtime' ? '◉' : txn.type === 'wire_transfer' ? '⇄' : txn.type === 'deposit' ? '↓' : txn.type === 'loan_credit' ? '€' : credit ? '↓' : '↑';
+      %>
+        <a class="nb-activity-item" href="/dashboard/transactions/<%= txn._id %>">
+          <span class="nb-activity-icon <%= credit ? 'credit' : '' %>"><%= icon %></span>
+          <div class="nb-activity-copy">
+            <b><%= otherName.trim() || 'Account activity' %></b>
+            <small><%= txn.category || txn.type.replace(/_/g,' ') %> · <%= new Date(txn.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) %></small>
+          </div>
+          <div class="nb-activity-amount">
+            <strong class="<%= credit ? 'credit' : '' %>"><%= credit ? '+' : '-' %>€<%= Number(txn.amount).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong>
+            <small><%= txn.status || 'completed' %></small>
+          </div>
+        </a>
+      <% }); } %>
+      </div>
+    </div>
+    <div class="nb-command-panel nb-spending-panel">
+      <div class="nb-panel-heading">
+        <div><span>SPENDING PROFILE</span><h2>Where your money goes</h2></div>
+        <span class="nb-spending-period">30 DAYS</span>
+      </div>
+      <% if (spending.length === 0) { %>
+        <div class="nb-empty-state"><b>No spending data yet</b><span>Completed spending will be grouped here.</span></div>
+      <% } else { var spendTotal = spending.reduce(function(sum,item){return sum + Number(item.total || 0);},0); spending.forEach(function(item){ var pct = spendTotal ? Math.round((Number(item.total)/spendTotal)*100) : 0; %>
+        <div class="nb-spend-row"><div><b><%= item._id || 'Other' %></b><span>€ <%= Number(item.total).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></span></div><div class="nb-spend-track"><i style="width:<%= pct %>%"></i></div><small><%= pct %>% of spending</small></div>
+      <% }); } %>
+      <% if (spending.length > 0) { %><div class="nb-spending-total"><span>Total spending</span><b>€ <%= Number(spendTotal).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></b></div><% } %>
+    </div>
+  </section>
   <section class="nb-portfolio-overview"><div class="nb-portfolio-top"><div><span class="nb-portfolio-kicker">PORTFOLIO OVERVIEW</span><h2>Your financial position.</h2><p>A live view of your available funds, earnings and active allocation.</p></div><a href="/dashboard/transactions">View activity →</a></div><div class="nb-portfolio-main"><div class="nb-portfolio-total"><span>TOTAL ACCOUNT VALUE</span><strong>€ <%= Number((Number(user.balance || 0) + Number(user.activeDeposit || 0))).toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong><small>Combined available balance and active allocation</small><div class="nb-portfolio-status"><i></i><span>Account active</span><b>Updated now</b></div></div><div class="nb-portfolio-metrics"><div><span>AVAILABLE</span><strong>€ <%= Number(user.balance || 0).toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong><small>Ready to use</small></div><div><span>EARNINGS</span><strong>€ <%= Number(user.totalProfit || 0).toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong><small>Total profit</small></div><div><span>ALLOCATED</span><strong>€ <%= Number(user.activeDeposit || 0).toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong><small>Active allocation</small></div></div></div></section>
   <section class="nb-command-panel nb-cashflow-overview">
     <div class="nb-panel-heading">
