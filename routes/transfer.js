@@ -243,7 +243,7 @@ router.post('/wire', isAuth, isPinVerified, function (req, res) {
 
 
 // Deposit Page
-router.get('/deposit', isPinVerified, isAuth, function (req, res) {
+router.get('/deposit', isAuth, isPinVerified, function (req, res) {
   res.render('dashboard/deposit', {
     title: 'Deposit Funds',
     unreadCount: 0
@@ -251,13 +251,6 @@ router.get('/deposit', isPinVerified, isAuth, function (req, res) {
 });
 
 // Deposit Submission
-router.get('/deposit', isAuth, isPinVerified, function (req, res) {
-  res.render('dashboard/deposit', {
-    title:      'Deposit Funds',
-    unreadCount: 0
-  });
-});
-
 router.post('/deposit', isAuth, isPinVerified, uploadDeposit.single('proofOfPayment'), function (req, res) {
   verifyPin(req, res, '/transfer/deposit', function () {
     checkAccountActive(req, res, '/transfer/deposit', function () {
