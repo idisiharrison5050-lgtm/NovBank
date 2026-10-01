@@ -69,6 +69,19 @@ router.get('/transactions/:id', isAuth, isPinVerified, kycGate, function (req, r
   }).catch(function (err) { console.error(err); res.status(404).render('404', { title: 'Transaction Not Found' }); });
 });
 
+
+router.get('/security', isAuth, isPinVerified, kycGate, function (req, res) {
+  Notification.find({ user: req.user._id }).sort({ createdAt: -1 }).limit(8).then(function (notifications) {
+    res.render('dashboard/security', {
+      title: 'Security Center',
+      notifications: notifications
+    });
+  }).catch(function (err) {
+    console.error(err);
+    res.redirect('/dashboard/profile');
+  });
+});
+
 router.get('/notifications', isAuth, isPinVerified, kycGate, function (req, res) {
   Notification.find({ user: req.user._id }).sort({ createdAt: -1 }).then(function (notifications) { return Notification.updateMany({ user: req.user._id, isRead: false }, { isRead: true }).then(function () { res.render('dashboard/notifications', { title: 'Notifications', notifications: notifications, unreadCount: 0 }); }); }).catch(function (err) { console.error(err); res.redirect('/dashboard'); });
 });
