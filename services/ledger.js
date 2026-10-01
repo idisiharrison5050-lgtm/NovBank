@@ -146,8 +146,119 @@ function getBalance(userId, callback) {
   }).catch(callback);
 }
 
+function createDebit(options, callback) {
+  var amount;
+  try { amount = normalizeAmount(options.amount); } catch (err) { return callback(err); }
+  if (!options.userId) return callback(new Error('User is required'));
+  var idempotencyKey = options.idempotencyKey || ('debit:' + options.userId.toString() + ':' + Date.now() + ':' + Math.floor(Math.random() * 1000000));
+  var session;
+  mongoose.startSession().then(function (newSession) {
+    session = newSession;
+    return session.withTransaction(function () {
+      return Transaction.findOne({ idempotencyKey: idempotencyKey }).session(session).then(function (existing) {
+        if (existing) return existing;
+        return User.findById(options.userId).session(session).then(function (user) {
+          if (!user) throw new Error('Account not found');
+          if (user.accountStatus !== 'active') throw new Error('Account is not active');
+          return ensureLedgerAccountPromise(user, session).then(function (account) {
+            if (account.status !== 'active') throw new Error('Ledger account is not active');
+            if (account.balance < amount) throw new Error('Insufficient funds');
+            var after = Math.round((account.balance - amount) * 100) / 100;
+            return Transaction.create([{
+              sender: user._id, type: options.type, amount: amount,
+              currency: user.currency || 'EUR', description: options.description || '',
+              category: options.category || 'Transfer', status: options.status || 'completed',
+              idempotencyKey: idempotencyKey, wireDetails: options.wireDetails || undefined
+            }], { session: session }).then(function (created) {
+              var txn = created[0];
+              return LedgerAccount.updateOne({_id: account._id, balance: {$gte: amount}, status:'active'},
+                {$inc:{balance:-amount,version:1}}, {session:session}).then(function (updated) {
+                  if (updated.nModified !== 1) throw new Error('Unable to debit account');
+                  return LedgerEntry.create([{
+                    ledgerAccount: account._id, transaction: txn._id, direction:'debit',
+                    amount:amount, currency:user.currency || 'EUR', balanceAfter:after,
+                    idempotencyKey:idempotencyKey + ':entry', description:options.description || options.type
+                  }], {session:session});
+                }).then(function () {
+                  return User.updateOne({_id:user._id}, {$set:{balance:after}}, {session:session});
+                }).then(function () { return txn; });
+            });
+          });
+        });
+      });
+    });
+  }).then(function (txn) { session.endSession(); callback(null, txn); })
+    .catch(function (err) { if (session) session.endSession(); callback(err); });
+}
+
+function creditExisting(transactionId, callback) {
+  var session;
+  mongoose.startSession().then(function (newSession) {
+    session = newSession;
+    return session.withTransaction(function () {
+      return Transaction.findById(transactionId).session(session).then(function (txn) {
+        if (!txn) throw new Error('Transaction not found');
+        if (txn.status === 'completed' && txn.type !== 'wire_transfer') return txn;
+        if (!txn.sender) throw new Error('Transaction account is missing');
+        return User.findById(txn.sender).session(session).then(function (user) {
+          if (!user) throw new Error('Account not found');
+          return ensureLedgerAccountPromise(user, session).then(function (account) {
+            var key = 'credit-existing:' + txn._id.toString();
+            return LedgerEntry.findOne({idempotencyKey:key}).session(session).then(function (entry) {
+              if (entry) return txn;
+              var after = Math.round((account.balance + txn.amount) * 100) / 100;
+              return LedgerAccount.updateOne({_id:account._id,status:'active'},{$inc:{balance:txn.amount,version:1}},{session:session}).then(function (updated) {
+                if (updated.nModified !== 1) throw new Error('Unable to credit account');
+                return LedgerEntry.create([{ledgerAccount:account._id,transaction:txn._id,direction:'credit',amount:txn.amount,currency:user.currency||'EUR',balanceAfter:after,idempotencyKey:key,description:txn.description||txn.type}],{session:session});
+              }).then(function () {
+                return User.updateOne({_id:user._id},{$set:{balance:after}},{session:session});
+              }).then(function () {
+                txn.status='completed'; txn.processing.processedAt=new Date();
+                return txn.save({session:session});
+              });
+            });
+          });
+        });
+      });
+    });
+  }).then(function (txn) { session.endSession(); callback(null,txn); })
+    .catch(function (err) { if (session) session.endSession(); callback(err); });
+}
+
+function reverseDebit(transactionId, reason, callback) {
+  var session;
+  mongoose.startSession().then(function (newSession) {
+    session = newSession;
+    return session.withTransaction(function () {
+      return Transaction.findById(transactionId).session(session).then(function (txn) {
+        if (!txn) throw new Error('Transaction not found');
+        if (!txn.sender) throw new Error('Transaction account is missing');
+        if (txn.status === 'failed' || txn.status === 'reversed') return txn;
+        return User.findById(txn.sender).session(session).then(function (user) {
+          if (!user) throw new Error('Account not found');
+          return ensureLedgerAccountPromise(user, session).then(function (account) {
+            var key='reversal:' + txn._id.toString();
+            return LedgerEntry.findOne({idempotencyKey:key}).session(session).then(function (entry) {
+              if (entry) return txn;
+              var after=Math.round((account.balance + txn.amount)*100)/100;
+              return LedgerAccount.updateOne({_id:account._id,status:'active'},{$inc:{balance:txn.amount,version:1}},{session:session}).then(function(updated){
+                if(updated.nModified!==1) throw new Error('Unable to reverse debit');
+                return LedgerEntry.create([{ledgerAccount:account._id,transaction:txn._id,direction:'credit',amount:txn.amount,currency:user.currency||'EUR',balanceAfter:after,idempotencyKey:key,description:reason||'Transaction reversal'}],{session:session});
+              }).then(function(){return User.updateOne({_id:user._id},{$set:{balance:after}},{session:session});})
+                .then(function(){txn.status='reversed';txn.processing.reversalReason=reason||'Transaction reversal';txn.processing.processedAt=new Date();return txn.save({session:session});});
+            });
+          });
+        });
+      });
+    });
+  }).then(function(txn){session.endSession();callback(null,txn);}).catch(function(err){if(session)session.endSession();callback(err);});
+}
+
 module.exports = {
   transferInternal: transferInternal,
   getBalance: getBalance,
-  ensureLedgerAccount: ensureLedgerAccount
+  ensureLedgerAccount: ensureLedgerAccount,
+  createDebit: createDebit,
+  creditExisting: creditExisting,
+  reverseDebit: reverseDebit
 };
