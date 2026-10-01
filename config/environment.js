@@ -10,8 +10,12 @@ function getDatabaseName() {
 }
 
 function getMongoUri() {
-  var uri = process.env.MONGODB_URI;
-  if (!uri) throw new Error('MONGODB_URI is required. Refusing to start without an explicit database connection.');
+  // Keep compatibility with the existing Render deployment, which uses
+  // MONGO_URI, while allowing the more explicit MONGODB_URI name.
+  var uri = process.env.MONGODB_URI || process.env.MONGO_URI;
+  if (!uri) {
+    throw new Error('MONGODB_URI or MONGO_URI is required. Refusing to start without an explicit database connection.');
+  }
   return uri;
 }
 
