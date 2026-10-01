@@ -529,3 +529,20 @@
 .dashboard-main iframe {
   max-width: 100%;
 }
+
+@media (max-width:768px){
+  .sidebar{max-width:86vw;box-shadow:18px 0 45px rgba(0,0,0,.22)}
+  .nb-sidebar-brand{padding:8px 14px 18px!important}
+  .nb-sidebar .sidebar-link{min-height:44px}
+  .sidebar-overlay{backdrop-filter:blur(2px)}
+  .pin-modal{max-width:calc(100vw - 28px);margin:14px;padding:24px 18px;border-radius:20px}
+  .pin-keypad{gap:9px}
+  .pin-key{min-height:54px;padding:13px}
+  .pin-dots{gap:14px}
+  .pin-dot{width:14px;height:14px}
+  .main-footer{margin-top:30px;padding:34px 14px 20px}
+  .main-footer .container{width:100%;max-width:100%}
+  .main-footer .row{gap:20px}
+  .main-footer .col-md-4{max-width:none;flex-basis:100%;text-align:left}
+  .main-footer .footer-links{align-items:flex-start}
+}
