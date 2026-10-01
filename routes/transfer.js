@@ -51,12 +51,14 @@ router.get('/', isAuth, isPinVerified, function (req, res) {
 router.post('/', isAuth, isPinVerified, function (req, res) {
   verifyPin(req, res, '/transfer', function () {
     checkAccountActive(req, res, '/transfer', function () {
+      var recipient;
       var identifier=req.body.identifier;
       var amount=parseFloat(req.body.amount);
       var description=req.body.description || '';
       var category=req.body.category || 'Transfer';
       if(!identifier || isNaN(amount) || amount<=0){req.flash('error_msg','Invalid transfer details.');return res.redirect('/transfer');}
-      User.findOne({$or:[{accountNumber:identifier},{email:identifier.toLowerCase()},{username:identifier.toLowerCase()}]}).then(function(recipient){
+      User.findOne({$or:[{accountNumber:identifier},{email:identifier.toLowerCase()},{username:identifier.toLowerCase()}]}).then(function(foundRecipient){
+        recipient=foundRecipient;
         if(!recipient){req.flash('error_msg','Recipient not found.');return res.redirect('/transfer');}
         if(recipient._id.toString()===req.user._id.toString()){req.flash('error_msg','You cannot transfer to yourself.');return res.redirect('/transfer');}
         return new Promise(function(resolve,reject){
