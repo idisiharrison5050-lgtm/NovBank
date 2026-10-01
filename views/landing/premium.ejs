@@ -1,5 +1,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <link rel="stylesheet" href="/css/landing-premium.css?v=hero9">
+<div class="nb-page-loader" id="nbPageLoader" aria-label="Loading NovBank" role="status"><div class="nb-loader-mark"><span></span><span></span><span></span></div><strong>NovBank</strong><small>Preparing your banking experience</small></div>
 <div class="nb-landing">
   <header class="nb-site-nav">
     <a class="nb-brand" href="/">NovBank</a>
@@ -88,6 +89,16 @@
 
 <script>
 (function () {
+  var pageLoader = document.getElementById('nbPageLoader');
+  if (pageLoader) {
+    window.addEventListener('load', function () {
+      window.setTimeout(function () {
+        pageLoader.classList.add('is-hidden');
+        window.setTimeout(function () { pageLoader.remove(); }, 550);
+      }, 300);
+    });
+  }
+
   var button = document.getElementById('nbMobileMenuBtn');
   var menu = document.getElementById('nbMobileMenu');
   if (!button || !menu) return;
