@@ -346,10 +346,10 @@ router.post('/transactions/:id/decline', isAdmin, function (req, res) {
     if(!txn || txn.status!=='pending'){req.flash('error_msg','Transaction not found or already processed.');return res.redirect('/admin/transactions');}
     var reason=req.body.reason || 'Transaction declined by operations.';
     var action;
-    if(txn.type==='wire_transfer'){action=new Promise(function(resolve,reject){ledger.reverseDebit(txn._id,reason,function(err,result){if(err)reject(err);else resolve(result);});});}
+    if(txn.type==='wire_transfer'||txn.type==='withdrawal'){action=new Promise(function(resolve,reject){ledger.reverseDebit(txn._id,reason,function(err,result){if(err)reject(err);else resolve(result);});});}
     else {txn.status='failed';txn.processing.failureReason=reason;txn.processing.processedAt=new Date();txn.processing.processedBy=req.user._id;action=txn.save();}
     return action.then(function(){return logAction(req.user._id,'Declined Transaction','Transaction',txn._id,'Declined '+txn.type+' of €'+txn.amount.toFixed(2)+' — '+reason);})
-      .then(function(){if(txn.sender)return new Notification({user:txn.sender,title:'Transaction Declined',message:'Your '+txn.type.replace('_',' ')+' of €'+txn.amount.toFixed(2)+' was declined. '+(txn.type==='wire_transfer'?'The amount has been returned to your account.':'Please review the transaction details.'),type:'warning'}).save();})
+      .then(function(){if(txn.sender)return new Notification({user:txn.sender,title:'Transaction Declined',message:'Your '+txn.type.replace('_',' ')+' of €'+txn.amount.toFixed(2)+' was declined. '+((txn.type==='wire_transfer'||txn.type==='withdrawal')?'The amount has been returned to your account.':'Please review the transaction details.'),type:'warning'}).save();})
       .then(function(){if(txn.type==='deposit'&&txn.sender)return User.findById(txn.sender).then(function(u){if(u)return mailer.depositDeclinedEmail(u,txn.amount);});})
       .then(function(){req.flash('success_msg','Transaction declined successfully.');res.redirect('/admin/transactions');});
   }).catch(function(err){console.error(err);req.flash('error_msg','Failed to decline transaction.');res.redirect('/admin/transactions');});
