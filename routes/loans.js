@@ -22,11 +22,14 @@ function checkAccountActive(req, res, redirectOnFail, callback) {
 
 // Loan page
 router.get('/', isAuth, function (req, res) {
-  Loan.findOne({ user: req.user._id, status: { $in: ['pending', 'approved'] } })
-    .then(function (activeLoan) {
+  Promise.all([
+    Loan.findOne({ user: req.user._id, status: { $in: ['pending', 'approved'] } }).sort({ createdAt: -1 }),
+    Loan.find({ user: req.user._id }).sort({ createdAt: -1 }).limit(12)
+  ]).then(function (results) {
       res.render('dashboard/loans', {
         title: 'Loan',
-        activeLoan: activeLoan,
+        activeLoan: results[0],
+        loanHistory: results[1],
         unreadCount: 0
       });
     }).catch(function (err) {
@@ -91,6 +94,10 @@ router.post('/request', isAuth, function (req, res) {
 // Repay approved loan
 router.post('/repay', isAuth, function (req, res) {
   checkAccountActive(req, res, '/loans', function () {
+    if (!req.body.transactionPin || !/^\d{4}$/.test(String(req.body.transactionPin))) {
+      req.flash('error_msg', 'Please confirm your transaction PIN before making a repayment.');
+      return res.redirect('/loans');
+    }
     var amount = parseFloat(req.body.amount);
     if (!amount || isNaN(amount) || amount <= 0) {
       req.flash('error_msg', 'Enter a valid repayment amount.');
@@ -109,7 +116,7 @@ router.post('/repay', isAuth, function (req, res) {
           amount: amount,
           description: 'Loan repayment',
           category: 'Loan',
-          idempotencyKey: 'loan-repayment:' + loan._id + ':' + Date.now()
+          idempotencyKey: 'loan-repayment:' + loan._id + ':' + String(req.body.idempotencyKey || Date.now())
         }, function (err, txn) {
           if (err) return reject(err);
           resolve(txn);
