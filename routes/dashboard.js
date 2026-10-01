@@ -3,7 +3,7 @@ var router      = express.Router();
 var Transaction = require('../models/Transaction');
 var Notification= require('../models/Notification');
 var { kycGate } = require('./kyc');
-function escapeRegex(value) { return String(value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\var { kycGate } = require('./kyc');'); }
+function escapeRegex(value) { return String(value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
 
 function isAuth(req, res, next) {
   if (req.isAuthenticated()) return next();
