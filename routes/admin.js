@@ -633,9 +633,9 @@ router.get('/loans', isAdmin, function (req, res) {
 router.post('/loans/:id/approve', isAdmin, function (req, res) {
   Loan.findById(req.params.id).then(function(loan){
     if(!loan||loan.status!=='pending'){req.flash('error_msg','Loan request not found or already processed.');return res.redirect('/admin/loans');}
-    loan.status='approved';loan.approvedAt=new Date();
-    return loan.save().then(function(){
-      return new Promise(function(resolve,reject){ledger.createCredit({userId:loan.user,type:'loan_credit',amount:loan.amount,description:'Loan credited to account',category:'Loan',idempotencyKey:'loan:'+loan._id},function(err,txn){if(err)reject(err);else resolve(txn);});});
+    return new Promise(function(resolve,reject){ledger.createCredit({userId:loan.user,type:'loan_credit',amount:loan.amount,description:'Loan credited to account',category:'Loan',idempotencyKey:'loan:'+loan._id},function(err,txn){if(err)reject(err);else resolve(txn);});}).then(function(){
+      loan.status='approved';loan.approvedAt=new Date();loan.totalDue=loan.amount;loan.amountRepaid=0;loan.outstanding=loan.amount;
+      return loan.save();
     }).then(function(){
       return logAction(req.user._id,'Approved Loan','User',loan.user,'€'+loan.amount+' loan approved');
     }).then(function(){return new Notification({user:loan.user,title:'Loan Approved',message:'Your loan of €'+loan.amount.toFixed(2)+' has been approved and credited to your account.',type:'success'}).save();})
