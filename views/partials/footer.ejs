@@ -285,4 +285,41 @@ if (pinModalEl) {
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
 </body>
-</html>
+</html><script>
+(function () {
+  var loader = document.getElementById('nbNavigationLoader');
+  if (!loader) return;
+
+  window.addEventListener('pageshow', function () {
+    loader.classList.remove('is-active');
+  });
+
+  document.addEventListener('click', function (event) {
+    var link = event.target.closest ? event.target.closest('a') : null;
+    if (!link) return;
+    if (event.defaultPrevented || event.button !== 0) return;
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    if (link.target === '_blank' || link.hasAttribute('download')) return;
+
+    var href = link.getAttribute('href');
+    if (!href || href.charAt(0) === '#' || href.indexOf('javascript:') === 0) return;
+    if (/^(mailto:|tel:)/i.test(href)) return;
+
+    try {
+      var url = new URL(link.href, window.location.href);
+      if (url.origin !== window.location.origin) return;
+      if (url.href === window.location.href) return;
+    } catch (e) {
+      return;
+    }
+
+    loader.classList.add('is-active');
+  });
+
+  document.addEventListener('submit', function (event) {
+    if (event.defaultPrevented) return;
+    if (event.target && event.target.getAttribute('target') === '_blank') return;
+    loader.classList.add('is-active');
+  });
+})();
+</script>
