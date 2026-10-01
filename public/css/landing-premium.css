@@ -313,3 +313,25 @@
 @media(max-width:480px){
   .nb-hero-backdrop{background-position:54% center}
 }
+
+/* Edge-to-edge mobile hero */
+@media(max-width:768px){
+  html,body{margin:0!important;padding:0!important;width:100%;max-width:100%;overflow-x:hidden}
+  .nb-landing{width:100%;max-width:none;margin:0;padding-bottom:72px}
+  .nb-site-nav{width:100%;margin:0}
+  .nb-hero{
+    width:100vw;
+    max-width:100vw;
+    margin-left:50%;
+    margin-right:0;
+    transform:translateX(-50%);
+    border-radius:0;
+    overflow:hidden;
+  }
+  .nb-hero-backdrop{
+    left:0;
+    right:0;
+    width:100%;
+    max-width:none;
+  }
+}
