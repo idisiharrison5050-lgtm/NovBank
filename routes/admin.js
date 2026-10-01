@@ -331,8 +331,8 @@ router.post('/transactions/:id/approve', isAdmin, function (req, res) {
     if(txn.type==='deposit'){
       action=new Promise(function(resolve,reject){ledger.creditExisting(txn._id,function(err,result){if(err)reject(err);else resolve(result);});});
     } else if(txn.type==='wire_transfer'){
-      txn.status='completed';txn.processing.processedAt=new Date();txn.processing.processedBy=req.user._id;action=txn.save();
-    } else { txn.status='completed';txn.processing.processedAt=new Date();txn.processing.processedBy=req.user._id;action=txn.save(); }
+      txn.status='completed';txn.processing.processedAt=new Date();action=txn.save();
+    } else { txn.status='completed';txn.processing.processedAt=new Date();action=txn.save(); }
     return action.then(function(){return logAction(req.user._id,'Approved Transaction','Transaction',txn._id,'Approved '+txn.type+' of €'+txn.amount.toFixed(2));})
       .then(function(){if(txn.sender)return new Notification({user:txn.sender,title:txn.type==='deposit'?'Deposit Approved':'Transfer Approved',message:txn.type==='deposit'?'Your deposit of €'+txn.amount.toFixed(2)+' has been approved and credited to your account.':'Your '+txn.type.replace('_',' ')+' of €'+txn.amount.toFixed(2)+' has been approved.',type:'success'}).save();})
       .then(function(){if(txn.type==='wire_transfer'&&txn.sender)return User.findById(txn.sender).then(function(user){if(user&&txn.wireDetails)return mailer.wireTransferSuccessEmail(user,txn.amount,txn.wireDetails.recipientName,txn.wireDetails.iban,txn.wireDetails.bankName);});})
