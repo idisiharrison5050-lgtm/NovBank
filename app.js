@@ -17,6 +17,10 @@ require('./config/passport')(passport);
 
 var app = express();
 
+// Render and other reverse proxies terminate HTTPS before Express receives the request.
+// Trust the proxy so secure session cookies are issued and recognized correctly.
+app.set('trust proxy', 1);
+
 mongoose.connect(environmentConfig.uri, {
   useNewUrlParser:    true,
   useUnifiedTopology: true,
