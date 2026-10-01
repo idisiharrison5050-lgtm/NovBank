@@ -114,8 +114,15 @@ router.post('/register/step1', isGuest, function (req, res) {
     return res.redirect('/register');
   }
 
-  req.session.regStep1 = { firstName, lastName, email, phone, dateOfBirth: dob };
-  res.redirect('/register/step2');
+  req.session.regStep1 = { firstName, lastName, email: email.toLowerCase().trim(), phone, dateOfBirth: dob };
+  req.session.save(function (err) {
+    if (err) {
+      console.error('Registration session save error:', err);
+      req.flash('error_msg', 'We could not continue your registration. Please try again.');
+      return res.redirect('/register');
+    }
+    res.redirect('/register/step2');
+  });
 });
 
 // Register Step 2
@@ -136,7 +143,14 @@ router.post('/register/step2', isGuest, function (req, res) {
   }
 
   req.session.regStep2 = { street, city, country, zip };
-  res.redirect('/register/step3');
+  req.session.save(function (err) {
+    if (err) {
+      console.error('Registration session save error:', err);
+      req.flash('error_msg', 'We could not continue your registration. Please try again.');
+      return res.redirect('/register/step2');
+    }
+    res.redirect('/register/step3');
+  });
 });
 
 // Register Step 3
@@ -232,7 +246,13 @@ router.post('/register/step3', isGuest, function (req, res) {
             delete req.session.regStep2;
             req.session.verifyUserId = user._id.toString();
             req.flash('success_msg', 'Account created! Check your email for the verification code.');
-            res.redirect('/verify-email');
+            req.session.save(function (sessionErr) {
+              if (sessionErr) {
+                console.error('Verification session save error:', sessionErr);
+                return res.redirect('/register');
+              }
+              res.redirect('/verify-email');
+            });
           });
       });
     })
