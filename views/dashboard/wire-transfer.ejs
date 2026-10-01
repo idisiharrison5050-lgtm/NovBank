@@ -18,7 +18,7 @@
   <%- include('../partials/sidebar') %>
 
   <main class="dashboard-main nb-wire-page">
-    <div class="nb-funding-head"><div><span class="nb-funding-kicker">INTERNATIONAL PAYMENTS</span><h1>Wire transfer</h1><p>Send funds using recipient bank details and review the information before confirming.</p></div></div>
+    <div class="nb-transfer-switcher" aria-label="Transfer type navigation"><a href="/transfer" class=""><span>Send money</span><small>NovBank</small></a><a href="/transfer/wire" class="active"><span>Wire transfer</span><small>Bank transfer</small></a></div><div class="nb-funding-head"><div><span class="nb-funding-kicker">INTERNATIONAL PAYMENTS</span><h1>Wire transfer</h1><p>Send funds using recipient bank details and review the information before confirming.</p></div></div>
 
     <div class="nb-wire-layout"><div class="nb-wire-card">
       <p class="form-card-sub">Available Balance: <strong>€ <%= user.balance.toFixed(2) %></strong></p>
