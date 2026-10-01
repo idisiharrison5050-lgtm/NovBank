@@ -11,7 +11,8 @@
     <a href="/transfer/deposit" class="sidebar-link <%= title === 'Deposit Funds' ? 'active' : '' %>"><span class="nb-nav-icon">↓</span><span>Add money</span></a>
     <a href="/transfer/wire" class="sidebar-link <%= title === 'Wire Transfer' ? 'active' : '' %>"><span class="nb-nav-icon">⇄</span><span>Wire transfer</span></a>
     <a href="/cards" class="sidebar-link <%= title === 'Cards' ? 'active' : '' %>"><span class="nb-nav-icon">▣</span><span>Cards</span></a>
-    <a href="/loans" class="sidebar-link <%= title === 'Loan' ? 'active' : '' %>"><span class="nb-nav-icon">€</span><span>Loans</span></a>
+    <a href="/airtime" class="sidebar-link <%= title === 'Airtime Recharge' ? 'active' : '' %>"><span class="nb-nav-icon">◉</span><span>Airtime</span></a>
+        <a href="/loans" class="sidebar-link <%= title === 'Loan' ? 'active' : '' %>"><span class="nb-nav-icon">€</span><span>Loans</span></a>
     <div class="nb-sidebar-section nb-sidebar-section-spaced">ACCOUNT</div>
     <a href="/dashboard/profile" class="sidebar-link <%= title === 'Account Center' ? 'active' : '' %>"><span class="nb-nav-icon">◎</span><span>Account center</span></a>
     <a href="/dashboard/notifications" class="sidebar-link <%= title === 'Notifications' ? 'active' : '' %>"><span class="nb-nav-icon">◌</span><span>Secure inbox</span><% if (typeof unreadCount !== 'undefined' && unreadCount > 0) { %><em class="nb-nav-count"><%= unreadCount %></em><% } %></a>
