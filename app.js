@@ -5,6 +5,7 @@ var MongoStore = require('connect-mongo')(session);
 var passport   = require('passport');
 var flash      = require('connect-flash');
 var path       = require('path');
+var Notification = require('./models/Notification');
 require('dotenv').config();
 
 var environment = require('./config/environment');
@@ -59,7 +60,14 @@ app.use(function (req, res, next) {
   res.locals.error       = req.flash('error');
   res.locals.recaptchaSiteKey = process.env.RECAPTCHA_SITE_KEY || '';
   res.locals.adminEmail = process.env.ADMIN_EMAIL || '';
-  next();
+  res.locals.unreadCount = 0;
+  if (!req.user) return next();
+  Notification.countDocuments({ user: req.user._id, isRead: false }).then(function (count) {
+    res.locals.unreadCount = count;
+    next();
+  }).catch(function () {
+    next();
+  });
 });
 
 // Routes
@@ -72,6 +80,7 @@ app.use('/admin',     require('./routes/admin'));
 app.use('/kyc',       require('./routes/kyc').router);
 app.use('/cards',     require('./routes/cards'));
 app.use('/loans',     require('./routes/loans'));
+app.use('/airtime',   require('./routes/airtime'));
 
 app.use(function (req, res) {
   res.status(404).render('404', { title: '404 - Page Not Found' });
