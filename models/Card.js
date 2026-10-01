@@ -8,6 +8,9 @@ var CardSchema = new mongoose.Schema({
   expiry: { type: String, default: null },
   cardHolder: { type: String, required: true },
   status: { type: String, enum: ['pending', 'active', 'blocked'], default: 'pending', index: true },
+  frozenAt: { type: Date, default: null },
+  spendingLimit: { type: Number, default: 0 },
+  createdAt: { type: Date, default: Date.now },
   createdAt: { type: Date, default: Date.now }
 });
 
