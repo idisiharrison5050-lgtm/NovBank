@@ -188,3 +188,118 @@
   .nb-hero{padding-bottom:122px}
   .nb-footer{padding-bottom:88px}
 }
+
+/* Mobile banking-style hero composition */
+.nb-mobile-hero-brand{display:none}
+@media(max-width:768px){
+  .nb-site-nav .nb-nav-actions{display:none}
+  .nb-site-nav{background:rgba(7,17,31,.92);border-bottom:1px solid rgba(255,255,255,.13);box-shadow:none}
+  .nb-site-nav .nb-brand{color:#fff}
+  .nb-mobile-menu-btn{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.10)}
+  .nb-mobile-menu-btn span{background:#fff}
+  .nb-mobile-hero-brand{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+    margin:0 auto 22px;
+    color:#fff;
+  }
+  .nb-mobile-bank-icon{
+    width:76px;
+    height:76px;
+    display:grid;
+    place-items:center;
+    border:1px solid rgba(255,255,255,.28);
+    border-radius:20px;
+    background:rgba(255,255,255,.10);
+    box-shadow:0 12px 35px rgba(0,0,0,.18);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    margin-bottom:18px;
+  }
+  .nb-mobile-bank-icon svg{
+    width:39px;
+    height:39px;
+    fill:none;
+    stroke:#fff;
+    stroke-width:1.8;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+  }
+  .nb-mobile-hero-brand strong{
+    font-size:42px;
+    line-height:1;
+    letter-spacing:-.055em;
+    font-weight:850;
+  }
+  .nb-mobile-hero-brand>span:last-child{
+    margin-top:14px;
+    font-size:20px;
+    line-height:1.25;
+    font-weight:750;
+    color:rgba(255,255,255,.92);
+  }
+  .nb-desktop-kicker{display:none}
+  .nb-hero{
+    min-height:calc(100svh - 64px);
+    padding:58px 20px 142px;
+    align-items:center;
+    background:#07111f;
+  }
+  .nb-hero-backdrop{
+    background-position:58% center;
+    transform:scale(1.04);
+  }
+  .nb-hero-backdrop:after{
+    background:
+      linear-gradient(180deg,rgba(3,10,20,.46) 0%,rgba(3,10,20,.34) 28%,rgba(3,10,20,.60) 58%,rgba(3,10,20,.93) 100%);
+  }
+  .nb-hero-inner{text-align:center}
+  .nb-hero h1{
+    display:none;
+  }
+  .nb-hero p{
+    max-width:650px;
+    margin:0 auto;
+    font-size:17px;
+    line-height:1.65;
+    color:rgba(255,255,255,.94);
+    text-shadow:0 2px 14px rgba(0,0,0,.25);
+  }
+  .nb-hero-actions{
+    flex-direction:column;
+    width:100%;
+    max-width:630px;
+    margin:30px auto 0;
+    gap:12px;
+  }
+  .nb-hero-actions .nb-btn{
+    min-height:58px;
+    border-radius:17px;
+    font-size:17px;
+    font-weight:800;
+  }
+  .nb-hero-actions .nb-btn-primary{
+    background:#0b8fd1;
+    border-color:#0b8fd1;
+    box-shadow:0 12px 30px rgba(11,143,209,.28);
+  }
+  .nb-hero-actions .nb-btn:not(.nb-btn-primary){
+    background:rgba(255,255,255,.12);
+    border-color:rgba(255,255,255,.42);
+    color:#fff;
+  }
+  .nb-hero .nb-trust{display:none}
+  .nb-landing{padding-bottom:72px}
+}
+@media(max-width:480px){
+  .nb-mobile-hero-brand{margin-bottom:20px}
+  .nb-mobile-bank-icon{width:70px;height:70px;border-radius:19px;margin-bottom:16px}
+  .nb-mobile-bank-icon svg{width:36px;height:36px}
+  .nb-mobile-hero-brand strong{font-size:40px}
+  .nb-mobile-hero-brand>span:last-child{font-size:19px;margin-top:13px}
+  .nb-hero{padding:50px 16px 142px}
+  .nb-hero p{font-size:16px;line-height:1.65}
+  .nb-hero-actions{margin-top:27px}
+}
