@@ -90,6 +90,73 @@ router.post('/wire', isAuth, isPinVerified, function (req, res) {
     .catch(function(err){console.error(err);req.flash('error_msg',err.message==='Insufficient funds'?'Insufficient funds.':'Wire transfer failed. Please try again.');res.redirect('/transfer/wire');});
   });});
 });
+// Withdrawal
+router.get('/withdraw', isAuth, isPinVerified, function (req, res) {
+  res.render('dashboard/withdraw', { title: 'Withdraw Funds', unreadCount: 0 });
+});
+
+router.post('/withdraw', isAuth, isPinVerified, function (req, res) {
+  verifyPin(req, res, '/transfer/withdraw', function () {
+    checkAccountActive(req, res, '/transfer/withdraw', function () {
+      var amount = parseFloat(req.body.amount);
+      var recipientName = (req.body.recipientName || '').trim();
+      var accountNumber = (req.body.accountNumber || '').trim();
+      var bankName = (req.body.bankName || '').trim();
+      var bankCountry = (req.body.bankCountry || '').trim();
+      var description = req.body.description || '';
+      if (!amount || isNaN(amount) || amount <= 0 || !recipientName || !accountNumber || !bankName || !bankCountry) {
+        req.flash('error_msg', 'Please complete all withdrawal details.');
+        return res.redirect('/transfer/withdraw');
+      }
+      new Promise(function (resolve, reject) {
+        ledger.createDebit({
+          userId: req.user._id,
+          type: 'withdrawal',
+          amount: amount,
+          description: description,
+          category: 'Other',
+          status: 'pending',
+          wireDetails: {
+            recipientName: recipientName,
+            iban: accountNumber,
+            bankName: bankName,
+            bankCountry: bankCountry,
+            reference: req.body.reference || ''
+          },
+          idempotencyKey: 'withdrawal:' + req.user._id + ':' + Date.now() + ':' + Math.floor(Math.random() * 1000000)
+        }, function (err, txn) {
+          if (err) return reject(err);
+          resolve(txn);
+        });
+      }).then(function (txn) {
+        return new Notification({
+          user: req.user._id,
+          title: 'Withdrawal Request Received',
+          message: 'Your withdrawal of €' + amount.toFixed(2) + ' is pending processing.',
+          type: 'info'
+        }).save().then(function () {
+          req.session.receipt = {
+            amount: amount,
+            reference: txn.reference,
+            date: new Date(txn.createdAt).toLocaleString('en-GB'),
+            type: 'Withdrawal',
+            from: req.user.firstName + ' ' + req.user.lastName + ' (' + req.user.accountNumber + ')',
+            to: recipientName + ' — ' + accountNumber + ' (' + bankName + ')',
+            description: description || '-',
+            category: 'Other',
+            status: 'pending'
+          };
+          res.redirect('/transfer/receipt');
+        });
+      }).catch(function (err) {
+        console.error(err);
+        req.flash('error_msg', err.message === 'Insufficient funds' ? 'Insufficient funds.' : 'Withdrawal request failed. Please try again.');
+        res.redirect('/transfer/withdraw');
+      });
+    });
+  });
+});
+
 // Deposit Page
 router.get('/deposit', isAuth, isPinVerified, function (req, res) {
   res.render('dashboard/deposit', {
