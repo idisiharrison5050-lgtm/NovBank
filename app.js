@@ -24,8 +24,7 @@ app.set('trust proxy', 1);
 mongoose.connect(environmentConfig.uri, {
   useNewUrlParser:    true,
   useUnifiedTopology: true,
-  useCreateIndex:     true,
-  dbName:             environmentConfig.databaseName
+  useCreateIndex:     true
 }).then(function () {
   console.log('MongoDB connected');
 }).catch(function (err) {
@@ -72,6 +71,12 @@ app.use(function (req, res, next) {
   }).catch(function () {
     next();
   });
+});
+
+// Lightweight health endpoint for Render and uptime checks.
+app.get('/health', function (req, res) {
+  var ready = mongoose.connection.readyState === 1;
+  res.status(ready ? 200 : 503).json({ status: ready ? 'ok' : 'degraded', database: ready ? 'connected' : 'disconnected', timestamp: new Date().toISOString() });
 });
 
 // Routes
