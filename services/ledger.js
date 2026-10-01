@@ -191,6 +191,29 @@ function createDebit(options, callback) {
     .catch(function (err) { if (session) session.endSession(); callback(err); });
 }
 
+function createCredit(options, callback) {
+  var amount;
+  try { amount=normalizeAmount(options.amount); } catch(err){return callback(err);}
+  if(!options.userId)return callback(new Error('User is required'));
+  var key=options.idempotencyKey||('credit:'+options.userId+':'+Date.now());
+  var session;
+  mongoose.startSession().then(function(newSession){session=newSession;return session.withTransaction(function(){
+    return Transaction.findOne({idempotencyKey:key}).session(session).then(function(existing){if(existing)return existing;
+      return User.findById(options.userId).session(session).then(function(user){if(!user)throw new Error('Account not found');if(user.accountStatus!=='active')throw new Error('Account is not active');
+        return ensureLedgerAccountPromise(user,session).then(function(account){if(account.status!=='active')throw new Error('Ledger account is not active');
+          var after=Math.round((account.balance+amount)*100)/100;
+          return Transaction.create([{sender:user._id,type:options.type,amount:amount,currency:user.currency||'EUR',description:options.description||'',category:options.category||'Other',status:'completed',idempotencyKey:key,wireDetails:options.wireDetails||undefined}],{session:session}).then(function(created){
+            var txn=created[0];
+            return LedgerAccount.updateOne({_id:account._id,status:'active'},{$inc:{balance:amount,version:1}},{session:session}).then(function(updated){if(updated.nModified!==1)throw new Error('Unable to credit account');
+              return LedgerEntry.create([{ledgerAccount:account._id,transaction:txn._id,direction:'credit',amount:amount,currency:user.currency||'EUR',balanceAfter:after,idempotencyKey:key+':entry',description:options.description||options.type}],{session:session});
+            }).then(function(){return User.updateOne({_id:user._id},{$set:{balance:after}},{session:session});}).then(function(){return txn;});
+          });
+        });
+      });
+    });
+  });}).then(function(txn){session.endSession();callback(null,txn);}).catch(function(err){if(session)session.endSession();callback(err);});
+}
+
 function creditExisting(transactionId, callback) {
   var session;
   mongoose.startSession().then(function (newSession) {
@@ -259,6 +282,7 @@ module.exports = {
   getBalance: getBalance,
   ensureLedgerAccount: ensureLedgerAccount,
   createDebit: createDebit,
+  createCredit: createCredit,
   creditExisting: creditExisting,
   reverseDebit: reverseDebit
 };
