@@ -34,7 +34,23 @@ router.get('/transactions', isAuth, isPinVerified, kycGate, function (req, res) 
   var skip = (page - 1) * limit;
   var filter = req.query.filter || 'all';
   var query = { $or: [{ sender: userId }, { receiver: userId }] };
-  if (filter !== 'all') query.type = filter;
+  if (['internal_transfer', 'wire_transfer', 'deposit', 'airtime', 'loan_credit'].indexOf(filter) !== -1) query.type = filter;
+  if (req.query.export === 'csv') {
+    return Transaction.find(query).sort({ createdAt: -1 }).limit(1000).then(function (transactions) {
+      var rows = ['Reference,Date,Type,Description,Category,Amount,Currency,Status'];
+      transactions.forEach(function (txn) {
+        var description = String(txn.description || '').replace(/"/g, '""');
+        rows.push([txn.reference, new Date(txn.createdAt).toISOString(), txn.type, '"' + description + '"', txn.category || '', Number(txn.amount || 0).toFixed(2), txn.currency || 'EUR', txn.status].join(','));
+      });
+      res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+      res.setHeader('Content-Disposition', 'attachment; filename="novbank-transactions.csv"');
+      res.send(rows.join('\n'));
+    }).catch(function (err) {
+      console.error(err);
+      req.flash('error_msg', 'Unable to export transactions right now.');
+      res.redirect('/dashboard/transactions');
+    });
+  }
   Transaction.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit).populate('sender receiver', 'firstName lastName accountNumber').then(function (transactions) {
     return Transaction.countDocuments(query).then(function (total) {
       res.render('dashboard/transactions', { title: 'Transactions', transactions: transactions, currentPage: page, totalPages: Math.ceil(total / limit), filter: filter, unreadCount: 0 });
