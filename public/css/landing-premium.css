@@ -126,3 +126,65 @@
 .nb-hero .nb-trust span{padding:10px 13px;border:1px solid rgba(255,255,255,.16);border-radius:12px;background:rgba(7,17,31,.34);backdrop-filter:blur(10px);color:rgba(255,255,255,.86)}
 @media(max-width:768px){.nb-hero .nb-trust{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:24px}.nb-hero .nb-trust span{padding:10px 11px;border:1px solid rgba(255,255,255,.17);border-radius:11px;background:rgba(7,17,31,.36);font-size:10px;text-align:center}.nb-hero .nb-trust span:after{display:none}.nb-hero-backdrop{background-position:58% center}}
 @media(max-width:420px){.nb-hero .nb-trust{grid-template-columns:1fr}.nb-hero .nb-trust span{font-size:10px}}
+
+/* Mobile bottom authentication bar */
+.nb-mobile-auth-bar{display:none}
+@media(max-width:768px){
+  .nb-mobile-auth-bar{
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:0;
+    z-index:500;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    min-height:72px;
+    padding:0;
+    padding-bottom:env(safe-area-inset-bottom);
+    background:rgba(10,20,34,.96);
+    border-top:1px solid rgba(255,255,255,.18);
+    box-shadow:0 -12px 35px rgba(0,0,0,.24);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+  }
+  .nb-mobile-auth-link{
+    min-height:72px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    color:#fff;
+    font-size:17px;
+    font-weight:800;
+    letter-spacing:-.01em;
+    border-right:1px solid rgba(255,255,255,.12);
+    transition:background .18s ease,transform .18s ease;
+  }
+  .nb-mobile-auth-link:last-child{border-right:0}
+  .nb-mobile-auth-link svg{
+    width:25px;
+    height:25px;
+    fill:none;
+    stroke:currentColor;
+    stroke-width:2.2;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+    flex:none;
+  }
+  .nb-mobile-auth-link:active{transform:scale(.98)}
+  .nb-mobile-auth-primary{
+    background:#168fd0;
+    box-shadow:inset 1px 0 0 rgba(255,255,255,.08);
+  }
+  .nb-landing{padding-bottom:72px}
+  .nb-hero{padding-bottom:130px}
+  .nb-footer{padding-bottom:92px}
+}
+@media(max-width:380px){
+  .nb-mobile-auth-bar{min-height:68px}
+  .nb-mobile-auth-link{min-height:68px;font-size:16px;gap:8px}
+  .nb-mobile-auth-link svg{width:23px;height:23px}
+  .nb-landing{padding-bottom:68px}
+  .nb-hero{padding-bottom:122px}
+  .nb-footer{padding-bottom:88px}
+}
