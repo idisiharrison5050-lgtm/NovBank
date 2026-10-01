@@ -46,7 +46,30 @@
     </div>
   </section>
 
+  <section class="nb-image-story nb-reveal">
+    <div class="nb-image-story-media">
+      <img src="https://images.unsplash.com/photo-1739271933163-8dcc7c8e8a3e?auto=format&fit=crop&fm=jpg&q=85&w=2200" alt="Customer using a smartphone for digital banking" loading="lazy">
+    </div>
+    <div class="nb-image-story-overlay">
+      <span class="nb-kicker">BANKING ON THE GO</span>
+      <h2>Your finances should move with you.</h2>
+      <p>Check your money, manage payments and stay connected wherever your day takes you.</p>
+    </div>
+  </section>
+
   <section class="nb-section nb-capabilities"><div class="nb-section-head"><span class="nb-kicker">BUILT TO EXPAND</span><h2>A larger banking experience, not a single-purpose app.</h2><p>NovBank brings multiple financial workflows into one connected product surface.</p></div><div class="nb-capability-grid"><article><span>01</span><h3>Personal banking</h3><p>Balances, transactions, funding and account controls in one place.</p></article><article><span>02</span><h3>Payments & transfers</h3><p>Everyday transfers with references, statuses and activity history.</p></article><article><span>03</span><h3>Cards & spending</h3><p>Card management and spending visibility designed around real usage.</p></article><article><span>04</span><h3>Lending</h3><p>Bring loan discovery, applications and repayment visibility closer together.</p></article><article><span>05</span><h3>Business banking</h3><p>Operational tools and financial infrastructure that can grow with teams.</p></article><article><span>06</span><h3>Security center</h3><p>Account protection and financial controls are treated as first-class features.</p></article></div></section>
+
+  <section class="nb-image-story nb-image-story-light nb-reveal">
+    <div class="nb-image-story-media">
+      <img src="https://images.unsplash.com/photo-1758876020967-e5a80e49463a?auto=format&fit=crop&fm=jpg&q=85&w=2200" alt="Modern professional working with digital technology" loading="lazy">
+    </div>
+    <div class="nb-image-story-overlay">
+      <span class="nb-kicker">BUILT FOR REAL LIFE</span>
+      <h2>A financial platform that grows with you.</h2>
+      <p>From everyday banking to business workflows, NovBank is designed to keep expanding around the way you use money.</p>
+    </div>
+  </section>
+
   <section class="nb-split" id="security">
     <div class="nb-split-inner">
       <div><span class="nb-kicker">SECURITY FIRST</span><h2>Your money deserves serious protection.</h2><p>NovBank is being built around layered account security, controlled financial operations, transaction monitoring and auditable activity.</p></div>
@@ -81,4 +104,18 @@
     });
   });
 })();
+  var revealItems = document.querySelectorAll('.nb-reveal');
+  if ('IntersectionObserver' in window && revealItems.length) {
+    var revealObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.16 });
+    revealItems.forEach(function (item) { revealObserver.observe(item); });
+  } else {
+    revealItems.forEach(function (item) { item.classList.add('is-visible'); });
+  }
 </script>
