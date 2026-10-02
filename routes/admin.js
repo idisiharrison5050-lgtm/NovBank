@@ -232,6 +232,140 @@ router.post('/users/:id/edit-balance', isAdmin, function (req, res) {
   });
 });
 
+// ─── Super Admin Account Controls ────────────────────────────
+router.post('/users/:id/update-profile', isAdmin, function (req, res) {
+  var fields = {
+    firstName: String(req.body.firstName || '').trim(),
+    lastName: String(req.body.lastName || '').trim(),
+    email: String(req.body.email || '').trim().toLowerCase(),
+    phone: String(req.body.phone || '').trim(),
+    currency: String(req.body.currency || 'EUR').trim().toUpperCase()
+  };
+  if (!fields.firstName || !fields.lastName || !fields.email || !fields.phone) {
+    req.flash('error_msg', 'Name, email and phone are required.');
+    return res.redirect('/admin/users/' + req.params.id);
+  }
+  User.findById(req.params.id).then(function (user) {
+    if (!user) throw new Error('User not found');
+    user.firstName = fields.firstName;
+    user.lastName = fields.lastName;
+    user.email = fields.email;
+    user.phone = fields.phone;
+    user.currency = fields.currency;
+    return user.save().then(function () {
+      return logAction(req.user._id, 'Updated User Profile', 'User', user._id, 'Super admin updated core profile fields for ' + user.username);
+    }).then(function () {
+      req.flash('success_msg', 'User profile updated.');
+      res.redirect('/admin/users/' + user._id);
+    });
+  }).catch(function (err) {
+    console.error(err);
+    req.flash('error_msg', 'Failed to update user profile.');
+    res.redirect('/admin/users/' + req.params.id);
+  });
+});
+
+router.post('/users/:id/update-bank-details', isAdmin, function (req, res) {
+  User.findById(req.params.id).then(function (user) {
+    if (!user) throw new Error('User not found');
+    user.bankDetails = user.bankDetails || {};
+    user.bankDetails.bankName = String(req.body.bankName || 'NovBank').trim();
+    user.bankDetails.iban = String(req.body.iban || '').trim();
+    user.bankDetails.swift = String(req.body.swift || '').trim();
+    user.bankDetails.routingNumber = String(req.body.routingNumber || '').trim();
+    user.bankDetails.sortCode = String(req.body.sortCode || '').trim();
+    user.bankDetails.bankAddress = String(req.body.bankAddress || '').trim();
+    return user.save().then(function () {
+      return logAction(req.user._id, 'Updated Bank Details', 'User', user._id, 'Super admin updated receiving bank details for ' + user.username);
+    }).then(function () {
+      req.flash('success_msg', 'Bank details updated.');
+      res.redirect('/admin/users/' + user._id);
+    });
+  }).catch(function (err) {
+    console.error(err);
+    req.flash('error_msg', 'Failed to update bank details.');
+    res.redirect('/admin/users/' + req.params.id);
+  });
+});
+
+router.post('/users/:id/adjust-balance', isAdmin, function (req, res) {
+  var target = Number(req.body.targetBalance);
+  var reason = String(req.body.reason || '').trim();
+  if (!isFinite(target) || target < 0 || !reason) {
+    req.flash('error_msg', 'Enter a valid target balance and an adjustment reason.');
+    return res.redirect('/admin/users/' + req.params.id);
+  }
+  User.findById(req.params.id).then(function (user) {
+    if (!user) throw new Error('User not found');
+    return new Promise(function (resolve, reject) {
+      ledger.getBalance(user._id, function (err, current) {
+        if (err) return reject(err);
+        resolve(Number(current || 0));
+      });
+    }).then(function (current) {
+      var delta = Math.round((target - current) * 100) / 100;
+      if (delta === 0) return null;
+      var operation = delta > 0 ? ledger.createCredit : ledger.createDebit;
+      return new Promise(function (resolve, reject) {
+        operation({
+          userId: user._id,
+          type: 'admin_adjustment',
+          amount: Math.abs(delta),
+          description: 'Super admin balance adjustment: ' + reason,
+          category: 'Admin adjustment',
+          idempotencyKey: 'admin-adjustment:' + user._id + ':' + Date.now()
+        }, function (err, txn) {
+          if (err) return reject(err);
+          resolve(txn);
+        });
+      });
+    }).then(function () {
+      return logAction(req.user._id, 'Adjusted User Balance', 'User', user._id, 'Target €' + target.toFixed(2) + '. Reason: ' + reason);
+    }).then(function () {
+      return new Notification({
+        user: user._id,
+        title: 'Account Balance Adjusted',
+        message: 'Your account balance was adjusted by NovBank operations. Please contact support if you need clarification.',
+        type: 'info'
+      }).save();
+    }).then(function () {
+      req.flash('success_msg', 'Balance adjusted through the ledger.');
+      res.redirect('/admin/users/' + user._id);
+    });
+  }).catch(function (err) {
+    console.error(err);
+    req.flash('error_msg', 'Balance adjustment failed: ' + err.message);
+    res.redirect('/admin/users/' + req.params.id);
+  });
+});
+
+router.post('/users/:id/verification', isAdmin, function (req, res) {
+  var action = req.body.action;
+  User.findById(req.params.id).then(function (user) {
+    if (!user) throw new Error('User not found');
+    if (action === 'email') {
+      user.emailVerified = req.body.value === 'true';
+    } else if (action === 'kyc') {
+      var allowed = ['none', 'pending', 'approved', 'declined'];
+      if (allowed.indexOf(req.body.value) === -1) throw new Error('Invalid KYC status.');
+      user.kycStatus = req.body.value;
+      user.isVerified = req.body.value === 'approved';
+    } else {
+      throw new Error('Unknown verification action.');
+    }
+    return user.save().then(function () {
+      return logAction(req.user._id, 'Changed User Verification', 'User', user._id, 'Action: ' + action + ', value: ' + req.body.value);
+    }).then(function () {
+      req.flash('success_msg', 'Verification control applied.');
+      res.redirect('/admin/users/' + user._id);
+    });
+  }).catch(function (err) {
+    console.error(err);
+    req.flash('error_msg', err.message);
+    res.redirect('/admin/users/' + req.params.id);
+  });
+});
+
 // ─── Update Bitcoin Deposit Address ───────────────────────────
 router.post('/users/:id/bitcoin-address', isAdmin, function (req, res) {
   var address = String(req.body.bitcoinDepositAddress || '').trim();
