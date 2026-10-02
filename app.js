@@ -107,6 +107,6 @@ app.use(function (req, res) {
 });
 
 var PORT = process.env.PORT || 3000;
-app.listen(PORT, function () {
+app.listen(PORT, '0.0.0.0', function () {
   console.log('Server running on port ' + PORT);
 });
