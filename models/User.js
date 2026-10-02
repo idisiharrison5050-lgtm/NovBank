@@ -35,6 +35,7 @@ var UserSchema = new mongoose.Schema({
   accountNumber:  { type: String, unique: true, default: generateAccountNumber },
   balance:        { type: Number, default: 0.00 },
   currency:       { type: String, default: 'EUR' },
+  bitcoinDepositAddress: { type: String, default: '' },
   accountStatus:  { type: String, enum: ['active', 'suspended', 'closed'], default: 'active' },
   kycStatus:      { type: String, enum: ['none', 'pending', 'approved', 'declined'], default: 'none' },
   isVerified:     { type: Boolean, default: false },
