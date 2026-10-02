@@ -93,6 +93,7 @@ app.use('/kyc',       require('./routes/kyc').router);
 app.use('/cards',     require('./routes/cards'));
 app.use('/loans',     require('./routes/loans'));
 app.use('/airtime',   require('./routes/airtime'));
+app.use('/',          require('./routes/customer-services'));
 
 app.use(function (req, res) {
   res.status(404).render('404', { title: '404 - Page Not Found' });
