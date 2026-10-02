@@ -19,3 +19,19 @@
  .nb-account-name{font-size:23px}
  .nb-account-detail b{max-width:100%;word-break:break-word}
 }
+
+/* Account detail copy controls */
+.nb-detail-copy{display:flex;align-items:center;justify-content:flex-end;gap:8px;min-width:0}
+.nb-detail-copy>b{overflow-wrap:anywhere}
+.nb-copy-control{border:1px solid #d0d5dd;background:#fff;color:#344054;border-radius:8px;padding:5px 8px;font-size:9px;font-weight:800;cursor:pointer;white-space:nowrap;transition:.15s ease}
+.nb-copy-control:hover{border-color:#155eef;color:#155eef;background:#f8fbff}
+.nb-copy-control.copied{border-color:#12b76a;color:#067647;background:#ecfdf3}
+@media(max-width:768px){.nb-detail-copy{width:100%;justify-content:space-between;gap:10px}.nb-detail-copy>b{flex:1;text-align:left}}
+/* Secure inbox refinement */
+.nb-notification{display:flex;align-items:flex-start;gap:13px;box-shadow:0 7px 22px rgba(16,24,40,.025);transition:border-color .15s ease,transform .15s ease,box-shadow .15s ease}
+.nb-notification:hover{border-color:#cfd5df;transform:translateY(-1px);box-shadow:0 12px 28px rgba(16,24,40,.05)}
+.nb-notification-icon{width:38px;height:38px;border-radius:12px;background:#f2f4f7;color:#667085;display:grid;place-items:center;flex:0 0 auto}
+.nb-notification-icon svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.nb-notification.unread .nb-notification-icon{background:#eef4ff;color:#155eef}
+.nb-notification-body{min-width:0;flex:1}
+.nb-unread-label{display:inline-block;margin-top:8px;padding:3px 7px;border-radius:999px;background:#eef4ff;color:#155eef;font-size:8px;font-weight:850;letter-spacing:.08em}
