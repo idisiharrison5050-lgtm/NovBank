@@ -6,6 +6,7 @@ var Notification = require('../models/Notification');
 var mailer = require('../config/mailer');
 var ledger = require('../services/ledger');
 var { uploadDeposit } = require('../config/cloudinary');
+var accountLimits = require('../services/accountLimits');
 
 function isAuth(req, res, next) {
   if (req.isAuthenticated()) return next();
@@ -85,9 +86,12 @@ router.post('/wire', isAuth, isPinVerified, function (req, res) {
     var amount=parseFloat(req.body.amount), recipientName=req.body.recipientName, iban=req.body.iban, bic=req.body.bic, bankName=req.body.bankName, bankCountry=req.body.bankCountry, reference=req.body.reference||'', description=req.body.description||'', category=req.body.category||'Transfer';
     if(!amount||!recipientName||!iban||!bic||!bankName||!bankCountry){req.flash('error_msg','Please fill in all required wire transfer fields.');return res.redirect('/transfer/wire');}
     if(isNaN(amount)||amount<=0){req.flash('error_msg','Enter a valid amount.');return res.redirect('/transfer/wire');}
-    new Promise(function(resolve,reject){ledger.createDebit({userId:req.user._id,type:'wire_transfer',amount:amount,description:description,category:category,status:'pending',wireDetails:{recipientName:recipientName,iban:iban,bic:bic,bankName:bankName,bankCountry:bankCountry,reference:reference},idempotencyKey:'wire:'+req.user._id+':'+Date.now()+':'+Math.floor(Math.random()*1000000)},function(err,txn){if(err)reject(err);else resolve(txn);});})
+    accountLimits.checkTransferLimit(req.user, amount, function(limitErr){
+      if(limitErr){req.flash('error_msg',limitErr.message);return res.redirect('/transfer/wire');}
+      new Promise(function(resolve,reject){ledger.createDebit({userId:req.user._id,type:'wire_transfer',amount:amount,description:description,category:category,status:'pending',wireDetails:{recipientName:recipientName,iban:iban,bic:bic,bankName:bankName,bankCountry:bankCountry,reference:reference},idempotencyKey:'wire:'+req.user._id+':'+Date.now()+':'+Math.floor(Math.random()*1000000)},function(err,txn){if(err)reject(err);else resolve(txn);});})
     .then(function(txn){return new Notification({user:req.user._id,title:'Wire Transfer Initiated',message:'Your wire transfer of €'+amount.toFixed(2)+' to '+recipientName+' is pending processing.',type:'info'}).save().then(function(){mailer.wireTransferEmail(req.user,amount,recipientName,iban,bankName);mailer.adminWithdrawalNotification(req.user.firstName+' '+req.user.lastName,req.user.email,req.user.accountNumber,amount,'Wire Transfer');req.session.receipt={amount:amount,reference:txn.reference,date:new Date().toLocaleString('en-GB'),type:'Wire Transfer',from:req.user.firstName+' '+req.user.lastName+' ('+req.user.accountNumber+')',to:recipientName+' — '+iban+' ('+bankName+')',description:description||'-',category:category,status:'pending'};res.redirect('/transfer/receipt');});})
-    .catch(function(err){console.error(err);req.flash('error_msg',err.message==='Insufficient funds'?'Insufficient funds.':'Wire transfer failed. Please try again.');res.redirect('/transfer/wire');});
+    .catch(function(err){console.error(err);req.flash('error_msg',err.message==='Insufficient funds'?'Insufficient funds.':err.message);res.redirect('/transfer/wire');});
+      });
   });});
 });
 // Withdrawal
@@ -108,7 +112,12 @@ router.post('/withdraw', isAuth, isPinVerified, function (req, res) {
         req.flash('error_msg', 'Please complete all withdrawal details.');
         return res.redirect('/transfer/withdraw');
       }
-      new Promise(function (resolve, reject) {
+      accountLimits.checkTransferLimit(req.user, amount, function(limitErr) {
+        if (limitErr) {
+          req.flash('error_msg', limitErr.message);
+          return res.redirect('/transfer/withdraw');
+        }
+        new Promise(function (resolve, reject) {
         ledger.createDebit({
           userId: req.user._id,
           type: 'withdrawal',
@@ -153,6 +162,7 @@ router.post('/withdraw', isAuth, isPinVerified, function (req, res) {
         req.flash('error_msg', err.message === 'Insufficient funds' ? 'Insufficient funds.' : 'Withdrawal request failed. Please try again.');
         res.redirect('/transfer/withdraw');
       });
+        });
     });
   });
 });
