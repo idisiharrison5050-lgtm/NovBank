@@ -1,0 +1,26 @@
+<%- include('../partials/header') %>
+<link rel="stylesheet" href="/css/dashboard.css"/>
+<link rel="stylesheet" href="/css/customer-services.css"/>
+<div class="mobile-topbar"><span class="mobile-logo">NovBank</span><button class="hamburger-btn" id="hamburgerBtn">☰</button></div><div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="dashboard-layout"><%- include('../partials/sidebar') %><main class="dashboard-main nb-service-page">
+  <div class="nb-service-hero"><div><span>FINANCIAL SUPPORT</span><h1>Grant applications</h1><p>Request financial support and track every stage of your application from your account.</p></div><span class="nb-service-icon">◈</span></div>
+  <% if (success_msg && success_msg.length) { %><div class="alert alert-success"><%= success_msg %></div><% } %>
+  <% if (error_msg && error_msg.length) { %><div class="alert alert-danger"><%= error_msg %></div><% } %>
+  <div class="nb-service-grid">
+    <section class="nb-service-card">
+      <span class="nb-service-label">NEW APPLICATION</span><h2>Request a grant</h2>
+      <p>Tell us the amount you are requesting and what the funds are intended for.</p>
+      <form action="/grants/apply" method="POST" class="nb-service-form">
+        <label>Requested amount (€)<input type="number" name="amount" min="1" step="0.01" required placeholder="2,500.00"></label>
+        <label>Purpose<textarea name="purpose" rows="5" maxlength="500" required placeholder="Explain what the grant would be used for..."></textarea></label>
+        <button type="submit">Submit application</button>
+      </form>
+    </section>
+    <section class="nb-service-card">
+      <span class="nb-service-label">APPLICATION HISTORY</span><h2>Your applications</h2>
+      <% if (!grants.length) { %><div class="nb-service-empty">No grant applications yet.</div><% } else { %>
+        <div class="nb-service-list"><% grants.forEach(function(grant){ %><article><div><strong>€<%= Number(grant.amount).toLocaleString('en-GB',{minimumFractionDigits:2}) %></strong><span><%= grant.purpose %></span><small><%= new Date(grant.createdAt).toLocaleDateString('en-GB') %></small></div><b class="service-status <%= grant.status %>"><%= grant.status %></b></article><% }); %></div>
+      <% } %>
+    </section>
+  </div>
+</main></div><%- include('../partials/footer') %>
