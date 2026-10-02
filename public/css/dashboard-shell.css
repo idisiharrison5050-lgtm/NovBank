@@ -10,3 +10,15 @@
   .dashboard-main{min-height:100vh}
 }
 @media(max-width:768px){.nb-sidebar{height:100vh;max-height:100vh;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin}.nb-sidebar::-webkit-scrollbar{width:4px}.nb-sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.2);border-radius:10px}}
+
+/* Refined icon system */
+.nb-nav-icon svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;transition:transform .18s ease}
+.nb-sidebar .sidebar-link:hover .nb-nav-icon svg{transform:translateX(1px)}
+.nb-sidebar .sidebar-link.active .nb-nav-icon svg{stroke-width:2}
+.nb-sidebar .sidebar-link{transition:background .18s ease,color .18s ease,transform .18s ease}
+.nb-sidebar .sidebar-link:hover{transform:translateX(1px)}
+.nb-sidebar-brand img{box-shadow:0 6px 16px rgba(21,94,239,.18)}
+.hamburger-btn{display:inline-flex!important;flex-direction:column;gap:4px;align-items:center;justify-content:center}
+.hamburger-btn span{display:block;width:18px;height:1.7px;border-radius:2px;background:currentColor}
+@media(min-width:769px){.dashboard-main{padding:34px 36px 56px;box-sizing:border-box}.dashboard-main>*{max-width:1180px;margin-left:auto;margin-right:auto}}
+@media(max-width:768px){.dashboard-main{padding-bottom:105px!important}}
