@@ -1,98 +1,96 @@
 <%- include('../partials/header') %>
-<link rel="stylesheet" href="/css/dashboard.css"/><link rel="stylesheet" href="/css/funding-premium.css"/>
-<!-- Mobile topbar -->
+<link rel="stylesheet" href="/css/dashboard.css"/>
+<link rel="stylesheet" href="/css/funding-premium.css"/>
+<link rel="stylesheet" href="/css/banking-flows.css?v=wire1"/>
+
 <div class="mobile-topbar">
   <span class="mobile-logo">NovBank</span>
-  <button class="hamburger-btn" id="hamburgerBtn">
-    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <line x1="3" y1="6" x2="21" y2="6"/>
-      <line x1="3" y1="12" x2="21" y2="12"/>
-      <line x1="3" y1="18" x2="21" y2="18"/>
-    </svg>
+  <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open navigation">
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
   </button>
 </div>
-
-<!-- Overlay -->
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 <div class="dashboard-layout">
   <%- include('../partials/sidebar') %>
+  <main class="dashboard-main nb-wire-page nb-flow-screen">
 
-  <main class="dashboard-main nb-wire-page">
-    <div class="nb-transfer-switcher" aria-label="Transfer type navigation"><a href="/transfer" class=""><span>Send money</span><small>NovBank</small></a><a href="/transfer/wire" class="active"><span>Wire transfer</span><small>Bank transfer</small></a></div><div class="nb-funding-head"><div><span class="nb-funding-kicker">INTERNATIONAL PAYMENTS</span><h1>Wire transfer</h1><p>Send funds using recipient bank details and review the information before confirming.</p></div></div>
+    <div class="nb-transfer-switcher" aria-label="Transfer type navigation">
+      <a href="/transfer"><span>Send money</span><small>NovBank</small></a>
+      <a href="/transfer/wire" class="active"><span>Wire transfer</span><small>Bank transfer</small></a>
+    </div>
 
-    <div class="nb-wire-layout"><div class="nb-wire-card">
-      <p class="form-card-sub">Available Balance: <strong>€ <%= user.balance.toFixed(2) %></strong></p>
-      <div class="wire-notice">
-        Wire transfers are processed within 1-3 business days.
+    <section class="nb-flow-hero">
+      <div>
+        <span class="nb-flow-eyebrow">PAYMENTS · BANK TRANSFER</span>
+        <h1>Send a wire with confidence.</h1>
+        <p>Enter the recipient's bank information, review the transfer details, then securely authorize the payment.</p>
       </div>
+      <div class="nb-flow-balance">
+        <span>AVAILABLE BALANCE</span>
+        <strong>€ <%= Number(user.balance || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong>
+        <small>Available to send</small>
+      </div>
+    </section>
 
-      <% if (success_msg.length > 0) { %>
-        <div class="alert alert-success"><%= success_msg %></div>
-      <% } %>
-      <% if (error_msg.length > 0) { %>
-        <div class="alert alert-danger"><%= error_msg %></div>
-      <% } %>
+    <% if (success_msg.length > 0) { %><div class="alert alert-success"><%= success_msg %></div><% } %>
+    <% if (error_msg.length > 0) { %><div class="alert alert-danger"><%= error_msg %></div><% } %>
 
-      <form id="wireForm" class="wireForm" action="/transfer/wire" method="POST">
-        <h5 class="form-section-heading">Recipient Details</h5>
-        <div class="form-group">
-          <label>Recipient Full Name</label>
-          <input type="text" name="recipientName" class="form-control" placeholder="John Doe" required/>
+    <div class="nb-wire-layout nb-flow-layout">
+      <section class="nb-wire-card nb-flow-form-card">
+        <div class="nb-flow-card-head">
+          <div><span>NEW WIRE</span><h2>Recipient & transfer details</h2><p>Make sure the banking information matches the recipient's account.</p></div>
+          <div class="nb-flow-secure">Secure payment</div>
         </div>
-        <div class="form-group">
-          <label>IBAN</label>
-          <input type="text" name="iban" class="form-control" placeholder="DE89370400440532013000" required/>
+
+        <div class="nb-wire-steps">
+          <div class="active"><b>1</b><span>Recipient</span></div><i></i><div><b>2</b><span>Transfer</span></div><i></i><div><b>3</b><span>Review</span></div>
         </div>
-        <div class="row">
-          <div class="col-md-6">
-            <div class="form-group">
-              <label>BIC / SWIFT Code</label>
-              <input type="text" name="bic" class="form-control" placeholder="COBADEFFXXX" required/>
-            </div>
+
+        <div class="nb-flow-notice">
+          <span>i</span>
+          <div><b>Allow 1–3 business days</b><small>International and bank wires may take longer depending on the receiving bank.</small></div>
+        </div>
+
+        <form id="wireForm" class="wireForm nb-premium-form" action="/transfer/wire" method="POST">
+          <div class="nb-form-section"><span>01</span><div><b>Recipient details</b><small>Who should receive the funds?</small></div></div>
+
+          <div class="form-group"><label>Recipient full name</label><input type="text" name="recipientName" class="form-control" placeholder="John Doe" autocomplete="name" required/></div>
+          <div class="form-group"><label>IBAN</label><input type="text" name="iban" class="form-control" placeholder="DE89370400440532013000" autocomplete="off" required/></div>
+
+          <div class="row">
+            <div class="col-md-6"><div class="form-group"><label>BIC / SWIFT code</label><input type="text" name="bic" class="form-control" placeholder="COBADEFFXXX" autocomplete="off" required/></div></div>
+            <div class="col-md-6"><div class="form-group"><label>Bank name</label><input type="text" name="bankName" class="form-control" placeholder="Commerzbank" required/></div></div>
           </div>
-          <div class="col-md-6">
-            <div class="form-group">
-              <label>Bank Name</label>
-              <input type="text" name="bankName" class="form-control" placeholder="Commerzbank" required/>
-            </div>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Bank Country</label>
-          <input type="text" name="bankCountry" class="form-control" placeholder="Germany" required/>
-        </div>
+          <div class="form-group"><label>Bank country</label><input type="text" name="bankCountry" class="form-control" placeholder="Germany" required/></div>
 
-        <h5 class="form-section-heading">Transfer Details</h5>
-        <div class="form-group">
-          <label>Amount (€)</label>
-          <input type="number" name="amount" class="form-control" placeholder="0.00" min="0.01" step="0.01" required/>
-        </div>
-        <div class="form-group">
-          <label>Category</label>
-          <select name="category" class="form-control">
-            <option value="Transfer">Transfer</option>
-            <option value="Rent">Rent</option>
-            <option value="Utilities">Utilities</option>
-            <option value="Shopping">Shopping</option>
-            <option value="Healthcare">Healthcare</option>
-            <option value="Entertainment">Entertainment</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Reference (optional)</label>
-          <input type="text" name="reference" class="form-control" placeholder="e.g. Invoice #1234"/>
-        </div>
-        <div class="form-group">
-          <label>Description (optional)</label>
-          <input type="text" name="description" class="form-control" placeholder="Short note about this transfer"/>
-        </div>
+          <div class="nb-form-section nb-form-section-spaced"><span>02</span><div><b>Payment details</b><small>How much are you sending and why?</small></div></div>
+
+          <div class="form-group"><label>Amount (€)</label><div class="nb-amount-input"><span>€</span><input type="number" name="amount" class="form-control" placeholder="0.00" min="0.01" step="0.01" required/></div></div>
+
+          <div class="form-group"><label>Category</label><select name="category" class="form-control"><option value="Transfer">Transfer</option><option value="Rent">Rent</option><option value="Utilities">Utilities</option><option value="Shopping">Shopping</option><option value="Healthcare">Healthcare</option><option value="Entertainment">Entertainment</option><option value="Other">Other</option></select></div>
+          <div class="form-group"><label>Reference <small class="nb-optional">Optional</small></label><input type="text" name="reference" class="form-control" placeholder="Invoice #1234"/></div>
+          <div class="form-group"><label>Description <small class="nb-optional">Optional</small></label><input type="text" name="description" class="form-control" placeholder="What is this transfer for?"/></div>
+
           <input type="hidden" name="transactionPin" id="wirePinInput"/>
+          <div class="nb-wire-review-note"><span>✓</span><p>You'll review the transfer and authorize it with your transaction PIN before it is submitted.</p></div>
+          <button type="button" class="nb-flow-submit" onclick="openPinModal('wireForm')">Continue to secure review <span>→</span></button>
+        </form>
+      </section>
 
-        <button type="button" class="btn btn-primary btn-block" onclick="openPinModal('wireForm')">Submit Wire Transfer</button>
-      </form>
+      <aside class="nb-wire-aside nb-flow-aside">
+        <span>WIRE TRANSFER</span>
+        <h2>Built for important payments.</h2>
+        <p>Keep recipient information, transfer details and authorization in one controlled flow.</p>
+        <div class="nb-aside-stat"><span>Available now</span><strong>€ <%= Number(user.balance || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong></div>
+        <div class="nb-aside-list">
+          <div><b>01</b><span>Verify recipient banking details</span></div>
+          <div><b>02</b><span>Review amount and payment reference</span></div>
+          <div><b>03</b><span>Authorize securely with your PIN</span></div>
+        </div>
+        <div class="nb-aside-foot"><span>SECURITY</span><b>Your PIN is requested only at authorization.</b></div>
+      </aside>
     </div>
   </main>
 </div>
-
 <%- include('../partials/footer') %>
