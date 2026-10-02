@@ -206,6 +206,63 @@
           </form>
         </div>
 
+        <div class="admin-card">
+          <h5 class="admin-card-title">Account Operations</h5>
+          <div class="admin-operation-grid">
+            <form action="/admin/users/<%= targetUser._id %>/credit" method="POST" class="admin-operation-box">
+              <strong>Credit Account</strong>
+              <input type="number" name="amount" class="form-control" step="0.01" min="0.01" placeholder="Amount" required>
+              <input type="text" name="reason" class="form-control" placeholder="Reason" required>
+              <button class="btn btn-success">Credit</button>
+            </form>
+            <form action="/admin/users/<%= targetUser._id %>/debit" method="POST" class="admin-operation-box">
+              <strong>Debit Account</strong>
+              <input type="number" name="amount" class="form-control" step="0.01" min="0.01" placeholder="Amount" required>
+              <input type="text" name="reason" class="form-control" placeholder="Reason" required>
+              <button class="btn btn-warning">Debit</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <h5 class="admin-card-title">Account Usage Limits</h5>
+          <form action="/admin/users/<%= targetUser._id %>/limits" method="POST">
+            <div class="row">
+              <div class="col-md-4"><label>Daily transfers</label><input type="number" name="dailyTransfer" class="form-control" min="0" step="0.01" value="<%= targetUser.accountLimits && targetUser.accountLimits.dailyTransfer != null ? targetUser.accountLimits.dailyTransfer : 10000 %>"></div>
+              <div class="col-md-4"><label>Monthly transfers</label><input type="number" name="monthlyTransfer" class="form-control" min="0" step="0.01" value="<%= targetUser.accountLimits && targetUser.accountLimits.monthlyTransfer != null ? targetUser.accountLimits.monthlyTransfer : 50000 %>"></div>
+              <div class="col-md-4"><label>Card spending</label><input type="number" name="cardSpending" class="form-control" min="0" step="0.01" value="<%= targetUser.accountLimits && targetUser.accountLimits.cardSpending != null ? targetUser.accountLimits.cardSpending : 5000 %>"></div>
+            </div>
+            <button class="btn btn-primary">Save limits</button>
+          </form>
+        </div>
+
+        <div class="admin-card">
+          <h5 class="admin-card-title">Security Controls</h5>
+          <div class="admin-security-grid">
+            <form action="/admin/users/<%= targetUser._id %>/two-factor" method="POST">
+              <input type="hidden" name="enabled" value="<%= targetUser.twoFactorEnabled ? 'false' : 'true' %>">
+              <button class="btn btn-info"><%= targetUser.twoFactorEnabled ? 'Disable 2FA' : 'Enable 2FA' %></button>
+            </form>
+            <form action="/admin/users/<%= targetUser._id %>/reset-password" method="POST">
+              <input type="password" name="password" class="form-control" minlength="8" placeholder="Temporary password" required>
+              <button class="btn btn-secondary">Reset Password</button>
+            </form>
+          </div>
+          <p class="admin-muted" style="margin-top:12px;">Transaction PINs and passwords are never displayed in plaintext in this panel.</p>
+        </div>
+
+        <div class="admin-card admin-danger-zone">
+          <h5 class="admin-card-title danger-title">Account Status</h5>
+          <form action="/admin/users/<%= targetUser._id %>/status" method="POST" class="form-inline-row">
+            <select name="status" class="form-control">
+              <option value="active" <%= targetUser.accountStatus === 'active' ? 'selected' : '' %>>Active</option>
+              <option value="suspended" <%= targetUser.accountStatus === 'suspended' ? 'selected' : '' %>>Suspended</option>
+              <option value="closed" <%= targetUser.accountStatus === 'closed' ? 'selected' : '' %>>Closed</option>
+            </select>
+            <button class="btn btn-dark">Update status</button>
+          </form>
+        </div>
+
         <!-- Transaction History -->
         <div class="admin-card">
           <h5 class="admin-card-title">Transaction History</h5>
