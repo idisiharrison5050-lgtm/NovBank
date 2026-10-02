@@ -3,21 +3,29 @@
     <img src="/images/nav.png" alt="NovBank" width="30" height="30">
     <span>NovBank</span>
   </div>
-  <div class="nb-sidebar-section">BANKING</div>
+
+  <div class="nb-sidebar-section">MAIN</div>
   <nav class="sidebar-nav">
-    <a href="/dashboard" class="sidebar-link <%= title === 'Dashboard' ? 'active' : '' %>"><span class="nb-nav-icon">⌂</span><span>Overview</span></a>
+    <a href="/dashboard" class="sidebar-link <%= title === 'Dashboard' ? 'active' : '' %>"><span class="nb-nav-icon">⌂</span><span>Dashboard</span></a>
     <a href="/dashboard/transactions" class="sidebar-link <%= title === 'Transactions' || title === 'Transaction' ? 'active' : '' %>"><span class="nb-nav-icon">≡</span><span>Transactions</span></a>
-    <a href="/transfer" class="sidebar-link <%= title === 'Send Money' ? 'active' : '' %>"><span class="nb-nav-icon">↗</span><span>Send money</span></a>
-    <a href="/transfer/deposit" class="sidebar-link <%= title === 'Deposit Funds' ? 'active' : '' %>"><span class="nb-nav-icon">↓</span><span>Add money</span></a>
-    <a href="/transfer/wire" class="sidebar-link <%= title === 'Wire Transfer' ? 'active' : '' %>"><span class="nb-nav-icon">⇄</span><span>Wire transfer</span></a>
-    <a href="/transfer/withdraw" class="sidebar-link <%= title === 'Withdraw Funds' ? 'active' : '' %>"><span class="nb-nav-icon">↑</span><span>Withdraw</span></a>
     <a href="/cards" class="sidebar-link <%= title === 'Cards' ? 'active' : '' %>"><span class="nb-nav-icon">▣</span><span>Cards</span></a>
+
+    <div class="nb-sidebar-section nb-sidebar-section-spaced">TRANSFERS</div>
+    <a href="/transfer" class="sidebar-link <%= title === 'Send Money' ? 'active' : '' %>"><span class="nb-nav-icon">↗</span><span>Local transfer</span></a>
+    <a href="/transfer/wire" class="sidebar-link <%= title === 'Wire Transfer' ? 'active' : '' %>"><span class="nb-nav-icon">⇄</span><span>International</span></a>
+    <a href="/transfer/deposit" class="sidebar-link <%= title === 'Deposit Funds' ? 'active' : '' %>"><span class="nb-nav-icon">＋</span><span>Deposit</span></a>
+    <a href="/transfer/withdraw" class="sidebar-link <%= title === 'Withdraw Funds' ? 'active' : '' %>"><span class="nb-nav-icon">↑</span><span>Withdraw</span></a>
+
+    <div class="nb-sidebar-section nb-sidebar-section-spaced">SERVICES</div>
     <a href="/airtime" class="sidebar-link <%= title === 'Airtime Recharge' ? 'active' : '' %>"><span class="nb-nav-icon">◉</span><span>Airtime</span></a>
-        <a href="/loans" class="sidebar-link <%= title === 'Loan' ? 'active' : '' %>"><span class="nb-nav-icon">€</span><span>Loans</span></a>
-    <div class="nb-sidebar-section nb-sidebar-section-spaced">ACCOUNT</div>
-    <a href="/dashboard/profile" class="sidebar-link <%= title === 'Account Center' ? 'active' : '' %>"><span class="nb-nav-icon">◎</span><span>Account center</span></a>
-    <a href="/dashboard/security" class="sidebar-link <%= title === 'Security Center' ? 'active' : '' %>"><span class="nb-nav-icon">◈</span><span>Security center</span></a>
+    <a href="/loans" class="sidebar-link <%= title === 'Loan' ? 'active' : '' %>"><span class="nb-nav-icon">€</span><span>Loans</span></a>
     <a href="/dashboard/notifications" class="sidebar-link <%= title === 'Notifications' ? 'active' : '' %>"><span class="nb-nav-icon">◌</span><span>Secure inbox</span><% if (typeof unreadCount !== 'undefined' && unreadCount > 0) { %><em class="nb-nav-count"><%= unreadCount %></em><% } %></a>
+
+    <div class="nb-sidebar-section nb-sidebar-section-spaced">ACCOUNT</div>
+    <a href="/account" class="sidebar-link <%= title === 'Account' ? 'active' : '' %>"><span class="nb-nav-icon">◎</span><span>Bank details</span></a>
+    <a href="/dashboard/profile" class="sidebar-link <%= title === 'Account Center' ? 'active' : '' %>"><span class="nb-nav-icon">⚙</span><span>Settings</span></a>
+    <a href="/dashboard/security" class="sidebar-link <%= title === 'Security Center' ? 'active' : '' %>"><span class="nb-nav-icon">◈</span><span>Security</span></a>
   </nav>
+
   <a href="/logout" class="sidebar-logout nb-sidebar-logout"><span class="nb-nav-icon">↪</span><span>Sign out</span></a>
 </aside>
