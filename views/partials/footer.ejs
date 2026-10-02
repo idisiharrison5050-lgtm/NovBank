@@ -294,7 +294,7 @@ if (pinModalEl) {
     loader.classList.remove('is-active');
   });
 
-  document.addEventListener('click', function (event) {
+  document.addEventListener('pointerdown', function (event) {
     var link = event.target.closest ? event.target.closest('a') : null;
     if (!link) return;
     if (event.defaultPrevented || event.button !== 0) return;
