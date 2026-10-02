@@ -120,6 +120,14 @@
           </div>
         </div>
 
+        <div class="admin-card" style="border:1px solid #f5c542;background:#fffbeb;">
+          <h5 class="admin-card-title">User Session</h5>
+          <p style="color:#667085;font-size:13px;">Open this active user's account exactly as they see it. Financial and security actions remain subject to the existing controls.</p>
+          <form action="/admin/users/<%= targetUser._id %>/impersonate" method="POST" onsubmit="return confirm('Open this user account as Super Admin? Your admin session will be preserved so you can return safely.');">
+            <button class="btn btn-primary">Open user account</button>
+          </form>
+        </div>
+
         <!-- Edit Balance -->
         <div class="admin-card">
           <h5 class="admin-card-title">Edit Balance</h5>
