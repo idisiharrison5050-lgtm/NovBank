@@ -284,41 +284,33 @@ if (pinModalEl) {
 <script src="//code.jivosite.com/widget/67Olrk9gNV" async></script>
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
-</body>
-</html><script>
+<script>
 (function () {
   var loader = document.getElementById('nbNavigationLoader');
   if (!loader) return;
 
-  var timer = null;
   var navigating = false;
 
-  function clearLoader() {
+  function hideLoader() {
     navigating = false;
-    if (timer) {
-      clearTimeout(timer);
-      timer = null;
-    }
     loader.classList.remove('is-active');
   }
 
-  function beginNavigation() {
-    if (navigating) return;
+  function markNavigation() {
     navigating = true;
-    timer = setTimeout(function () {
-      if (navigating && document.visibilityState !== 'hidden') {
-        loader.classList.add('is-active');
-      }
-    }, 1500);
   }
 
-  // New documents start with the loader hidden. Only a navigation from
-  // this document is allowed to activate it.
-  clearLoader();
-  window.addEventListener('pageshow', clearLoader);
+  function showLoaderBeforeUnload() {
+    if (!navigating) return;
+    loader.classList.add('is-active');
+  }
+
+  hideLoader();
+  window.addEventListener('pageshow', hideLoader);
   window.addEventListener('pagehide', function () {
-    if (timer) clearTimeout(timer);
+    if (navigating) loader.classList.add('is-active');
   });
+  window.addEventListener('beforeunload', showLoaderBeforeUnload);
 
   document.addEventListener('click', function (event) {
     var link = event.target.closest ? event.target.closest('a') : null;
@@ -336,16 +328,16 @@ if (pinModalEl) {
       return;
     }
 
-    beginNavigation();
+    markNavigation();
   });
 
   document.addEventListener('submit', function (event) {
     if (event.defaultPrevented) return;
     if (event.target && event.target.getAttribute('target') === '_blank') return;
-    beginNavigation();
+    markNavigation();
   });
 })();
-</script>>
+</script>
 <nav class="nb-mobile-bottom-nav" aria-label="Primary mobile navigation">
   <a href="/dashboard/transactions" class="nb-mobile-nav-link" data-nav-path="/dashboard/transactions" aria-label="Activity">
     <svg viewBox="0 0 24 24"><path d="M4 19V5"></path><path d="M4 19h16"></path><path d="m7 15 4-4 3 2 5-7"></path></svg><span>Activity</span>
@@ -360,7 +352,7 @@ if (pinModalEl) {
     <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 10h18"></path><path d="M7 15h3"></path></svg><span>Cards</span>
   </a>
   <a href="/dashboard/profile" class="nb-mobile-nav-link" data-nav-path="/dashboard/profile" aria-label="Profile">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 21c.8-4 3.1-6 7-6s6.2 2 7 6"></path></svg><span>Profile</span>
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 21c.8-4 3.1-6 7 7s6.2 2 7 6"></path></svg><span>Profile</span>
   </a>
 </nav>
 <script>
@@ -377,3 +369,5 @@ if (pinModalEl) {
   });
 })();
 </script>
+</body>
+</html>
