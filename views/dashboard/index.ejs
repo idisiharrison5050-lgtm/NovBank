@@ -15,13 +15,17 @@
 <div class="dashboard-layout"><%- include('../partials/sidebar') %><main class="dashboard-main nb-command-dashboard">
   <section class="nb-command-hero">
     <div><span class="nb-command-kicker">PERSONAL BANKING</span><h1>Good day, <%= user.firstName %>.</h1><p>Your financial snapshot, activity and everyday banking tools in one place.</p></div>
-    <div class="nb-command-actions">
-      <a class="nb-command-secondary" href="/receive">Receive money</a>
-      <a class="nb-command-primary" href="/transfer">Send money</a>
-    </div>
+    <div class="nb-command-status"><span class="nb-command-status-dot"></span><span>Secure banking session</span></div>
   </section>
   <% if (success_msg.length > 0) { %><div class="alert alert-success"><%= success_msg %></div><% } %><% if (error_msg.length > 0) { %><div class="alert alert-danger"><%= error_msg %></div><% } %>
-  <section class="nb-command-grid"><div class="nb-networth-card"><div class="nb-networth-top"><span>AVAILABLE BALANCE</span><a href="/dashboard/profile">Account details →</a></div><strong>€ <%= Number(user.balance || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong><div class="nb-networth-meta"><span><i></i><%= user.accountStatus.charAt(0).toUpperCase()+user.accountStatus.slice(1) %> account</span><span>•••• <%= String(user.accountNumber).slice(-4) %></span></div></div><div class="nb-health-card"><span>ACCOUNT HEALTH</span><div class="nb-health-ring"><b><%= user.kycStatus === 'approved' ? '100%' : user.kycStatus === 'pending' ? '75%' : '50%' %></b></div><strong><%= user.kycStatus === 'approved' ? 'Verification complete' : user.kycStatus === 'pending' ? 'Verification in progress' : 'Complete your profile' %></strong><p><%= user.kycStatus === 'approved' ? 'Your account is fully set up.' : 'Finish the remaining steps to unlock your full banking experience.' %></p><a href="/kyc">Review account →</a></div></section>
+  <section class="nb-command-grid"><div class="nb-networth-card"><div class="nb-networth-top"><span>AVAILABLE BALANCE</span><a href="/dashboard/profile">Account details →</a></div><strong>€ <%= Number(user.balance || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong><div class="nb-networth-meta"><span><i></i><%= user.accountStatus.charAt(0).toUpperCase()+user.accountStatus.slice(1) %> account</span><span>•••• <%= String(user.accountNumber).slice(-4) %></span></div>
+      <div class="nb-balance-actions" aria-label="Quick banking actions">
+        <button type="button" data-action-popup="add"><span class="nb-balance-action-icon"><svg viewBox="0 0 24 24"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg></span><b>Top Up</b></button>
+        <button type="button" data-action-popup="send"><span class="nb-balance-action-icon"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></span><b>Send</b></button>
+        <button type="button" data-action-popup="receive"><span class="nb-balance-action-icon"><svg viewBox="0 0 24 24"><path d="M12 5v14"></path><path d="m6 13 6 6 6-6"></path></svg></span><b>Receive</b></button>
+        <button type="button" data-action-popup="more"><span class="nb-balance-action-icon"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.6"></circle><circle cx="12" cy="12" r="1.6"></circle><circle cx="19" cy="12" r="1.6"></circle></svg></span><b>More</b></button>
+      </div>
+    </div></div><div class="nb-health-card"><span>ACCOUNT HEALTH</span><div class="nb-health-ring"><b><%= user.kycStatus === 'approved' ? '100%' : user.kycStatus === 'pending' ? '75%' : '50%' %></b></div><strong><%= user.kycStatus === 'approved' ? 'Verification complete' : user.kycStatus === 'pending' ? 'Verification in progress' : 'Complete your profile' %></strong><p><%= user.kycStatus === 'approved' ? 'Your account is fully set up.' : 'Finish the remaining steps to unlock your full banking experience.' %></p><a href="/kyc">Review account →</a></div></section>
 
   <section class="nb-financial-cards" aria-label="Financial overview">
     <article class="nb-fin-card nb-fin-card-balance">
@@ -52,15 +56,6 @@
       <small>Daily outgoing limit</small>
       <a href="/dashboard/profile">Manage limits <b>→</b></a>
     </article>
-  </section>
-
-  <section class="nb-command-actions-grid nb-quick-actions" aria-label="Quick banking actions">
-    <button type="button" data-action-popup="send"><span class="nb-action-icon"><svg viewBox="0 0 24 24"><path d="M4 12h15"></path><path d="m13 6 6 6-6 6"></path></svg></span><b>Send</b></button>
-    <button type="button" data-action-popup="receive"><span class="nb-action-icon"><svg viewBox="0 0 24 24"><path d="M12 4v15"></path><path d="m6 13 6 6 6-6"></path></svg></span><b>Receive</b></button>
-    <button type="button" data-action-popup="add"><span class="nb-action-icon"><svg viewBox="0 0 24 24"><path d="M12 4v13"></path><path d="m7 12 5 5 5-5"></path><path d="M5 20h14"></path></svg></span><b>Add funds</b></button>
-    <button type="button" data-action-popup="withdraw"><span class="nb-action-icon"><svg viewBox="0 0 24 24"><path d="M12 20V7"></path><path d="m7 12 5-5 5 5"></path><path d="M5 4h14"></path></svg></span><b>Withdraw</b></button>
-    <button type="button" data-action-popup="cards"><span class="nb-action-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"></rect><path d="M3 10h18"></path><path d="M7 15h3"></path></svg></span><b>Cards</b></button>
-    <button type="button" data-action-popup="more"><span class="nb-action-icon more"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"></circle><circle cx="12" cy="12" r="1.5"></circle><circle cx="19" cy="12" r="1.5"></circle></svg></span><b>More</b></button>
   </section>
 
   <div class="nb-action-modal" id="nbActionModal" aria-hidden="true">
