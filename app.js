@@ -85,6 +85,7 @@ app.use('/dashboard', require('./routes/dashboard'));
 app.use('/transfer',  require('./routes/internal-transfer'));
 app.use('/transfer',  require('./routes/transfer'));
 app.use('/account',   require('./routes/account'));
+app.use('/receive',  require('./routes/receive'));
 app.use('/admin',     require('./routes/admin'));
 app.use('/kyc',       require('./routes/kyc').router);
 app.use('/cards',     require('./routes/cards'));
