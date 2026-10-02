@@ -29,11 +29,11 @@
 
   <section class="nb-financial-cards" aria-label="Financial overview">
     <article class="nb-fin-card nb-fin-card-balance">
-      <div class="nb-fin-card-icon"><svg viewBox="0 0 24 24"><path d="M3 10h18"></path><path d="M5 10V7l7-4 7 4v3"></path><path d="M5 13v6"></path><path d="M9 13v6"></path><path d="M15 13v6"></path><path d="M19 13v6"></path><path d="M3 21h18"></path></svg></div>
-      <span>AVAILABLE BALANCE</span>
-      <strong>€ <%= Number(user.balance || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong>
-      <small>Ready for everyday banking</small>
-      <a href="/dashboard/transactions">View activity <b>→</b></a>
+      <div class="nb-fin-card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><path d="M8 12h8"></path><path d="M12 8v8"></path></svg></div>
+      <span>MONTHLY TRANSFER LIMIT</span>
+      <strong>€ <%= Number((user.accountLimits && user.accountLimits.monthlyTransfer) || 0).toLocaleString('en-GB',{minimumFractionDigits:0,maximumFractionDigits:0}) %></strong>
+      <small>Maximum outgoing volume</small>
+      <a href="/dashboard/profile">Manage limits <b>→</b></a>
     </article>
     <article class="nb-fin-card nb-fin-card-profit">
       <div class="nb-fin-card-icon"><svg viewBox="0 0 24 24"><path d="M4 19V5"></path><path d="M4 19h16"></path><path d="m7 15 4-4 3 2 5-7"></path><path d="M16 6h3v3"></path></svg></div>
