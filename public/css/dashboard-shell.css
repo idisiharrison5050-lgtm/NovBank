@@ -33,3 +33,12 @@
     padding-bottom:0!important;
   }
 }
+
+/* Product-wide visual finishing layer */
+.mobile-topbar{box-shadow:0 1px 0 rgba(255,255,255,.06),0 8px 24px rgba(2,6,23,.08)!important}
+.mobile-logo{font-weight:850!important;letter-spacing:-.035em}
+.nb-physical-card,.nb-card-controls,.nb-loan-card,.nb-airtime-card,.nb-wire-card,.nb-funding-panel,.nb-account-card,.nb-security-card,.nb-service-card,.nb-transactions-list{box-shadow:0 10px 30px rgba(16,24,40,.045)}
+.nb-benefit-icon svg,.nb-airtime-empty-icon svg,.nb-empty-icon svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.nb-empty-icon{width:52px;height:52px;margin:0 auto;display:grid;place-items:center;border-radius:16px;background:#eef4ff;color:#155eef}
+.nb-empty-icon svg{width:24px;height:24px}
+.nb-benefit-icon{font-style:normal!important}
