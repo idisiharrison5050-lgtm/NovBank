@@ -338,6 +338,7 @@ if (pinModalEl) {
   });
 })();
 </script>
+<% if (user) { %>
 <nav class="nb-mobile-bottom-nav" aria-label="Primary mobile navigation">
   <a href="/dashboard/transactions" class="nb-mobile-nav-link" data-nav-path="/dashboard/transactions" aria-label="Activity">
     <svg viewBox="0 0 24 24"><path d="M4 19V5"></path><path d="M4 19h16"></path><path d="m7 15 4-4 3 2 5-7"></path></svg><span>Activity</span>
@@ -355,6 +356,7 @@ if (pinModalEl) {
     <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 21c.8-4 3.1-6 7-6s6.2 2 7 6"></path></svg><span>Profile</span>
   </a>
 </nav>
+<% } %>
 <script>
 (function () {
   var links = document.querySelectorAll('.nb-mobile-nav-link');
