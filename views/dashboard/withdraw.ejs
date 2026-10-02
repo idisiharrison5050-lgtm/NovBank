@@ -1,6 +1,6 @@
 <%- include('../partials/header') %>
 <link rel="stylesheet" href="/css/dashboard.css"/><link rel="stylesheet" href="/css/funding-premium.css"/>
-<div class="mobile-topbar"><span class="mobile-logo">NovBank</span><button class="hamburger-btn" id="hamburgerBtn">☰</button></div><div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="mobile-topbar"><span class="mobile-logo">NovBank</span><button class="hamburger-btn" id="hamburgerBtn" aria-label="Open navigation"><span></span><span></span><span></span></button></div><div class="sidebar-overlay" id="sidebarOverlay"></div>
 <div class="dashboard-layout"><%- include('../partials/sidebar') %><main class="dashboard-main nb-withdraw-page">
   <div class="nb-funding-head"><div><span class="nb-funding-kicker">MOVE MONEY OUT</span><h1>Withdraw funds</h1><p>Request a withdrawal to your bank account. Your available balance is debited immediately and the request remains pending until operations completes it.</p></div><div class="nb-funding-balance"><span>AVAILABLE BALANCE</span><b>€ <%= Number(user.balance || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></b></div></div>
   <% if (success_msg.length > 0) { %><div class="alert alert-success"><%= success_msg %></div><% } %><% if (error_msg.length > 0) { %><div class="alert alert-danger"><%= error_msg %></div><% } %>
