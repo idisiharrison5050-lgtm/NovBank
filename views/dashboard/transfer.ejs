@@ -18,8 +18,20 @@
         <div class="form-group"><label>Username, email or account number</label><input type="text" name="identifier" class="form-control" placeholder="e.g. alex@example.com" autocomplete="off" required/></div>
         <div class="nb-form-section nb-form-section-spaced"><span>02</span><div><b>Payment details</b><small>Set the amount and describe the transfer.</small></div></div>
         <div class="form-group"><label>Amount (€)</label><div class="nb-amount-input"><span>€</span><input type="number" name="amount" class="form-control" placeholder="0.00" min="0.01" step="0.01" required/></div></div>
-        <div class="form-group"><label>Category</label><select name="category" class="form-control"><option value="Transfer">Transfer</option><option value="Food">Food</option><option value="Rent">Rent</option><option value="Utilities">Utilities</option><option value="Shopping">Shopping</option><option value="Healthcare">Healthcare</option><option value="Entertainment">Entertainment</option><option value="Other">Other</option></select></div>
-        <div class="form-group"><label>Description <small class="nb-optional">Optional</small></label><input type="text" name="description" class="form-control" placeholder="What is this transfer for?"/></div>
+        <div class="nb-saved-recipients">
+  <div class="nb-saved-head"><span>SAVED RECIPIENTS</span><small>Use a recipient you've sent to before</small></div>
+  <% if (beneficiaries && beneficiaries.length) { %>
+    <div class="nb-recipient-list">
+      <% beneficiaries.forEach(function(b){ %>
+        <div class="nb-recipient">
+          <a href="/transfer?recipient=<%= encodeURIComponent(b.identifier) %>"><span class="nb-recipient-avatar"><%= b.name.charAt(0).toUpperCase() %></span><span><b><%= b.name %></b><small><%= b.identifier %></small></span></a>
+          <form action="/transfer/beneficiaries/<%= b._id %>/delete" method="POST"><button type="submit" aria-label="Remove saved recipient">×</button></form>
+        </div>
+      <% }); %>
+    </div>
+  <% } else { %><div class="nb-saved-empty">Recipients you save during transfers will appear here.</div><% } %>
+</div><div class="form-group"><label>Category</label><select name="category" class="form-control"><option value="Transfer">Transfer</option><option value="Food">Food</option><option value="Rent">Rent</option><option value="Utilities">Utilities</option><option value="Shopping">Shopping</option><option value="Healthcare">Healthcare</option><option value="Entertainment">Entertainment</option><option value="Other">Other</option></select></div>
+        <label class="nb-save-recipient"><input type="checkbox" name="saveRecipient"><span><b>Save this recipient</b><small>Keep the details ready for your next transfer.</small></span></label><div class="form-group"><label>Description <small class="nb-optional">Optional</small></label><input type="text" name="description" class="form-control" placeholder="What is this transfer for?"/></div>
         <input type="hidden" name="transactionPin" id="transferPinInput"/>
         <div class="nb-wire-review-note"><span>✓</span><p>Your transaction PIN is requested only when you authorize the transfer.</p></div>
         <button type="button" class="nb-flow-submit" onclick="openPinModal('transferForm')">Continue to secure review <span>→</span></button>
