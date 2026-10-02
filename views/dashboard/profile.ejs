@@ -5,7 +5,7 @@
 <div class="nb-account-hero"><div><span class="nb-account-label">ACCOUNT CENTER</span><h1>My account</h1><p>Manage your profile, banking details and security.</p></div><span class="nb-account-badge"><%= user.accountStatus.charAt(0).toUpperCase()+user.accountStatus.slice(1) %> account</span></div>
 <% if (success_msg.length > 0) { %><div class="alert alert-success"><%= success_msg %></div><% } %><% if (error_msg.length > 0) { %><div class="alert alert-danger"><%= error_msg %></div><% } %>
 <div class="nb-account-grid">
-<section class="nb-account-card"><span class="nb-account-label">PROFILE</span><div class="nb-account-name"><%= user.firstName %> <%= user.lastName %></div><div class="nb-account-muted">@<%= user.username %> · <%= user.email %></div><div class="nb-account-details"><div class="nb-account-detail"><span>Phone</span><b><%= user.phone || 'Not provided' %></b></div><div class="nb-account-detail"><span>Account number</span><b class="nb-copy-value"><%= user.accountNumber %></b></div><div class="nb-account-detail"><span>IBAN</span><b class="nb-copy-value"><%= user.bankDetails && user.bankDetails.iban ? user.bankDetails.iban : 'Not available' %></b></div><div class="nb-account-detail"><span>SWIFT</span><b><%= user.bankDetails && user.bankDetails.swift ? user.bankDetails.swift : 'Not available' %></b></div><div class="nb-account-detail"><span>Bank</span><b><%= user.bankDetails && user.bankDetails.bankName ? user.bankDetails.bankName : 'NovBank' %></b></div></div></section>
+<section class="nb-account-card"><span class="nb-account-label">PROFILE</span><div class="nb-account-name"><%= user.firstName %> <%= user.lastName %></div><div class="nb-account-muted">@<%= user.username %> · <%= user.email %></div><div class="nb-account-details"><div class="nb-account-detail"><span>Phone</span><b><%= user.phone || 'Not provided' %></b></div><div class="nb-account-detail"><span>Account number</span><div class="nb-detail-copy"><b class="nb-copy-value"><%= user.accountNumber %></b><button type="button" class="nb-copy-control" data-copy="<%= user.accountNumber %>">Copy</button></div></div><div class="nb-account-detail"><span>IBAN</span><div class="nb-detail-copy"><b class="nb-copy-value"><%= user.bankDetails && user.bankDetails.iban ? user.bankDetails.iban : 'Not available' %></b><% if (user.bankDetails && user.bankDetails.iban) { %><button type="button" class="nb-copy-control" data-copy="<%= user.bankDetails.iban %>">Copy</button><% } %></div></div><div class="nb-account-detail"><span>SWIFT</span><div class="nb-detail-copy"><b><%= user.bankDetails && user.bankDetails.swift ? user.bankDetails.swift : 'Not available' %></b><% if (user.bankDetails && user.bankDetails.swift) { %><button type="button" class="nb-copy-control" data-copy="<%= user.bankDetails.swift %>">Copy</button><% } %></div></div><div class="nb-account-detail"><span>Bank</span><b><%= user.bankDetails && user.bankDetails.bankName ? user.bankDetails.bankName : 'NovBank' %></b></div></div></section>
 <section class="nb-account-card dark"><span class="nb-account-label">SECURITY STATUS</span><div class="nb-account-name"><%= user.isVerified ? 'Account verified' : 'Verification required' %></div><div class="nb-account-muted">Security controls available on your account.</div><div class="nb-security-list"><div class="nb-security-item <%= user.emailVerified ? 'ok' : 'pending' %>"><b>Email verification</b><span><%= user.emailVerified ? 'Verified' : 'Action required' %></span></div><div class="nb-security-item <%= user.pinSet ? 'ok' : 'pending' %>"><b>Transaction PIN</b><span><%= user.pinSet ? 'Configured' : 'Not configured' %></span></div><div class="nb-security-item <%= user.kycStatus === 'approved' ? 'ok' : 'pending' %>"><b>Identity verification</b><span><%= user.kycStatus %></span></div></div></section>
 </div>
 <div class="nb-account-card nb-account-form"><h2>Contact information</h2><form action="/account/update-profile" method="POST"><label>Phone<input type="tel" name="phone" value="<%= user.phone %>"/></label><label>Street address<input type="text" name="street" value="<%= user.address ? user.address.street : '' %>"/></label><label>City<input type="text" name="city" value="<%= user.address ? user.address.city : '' %>"/></label><label>Zip code<input type="text" name="zip" value="<%= user.address ? user.address.zip : '' %>"/></label><label>Country<input type="text" name="country" value="<%= user.address ? user.address.country : '' %>"/></label><button class="nb-account-button" type="submit">Save changes</button></form></div>
@@ -20,4 +20,25 @@
   </div>
 </div>
 <div class="nb-account-card nb-account-form" id="password"><h2>Password</h2><form action="/account/change-password" method="POST"><label>Current password<input type="password" name="currentPassword" required/></label><label>New password<input type="password" name="newPassword" required/></label><label>Confirm new password<input type="password" name="confirmNew" required/></label><button class="nb-account-button" type="submit">Update password</button></form></div>
-</main></div><%- include('../partials/footer') %>
+</main></div>
+<script>
+(function () {
+  var buttons = document.querySelectorAll('.nb-copy-control');
+  buttons.forEach(function (button) {
+    button.addEventListener('click', function () {
+      var value = button.getAttribute('data-copy');
+      if (!value || !navigator.clipboard) return;
+      navigator.clipboard.writeText(value).then(function () {
+        var original = button.textContent;
+        button.textContent = 'Copied';
+        button.classList.add('copied');
+        setTimeout(function () {
+          button.textContent = original;
+          button.classList.remove('copied');
+        }, 1400);
+      });
+    });
+  });
+}());
+</script>
+<%- include('../partials/footer') %>
