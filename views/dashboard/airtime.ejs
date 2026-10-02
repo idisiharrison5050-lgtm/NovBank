@@ -1,7 +1,7 @@
 <%- include('../partials/header') %>
 <link rel="stylesheet" href="/css/dashboard.css"/><link rel="stylesheet" href="/css/airtime-premium.css"/>
 
-<div class="mobile-topbar"><span class="mobile-logo">NovBank</span><button class="hamburger-btn" id="hamburgerBtn" aria-label="Open navigation">☰</button></div>
+<div class="mobile-topbar"><span class="mobile-logo">NovBank</span><button class="hamburger-btn" id="hamburgerBtn" aria-label="Open navigation"><span></span><span></span><span></span></button></div>
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 <div class="dashboard-layout">
@@ -30,7 +30,7 @@
       <section class="nb-airtime-card">
         <div class="nb-airtime-card-head"><div><span>ACTIVITY</span><h2>Recent recharges</h2></div><span class="nb-airtime-count"><%= history.length %></span></div>
         <% if (history.length === 0) { %>
-          <div class="nb-airtime-empty"><div class="nb-airtime-empty-icon">◷</div><strong>No recharges yet</strong><p>Your completed airtime recharges will appear here.</p></div>
+          <div class="nb-airtime-empty"><div class="nb-airtime-empty-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v5l3 2"></path></svg></div><strong>No recharges yet</strong><p>Your completed airtime recharges will appear here.</p></div>
         <% } else { %>
           <div class="nb-airtime-list">
             <% history.forEach(function(a) { %>
