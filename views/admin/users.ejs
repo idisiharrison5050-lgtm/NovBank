@@ -19,7 +19,7 @@
     <div class="admin-search-bar">
       <form action="/admin/users" method="GET">
         <div class="input-group">
-          <input type="text" name="search" class="form-control" placeholder="Search by name, email, username or account number..." value="<%= search %>"/>
+          <label class="sr-only" for="adminUserSearch">Search users</label><input id="adminUserSearch" type="search" name="search" autocomplete="off" class="form-control" placeholder="Search by name, email, username or account number..." value="<%= search %>"/>
           <div class="input-group-append">
             <button class="btn btn-primary" type="submit">Search</button>
           </div>
@@ -28,7 +28,7 @@
     </div>
 
     <div class="admin-card">
-      <p class="admin-result-count"><%= users.length %> user(s) found</p>
+      <div class="admin-list-meta"><span class="admin-kicker">CUSTOMER DIRECTORY</span><p class="admin-result-count"><%= users.length %> user(s) found</p></div>
       <% if (users.length === 0) { %>
         <p class="admin-empty">No users found.</p>
       <% } else { %>
