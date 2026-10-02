@@ -164,7 +164,14 @@
 (function () {
   var loader = document.getElementById('nbNavigationLoader');
   if (!loader) return;
-  window.setTimeout(function () { loader.classList.remove('is-active'); }, 1800);
+
+  // The loader is navigation-only. It must never wait for the next
+  // document to become ready before appearing, and it must not animate.
+  loader.classList.remove('is-active');
+
+  window.addEventListener('pageshow', function () {
+    loader.classList.remove('is-active');
+  });
 })();
 </script>
 <% if (typeof session !== 'undefined' && session.impersonating) { %>
