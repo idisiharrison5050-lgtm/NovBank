@@ -290,9 +290,31 @@ if (pinModalEl) {
   var loader = document.getElementById('nbNavigationLoader');
   if (!loader) return;
 
-  window.addEventListener('pageshow', function () {
+  var loaderTimer = null;
+  var navigationStarted = false;
+
+  function hideLoader() {
+    if (loaderTimer) {
+      window.clearTimeout(loaderTimer);
+      loaderTimer = null;
+    }
     loader.classList.remove('is-active');
-  });
+  }
+
+  function scheduleLoader() {
+    if (navigationStarted) return;
+    navigationStarted = true;
+    loaderTimer = window.setTimeout(function () {
+      if (navigationStarted) loader.classList.add('is-active');
+    }, 380);
+  }
+
+  // This script is loaded near the end of the document, so pageshow/load
+  // may already have fired. Check readyState as well as listening for them.
+  hideLoader();
+  window.addEventListener('pageshow', hideLoader);
+  window.addEventListener('load', hideLoader);
+  document.addEventListener('DOMContentLoaded', hideLoader);
 
   document.addEventListener('pointerdown', function (event) {
     var link = event.target.closest ? event.target.closest('a') : null;
@@ -313,20 +335,16 @@ if (pinModalEl) {
       return;
     }
 
-    // Let the browser start normal navigation first. If the next document
-    // takes long enough, then reveal the animated transition.
-    window.clearTimeout(window.nbNavigationLoaderTimer);
-    window.nbNavigationLoaderTimer = window.setTimeout(function () {
-      loader.classList.add('is-active');
-    }, 380);
+    scheduleLoader();
   });
+
   document.addEventListener('submit', function (event) {
     if (event.defaultPrevented) return;
     if (event.target && event.target.getAttribute('target') === '_blank') return;
-    loader.classList.add('is-active');
+    scheduleLoader();
   });
 })();
-</script>
+</script>>
 <nav class="nb-mobile-bottom-nav" aria-label="Primary mobile navigation">
   <a href="/dashboard" class="nb-mobile-nav-link active" data-nav-path="/dashboard" aria-label="Home">
     <svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5.5 9.5V21h13V9.5"></path><path d="M9.5 21v-6h5v6"></path></svg><span>Home</span>
