@@ -345,6 +345,51 @@ router.get('/settings', isAdmin, function (req, res) {
   });
 });
 
+router.get('/generate-transaction', isAdmin, function (req, res) {
+  User.find().sort({ firstName: 1, lastName: 1 }).select('firstName lastName username email accountNumber currency').then(function (users) {
+    res.render('admin/generate-transaction', { title: 'Generate Transaction', users: users });
+  }).catch(function (err) {
+    console.error(err);
+    res.redirect('/admin/dashboard');
+  });
+});
+
+router.post('/generate-transaction', isAdmin, function (req, res) {
+  var amount = Number(req.body.amount);
+  var direction = req.body.direction === 'debit' ? 'debit' : 'credit';
+  var description = String(req.body.description || 'Manual admin transaction').trim();
+  if (!req.body.userId || !isFinite(amount) || amount <= 0 || !description) {
+    req.flash('error_msg', 'Select a customer and enter a valid amount and description.');
+    return res.redirect('/admin/generate-transaction');
+  }
+  User.findById(req.body.userId).then(function (user) {
+    if (!user) throw new Error('User not found.');
+    var operation = direction === 'credit' ? ledger.createCredit : ledger.createDebit;
+    return new Promise(function (resolve, reject) {
+      operation({
+        userId: user._id,
+        type: direction === 'credit' ? 'admin_credit' : 'admin_debit',
+        amount: amount,
+        description: description,
+        category: 'Other',
+        idempotencyKey: 'generated:' + user._id + ':' + Date.now()
+      }, function (err, txn) {
+        if (err) return reject(err);
+        resolve(txn);
+      });
+    }).then(function (txn) {
+      return logAction(req.user._id, 'Generated Transaction', 'Transaction', txn._id, direction.toUpperCase() + ' €' + amount.toFixed(2) + ' for ' + user.username + ' — ' + description);
+    }).then(function () {
+      req.flash('success_msg', 'Transaction generated and posted to the ledger.');
+      res.redirect('/admin/transactions');
+    });
+  }).catch(function (err) {
+    console.error(err);
+    req.flash('error_msg', 'Transaction generation failed: ' + err.message);
+    res.redirect('/admin/generate-transaction');
+  });
+});
+
 router.get('/create-user', isAdmin, function (req, res) {
   res.render('admin/create-user', { title: 'Create New User' });
 });
