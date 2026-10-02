@@ -6,7 +6,7 @@ var TransactionSchema = new mongoose.Schema({
 
   type: {
     type: String,
-    enum: ['internal_transfer', 'wire_transfer', 'deposit', 'withdrawal', 'airtime', 'loan_credit'],
+    enum: ['internal_transfer', 'wire_transfer', 'deposit', 'withdrawal', 'airtime', 'loan_credit', 'admin_credit', 'admin_debit', 'grant_credit', 'refund_credit'],
     required: true
   },
 
