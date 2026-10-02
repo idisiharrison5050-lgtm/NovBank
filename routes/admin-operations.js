@@ -1,4 +1,5 @@
 var express = require('express');
+var bcrypt = require('bcryptjs');
 var router = express.Router();
 var Admin = require('../models/Admin');
 var User = require('../models/User');
@@ -343,5 +344,160 @@ router.get('/settings', isAdmin, function (req, res) {
     }
   });
 });
+
+/* ─── Individual customer controls ─────────────────────────── */
+router.post('/users/:id/credit', isAdmin, function (req, res) {
+  var amount = Number(req.body.amount);
+  var reason = String(req.body.reason || 'Admin credit').trim();
+  if (!isFinite(amount) || amount <= 0) {
+    req.flash('error_msg', 'Enter a valid credit amount.');
+    return res.redirect('/admin/users/' + req.params.id);
+  }
+  User.findById(req.params.id).then(function (user) {
+    if (!user) throw new Error('User not found.');
+    return new Promise(function (resolve, reject) {
+      ledger.createCredit({
+        userId: user._id,
+        type: 'admin_credit',
+        amount: amount,
+        description: reason,
+        category: 'Other',
+        idempotencyKey: 'admin-credit:' + user._id + ':' + Date.now()
+      }, function (err, txn) {
+        if (err) return reject(err);
+        resolve(txn);
+      });
+    }).then(function () {
+      return logAction(req.user._id, 'Credited User Account', 'User', user._id, '€' + amount.toFixed(2) + ' — ' + reason);
+    }).then(function () {
+      return new Notification({
+        user: user._id,
+        type: 'transaction',
+        title: 'Account Credit',
+        message: '€' + amount.toFixed(2) + ' was credited to your account.',
+        severity: 'success'
+      }).save();
+    }).then(function () {
+      req.flash('success_msg', 'Account credited through the ledger.');
+      res.redirect('/admin/users/' + user._id);
+    });
+  }).catch(function (err) {
+    console.error(err);
+    req.flash('error_msg', 'Credit failed: ' + err.message);
+    res.redirect('/admin/users/' + req.params.id);
+  });
+});
+
+router.post('/users/:id/debit', isAdmin, function (req, res) {
+  var amount = Number(req.body.amount);
+  var reason = String(req.body.reason || 'Admin debit').trim();
+  if (!isFinite(amount) || amount <= 0) {
+    req.flash('error_msg', 'Enter a valid debit amount.');
+    return res.redirect('/admin/users/' + req.params.id);
+  }
+  User.findById(req.params.id).then(function (user) {
+    if (!user) throw new Error('User not found.');
+    return new Promise(function (resolve, reject) {
+      ledger.createDebit({
+        userId: user._id,
+        type: 'admin_debit',
+        amount: amount,
+        description: reason,
+        category: 'Other',
+        idempotencyKey: 'admin-debit:' + user._id + ':' + Date.now()
+      }, function (err, txn) {
+        if (err) return reject(err);
+        resolve(txn);
+      });
+    }).then(function () {
+      return logAction(req.user._id, 'Debited User Account', 'User', user._id, '€' + amount.toFixed(2) + ' — ' + reason);
+    }).then(function () {
+      return new Notification({
+        user: user._id,
+        type: 'transaction',
+        title: 'Account Debit',
+        message: '€' + amount.toFixed(2) + ' was debited from your account.',
+        severity: 'warning'
+      }).save();
+    }).then(function () {
+      req.flash('success_msg', 'Account debited through the ledger.');
+      res.redirect('/admin/users/' + user._id);
+    });
+  }).catch(function (err) {
+    console.error(err);
+    req.flash('error_msg', 'Debit failed: ' + err.message);
+    res.redirect('/admin/users/' + req.params.id);
+  });
+});
+
+router.post('/users/:id/reset-password', isAdmin, function (req, res) {
+  var password = String(req.body.password || '');
+  if (password.length < 8) {
+    req.flash('error_msg', 'Temporary password must be at least 8 characters.');
+    return res.redirect('/admin/users/' + req.params.id);
+  }
+  User.findById(req.params.id).then(function (user) {
+    if (!user) throw new Error('User not found.');
+    return new Promise(function (resolve, reject) {
+      bcrypt.genSalt(10, function (err, salt) {
+        if (err) return reject(err);
+        bcrypt.hash(password, salt, function (hashErr, hash) {
+          if (hashErr) return reject(hashErr);
+          user.password = hash;
+          user.emailVerified = false;
+          resolve(user.save());
+        });
+      });
+    }).then(function () {
+      return logAction(req.user._id, 'Reset User Password', 'User', user._id, 'Admin reset the password and required re-verification.');
+    }).then(function () {
+      req.flash('success_msg', 'Password reset. Give the temporary password to the customer through a secure channel.');
+      res.redirect('/admin/users/' + user._id);
+    });
+  }).catch(function (err) {
+    req.flash('error_msg', 'Password reset failed: ' + err.message);
+    res.redirect('/admin/users/' + req.params.id);
+  });
+});
+
+router.post('/users/:id/two-factor', isAdmin, function (req, res) {
+  User.findById(req.params.id).then(function (user) {
+    if (!user) throw new Error('User not found.');
+    user.twoFactorEnabled = req.body.enabled === 'true';
+    return user.save().then(function () {
+      return logAction(req.user._id, 'Changed User Two-Factor Authentication', 'User', user._id, '2FA ' + (user.twoFactorEnabled ? 'enabled' : 'disabled'));
+    }).then(function () {
+      req.flash('success_msg', 'Two-factor authentication setting updated.');
+      res.redirect('/admin/users/' + user._id);
+    });
+  }).catch(function (err) {
+    req.flash('error_msg', 'Unable to change 2FA: ' + err.message);
+    res.redirect('/admin/users/' + req.params.id);
+  });
+});
+
+router.post('/users/:id/limits', isAdmin, function (req, res) {
+  var daily = Number(req.body.dailyTransfer);
+  var monthly = Number(req.body.monthlyTransfer);
+  var card = Number(req.body.cardSpending);
+  if (![daily, monthly, card].every(function (v) { return isFinite(v) && v >= 0; })) {
+    req.flash('error_msg', 'All account limits must be valid non-negative numbers.');
+    return res.redirect('/admin/users/' + req.params.id);
+  }
+  User.findById(req.params.id).then(function (user) {
+    if (!user) throw new Error('User not found.');
+    user.accountLimits = { dailyTransfer: daily, monthlyTransfer: monthly, cardSpending: card };
+    return user.save().then(function () {
+      return logAction(req.user._id, 'Updated Account Limits', 'User', user._id, 'Daily €' + daily + ', monthly €' + monthly + ', card €' + card);
+    }).then(function () {
+      req.flash('success_msg', 'Account usage limits updated.');
+      res.redirect('/admin/users/' + user._id);
+    });
+  }).catch(function (err) {
+    req.flash('error_msg', 'Unable to update limits: ' + err.message);
+    res.redirect('/admin/users/' + req.params.id);
+  });
+});
+
 
 module.exports = router;
