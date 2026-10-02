@@ -35,7 +35,7 @@
     <% if (notifications.length > 0) { %>
       <div class="nb-security-events">
       <% notifications.forEach(function(item) { %>
-        <div class="nb-security-event <%= item.isRead ? '' : 'unread' %>"><div class="nb-security-event-icon">•</div><div><b><%= item.title %></b><p><%= item.message %></p><small><%= new Date(item.createdAt).toLocaleString() %></small></div></div>
+        <div class="nb-security-event <%= item.isRead ? '' : 'unread' %>"><div class="nb-security-event-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 5 6v5c0 4.5 2.9 8.1 7 10 4.1-1.9 7-5.5 7-10V6l-7-3Z"></path><path d="m9.5 12 1.7 1.7 3.6-4"></path></svg></div><div><b><%= item.title %></b><p><%= item.message %></p><small><%= new Date(item.createdAt).toLocaleString() %></small></div></div>
       <% }); %>
       </div>
     <% } else { %>
