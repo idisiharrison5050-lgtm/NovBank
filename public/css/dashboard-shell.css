@@ -22,3 +22,14 @@
 .hamburger-btn span{display:block;width:18px;height:1.7px;border-radius:2px;background:currentColor}
 @media(min-width:769px){.dashboard-main{padding:34px 36px 56px;box-sizing:border-box}.dashboard-main>*{max-width:1180px;margin-left:auto;margin-right:auto}}
 @media(max-width:768px){.dashboard-main{padding-bottom:105px!important}}
+
+/* Keep sign-out reachable above the fixed mobile bottom navigation. */
+@media(max-width:768px){
+  .nb-sidebar-logout{
+    margin-bottom:88px!important;
+    flex:0 0 auto;
+  }
+  .nb-sidebar{
+    padding-bottom:0!important;
+  }
+}
