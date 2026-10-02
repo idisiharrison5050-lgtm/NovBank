@@ -71,42 +71,110 @@ router.post('/beneficiaries/:id/delete', isAuth, isPinVerified, function (req, r
 router.post('/', isAuth, isPinVerified, function (req, res) {
   verifyPin(req, res, '/transfer', function () {
     checkAccountActive(req, res, '/transfer', function () {
-      var recipient;
-      var identifier=req.body.identifier;
-      var amount=parseFloat(req.body.amount);
-      var description=req.body.description || '';
-      var category=req.body.category || 'Transfer';
-      if(!identifier || isNaN(amount) || amount<=0){req.flash('error_msg','Invalid transfer details.');return res.redirect('/transfer');}
-      User.findOne({$or:[{accountNumber:identifier},{email:identifier.toLowerCase()},{username:identifier.toLowerCase()}]}).then(function(foundRecipient){
-        recipient=foundRecipient;
-        if(!recipient){req.flash('error_msg','Recipient not found.');return res.redirect('/transfer');}
-        if(recipient._id.toString()===req.user._id.toString()){req.flash('error_msg','You cannot transfer to yourself.');return res.redirect('/transfer');}
-        return new Promise(function(resolve,reject){
-          ledger.transferInternal({senderId:req.user._id,receiverId:recipient._id,amount:amount,description:description,category:category,idempotencyKey:'internal:'+req.user._id+':'+Date.now()+':'+Math.floor(Math.random()*1000000)},function(err,txn){if(err)return reject(err);resolve(txn);});
-        });
-      }).then(function(txn){
-        var saveRecipient = req.body.saveRecipient === 'on';
-        var beneficiaryPromise = Promise.resolve();
-        if (saveRecipient) {
-          beneficiaryPromise = Beneficiary.findOneAndUpdate(
-            { user: req.user._id, identifier: String(identifier).trim().toLowerCase(), kind: 'local' },
-            { user: req.user._id, identifier: String(identifier).trim().toLowerCase(), name: recipient.firstName + ' ' + recipient.lastName, kind: 'local', lastUsedAt: new Date() },
-            { upsert: true, new: true, setDefaultsOnInsert: true }
-          );
-        } else {
-          beneficiaryPromise = Beneficiary.updateOne({ user: req.user._id, identifier: String(identifier).trim().toLowerCase(), kind: 'local' }, { $set: { lastUsedAt: new Date() } });
+      var identifier = req.body.identifier;
+      var amount = parseFloat(req.body.amount);
+      var description = req.body.description || '';
+      var category = req.body.category || 'Transfer';
+
+      if (!identifier || isNaN(amount) || amount <= 0) {
+        req.flash('error_msg', 'Invalid transfer details.');
+        return res.redirect('/transfer');
+      }
+
+      User.findOne({
+        $or: [
+          { accountNumber: identifier },
+          { email: identifier.toLowerCase() },
+          { username: identifier.toLowerCase() }
+        ]
+      }).then(function (recipient) {
+        if (!recipient) {
+          req.flash('error_msg', 'Recipient not found.');
+          return res.redirect('/transfer');
         }
-        return beneficiaryPromise.then(function(){
-          return Promise.all([
-          new Notification({user:req.user._id,title:'Transfer Sent',message:'You sent €'+amount.toFixed(2)+' to '+txn.receiver.firstName+' '+txn.receiver.lastName+'.',type:'success'}).save(),
-          new Notification({user:recipient._id,title:'Money Received',message:'You received €'+amount.toFixed(2)+' from '+req.user.firstName+' '+req.user.lastName+'.',type:'success'}).save(),
-          mailer.transferSentEmail(req.user,amount,recipient.firstName+' '+recipient.lastName),
-          mailer.transferReceivedEmail(recipient,amount,req.user.firstName+' '+req.user.lastName)
-        ]).then(function(){req.session.receipt={amount:txn.amount,reference:txn.reference,date:new Date(txn.createdAt).toLocaleString('en-GB'),type:'Internal Transfer',from:req.user.firstName+' '+req.user.lastName+' ('+req.user.accountNumber+')',to:recipient.firstName+' '+recipient.lastName+' ('+recipient.accountNumber+')',description:txn.description||'-',category:txn.category,status:txn.status};res.redirect('/transfer/receipt');});
-      }).catch(function(err){console.error(err);req.flash('error_msg',err.message==='Insufficient funds'?'Insufficient funds.':'Transfer failed. Please try again.');res.redirect('/transfer');});
+
+        if (recipient._id.toString() === req.user._id.toString()) {
+          req.flash('error_msg', 'You cannot transfer to yourself.');
+          return res.redirect('/transfer');
+        }
+
+        return new Promise(function (resolve, reject) {
+          ledger.transferInternal({
+            senderId: req.user._id,
+            receiverId: recipient._id,
+            amount: amount,
+            description: description,
+            category: category,
+            idempotencyKey: 'internal:' + req.user._id + ':' + Date.now() + ':' + Math.floor(Math.random() * 1000000)
+          }, function (err, txn) {
+            if (err) return reject(err);
+            resolve(txn);
+          });
+        }).then(function (txn) {
+          var identifierKey = String(identifier).trim().toLowerCase();
+          var saveRecipient = req.body.saveRecipient === 'on';
+          var beneficiaryPromise;
+
+          if (saveRecipient) {
+            beneficiaryPromise = Beneficiary.findOneAndUpdate(
+              { user: req.user._id, identifier: identifierKey, kind: 'local' },
+              {
+                user: req.user._id,
+                identifier: identifierKey,
+                name: recipient.firstName + ' ' + recipient.lastName,
+                kind: 'local',
+                lastUsedAt: new Date()
+              },
+              { upsert: true, new: true, setDefaultsOnInsert: true }
+            );
+          } else {
+            beneficiaryPromise = Beneficiary.updateOne(
+              { user: req.user._id, identifier: identifierKey, kind: 'local' },
+              { $set: { lastUsedAt: new Date() } }
+            );
+          }
+
+          return beneficiaryPromise.then(function () {
+            return Promise.all([
+              new Notification({
+                user: req.user._id,
+                title: 'Transfer Sent',
+                message: 'You sent €' + amount.toFixed(2) + ' to ' + recipient.firstName + ' ' + recipient.lastName + '.',
+                type: 'success'
+              }).save(),
+              new Notification({
+                user: recipient._id,
+                title: 'Money Received',
+                message: 'You received €' + amount.toFixed(2) + ' from ' + req.user.firstName + ' ' + req.user.lastName + '.',
+                type: 'success'
+              }).save(),
+              mailer.transferSentEmail(req.user, amount, recipient.firstName + ' ' + recipient.lastName),
+              mailer.transferReceivedEmail(recipient, amount, req.user.firstName + ' ' + req.user.lastName)
+            ]);
+          }).then(function () {
+            req.session.receipt = {
+              amount: txn.amount,
+              reference: txn.reference,
+              date: new Date(txn.createdAt).toLocaleString('en-GB'),
+              type: 'Internal Transfer',
+              from: req.user.firstName + ' ' + req.user.lastName + ' (' + req.user.accountNumber + ')',
+              to: recipient.firstName + ' ' + recipient.lastName + ' (' + recipient.accountNumber + ')',
+              description: txn.description || '-',
+              category: txn.category,
+              status: txn.status
+            };
+            res.redirect('/transfer/receipt');
+          });
+        });
+      }).catch(function (err) {
+        console.error(err);
+        req.flash('error_msg', err.message === 'Insufficient funds' ? 'Insufficient funds.' : 'Transfer failed. Please try again.');
+        res.redirect('/transfer');
+      });
     });
   });
 });
+
 // Wire Transfer
 router.get('/wire', isAuth, isPinVerified, function (req, res) {
   res.render('dashboard/wire-transfer', { title: 'Wire Transfer', unreadCount: 0 });
