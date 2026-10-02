@@ -1,9 +1,9 @@
 <%- include('../partials/header') %>
 <link rel="stylesheet" href="/css/dashboard.css"/>
 <link rel="stylesheet" href="/css/customer-services.css"/>
-<div class="mobile-topbar"><span class="mobile-logo">NovBank</span><button class="hamburger-btn" id="hamburgerBtn">☰</button></div><div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="mobile-topbar"><span class="mobile-logo">NovBank</span><button class="hamburger-btn" id="hamburgerBtn" aria-label="Open navigation"><span></span><span></span><span></span></button></div><div class="sidebar-overlay" id="sidebarOverlay"></div>
 <div class="dashboard-layout"><%- include('../partials/sidebar') %><main class="dashboard-main nb-service-page">
-  <div class="nb-service-hero"><div><span>TRANSACTION SUPPORT</span><h1>Refunds</h1><p>Request a review when a completed transaction needs to be refunded.</p></div><span class="nb-service-icon">↩</span></div>
+  <div class="nb-service-hero"><div><span>TRANSACTION SUPPORT</span><h1>Refunds</h1><p>Request a review when a completed transaction needs to be refunded.</p></div><span class="nb-service-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 8a8 8 0 1 0 1 5"></path><path d="M20 4v6h-6"></path></svg></span></div>
   <% if (success_msg && success_msg.length) { %><div class="alert alert-success"><%= success_msg %></div><% } %>
   <% if (error_msg && error_msg.length) { %><div class="alert alert-danger"><%= error_msg %></div><% } %>
   <div class="nb-service-grid">
