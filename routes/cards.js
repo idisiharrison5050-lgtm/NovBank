@@ -4,6 +4,7 @@ var Card = require('../models/Card');
 var Notification = require('../models/Notification');
 var CardToken = require('../models/CardToken');
 var crypto = require('crypto');
+var bcrypt = require('bcryptjs');
 
 function isAuth(req, res, next) {
   if (req.isAuthenticated()) return next();
@@ -89,9 +90,22 @@ router.post('/request', isAuth, function (req, res) {
 
 
 function pinGate(req, res, next) {
-  if (req.session.pinVerified) return next();
-  req.flash('error_msg', 'Please verify your transaction PIN first.');
-  return res.redirect('/pin');
+  if (!req.user.pinSet || !req.user.pin) {
+    req.flash('error_msg', 'Set your transaction PIN before managing a card.');
+    return res.redirect('/set-pin');
+  }
+  var enteredPin = String(req.body.transactionPin || '');
+  if (!/^\\d{4}$/.test(enteredPin)) {
+    req.flash('error_msg', 'Enter your 4-digit PIN to confirm this card action.');
+    return res.redirect('/cards');
+  }
+  bcrypt.compare(enteredPin, req.user.pin, function (err, isMatch) {
+    if (err || !isMatch) {
+      req.flash('error_msg', 'Incorrect PIN. Your card was not changed.');
+      return res.redirect('/cards');
+    }
+    return next();
+  });
 }
 
 router.post('/:id/freeze', isAuth, pinGate, function (req, res) {
