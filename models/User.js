@@ -37,6 +37,12 @@ var UserSchema = new mongoose.Schema({
   currency:       { type: String, default: 'EUR' },
   bitcoinDepositAddress: { type: String, default: '' },
   accountStatus:  { type: String, enum: ['active', 'suspended', 'closed'], default: 'active' },
+  twoFactorEnabled: { type: Boolean, default: false },
+  accountLimits: {
+    dailyTransfer: { type: Number, default: 10000 },
+    monthlyTransfer: { type: Number, default: 50000 },
+    cardSpending: { type: Number, default: 5000 }
+  },
   kycStatus:      { type: String, enum: ['none', 'pending', 'approved', 'declined'], default: 'none' },
   isVerified:     { type: Boolean, default: false },
   pin:            { type: String, default: null },
