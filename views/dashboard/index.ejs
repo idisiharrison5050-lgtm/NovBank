@@ -14,7 +14,7 @@
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 <div class="dashboard-layout"><%- include('../partials/sidebar') %><main class="dashboard-main nb-command-dashboard">
   <section class="nb-command-hero">
-    <div><span class="nb-command-kicker">PERSONAL BANKING</span><h1>Good day, <%= user.firstName %>.</h1><p>Your financial snapshot, activity and everyday banking tools in one place.</p></div>
+    <div><span class="nb-command-kicker">PERSONAL BANKING</span><h1>Good day, <%= user.firstName %>.</h1><p>Your money, activity and banking tools at a glance.</p></div>
     <div class="nb-command-status"><span class="nb-command-status-dot"></span><span>Secure banking session</span></div>
   </section>
   <% if (success_msg.length > 0) { %><div class="alert alert-success"><%= success_msg %></div><% } %><% if (error_msg.length > 0) { %><div class="alert alert-danger"><%= error_msg %></div><% } %>
@@ -25,7 +25,7 @@
         <button type="button" data-action-popup="receive"><span class="nb-balance-action-icon"><svg viewBox="0 0 24 24"><path d="M12 5v14"></path><path d="m6 13 6 6 6-6"></path></svg></span><b>Receive</b></button>
         <button type="button" data-action-popup="more"><span class="nb-balance-action-icon"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.6"></circle><circle cx="12" cy="12" r="1.6"></circle><circle cx="19" cy="12" r="1.6"></circle></svg></span><b>More</b></button>
       </div>
-    </div></div><div class="nb-health-card"><span>ACCOUNT HEALTH</span><div class="nb-health-ring"><b><%= user.kycStatus === 'approved' ? '100%' : user.kycStatus === 'pending' ? '75%' : '50%' %></b></div><strong><%= user.kycStatus === 'approved' ? 'Verification complete' : user.kycStatus === 'pending' ? 'Verification in progress' : 'Complete your profile' %></strong><p><%= user.kycStatus === 'approved' ? 'Your account is fully set up.' : 'Finish the remaining steps to unlock your full banking experience.' %></p><a href="/kyc">Review account →</a></div></section>
+    </div></div><div class="nb-health-card"><span>ACCOUNT HEALTH</span><div class="nb-health-ring"><b><%= user.kycStatus === 'approved' ? '100%' : user.kycStatus === 'pending' ? '75%' : '50%' %></b></div><strong><%= user.kycStatus === 'approved' ? 'Verification complete' : user.kycStatus === 'pending' ? 'Verification in progress' : 'Complete your profile' %></strong><p><%= user.kycStatus === 'approved' ? 'Your account is fully set up.' : 'Finish the remaining steps to unlock all banking features.' %></p><a href="/kyc">Review account →</a></div></section>
 
   <section class="nb-financial-cards" aria-label="Financial overview">
     <article class="nb-fin-card nb-fin-card-balance">
