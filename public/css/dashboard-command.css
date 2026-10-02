@@ -177,7 +177,7 @@
 
 /* Balance-card quick actions: circular banking controls */
 .nb-networth-card{position:relative;overflow:hidden}
-.nb-balance-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:20px -4px -8px;padding-top:17px;border-top:1px solid rgba(255,255,255,.09)}
+.nb-balance-actions{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin:20px -4px -8px;padding-top:17px;border-top:1px solid rgba(255,255,255,.09)}
 .nb-balance-actions>button{appearance:none;border:0;background:transparent;color:#fff;display:flex;flex-direction:column;align-items:center;gap:7px;padding:0;cursor:pointer;font:inherit}
 .nb-balance-action-icon{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:#4b5567;border:1px solid rgba(255,255,255,.13);box-shadow:0 6px 18px rgba(0,0,0,.12);transition:transform .18s ease,background .18s ease}
 .nb-balance-actions>button:first-child .nb-balance-action-icon{background:#facc15;color:#111827;border-color:#facc15}
@@ -185,6 +185,10 @@
 .nb-balance-actions>button:first-child:hover .nb-balance-action-icon{background:#fde047}
 .nb-balance-action-icon svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .nb-balance-actions b{font-size:10px;font-weight:750;color:#f8fafc}
+@media(max-width:900px){
+ .nb-balance-actions{grid-template-columns:repeat(3,1fr);gap:9px;
+ }
+}
 @media(max-width:600px){
  .nb-balance-actions{gap:5px;margin-top:16px;padding-top:14px}
  .nb-balance-action-icon{width:48px;height:48px}
