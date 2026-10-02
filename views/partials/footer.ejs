@@ -347,11 +347,14 @@ if (pinModalEl) {
 })();
 </script>>
 <nav class="nb-mobile-bottom-nav" aria-label="Primary mobile navigation">
-  <a href="/dashboard" class="nb-mobile-nav-link active" data-nav-path="/dashboard" aria-label="Home">
-    <svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5.5 9.5V21h13V9.5"></path><path d="M9.5 21v-6h5v6"></path></svg><span>Home</span>
+  <a href="/dashboard/transactions" class="nb-mobile-nav-link" data-nav-path="/dashboard/transactions" aria-label="Activity">
+    <svg viewBox="0 0 24 24"><path d="M4 19V5"></path><path d="M4 19h16"></path><path d="m7 15 4-4 3 2 5-7"></path></svg><span>Activity</span>
   </a>
-  <a href="/transfer" class="nb-mobile-nav-link" data-nav-path="/transfer" aria-label="Payments">
-    <svg viewBox="0 0 24 24"><path d="M4 7h16"></path><path d="M7 4v6"></path><path d="M4 17h16"></path><path d="M17 14v6"></path></svg><span>Payments</span>
+  <a href="/transfer" class="nb-mobile-nav-link" data-nav-path="/transfer" aria-label="Transfer">
+    <svg viewBox="0 0 24 24"><path d="M5 7h14"></path><path d="m15 4 4 3-4 3"></path><path d="M19 17H5"></path><path d="m9 14-4 3 4 3"></path></svg><span>Transfer</span>
+  </a>
+  <a href="/dashboard" class="nb-mobile-nav-link nb-mobile-nav-home" data-nav-path="/dashboard" aria-label="Home">
+    <span class="nb-mobile-home-icon"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5.5 9.5V21h13V9.5"></path><path d="M9.5 21v-6h5v6"></path></svg></span><span>Home</span>
   </a>
   <a href="/cards" class="nb-mobile-nav-link" data-nav-path="/cards" aria-label="Cards">
     <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 10h18"></path><path d="M7 15h3"></path></svg><span>Cards</span>
