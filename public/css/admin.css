@@ -870,3 +870,24 @@ body{font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",san
 .admin-user-row{padding:11px 0}.admin-user-avatar{background:#eef4ff;color:#155eef}
 .admin-auth-wrap{background:radial-gradient(circle at 20% 10%,rgba(21,94,239,.2),transparent 32%),#09111f;padding:24px}.admin-auth-box{max-width:440px;border-radius:24px;padding:36px;box-shadow:0 30px 90px rgba(0,0,0,.32);border:1px solid rgba(255,255,255,.08)}.admin-auth-logo{color:#101828;font-size:21px;letter-spacing:-.05em}.admin-auth-sub{font-size:9px;letter-spacing:.14em;font-weight:800}.admin-auth-title{font-size:30px;letter-spacing:-.05em}.admin-auth-box .form-control{height:47px;border-radius:11px}.admin-btn{height:47px;border-radius:11px;font-weight:800}
 @media(max-width:768px){.admin-main{padding:20px 15px}.admin-topbar{align-items:flex-start}.admin-page-title{font-size:26px}.admin-date{display:none}.admin-stat-value{font-size:21px}.admin-auth-box{padding:28px 22px;border-radius:20px}}
+
+
+/* ── Expanded operations UI ─────────────────────── */
+.admin-kicker{margin:0 0 5px;color:#155eef;font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+.admin-muted{color:#98a2b3;font-size:11px}
+.admin-inline-form{display:inline-flex;align-items:center;gap:5px;margin:2px 4px 2px 0}
+.admin-action-input{width:130px;height:30px;border:1px solid #e4e7ec;border-radius:7px;padding:4px 8px;font-size:11px;outline:none}
+.admin-action-input:focus{border-color:#155eef;box-shadow:0 0 0 3px rgba(21,94,239,.08)}
+.admin-btn-primary-sm{background:#155eef;color:#fff;border:0;border-radius:7px;padding:6px 11px;font-size:11px;font-weight:700;cursor:pointer}
+.admin-btn-primary-sm:hover{background:#0b4bc4;color:#fff}
+.admin-setting-row{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:14px 0;border-bottom:1px solid #f2f4f7;font-size:13px;color:#667085}
+.admin-setting-row:last-child{border-bottom:0}
+.admin-setting-row strong{color:#101828;font-size:13px}
+.admin-setting-link{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid #f2f4f7;color:#344054;font-size:13px;font-weight:650;text-decoration:none}
+.admin-setting-link:last-child{border-bottom:0}
+.admin-setting-link:hover{color:#155eef;text-decoration:none}
+@media(max-width:768px){
+  .admin-inline-form{display:flex;flex-wrap:wrap}
+  .admin-action-input{width:100%;max-width:180px}
+  .admin-setting-row{align-items:flex-start;flex-direction:column;gap:5px}
+}
