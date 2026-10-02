@@ -15,9 +15,9 @@
       <div class="nb-wire-steps"><div class="active"><b>1</b><span>Recipient</span></div><i></i><div><b>2</b><span>Payment</span></div><i></i><div><b>3</b><span>Authorize</span></div></div>
       <form id="transferForm" class="nb-premium-form" action="/transfer" method="POST">
         <div class="nb-form-section"><span>01</span><div><b>Recipient</b><small>Who should receive the funds?</small></div></div>
-        <div class="form-group"><label>Username, email or account number</label><input type="text" name="identifier" class="form-control" placeholder="e.g. alex@example.com" autocomplete="off" required/></div>
+        <div class="form-group"><label>Username, email or account number</label><input type="text" name="identifier" class="form-control" value="<%= prefillRecipient || '' %>" placeholder="e.g. alex@example.com" autocomplete="off" required/></div>
         <div class="nb-form-section nb-form-section-spaced"><span>02</span><div><b>Payment details</b><small>Set the amount and describe the transfer.</small></div></div>
-        <div class="form-group"><label>Amount (€)</label><div class="nb-amount-input"><span>€</span><input type="number" name="amount" class="form-control" placeholder="0.00" min="0.01" step="0.01" required/></div></div>
+        <div class="form-group"><label>Amount (€)</label><div class="nb-amount-input"><span>€</span><input id="transferAmount" type="number" name="amount" class="form-control" placeholder="0.00" min="0.01" step="0.01" required/></div><div class="nb-amount-presets" aria-label="Amount shortcuts"><button type="button" data-amount="50">€50</button><button type="button" data-amount="100">€100</button><button type="button" data-amount="250">€250</button><button type="button" data-amount="500">€500</button></div></div>
         <div class="nb-saved-recipients">
   <div class="nb-saved-head"><span>SAVED RECIPIENTS</span><small>Use a recipient you've sent to before</small></div>
   <% if (beneficiaries && beneficiaries.length) { %>
@@ -39,4 +39,18 @@
     </section>
     <aside class="nb-wire-aside nb-flow-aside"><span>LOCAL TRANSFER</span><h2>Move money between NovBank accounts.</h2><p>Fast account-to-account payments with a clear recipient and authorization flow.</p><div class="nb-aside-stat"><span>Available now</span><strong>€ <%= Number(user.balance || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong></div><div class="nb-aside-list"><div><b>01</b><span>Find the recipient using their NovBank details</span></div><div><b>02</b><span>Confirm amount and payment category</span></div><div><b>03</b><span>Authorize securely with your transaction PIN</span></div></div><div class="nb-aside-foot"><span>NEED A BANK ACCOUNT?</span><b>Use International to send a wire transfer.</b></div></aside>
   </div>
+<script>
+(function(){
+  var input=document.getElementById('transferAmount');
+  document.querySelectorAll('[data-amount]').forEach(function(button){
+    button.addEventListener('click',function(){
+      if(!input)return;
+      input.value=button.getAttribute('data-amount');
+      input.focus();
+      document.querySelectorAll('[data-amount]').forEach(function(item){item.classList.remove('active');});
+      button.classList.add('active');
+    });
+  });
+})();
+</script>
 </main></div><%- include('../partials/footer') %>
