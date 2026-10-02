@@ -10,7 +10,7 @@
 <div class="dashboard-layout">
   <%- include('../partials/sidebar') %>
   <main class="dashboard-main nb-detail-page">
-    <a class="nb-back" href="/dashboard/transactions">← <span>Back to transactions</span></a>
+    <a class="nb-back" href="/dashboard/transactions" aria-label="Back to transactions"><span aria-hidden="true">←</span><span>Back to transactions</span></a>
 
     <div class="nb-detail-head">
       <div class="nb-detail-icon <%= isCredit ? 'credit' : '' %>" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg></div>
@@ -32,7 +32,7 @@
         <div>
           <span>REFERENCE</span>
           <b class="nb-reference"><%= transaction.reference %></b>
-          <button type="button" class="nb-copy" onclick="copyReference('<%= transaction.reference %>')">Copy reference</button>
+          <button type="button" class="nb-copy" aria-label="Copy transaction reference" onclick="copyReference('<%= transaction.reference %>')">Copy reference</button>
         </div>
         <div><span>TYPE</span><b><%= transaction.type.replace(/_/g,' ') %></b></div>
         <div><span>CATEGORY</span><b><%= transaction.category || 'Account activity' %></b></div>
