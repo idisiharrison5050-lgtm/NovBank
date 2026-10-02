@@ -94,8 +94,37 @@ router.get('/transactions', isAuth, isPinVerified, kycGate, function (req, res) 
     });
   }
   Transaction.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit).populate('sender receiver', 'firstName lastName accountNumber').then(function (transactions) {
-    return Transaction.countDocuments(query).then(function (total) {
-      res.render('dashboard/transactions', { title: 'Transactions', transactions: transactions, currentPage: page, totalPages: Math.ceil(total / limit), filter: filter, search: search });
+    return Promise.all([
+      Transaction.countDocuments(query),
+      Transaction.find(query).select('amount type status createdAt sender receiver').lean()
+    ]).then(function (results) {
+      var total = results[0];
+      var allActivity = results[1] || [];
+      var monthStart = new Date();
+      monthStart.setDate(1);
+      monthStart.setHours(0, 0, 0, 0);
+      var monthIncoming = 0;
+      var monthOutgoing = 0;
+      var pendingCount = 0;
+      allActivity.forEach(function (txn) {
+        if (txn.status === 'pending' || txn.status === 'processing') pendingCount += 1;
+        if (new Date(txn.createdAt) < monthStart || txn.status === 'failed' || txn.status === 'cancelled' || txn.status === 'reversed') return;
+        var outgoing = txn.sender && String(txn.sender) === String(userId) && txn.type !== 'deposit';
+        if (outgoing) monthOutgoing += Number(txn.amount || 0);
+        else monthIncoming += Number(txn.amount || 0);
+      });
+      res.render('dashboard/transactions', {
+        title: 'Transactions',
+        transactions: transactions,
+        currentPage: page,
+        totalPages: Math.max(1, Math.ceil(total / limit)),
+        filter: filter,
+        search: search,
+        activityCount: total,
+        monthIncoming: monthIncoming,
+        monthOutgoing: monthOutgoing,
+        pendingCount: pendingCount
+      });
     });
   }).catch(function (err) { console.error(err); res.redirect('/dashboard'); });
 });
