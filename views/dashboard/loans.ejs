@@ -1,7 +1,7 @@
 <%- include('../partials/header') %>
 <link rel="stylesheet" href="/css/dashboard.css"/>
 <link rel="stylesheet" href="/css/loans-premium.css"/>
-<div class="mobile-topbar"><span class="mobile-logo">NovBank</span><button class="hamburger-btn" id="hamburgerBtn">☰</button></div>
+<div class="mobile-topbar"><span class="mobile-logo">NovBank</span><button class="hamburger-btn" id="hamburgerBtn" aria-label="Open navigation"><span></span><span></span><span></span></button></div>
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 <div class="dashboard-layout"><%- include('../partials/sidebar') %>
 <main class="dashboard-main nb-loan-page">
@@ -28,9 +28,9 @@
       <div class="nb-loan-card">
         <span class="nb-loan-label">LOAN OVERVIEW</span>
         <div class="nb-loan-benefits">
-          <div class="nb-loan-benefit"><i>✓</i><div><b>Clear application status</b><span>Keep track of the request currently associated with your account.</span></div></div>
-          <div class="nb-loan-benefit"><i>◷</i><div><b>Flexible terms</b><span>Choose a repayment period that matches your request.</span></div></div>
-          <div class="nb-loan-benefit"><i>⌁</i><div><b>Secure notifications</b><span>Important lending updates are delivered to your account inbox.</span></div></div>
+          <div class="nb-loan-benefit"><i class="nb-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></i><div><b>Clear application status</b><span>Keep track of the request currently associated with your account.</span></div></div>
+          <div class="nb-loan-benefit"><i class="nb-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v5l3 2"></path></svg></i><div><b>Flexible terms</b><span>Choose a repayment period that matches your request.</span></div></div>
+          <div class="nb-loan-benefit"><i class="nb-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v18"></path><path d="M6 7h12"></path><path d="M6 17h12"></path></svg></i><div><b>Secure notifications</b><span>Important lending updates are delivered to your account inbox.</span></div></div>
         </div>
       </div>
     </section>
