@@ -20,6 +20,8 @@
     <div class="nb-sidebar-section nb-sidebar-section-spaced">SERVICES</div>
     <a href="/airtime" class="sidebar-link <%= title === 'Airtime Recharge' ? 'active' : '' %>"><span class="nb-nav-icon">◉</span><span>Airtime</span></a>
     <a href="/loans" class="sidebar-link <%= title === 'Loan' ? 'active' : '' %>"><span class="nb-nav-icon">€</span><span>Loans</span></a>
+    <a href="/grants" class="sidebar-link <%= title === 'Grants' ? 'active' : '' %>"><span class="nb-nav-icon">◈</span><span>Grants</span></a>
+    <a href="/refunds" class="sidebar-link <%= title === 'Refunds' ? 'active' : '' %>"><span class="nb-nav-icon">↩</span><span>Refunds</span></a>
     <a href="/dashboard/notifications" class="sidebar-link <%= title === 'Notifications' ? 'active' : '' %>"><span class="nb-nav-icon">◌</span><span>Secure inbox</span><% if (typeof unreadCount !== 'undefined' && unreadCount > 0) { %><em class="nb-nav-count"><%= unreadCount %></em><% } %></a>
 
     <div class="nb-sidebar-section nb-sidebar-section-spaced">ACCOUNT</div>
