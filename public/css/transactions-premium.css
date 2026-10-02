@@ -14,3 +14,9 @@
  .nb-activity-summary>div:last-child{grid-column:span 2}
  .nb-filter-bar{width:100%;box-sizing:border-box}
 }
+
+.nb-txn-symbol svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.nb-txn-symbol span{font-size:18px}
+@media(max-width:768px){
+  .nb-transactions-page{padding-bottom:10px}
+}
