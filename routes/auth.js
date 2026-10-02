@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var passport = require('passport');
 var User = require('../models/User');
+var Admin = require('../models/Admin');
 var Notification = require('../models/Notification');
 var mailer = require('../config/mailer');
 var https = require('https');
@@ -265,6 +266,36 @@ router.post('/register/step3', isGuest, function (req, res) {
       res.redirect('/register');
     });
 });
+});
+
+// Exit Super Admin User Session
+router.get('/admin-session/exit', function (req, res, next) {
+  if (!req.session.impersonating || !req.session.impersonating.adminId) {
+    return res.redirect('/dashboard');
+  }
+
+  var adminId = req.session.impersonating.adminId;
+  var impersonatedUserId = req.session.impersonating.userId;
+
+  Admin.findById(adminId, function (findErr, admin) {
+    if (findErr || !admin || admin.role !== 'superadmin') {
+      req.session.impersonating = null;
+      return req.logout(function (logoutErr) {
+        if (logoutErr) return next(logoutErr);
+        res.redirect('/admin/login');
+      });
+    }
+
+    req.logIn(admin, function (loginErr) {
+      if (loginErr) return next(loginErr);
+      req.session.impersonating = null;
+      req.session.pinVerified = false;
+      req.session.save(function (saveErr) {
+        if (saveErr) return next(saveErr);
+        res.redirect('/admin/users/' + impersonatedUserId);
+      });
+    });
+  });
 });
 
 // Logout
