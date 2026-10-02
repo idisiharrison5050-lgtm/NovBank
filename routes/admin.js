@@ -15,12 +15,12 @@ var ledger = require('../services/ledger');
 
 // ─── Middleware ───────────────────────────────────────────────
 function isAdmin(req, res, next) {
-  if (req.isAuthenticated() && req.user.role === 'superadmin') return next();
+  if (req.isAuthenticated() && (req.user.role === 'superadmin' || req.user.role === 'manager')) return next();
   res.redirect('/admin/login');
 }
 
 function isAdminGuest(req, res, next) {
-  if (req.isAuthenticated() && req.user.role === 'superadmin') return res.redirect('/admin/dashboard');
+  if (req.isAuthenticated() && (req.user.role === 'superadmin' || req.user.role === 'manager')) return res.redirect('/admin/dashboard');
   next();
 }
 
