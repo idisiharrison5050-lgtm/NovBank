@@ -154,27 +154,18 @@
 @media(max-width:600px){.nb-impersonation-banner{justify-content:flex-start;flex-wrap:wrap;padding:8px 10px}.nb-impersonation-banner span{display:none}}
 </style></head>
 <div class="nb-navigation-loader" id="nbNavigationLoader" aria-label="Loading NovBank" role="status">
-  <div class="nb-navigation-loader-inner">
-    <div class="nb-loader-mark"><span></span><span></span><span></span></div>
+  <div class="nb-loader-scene" aria-hidden="true">
+    <div class="nb-loader-orbit nb-orbit-one"><span></span></div>
+    <div class="nb-loader-orbit nb-orbit-two"><span></span></div>
+    <div class="nb-loader-orbit nb-orbit-three"><span></span></div>
+    <div class="nb-loader-core"><i></i></div>
+  </div>
+  <div class="nb-loader-copy">
     <strong>NovBank</strong>
-    <small>Loading secure experience</small>
+    <small>Preparing your secure banking experience</small>
   </div>
 </div>
-<script>
-(function () {
-  var loader = document.getElementById('nbNavigationLoader');
-  if (!loader) return;
-
-  // The loader is navigation-only. It must never wait for the next
-  // document to become ready before appearing, and it must not animate.
-  loader.classList.remove('is-active');
-
-  window.addEventListener('pageshow', function () {
-    loader.classList.remove('is-active');
-  });
-})();
-</script>
-<% if (typeof session !== 'undefined' && session.impersonating) { %>
+<% if (typeof session/ !== 'undefined' && session.impersonating) { %>
 <div class="nb-impersonation-banner">
   <strong>SUPER ADMIN MODE</strong>
   <span>You are viewing a user account.</span>
