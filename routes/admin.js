@@ -12,6 +12,7 @@ var Card = require('../models/Card');
 var Loan = require('../models/Loan');
 var mailer = require('../config/mailer');
 var ledger = require('../services/ledger');
+var loanApproval = require('../services/loanApproval');
 
 // ─── Middleware ───────────────────────────────────────────────
 function isAdmin(req, res, next) {
@@ -852,18 +853,51 @@ router.get('/loans', isAdmin, function (req, res) {
 });
 
 router.post('/loans/:id/approve', isAdmin, function (req, res) {
-  Loan.findById(req.params.id).then(function(loan){
-    if(!loan||loan.status!=='pending'){req.flash('error_msg','Loan request not found or already processed.');return res.redirect('/admin/loans');}
-    return new Promise(function(resolve,reject){ledger.createCredit({userId:loan.user,type:'loan_credit',amount:loan.amount,description:'Loan credited to account',category:'Loan',idempotencyKey:'loan:'+loan._id},function(err,txn){if(err)reject(err);else resolve(txn);});}).then(function(){
-      loan.status='approved';loan.approvedAt=new Date();loan.totalDue=loan.amount;loan.amountRepaid=0;loan.outstanding=loan.amount;
-      return loan.save();
-    }).then(function(){
-      return logAction(req.user._id,'Approved Loan','User',loan.user,'€'+loan.amount+' loan approved');
-    }).then(function(){return new Notification({user:loan.user,title:'Loan Approved',message:'Your loan of €'+loan.amount.toFixed(2)+' has been approved and credited to your account.',type:'success'}).save();})
-    .then(function(){return User.findById(loan.user).then(function(u){if(u)return mailer.loanApprovedEmail(u,loan.amount);});})
-    .then(function(){req.flash('success_msg','Loan approved and credited.');res.redirect('/admin/loans');});
-  }).catch(function(err){console.error(err);req.flash('error_msg','Failed to approve loan.');res.redirect('/admin/loans');});
+  loanApproval.approveLoan({
+    loanId: req.params.id,
+    adminId: req.user._id
+  }, function (err, result) {
+    if (err) {
+      console.error(err);
+      req.flash('error_msg', err.message || 'Failed to approve loan.');
+      return res.redirect('/admin/loans');
+    }
+
+    var loan = result.loan;
+
+    if (result.duplicate) {
+      req.flash('success_msg', 'Loan approval was already processed.');
+      return res.redirect('/admin/loans');
+    }
+
+    return logAction(
+      req.user._id,
+      'Approved Loan',
+      'User',
+      loan.user,
+      '€' + loan.amount + ' loan approved'
+    ).then(function () {
+      return new Notification({
+        user: loan.user,
+        title: 'Loan Approved',
+        message: 'Your loan of €' + loan.amount.toFixed(2) + ' has been approved and credited to your account.',
+        type: 'success'
+      }).save();
+    }).then(function () {
+      return User.findById(loan.user).then(function (u) {
+        if (u) return mailer.loanApprovedEmail(u, loan.amount);
+      });
+    }).then(function () {
+      req.flash('success_msg', 'Loan approved and credited.');
+      res.redirect('/admin/loans');
+    }).catch(function (notificationErr) {
+      console.error(notificationErr);
+      req.flash('success_msg', 'Loan approved and credited. Some notifications may be delayed.');
+      res.redirect('/admin/loans');
+    });
+  });
 });
+
 router.post('/loans/:id/decline', isAdmin, function (req, res) {
   var reason = req.body.reason || 'Your loan request did not meet our criteria.';
   Loan.findById(req.params.id)
