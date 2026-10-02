@@ -23,6 +23,37 @@
   <% if (success_msg.length > 0) { %><div class="alert alert-success"><%= success_msg %></div><% } %><% if (error_msg.length > 0) { %><div class="alert alert-danger"><%= error_msg %></div><% } %>
   <section class="nb-command-grid"><div class="nb-networth-card"><div class="nb-networth-top"><span>AVAILABLE BALANCE</span><a href="/dashboard/profile">Account details →</a></div><strong>€ <%= Number(user.balance || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong><div class="nb-networth-meta"><span><i></i><%= user.accountStatus.charAt(0).toUpperCase()+user.accountStatus.slice(1) %> account</span><span>•••• <%= String(user.accountNumber).slice(-4) %></span></div></div><div class="nb-health-card"><span>ACCOUNT HEALTH</span><div class="nb-health-ring"><b><%= user.kycStatus === 'approved' ? '100%' : user.kycStatus === 'pending' ? '75%' : '50%' %></b></div><strong><%= user.kycStatus === 'approved' ? 'Verification complete' : user.kycStatus === 'pending' ? 'Verification in progress' : 'Complete your profile' %></strong><p><%= user.kycStatus === 'approved' ? 'Your account is fully set up.' : 'Finish the remaining steps to unlock your full banking experience.' %></p><a href="/kyc">Review account →</a></div></section>
 
+  <section class="nb-financial-cards" aria-label="Financial overview">
+    <article class="nb-fin-card nb-fin-card-balance">
+      <div class="nb-fin-card-icon"><svg viewBox="0 0 24 24"><path d="M3 10h18"></path><path d="M5 10V7l7-4 7 4v3"></path><path d="M5 13v6"></path><path d="M9 13v6"></path><path d="M15 13v6"></path><path d="M19 13v6"></path><path d="M3 21h18"></path></svg></div>
+      <span>AVAILABLE BALANCE</span>
+      <strong>€ <%= Number(user.balance || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong>
+      <small>Ready for everyday banking</small>
+      <a href="/dashboard/transactions">View activity <b>→</b></a>
+    </article>
+    <article class="nb-fin-card nb-fin-card-profit">
+      <div class="nb-fin-card-icon"><svg viewBox="0 0 24 24"><path d="M4 19V5"></path><path d="M4 19h16"></path><path d="m7 15 4-4 3 2 5-7"></path><path d="M16 6h3v3"></path></svg></div>
+      <span>TOTAL EARNINGS</span>
+      <strong>€ <%= Number(user.totalProfit || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong>
+      <small>Recorded account earnings</small>
+      <a href="/dashboard/transactions">Review earnings <b>→</b></a>
+    </article>
+    <article class="nb-fin-card nb-fin-card-active">
+      <div class="nb-fin-card-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M8 8h8"></path><path d="M8 12h5"></path><circle cx="17" cy="15" r="2"></circle></svg></div>
+      <span>ACTIVE ALLOCATION</span>
+      <strong>€ <%= Number(user.activeDeposit || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong>
+      <small>Funds currently allocated</small>
+      <a href="/dashboard/profile">Account details <b>→</b></a>
+    </article>
+    <article class="nb-fin-card nb-fin-card-limit">
+      <div class="nb-fin-card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v5l3 2"></path><path d="M8 3h8"></path></svg></div>
+      <span>TRANSFER LIMIT</span>
+      <strong>€ <%= Number((user.accountLimits && user.accountLimits.dailyTransfer) || 0).toLocaleString('en-GB',{minimumFractionDigits:0,maximumFractionDigits:0}) %></strong>
+      <small>Daily outgoing limit</small>
+      <a href="/dashboard/profile">Manage limits <b>→</b></a>
+    </article>
+  </section>
+
   <section class="nb-command-actions-grid" aria-label="Quick banking actions">
     <a href="/transfer"><span class="nb-action-icon"><svg viewBox="0 0 24 24"><path d="M4 12h15"></path><path d="m13 6 6 6-6 6"></path></svg></span><div><b>Send money</b><small>Transfer to another account</small></div><em>→</em></a>
     <a href="/receive"><span class="nb-action-icon"><svg viewBox="0 0 24 24"><path d="M12 4v15"></path><path d="m6 13 6 6 6-6"></path></svg></span><div><b>Receive</b><small>Share your payment details</small></div><em>→</em></a>
