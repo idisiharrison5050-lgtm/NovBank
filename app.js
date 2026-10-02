@@ -21,6 +21,12 @@ var app = express();
 // Trust the proxy so secure session cookies are issued and recognized correctly.
 app.set('trust proxy', 1);
 
+// Render liveness checks must not depend on sessions, Passport, or a slow database handshake.
+// Keep this endpoint cheap so a cold Atlas connection cannot block a deployment from becoming live.
+app.get('/health', function (req, res) {
+  res.status(200).json({ status: 'ok', service: 'novbank', timestamp: new Date().toISOString() });
+});
+
 mongoose.connect(environmentConfig.uri, {
   useNewUrlParser:    true,
   useUnifiedTopology: true,
@@ -74,10 +80,11 @@ app.use(function (req, res, next) {
   });
 });
 
-// Lightweight health endpoint for Render and uptime checks.
-app.get('/health', function (req, res) {
+// Database readiness endpoint for diagnostics and internal monitoring.
+// Unlike /health, this is allowed to return 503 while MongoDB is still connecting.
+app.get('/ready', function (req, res) {
   var ready = mongoose.connection.readyState === 1;
-  res.status(ready ? 200 : 503).json({ status: ready ? 'ok' : 'degraded', database: ready ? 'connected' : 'disconnected', timestamp: new Date().toISOString() });
+  res.status(ready ? 200 : 503).json({ status: ready ? 'ready' : 'degraded', database: ready ? 'connected' : 'disconnected', timestamp: new Date().toISOString() });
 });
 
 // Routes
