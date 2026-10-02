@@ -88,6 +88,7 @@ app.use('/transfer',  require('./routes/transfer'));
 app.use('/account',   require('./routes/account'));
 app.use('/receive',  require('./routes/receive'));
 app.use('/admin',     require('./routes/admin'));
+app.use('/admin',     require('./routes/admin-operations'));
 app.use('/kyc',       require('./routes/kyc').router);
 app.use('/cards',     require('./routes/cards'));
 app.use('/loans',     require('./routes/loans'));
