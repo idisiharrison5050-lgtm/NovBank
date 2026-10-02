@@ -1,10 +1,9 @@
 var express      = require('express');
 var router       = express.Router();
+var bcrypt       = require('bcryptjs');
 var Loan         = require('../models/Loan');
-var User         = require('../models/User');
-var Transaction  = require('../models/Transaction');
 var Notification = require('../models/Notification');
-var ledger = require('../services/ledger');
+var loanRepayment = require('../services/loanRepayment');
 
 function isAuth(req, res, next) {
   if (req.isAuthenticated()) return next();
@@ -20,41 +19,38 @@ function checkAccountActive(req, res, redirectOnFail, callback) {
   callback();
 }
 
-// Loan page
 router.get('/', isAuth, function (req, res) {
   Promise.all([
     Loan.findOne({ user: req.user._id, status: { $in: ['pending', 'approved'] } }).sort({ createdAt: -1 }),
     Loan.find({ user: req.user._id }).sort({ createdAt: -1 }).limit(12)
   ]).then(function (results) {
-      res.render('dashboard/loans', {
-        title: 'Loan',
-        activeLoan: results[0],
-        loanHistory: results[1],
-        unreadCount: 0
-      });
-    }).catch(function (err) {
-      console.error(err);
-      res.redirect('/dashboard');
+    res.render('dashboard/loans', {
+      title: 'Loan',
+      activeLoan: results[0],
+      loanHistory: results[1],
+      unreadCount: 0
     });
+  }).catch(function (err) {
+    console.error(err);
+    res.redirect('/dashboard');
+  });
 });
 
-// Request loan
 router.post('/request', isAuth, function (req, res) {
   var amount          = parseFloat(req.body.amount);
-  var purpose         = req.body.purpose;
-  var repaymentPeriod = parseInt(req.body.repaymentPeriod);
+  var purpose         = String(req.body.purpose || '').trim();
+  var repaymentPeriod = parseInt(req.body.repaymentPeriod, 10);
 
   if (!amount || isNaN(amount) || amount <= 0) {
     req.flash('error_msg', 'Please enter a valid loan amount.');
     return res.redirect('/loans');
   }
 
-  if (!purpose || !repaymentPeriod) {
+  if (!purpose || !repaymentPeriod || repaymentPeriod <= 0) {
     req.flash('error_msg', 'Please fill in all fields.');
     return res.redirect('/loans');
   }
 
-  // Check no active loan
   Loan.findOne({ user: req.user._id, status: { $in: ['pending', 'approved'] } })
     .then(function (existing) {
       if (existing) {
@@ -73,13 +69,12 @@ router.post('/request', isAuth, function (req, res) {
       });
 
       return loan.save().then(function () {
-        var notif = new Notification({
+        return new Notification({
           user:    req.user._id,
           title:   'Loan Request Received',
           message: 'Your loan request of €' + amount.toFixed(2) + ' is under review.',
           type:    'info'
-        });
-        return notif.save();
+        }).save();
       }).then(function () {
         req.flash('success_msg', 'Loan request submitted successfully.');
         res.redirect('/loans');
@@ -91,59 +86,87 @@ router.post('/request', isAuth, function (req, res) {
     });
 });
 
-// Repay approved loan
 router.post('/repay', isAuth, function (req, res) {
   checkAccountActive(req, res, '/loans', function () {
-    if (!req.body.transactionPin || !/^\d{4}$/.test(String(req.body.transactionPin))) {
-      req.flash('error_msg', 'Please confirm your transaction PIN before making a repayment.');
+    var enteredPin = String(req.body.transactionPin || '');
+
+    if (!req.user.pinSet || !req.user.pin) {
+      req.flash('error_msg', 'Please set up your transaction PIN before making a repayment.');
+      return res.redirect('/dashboard/profile');
+    }
+
+    if (!/^\d{4}$/.test(enteredPin)) {
+      req.flash('error_msg', 'Please enter your 4-digit transaction PIN.');
       return res.redirect('/loans');
     }
-    var amount = parseFloat(req.body.amount);
-    if (!amount || isNaN(amount) || amount <= 0) {
-      req.flash('error_msg', 'Enter a valid repayment amount.');
-      return res.redirect('/loans');
-    }
-    Loan.findOne({ user: req.user._id, status: 'approved' }).then(function (loan) {
-      if (!loan) {
-        req.flash('error_msg', 'No approved loan is available for repayment.');
+
+    bcrypt.compare(enteredPin, req.user.pin, function (pinErr, isMatch) {
+      if (pinErr || !isMatch) {
+        req.flash('error_msg', 'Incorrect transaction PIN. Repayment cancelled.');
         return res.redirect('/loans');
       }
-      if (amount > loan.outstanding) amount = loan.outstanding;
-      return new Promise(function (resolve, reject) {
-        ledger.createDebit({
-          userId: req.user._id,
-          type: 'withdrawal',
-          amount: amount,
-          description: 'Loan repayment',
-          category: 'Loan',
-          idempotencyKey: 'loan-repayment:' + loan._id + ':' + String(req.body.idempotencyKey || Date.now())
-        }, function (err, txn) {
-          if (err) return reject(err);
-          resolve(txn);
-        });
-      }).then(function () {
-        loan.amountRepaid = Math.round((Number(loan.amountRepaid || 0) + amount) * 100) / 100;
-        loan.outstanding = Math.max(0, Math.round((Number(loan.totalDue || loan.amount) - loan.amountRepaid) * 100) / 100);
-        if (loan.outstanding === 0) loan.status = 'repaid';
-        return loan.save();
-      }).then(function () {
-        return new Notification({
+
+      var amount = parseFloat(req.body.amount);
+      var loanId = String(req.body.loanId || '').trim();
+      var idempotencyKey = String(req.body.idempotencyKey || '').trim();
+
+      if (!amount || isNaN(amount) || amount <= 0) {
+        req.flash('error_msg', 'Enter a valid repayment amount.');
+        return res.redirect('/loans');
+      }
+
+      if (!loanId) {
+        req.flash('error_msg', 'The repayment session is invalid. Please try again.');
+        return res.redirect('/loans');
+      }
+
+      loanRepayment.repayLoan({
+        userId: req.user._id,
+        loanId: loanId,
+        amount: amount,
+        idempotencyKey: idempotencyKey,
+        description: 'Loan repayment'
+      }, function (err, result) {
+        if (err) {
+          console.error(err);
+          req.flash(
+            'error_msg',
+            err.message === 'Insufficient funds'
+              ? 'Insufficient funds for this repayment.'
+              : (err.message || 'Unable to process repayment.')
+          );
+          return res.redirect('/loans');
+        }
+
+        if (result.duplicate) {
+          req.flash('success_msg', 'This repayment was already processed.');
+          return res.redirect('/loans');
+        }
+
+        var completedLoan = result.loan;
+        var message = completedLoan && completedLoan.status === 'repaid'
+          ? '€' + result.transaction.amount.toFixed(2) + ' completed your loan repayment.'
+          : '€' + result.transaction.amount.toFixed(2) + ' has been applied to your loan.';
+
+        new Notification({
           user: req.user._id,
-          title: loan.status === 'repaid' ? 'Loan Repaid' : 'Loan Repayment Received',
-          message: '€' + amount.toFixed(2) + ' has been applied to your loan.',
+          title: completedLoan && completedLoan.status === 'repaid' ? 'Loan Repaid' : 'Loan Repayment Received',
+          message: message,
           type: 'success'
-        }).save();
-      }).then(function () {
-        req.flash('success_msg', loan.status === 'repaid' ? 'Your loan has been fully repaid.' : 'Loan repayment received.');
-        res.redirect('/loans');
+        }).save().catch(function (notificationErr) {
+          console.error('Loan repayment notification error:', notificationErr);
+        }).then(function () {
+          req.flash(
+            'success_msg',
+            completedLoan && completedLoan.status === 'repaid'
+              ? 'Your loan has been fully repaid.'
+              : 'Loan repayment received.'
+          );
+          res.redirect('/loans');
+        });
       });
-    }).catch(function (err) {
-      console.error(err);
-      req.flash('error_msg', err.message === 'Insufficient funds' ? 'Insufficient funds for this repayment.' : 'Unable to process repayment.');
-      res.redirect('/loans');
     });
   });
 });
-
 
 module.exports = router;
