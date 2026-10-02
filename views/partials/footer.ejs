@@ -290,58 +290,59 @@ if (pinModalEl) {
   var loader = document.getElementById('nbNavigationLoader');
   if (!loader) return;
 
-  var loaderTimer = null;
-  var navigationStarted = false;
+  var timer = null;
+  var navigating = false;
 
-  function hideLoader() {
-    if (loaderTimer) {
-      window.clearTimeout(loaderTimer);
-      loaderTimer = null;
+  function clearLoader() {
+    navigating = false;
+    if (timer) {
+      clearTimeout(timer);
+      timer = null;
     }
     loader.classList.remove('is-active');
   }
 
-  function scheduleLoader() {
-    if (navigationStarted) return;
-    navigationStarted = true;
-    loaderTimer = window.setTimeout(function () {
-      if (navigationStarted) loader.classList.add('is-active');
+  function beginNavigation() {
+    if (navigating) return;
+    navigating = true;
+    timer = setTimeout(function () {
+      if (navigating && document.visibilityState !== 'hidden') {
+        loader.classList.add('is-active');
+      }
     }, 1500);
   }
 
-  // This script is loaded near the end of the document, so pageshow/load
-  // may already have fired. Check readyState as well as listening for them.
-  hideLoader();
-  window.addEventListener('pageshow', hideLoader);
-  window.addEventListener('load', hideLoader);
-  document.addEventListener('DOMContentLoaded', hideLoader);
+  // New documents start with the loader hidden. Only a navigation from
+  // this document is allowed to activate it.
+  clearLoader();
+  window.addEventListener('pageshow', clearLoader);
+  window.addEventListener('pagehide', function () {
+    if (timer) clearTimeout(timer);
+  });
 
-  document.addEventListener('pointerdown', function (event) {
+  document.addEventListener('click', function (event) {
     var link = event.target.closest ? event.target.closest('a') : null;
-    if (!link) return;
-    if (event.defaultPrevented || event.button !== 0) return;
+    if (!link || event.defaultPrevented || event.button !== 0) return;
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     if (link.target === '_blank' || link.hasAttribute('download')) return;
 
     var href = link.getAttribute('href');
-    if (!href || href.charAt(0) === '#' || href.indexOf('javascript:') === 0) return;
-    if (/^(mailto:|tel:)/i.test(href)) return;
+    if (!href || href.charAt(0) === '#' || /^(mailto:|tel:|javascript:)/i.test(href)) return;
 
     try {
-      var url = new URL(link.href, window.location.href);
-      if (url.origin !== window.location.origin) return;
-      if (url.href === window.location.href) return;
+      var url = new URL(link.href, location.href);
+      if (url.origin !== location.origin || url.href === location.href) return;
     } catch (e) {
       return;
     }
 
-    scheduleLoader();
+    beginNavigation();
   });
 
   document.addEventListener('submit', function (event) {
     if (event.defaultPrevented) return;
     if (event.target && event.target.getAttribute('target') === '_blank') return;
-    scheduleLoader();
+    beginNavigation();
   });
 })();
 </script>>
