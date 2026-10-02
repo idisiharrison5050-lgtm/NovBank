@@ -180,7 +180,16 @@
 
       </div>
     </div>
-  </main>
+  <section class="admin-card" style="margin-top:20px;">
+  <div class="admin-card-header"><h2>Bitcoin Receiving</h2><span class="admin-status-badge <%= targetUser.bitcoinDepositAddress ? 'status-active' : 'status-suspended' %>"><%= targetUser.bitcoinDepositAddress ? 'Configured' : 'Not configured' %></span></div>
+  <p style="color:#667085;font-size:13px;">Set or replace the Bitcoin deposit address used on this user's Receive Money page. Leave empty to disable Bitcoin receiving for the account.</p>
+  <form action="/admin/users/<%= targetUser._id %>/bitcoin-address" method="POST">
+    <div class="form-group"><label>Bitcoin deposit address</label><input type="text" name="bitcoinDepositAddress" class="form-control" value="<%= targetUser.bitcoinDepositAddress || '' %>" placeholder="bc1... or 1... / 3..."></div>
+    <button type="submit" class="btn btn-primary">Save Bitcoin address</button>
+  </form>
+  <% if (targetUser.bitcoinDepositAddress) { %><small style="display:block;margin-top:10px;color:#98a2b3;word-break:break-all;">Current: <%= targetUser.bitcoinDepositAddress %></small><% } %>
+</section>
+</main>
 </div>
 
 <%- include('partials/admin-footer') %>
