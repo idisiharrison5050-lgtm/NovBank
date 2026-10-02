@@ -32,14 +32,14 @@
 
         <div class="nb-receive-detail-grid">
           <div><span>ACCOUNT NAME</span><strong><%= user.firstName %> <%= user.lastName %></strong></div>
-          <div><span>ACCOUNT NUMBER</span><strong class="mono"><%= user.accountNumber %></strong></div>
-          <div><span>IBAN</span><strong class="mono"><%= user.bankDetails && user.bankDetails.iban ? user.bankDetails.iban : 'Not available' %></strong></div>
-          <div><span>SWIFT / BIC</span><strong class="mono"><%= user.bankDetails && user.bankDetails.swift ? user.bankDetails.swift : 'Not available' %></strong></div>
+          <div><span>ACCOUNT NUMBER</span><div class="nb-receive-value"><strong class="mono"><%= user.accountNumber %></strong><button type="button" class="nb-inline-copy" data-copy="<%= user.accountNumber %>">Copy</button></div></div>
+          <div><span>IBAN</span><div class="nb-receive-value"><strong class="mono"><%= user.bankDetails && user.bankDetails.iban ? user.bankDetails.iban : 'Not available' %></strong><% if (user.bankDetails && user.bankDetails.iban) { %><button type="button" class="nb-inline-copy" data-copy="<%= user.bankDetails.iban %>">Copy</button><% } %></div></div>
+          <div><span>SWIFT / BIC</span><div class="nb-receive-value"><strong class="mono"><%= user.bankDetails && user.bankDetails.swift ? user.bankDetails.swift : 'Not available' %></strong><% if (user.bankDetails && user.bankDetails.swift) { %><button type="button" class="nb-inline-copy" data-copy="<%= user.bankDetails.swift %>">Copy</button><% } %></div></div>
           <div><span>BANK</span><strong><%= user.bankDetails && user.bankDetails.bankName ? user.bankDetails.bankName : 'NovBank' %></strong></div>
           <div><span>CURRENCY</span><strong><%= user.currency || 'EUR' %></strong></div>
         </div>
 
-        <button type="button" class="nb-copy-details" onclick="copyText('<%= user.accountNumber %>')">Copy account number</button>
+        <button type="button" class="nb-copy-details" data-copy="<%= user.accountNumber %>">Copy account number</button>
       </section>
 
       <section class="nb-receive-card nb-bitcoin-card">
@@ -54,7 +54,7 @@
           </div>
           <div class="nb-bitcoin-address">
             <span>BITCOIN ADDRESS</span>
-            <div><code id="bitcoinAddress"><%= bitcoinAddress %></code><button type="button" onclick="copyText('<%= bitcoinAddress %>')">Copy</button></div>
+            <div><code id="bitcoinAddress"><%= bitcoinAddress %></code><button type="button" class="nb-bitcoin-copy" data-copy="<%= bitcoinAddress %>">Copy</button></div>
           </div>
           <div class="nb-bitcoin-warning"><b>Send only BTC</b><span>Sending another cryptocurrency to this address may result in permanent loss of funds.</span></div>
         <% } else { %>
@@ -73,22 +73,30 @@
     </section>
   </main>
 </div>
-
+<div class="nb-copy-toast" role="status" aria-live="polite">Copied to clipboard</div>
 <script>
-function copyText(value) {
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(value).then(function () {
-      alert('Copied to clipboard');
+(function () {
+  var toast = document.querySelector('.nb-copy-toast');
+  var buttons = document.querySelectorAll('[data-copy]');
+  buttons.forEach(function (button) {
+    button.addEventListener('click', function () {
+      var value = button.getAttribute('data-copy');
+      if (!value || !navigator.clipboard) return;
+      navigator.clipboard.writeText(value).then(function () {
+        var original = button.textContent;
+        button.textContent = 'Copied';
+        button.classList.add('copied');
+        if (toast) {
+          toast.classList.add('show');
+          setTimeout(function () { toast.classList.remove('show'); }, 1500);
+        }
+        setTimeout(function () {
+          button.textContent = original;
+          button.classList.remove('copied');
+        }, 1400);
+      });
     });
-    return;
-  }
-  var input = document.createElement('input');
-  input.value = value;
-  document.body.appendChild(input);
-  input.select();
-  document.execCommand('copy');
-  input.remove();
-  alert('Copied to clipboard');
-}
+  });
+}());
 </script>
 <%- include('../partials/footer') %>
