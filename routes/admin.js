@@ -170,6 +170,48 @@ router.get('/users', isAdmin, function (req, res) {
     });
 });
 
+// ─── Super Admin User Login / Impersonation ──────────────────
+router.post('/users/:id/impersonate', isAdmin, function (req, res) {
+  User.findById(req.params.id).then(function (user) {
+    if (!user) {
+      req.flash('error_msg', 'User not found.');
+      return res.redirect('/admin/users');
+    }
+    if (user.accountStatus !== 'active') {
+      req.flash('error_msg', 'Only active user accounts can be opened.');
+      return res.redirect('/admin/users/' + user._id);
+    }
+
+    var adminId = req.user._id.toString();
+    req.session.impersonating = {
+      adminId: adminId,
+      userId: user._id.toString(),
+      startedAt: new Date()
+    };
+    req.session.pinVerified = true;
+
+    return req.logIn(user, function (err) {
+      if (err) throw err;
+      return logAction(
+        adminId,
+        'Started User Impersonation',
+        'User',
+        user._id,
+        'Super admin opened the user account session for ' + user.username
+      ).then(function () {
+        req.session.save(function (sessionErr) {
+          if (sessionErr) throw sessionErr;
+          res.redirect('/dashboard');
+        });
+      });
+    });
+  }).catch(function (err) {
+    console.error(err);
+    req.flash('error_msg', 'Unable to open user account.');
+    res.redirect('/admin/users/' + req.params.id);
+  });
+});
+
 // ─── User Detail ─────────────────────────────────────────────
 router.get('/users/:id', isAdmin, function (req, res) {
   User.findById(req.params.id)
