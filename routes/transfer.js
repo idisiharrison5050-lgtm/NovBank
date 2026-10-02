@@ -7,6 +7,7 @@ var mailer = require('../config/mailer');
 var ledger = require('../services/ledger');
 var { uploadDeposit } = require('../config/cloudinary');
 var accountLimits = require('../services/accountLimits');
+var Beneficiary = require('../models/Beneficiary');
 
 function isAuth(req, res, next) {
   if (req.isAuthenticated()) return next();
@@ -46,7 +47,25 @@ function checkAccountActive(req, res, redirectOnFail, callback) {
 
 // Internal Transfer
 router.get('/', isAuth, isPinVerified, function (req, res) {
-  res.render('dashboard/transfer', { title: 'Send Money', unreadCount: 0 });
+  Beneficiary.find({ user: req.user._id, kind: 'local' }).sort({ lastUsedAt: -1, createdAt: -1 }).limit(8).then(function (beneficiaries) {
+    res.render('dashboard/transfer', {
+      title: 'Send Money',
+      unreadCount: 0,
+      beneficiaries: beneficiaries,
+      prefillRecipient: req.query.recipient || ''
+    });
+  });
+});
+
+router.post('/beneficiaries/:id/delete', isAuth, isPinVerified, function (req, res) {
+  Beneficiary.deleteOne({ _id: req.params.id, user: req.user._id, kind: 'local' }).then(function () {
+    req.flash('success_msg', 'Saved recipient removed.');
+    res.redirect('/transfer');
+  }).catch(function (err) {
+    console.error(err);
+    req.flash('error_msg', 'Unable to remove saved recipient.');
+    res.redirect('/transfer');
+  });
 });
 
 router.post('/', isAuth, isPinVerified, function (req, res) {
@@ -66,7 +85,19 @@ router.post('/', isAuth, isPinVerified, function (req, res) {
           ledger.transferInternal({senderId:req.user._id,receiverId:recipient._id,amount:amount,description:description,category:category,idempotencyKey:'internal:'+req.user._id+':'+Date.now()+':'+Math.floor(Math.random()*1000000)},function(err,txn){if(err)return reject(err);resolve(txn);});
         });
       }).then(function(txn){
-        return Promise.all([
+        var saveRecipient = req.body.saveRecipient === 'on';
+        var beneficiaryPromise = Promise.resolve();
+        if (saveRecipient) {
+          beneficiaryPromise = Beneficiary.findOneAndUpdate(
+            { user: req.user._id, identifier: String(identifier).trim().toLowerCase(), kind: 'local' },
+            { user: req.user._id, identifier: String(identifier).trim().toLowerCase(), name: recipient.firstName + ' ' + recipient.lastName, kind: 'local', lastUsedAt: new Date() },
+            { upsert: true, new: true, setDefaultsOnInsert: true }
+          );
+        } else {
+          beneficiaryPromise = Beneficiary.updateOne({ user: req.user._id, identifier: String(identifier).trim().toLowerCase(), kind: 'local' }, { $set: { lastUsedAt: new Date() } });
+        }
+        return beneficiaryPromise.then(function(){
+          return Promise.all([
           new Notification({user:req.user._id,title:'Transfer Sent',message:'You sent €'+amount.toFixed(2)+' to '+txn.receiver.firstName+' '+txn.receiver.lastName+'.',type:'success'}).save(),
           new Notification({user:recipient._id,title:'Money Received',message:'You received €'+amount.toFixed(2)+' from '+req.user.firstName+' '+req.user.lastName+'.',type:'success'}).save(),
           mailer.transferSentEmail(req.user,amount,recipient.firstName+' '+recipient.lastName),
