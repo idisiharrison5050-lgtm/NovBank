@@ -941,3 +941,22 @@ body{font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",san
   .admin-table th,.admin-table td{padding:11px 10px}
   .admin-btn-view,.admin-btn-approve,.admin-btn-decline{min-height:36px}
 }
+
+
+/* ── KYC decision workspace ──────────────────────── */
+.kyc-decision-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.kyc-decision-row form{margin:0}
+.kyc-decision-row .form-group{margin-bottom:9px}
+.kyc-decision-row .btn{height:42px;border-radius:10px;font-weight:800;border:0}
+.kyc-decision-row .btn-success{background:#15803d}
+.kyc-decision-row .btn-success:hover{background:#166534}
+.kyc-decision-row .btn-danger{background:#dc2626}
+.kyc-decision-row .btn-danger:hover{background:#b91c1c}
+.kyc-decision-row .form-control{height:42px}
+.kyc-doc-item{box-shadow:0 4px 14px rgba(16,24,40,.025)}
+.kyc-doc-view-link{padding:7px 10px;border:1px solid #d1e0ff;border-radius:8px;background:#f5f8ff;text-decoration:none}
+.kyc-doc-view-link:hover{background:#eef4ff;text-decoration:none}
+@media(max-width:700px){
+  .kyc-decision-row{grid-template-columns:1fr}
+  .kyc-decision-row form{width:100%}
+}
