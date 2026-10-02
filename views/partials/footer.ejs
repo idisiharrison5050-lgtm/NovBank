@@ -313,9 +313,13 @@ if (pinModalEl) {
       return;
     }
 
-    loader.classList.add('is-active');
+    // Let the browser start normal navigation first. If the next document
+    // takes long enough, then reveal the animated transition.
+    window.clearTimeout(window.nbNavigationLoaderTimer);
+    window.nbNavigationLoaderTimer = window.setTimeout(function () {
+      loader.classList.add('is-active');
+    }, 380);
   });
-
   document.addEventListener('submit', function (event) {
     if (event.defaultPrevented) return;
     if (event.target && event.target.getAttribute('target') === '_blank') return;
