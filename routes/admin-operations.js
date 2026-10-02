@@ -10,7 +10,7 @@ var Notification = require('../models/Notification');
 var ledger = require('../services/ledger');
 
 function isAdmin(req, res, next) {
-  if (req.isAuthenticated() && req.user.role === 'superadmin') return next();
+  if (req.isAuthenticated() && (req.user.role === 'superadmin' || req.user.role === 'manager')) return next();
   res.redirect('/admin/login');
 }
 
