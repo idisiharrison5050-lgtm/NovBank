@@ -345,6 +345,44 @@ router.get('/settings', isAdmin, function (req, res) {
   });
 });
 
+router.get('/create-user', isAdmin, function (req, res) {
+  res.render('admin/create-user', { title: 'Create New User' });
+});
+
+router.post('/create-user', isAdmin, function (req, res) {
+  var firstName = String(req.body.firstName || '').trim();
+  var lastName = String(req.body.lastName || '').trim();
+  var username = String(req.body.username || '').trim().toLowerCase();
+  var email = String(req.body.email || '').trim().toLowerCase();
+  var phone = String(req.body.phone || '').trim();
+  var password = String(req.body.password || '');
+
+  if (!firstName || !lastName || !username || !email || !phone || password.length < 8) {
+    req.flash('error_msg', 'Complete all fields. Password must be at least 8 characters.');
+    return res.redirect('/admin/create-user');
+  }
+
+  User.findOne({ $or: [{ username: username }, { email: email }] }).then(function (existing) {
+    if (existing) throw new Error('Username or email is already in use.');
+    return new User({
+      firstName: firstName,
+      lastName: lastName,
+      username: username,
+      email: email,
+      phone: phone,
+      password: password
+    }).save();
+  }).then(function (user) {
+    return logAction(req.user._id, 'Created User', 'User', user._id, 'Created customer account ' + user.username);
+  }).then(function () {
+    req.flash('success_msg', 'Customer account created successfully.');
+    res.redirect('/admin/users');
+  }).catch(function (err) {
+    req.flash('error_msg', err.message);
+    res.redirect('/admin/create-user');
+  });
+});
+
 /* ─── Individual customer controls ─────────────────────────── */
 router.post('/users/:id/credit', isAdmin, function (req, res) {
   var amount = Number(req.body.amount);
