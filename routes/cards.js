@@ -24,7 +24,9 @@ router.get('/', isAuth, function (req, res) {
           cardHolder: card.cardHolder,
           status: card.status,
           last4: token ? token.last4 : '0000',
-          expiry: token && token.expMonth && token.expYear ? String(token.expMonth).padStart(2, '0') + '/' + String(token.expYear).slice(-2) : (card.expiry || '—')
+          expiry: token && token.expMonth && token.expYear ? String(token.expMonth).padStart(2, '0') + '/' + String(token.expYear).slice(-2) : (card.expiry || '—'),
+          spendingLimit: Number(card.spendingLimit || 0),
+          createdAt: card.createdAt
         };
       });
       res.render('dashboard/cards', { title: 'Cards', cards: safeCards, unreadCount: 0 });
