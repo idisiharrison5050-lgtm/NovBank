@@ -17,7 +17,7 @@
 .nb-title { margin:4px 0 0; font-size:32px; font-weight:750; letter-spacing:-.03em; }
 .nb-grid { display:grid; grid-template-columns:repeat(12, 1fr); gap:20px; }
 .nb-card { background:var(--nb-surface); border:1px solid var(--nb-border); border-radius:var(--nb-radius); box-shadow:var(--nb-shadow); padding:24px; }
-.nb-balance { grid-column:span 5; min-height:230px; background:linear-gradient(145deg,#101828,#1d2939); color:#fff; border:0; overflow:hidden; position:relative; }
+.nb-balance { grid-column:span 5; min-height:230px; background:#101828; color:#fff; border:0; overflow:hidden; position:relative; }
 .nb-balance:after { content:""; position:absolute; width:260px; height:260px; border:1px solid rgba(255,255,255,.12); border-radius:50%; right:-90px; top:-100px; }
 .nb-balance-label { opacity:.7; font-size:14px; }
 .nb-balance-value { font-size:42px; font-weight:750; letter-spacing:-.04em; margin:14px 0 30px; }
@@ -28,6 +28,21 @@
 .nb-actions { grid-column:span 12; display:grid; grid-template-columns:repeat(5,1fr); gap:12px; }
 .nb-action { padding:18px; border:1px solid var(--nb-border); border-radius:16px; background:#fff; text-decoration:none; color:inherit; font-weight:650; transition:.2s ease; }
 .nb-action:hover { transform:translateY(-2px); box-shadow:0 12px 28px rgba(16,24,40,.08); }
+.nb-quick-actions { grid-column:span 12; background:#fff; border:1px solid var(--nb-border); border-radius:var(--nb-radius); padding:22px 24px; box-shadow:var(--nb-shadow); }
+.nb-quick-actions-head { display:flex; justify-content:space-between; align-items:end; gap:20px; margin-bottom:20px; }
+.nb-quick-actions-head h2 { margin:5px 0 0; font-size:20px; letter-spacing:-.025em; }
+.nb-quick-actions-head>a { color:var(--nb-accent); font-size:13px; font-weight:700; text-decoration:none; }
+.nb-section-eyebrow { color:var(--nb-muted); font-size:10px; font-weight:800; letter-spacing:.08em; }
+.nb-action-rail { display:grid; grid-template-columns:repeat(6,1fr); gap:12px; }
+.nb-action-rail .nb-action { min-height:128px; padding:16px 10px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; text-align:center; border-color:#edf0f4; }
+.nb-action-rail .nb-action:hover { transform:translateY(-3px); border-color:#dbe2ea; }
+.nb-action-circle { width:58px; height:58px; border-radius:50%; display:grid; place-items:center; background:#f1f5f9; color:#101828; flex:0 0 auto; }
+.nb-action-circle svg { width:23px; height:23px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.nb-action span:last-child { display:flex; flex-direction:column; gap:3px; }
+.nb-action b { font-size:13px; line-height:1.1; }
+.nb-action small { color:var(--nb-muted); font-size:10px; line-height:1.2; }
+.nb-action-send .nb-action-circle { background:#eaf2ff; color:#155eef; }
+.nb-action-receive .nb-action-circle { background:#ecfdf3; color:#039855; }
 .nb-wide { grid-column:span 8; }
 .nb-side { grid-column:span 4; }
 .nb-card-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
@@ -48,3 +63,22 @@
 .nb-security-row:last-child { border-bottom:0; }
 @media(max-width:1000px){ .nb-balance,.nb-wide{grid-column:span 12}.nb-stat,.nb-side{grid-column:span 12}.nb-actions{grid-template-columns:repeat(3,1fr)} }
 @media(max-width:650px){ .nb-container{padding:18px}.nb-title{font-size:27px}.nb-stat{grid-template-columns:1fr}.nb-actions{grid-template-columns:repeat(2,1fr)}.nb-balance-value{font-size:34px} }
+
+
+@media(max-width:1000px){
+  .nb-action-rail{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:650px){
+  .nb-quick-actions{padding:18px 14px;border-radius:18px}
+  .nb-quick-actions-head{align-items:start}
+  .nb-quick-actions-head h2{font-size:18px}
+  .nb-action-rail{grid-template-columns:repeat(3,1fr);gap:8px}
+  .nb-action-rail .nb-action{min-height:112px;padding:12px 6px;border-radius:14px}
+  .nb-action-circle{width:50px;height:50px}
+  .nb-action b{font-size:12px}
+  .nb-action small{font-size:9px}
+}
+@media(max-width:390px){
+  .nb-action-rail{grid-template-columns:repeat(2,1fr)}
+  .nb-action-rail .nb-action{min-height:106px}
+}
