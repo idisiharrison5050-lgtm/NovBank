@@ -23,6 +23,8 @@ router.get('/', isAuth, function (req, res) {
           cardType: card.cardType,
           cardHolder: card.cardHolder,
           status: card.status,
+          frozenAt: card.frozenAt,
+          userFrozen: !!card.frozenAt,
           last4: token ? token.last4 : '0000',
           expiry: token && token.expMonth && token.expYear ? String(token.expMonth).padStart(2, '0') + '/' + String(token.expYear).slice(-2) : (card.expiry || '—'),
           spendingLimit: Number(card.spendingLimit || 0),
@@ -129,8 +131,8 @@ router.post('/:id/unfreeze', isAuth, pinGate, function (req, res) {
       req.flash('error_msg', 'Card not found.');
       return res.redirect('/cards');
     }
-    if (card.status !== 'blocked') {
-      req.flash('error_msg', 'This card is not frozen.');
+    if (card.status !== 'blocked' || !card.frozenAt) {
+      req.flash('error_msg', 'This card cannot be unfrozen from your account.');
       return res.redirect('/cards');
     }
     card.status = 'active';
