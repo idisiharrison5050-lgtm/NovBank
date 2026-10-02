@@ -1,0 +1,101 @@
+<%- include('partials/admin-header') %>
+<div class="admin-layout">
+  <%- include('partials/admin-sidebar') %>
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div>
+        <p class="admin-kicker">Operations</p>
+        <h1 class="admin-page-title"><%= title %></h1>
+      </div>
+    </div>
+
+    <% if (success_msg && success_msg.length) { %>
+      <div class="alert alert-success"><%= success_msg %></div>
+    <% } %>
+    <% if (error_msg && error_msg.length) { %>
+      <div class="alert alert-danger"><%= error_msg %></div>
+    <% } %>
+
+    <div class="admin-filter-row">
+      <% statuses.forEach(function(status) { %>
+        <a href="?filter=<%= status %>" class="admin-filter-btn <%= filter === status ? 'active' : '' %>">
+          <%= status.charAt(0).toUpperCase() + status.slice(1) %>
+        </a>
+      <% }); %>
+    </div>
+
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <h5><%= items.length %> record(s)</h5>
+        <span class="admin-muted">Review every request before funds are moved.</span>
+      </div>
+      <% if (!items.length) { %>
+        <p class="admin-empty"><%= emptyText %></p>
+      <% } else { %>
+        <div class="table-responsive">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <% columns.forEach(function(column) { %><th><%= column %></th><% }); %>
+              </tr>
+            </thead>
+            <tbody>
+              <% items.forEach(function(item) { %>
+                <tr>
+                  <td>
+                    <% if (item.user) { %>
+                      <a href="/admin/users/<%= item.user._id %>"><%= item.user.firstName %> <%= item.user.lastName %></a>
+                      <div class="admin-muted">@<%= item.user.username %></div>
+                    <% } else { %>Unknown customer<% } %>
+                  </td>
+                  <td>€<%= Number(item.amount).toFixed(2) %></td>
+                  <td><%= operation === 'grants' ? item.purpose : item.reason %></td>
+                  <td><%= new Date(item.createdAt).toLocaleString('en-GB') %></td>
+                  <td><span class="admin-status-badge status-<%= item.status %>"><%= item.status %></span></td>
+                  <td>
+                    <% if (operation === 'grants') { %>
+                      <% if (item.status === 'processing') { %>
+                        <form action="/admin/grants/<%= item._id %>/approve" method="POST" class="admin-inline-form">
+                          <input name="note" class="admin-action-input" placeholder="Review note">
+                          <button class="admin-btn-approve">Approve</button>
+                        </form>
+                        <form action="/admin/grants/<%= item._id %>/reject" method="POST" class="admin-inline-form">
+                          <input name="note" class="admin-action-input" placeholder="Reason">
+                          <button class="admin-btn-decline">Reject</button>
+                        </form>
+                      <% } else if (item.status === 'approved') { %>
+                        <form action="/admin/grants/<%= item._id %>/disburse" method="POST" onsubmit="return confirm('Disburse this approved grant?');">
+                          <button class="admin-btn-primary-sm">Disburse</button>
+                        </form>
+                      <% } else { %>
+                        <span class="admin-processed"><%= item.status %></span>
+                      <% } %>
+                    <% } else { %>
+                      <% if (item.status === 'pending') { %>
+                        <form action="/admin/refunds/<%= item._id %>/approve" method="POST" class="admin-inline-form">
+                          <input name="note" class="admin-action-input" placeholder="Review note">
+                          <button class="admin-btn-approve">Approve</button>
+                        </form>
+                        <form action="/admin/refunds/<%= item._id %>/reject" method="POST" class="admin-inline-form">
+                          <input name="note" class="admin-action-input" placeholder="Reason">
+                          <button class="admin-btn-decline">Reject</button>
+                        </form>
+                      <% } else if (item.status === 'approved') { %>
+                        <form action="/admin/refunds/<%= item._id %>/complete" method="POST" onsubmit="return confirm('Complete this approved refund?');">
+                          <button class="admin-btn-primary-sm">Complete</button>
+                        </form>
+                      <% } else { %>
+                        <span class="admin-processed"><%= item.status %></span>
+                      <% } %>
+                    <% } %>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
+    </div>
+  </main>
+</div>
+<%- include('partials/admin-footer') %>
