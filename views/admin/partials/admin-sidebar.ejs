@@ -16,6 +16,7 @@
 
     <p class="admin-nav-label">Money Movement</p>
     <a href="/admin/transactions" class="admin-nav-link <%= title === 'Transactions' ? 'active' : '' %>">↕ <span>Transaction History</span></a>
+    <a href="/admin/generate-transaction" class="admin-nav-link <%= title === 'Generate Transaction' ? 'active' : '' %>">＋ <span>Generate Transaction</span></a>
     <a href="/admin/transactions?filter=wire_transfer&status=all" class="admin-nav-link">↗ <span>Transfer Transactions</span></a>
     <a href="/admin/transactions?filter=deposit&status=all" class="admin-nav-link">↓ <span>User Deposits</span></a>
     <a href="/admin/refunds" class="admin-nav-link <%= title === 'Refund Management' ? 'active' : '' %>">↩ <span>Refunds</span></a>
