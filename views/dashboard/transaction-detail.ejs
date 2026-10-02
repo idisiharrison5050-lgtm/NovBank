@@ -3,7 +3,7 @@
 
 <div class="mobile-topbar">
   <span class="mobile-logo">NovBank</span>
-  <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open navigation">☰</button>
+  <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open navigation"><span></span><span></span><span></span></button>
 </div>
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
@@ -13,7 +13,7 @@
     <a class="nb-back" href="/dashboard/transactions">← <span>Back to transactions</span></a>
 
     <div class="nb-detail-head">
-      <div class="nb-detail-icon <%= isCredit ? 'credit' : '' %>"><%= isCredit ? '+' : '−' %></div>
+      <div class="nb-detail-icon <%= isCredit ? 'credit' : '' %>" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg></div>
       <div>
         <span>TRANSACTION DETAILS</span>
         <h1><%= transaction.description || transaction.type.replace(/_/g,' ') %></h1>
