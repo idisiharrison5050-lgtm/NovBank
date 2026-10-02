@@ -148,7 +148,11 @@
     .receipt-amount-value { font-size: 1.6rem; }
   }
 </style>
-</head>
+<style>
+.nb-impersonation-banner{position:fixed;top:0;left:0;right:0;z-index:2000;min-height:38px;padding:9px 14px;background:#fff4cc;border-bottom:1px solid #e5c85b;color:#4b3b00;display:flex;align-items:center;justify-content:center;gap:10px;font-size:11px}
+.nb-impersonation-banner strong{font-size:10px;letter-spacing:.08em}.nb-impersonation-banner span{color:#6b5a20}.nb-impersonation-banner a{padding:6px 10px;border-radius:7px;background:#101828;color:#fff;text-decoration:none;font-weight:800;font-size:10px}
+@media(max-width:600px){.nb-impersonation-banner{justify-content:flex-start;flex-wrap:wrap;padding:8px 10px}.nb-impersonation-banner span{display:none}}
+</style></head>
 <div class="nb-navigation-loader" id="nbNavigationLoader" aria-label="Loading NovBank" role="status">
   <div class="nb-navigation-loader-inner">
     <div class="nb-loader-mark"><span></span><span></span><span></span></div>
@@ -163,4 +167,11 @@
   window.setTimeout(function () { loader.classList.remove('is-active'); }, 1800);
 })();
 </script>
+<% if (typeof session !== 'undefined' && session.impersonating) { %>
+<div class="nb-impersonation-banner">
+  <strong>SUPER ADMIN MODE</strong>
+  <span>You are viewing a user account.</span>
+  <a href="/admin-session/exit">Return to Admin</a>
+</div>
+<% } %>
 <body>
