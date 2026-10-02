@@ -1,14 +1,37 @@
 <%- include('../partials/header') %>
 <link rel="stylesheet" href="/css/dashboard.css"/>
 <link rel="stylesheet" href="/css/dashboard-premium.css"/>
-<link rel="stylesheet" href="/css/dashboard-command.css?v=command4"/>
-<div class="mobile-topbar"><img src="/images/nav.png" alt="NovBank Logo" width="32" height="32" class="d-inline-block me-2" style="border-radius:6px;"><span class="mobile-logo">NovBank</span><button class="hamburger-btn" id="hamburgerBtn">☰</button></div>
+<link rel="stylesheet" href="/css/dashboard-command.css?v=command5"/>
+<div class="mobile-topbar">
+  <img src="/images/nav.png" alt="NovBank Logo" width="32" height="32" class="d-inline-block me-2" style="border-radius:6px;">
+  <span class="mobile-logo">NovBank</span>
+  <a class="nb-mobile-alert" href="/dashboard/notifications" aria-label="Notifications">
+    <svg viewBox="0 0 24 24"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path><path d="M10 21h4"></path></svg>
+    <% if (unreadCount > 0) { %><i><%= unreadCount > 9 ? '9+' : unreadCount %></i><% } %>
+  </a>
+  <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open navigation"><span></span><span></span><span></span></button>
+</div>
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 <div class="dashboard-layout"><%- include('../partials/sidebar') %><main class="dashboard-main nb-command-dashboard">
-  <section class="nb-command-hero"><div><span class="nb-command-kicker">PERSONAL BANKING</span><h1>Good day, <%= user.firstName %>.</h1><p>Your financial snapshot, activity and everyday banking tools in one place.</p></div></section>
+  <section class="nb-command-hero">
+    <div><span class="nb-command-kicker">PERSONAL BANKING</span><h1>Good day, <%= user.firstName %>.</h1><p>Your financial snapshot, activity and everyday banking tools in one place.</p></div>
+    <div class="nb-command-actions">
+      <a class="nb-command-secondary" href="/receive">Receive money</a>
+      <a class="nb-command-primary" href="/transfer">Send money</a>
+    </div>
+  </section>
   <% if (success_msg.length > 0) { %><div class="alert alert-success"><%= success_msg %></div><% } %><% if (error_msg.length > 0) { %><div class="alert alert-danger"><%= error_msg %></div><% } %>
   <section class="nb-command-grid"><div class="nb-networth-card"><div class="nb-networth-top"><span>AVAILABLE BALANCE</span><a href="/dashboard/profile">Account details →</a></div><strong>€ <%= Number(user.balance || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong><div class="nb-networth-meta"><span><i></i><%= user.accountStatus.charAt(0).toUpperCase()+user.accountStatus.slice(1) %> account</span><span>•••• <%= String(user.accountNumber).slice(-4) %></span></div></div><div class="nb-health-card"><span>ACCOUNT HEALTH</span><div class="nb-health-ring"><b><%= user.kycStatus === 'approved' ? '100%' : user.kycStatus === 'pending' ? '75%' : '50%' %></b></div><strong><%= user.kycStatus === 'approved' ? 'Verification complete' : user.kycStatus === 'pending' ? 'Verification in progress' : 'Complete your profile' %></strong><p><%= user.kycStatus === 'approved' ? 'Your account is fully set up.' : 'Finish the remaining steps to unlock your full banking experience.' %></p><a href="/kyc">Review account →</a></div></section>
-  
+
+  <section class="nb-command-actions-grid" aria-label="Quick banking actions">
+    <a href="/transfer"><span class="nb-action-icon"><svg viewBox="0 0 24 24"><path d="M4 12h15"></path><path d="m13 6 6 6-6 6"></path></svg></span><div><b>Send money</b><small>Transfer to another account</small></div><em>→</em></a>
+    <a href="/receive"><span class="nb-action-icon"><svg viewBox="0 0 24 24"><path d="M12 4v15"></path><path d="m6 13 6 6 6-6"></path></svg></span><div><b>Receive</b><small>Share your payment details</small></div><em>→</em></a>
+    <a href="/transfer/deposit"><span class="nb-action-icon"><svg viewBox="0 0 24 24"><path d="M12 4v13"></path><path d="m7 12 5 5 5-5"></path><path d="M5 20h14"></path></svg></span><div><b>Add funds</b><small>Deposit into your account</small></div><em>→</em></a>
+    <a href="/transfer/withdraw"><span class="nb-action-icon"><svg viewBox="0 0 24 24"><path d="M12 20V7"></path><path d="m7 12 5-5 5 5"></path><path d="M5 4h14"></path></svg></span><div><b>Withdraw</b><small>Move funds out securely</small></div><em>→</em></a>
+    <a href="/cards"><span class="nb-action-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"></rect><path d="M3 10h18"></path><path d="M7 15h3"></path></svg></span><div><b>Cards</b><small>Manage your bank cards</small></div><em>→</em></a>
+    <a href="/airtime"><span class="nb-action-icon"><svg viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2"></rect><path d="M10 6h4"></path><circle cx="12" cy="17" r="1"></circle></svg></span><div><b>Airtime</b><small>Recharge a mobile line</small></div><em>→</em></a>
+  </section>
+
   <section class="nb-command-two-col">
     <div class="nb-command-panel nb-activity-panel">
       <div class="nb-panel-heading">
@@ -23,10 +46,16 @@
         var credit = txn.type === 'deposit' || txn.type === 'loan_credit' || !outgoing;
         var other = outgoing ? txn.receiver : txn.sender;
         var otherName = other && other.firstName ? (other.firstName + ' ' + (other.lastName || '')) : (txn.description || txn.type.replace(/_/g,' '));
-        var icon = txn.type === 'airtime' ? '◉' : txn.type === 'wire_transfer' ? '⇄' : txn.type === 'deposit' ? '↓' : txn.type === 'loan_credit' ? '€' : credit ? '↓' : '↑';
+        var icon = txn.type === 'airtime' ? 'phone' : txn.type === 'wire_transfer' ? 'transfer' : txn.type === 'deposit' ? 'down' : txn.type === 'loan_credit' ? 'loan' : credit ? 'down' : 'up';
       %>
         <a class="nb-activity-item" href="/dashboard/transactions/<%= txn._id %>">
-          <span class="nb-activity-icon <%= credit ? 'credit' : '' %>"><%= icon %></span>
+          <span class="nb-activity-icon <%= credit ? 'credit' : '' %>">
+            <% if (icon === 'phone') { %><svg viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2"></rect><path d="M10 6h4"></path><circle cx="12" cy="17" r="1"></circle></svg>
+            <% } else if (icon === 'transfer') { %><svg viewBox="0 0 24 24"><path d="M5 7h14"></path><path d="m15 4 4 3-4 3"></path><path d="M19 17H5"></path><path d="m9 14-4 3 4 3"></path></svg>
+            <% } else if (icon === 'loan') { %><svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="13" rx="2"></rect><path d="M8 6V4h8v2"></path><path d="M8 13h8"></path></svg>
+            <% } else if (icon === 'down') { %><svg viewBox="0 0 24 24"><path d="M12 4v15"></path><path d="m6 13 6 6 6-6"></path></svg>
+            <% } else { %><svg viewBox="0 0 24 24"><path d="M12 20V5"></path><path d="m6 11 6-6 6 6"></path></svg><% } %>
+          </span>
           <div class="nb-activity-copy">
             <b><%= otherName.trim() || 'Account activity' %></b>
             <small><%= txn.category || txn.type.replace(/_/g,' ') %> · <%= new Date(txn.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) %></small>
@@ -61,10 +90,7 @@
     <div class="nb-cashflow-chart">
       <% var maxFlow = 1; (cashflow || []).forEach(function(day){ maxFlow = Math.max(maxFlow, Number(day.incoming || 0), Number(day.outgoing || 0)); }); %>
       <% (cashflow || []).forEach(function(day){ var inHeight = Math.max(4, Math.round((Number(day.incoming || 0) / maxFlow) * 100)); var outHeight = Math.max(4, Math.round((Number(day.outgoing || 0) / maxFlow) * 100)); %>
-        <div class="nb-cashflow-day">
-          <div class="nb-cashflow-columns"><i style="height:<%= inHeight %>%"></i><b style="height:<%= outHeight %>%"></b></div>
-          <small><%= day.label %></small>
-        </div>
+        <div class="nb-cashflow-day"><div class="nb-cashflow-columns"><i style="height:<%= inHeight %>%"></i><b style="height:<%= outHeight %>%"></b></div><small><%= day.label %></small></div>
       <% }); %>
     </div>
     <div class="nb-cashflow-legend"><span><i></i>Money in</span><span><b></b>Money out</span><a href="/dashboard/transactions">View transactions →</a></div>
