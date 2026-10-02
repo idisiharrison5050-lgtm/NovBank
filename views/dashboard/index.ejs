@@ -1,7 +1,7 @@
 <%- include('../partials/header') %>
 <link rel="stylesheet" href="/css/dashboard.css"/>
 <link rel="stylesheet" href="/css/dashboard-premium.css"/>
-<link rel="stylesheet" href="/css/dashboard-command.css?v=command5"/>
+<link rel="stylesheet" href="/css/dashboard-command.css?v=command6"/>
 <div class="mobile-topbar">
   <img src="/images/nav.png" alt="NovBank Logo" width="32" height="32" class="d-inline-block me-2" style="border-radius:6px;">
   <span class="mobile-logo">NovBank</span>
@@ -56,6 +56,13 @@
       <small>Daily outgoing limit</small>
       <a href="/dashboard/profile">Manage limits <b>→</b></a>
     </article>
+  </section>
+
+  <section class="nb-financial-pulse">
+    <div class="nb-pulse-intro"><span>FINANCIAL PULSE</span><h2>Your money at a glance.</h2><p>Based on completed account activity over the current month.</p></div>
+    <div class="nb-pulse-stat"><span>RECEIVED</span><strong>€ <%= Number(monthIncoming || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong><small>Money in</small></div>
+    <div class="nb-pulse-stat"><span>SENT</span><strong>€ <%= Number(monthOutgoing || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong><small>Money out</small></div>
+    <div class="nb-pulse-stat <%= Number(monthIncoming || 0) - Number(monthOutgoing || 0) >= 0 ? 'positive' : 'negative' %>"><span>NET MOVEMENT</span><strong><%= Number(monthIncoming || 0) - Number(monthOutgoing || 0) >= 0 ? '+' : '−' %>€ <%= Math.abs(Number(monthIncoming || 0) - Number(monthOutgoing || 0)).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong><small><%= Number(monthIncoming || 0) - Number(monthOutgoing || 0) >= 0 ? 'More received than sent' : 'More sent than received' %></small></div>
   </section>
 
   <div class="nb-action-modal" id="nbActionModal" aria-hidden="true">
