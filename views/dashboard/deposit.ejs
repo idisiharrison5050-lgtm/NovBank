@@ -32,7 +32,8 @@
     <section class="nb-funding-panel nb-flow-panel">
   <div class="nb-flow-card-head"><div><span>FUNDING</span><h2>Add money to NovBank</h2><p>Choose the bank-transfer method that matches how you are funding your account.</p></div><div class="nb-flow-secure">Secure funding</div></div>
   <div class="nb-wire-steps"><div class="active"><b>1</b><span>Choose method</span></div><i></i><div><b>2</b><span>Send funds</span></div><i></i><div><b>3</b><span>Confirm</span></div></div>
-</section>\n    <div class="nb-funding-panel deposit-intro">
+</section>
+    <div class="nb-funding-panel deposit-intro">
       <p>Transfer funds from your local or international bank to your NovBank account using the details below. Once you have completed the transfer, fill in the form at the bottom so we can verify and credit your account.</p>
     </div>
 
@@ -163,6 +164,24 @@
     if (this.files[0]) {
       document.getElementById('proofUploadBox').classList.add('has-file');
     }
+  });
+</script>
+
+<script>
+  document.querySelectorAll('.nb-copy-detail').forEach(function (button) {
+    button.addEventListener('click', function () {
+      var value = button.getAttribute('data-copy') || '';
+      if (!navigator.clipboard) return;
+      navigator.clipboard.writeText(value).then(function () {
+        var original = button.textContent;
+        button.textContent = 'Copied';
+        button.classList.add('copied');
+        window.setTimeout(function () {
+          button.textContent = original;
+          button.classList.remove('copied');
+        }, 1400);
+      });
+    });
   });
 </script>
 
