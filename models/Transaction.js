@@ -6,7 +6,7 @@ var TransactionSchema = new mongoose.Schema({
 
   type: {
     type: String,
-    enum: ['internal_transfer', 'wire_transfer', 'deposit', 'withdrawal', 'airtime', 'loan_credit', 'admin_credit', 'admin_debit', 'grant_credit', 'refund_credit'],
+    enum: ['internal_transfer', 'wire_transfer', 'deposit', 'withdrawal', 'airtime', 'loan_credit', 'loan_repayment', 'admin_credit', 'admin_debit', 'grant_credit', 'refund_credit'],
     required: true
   },
 
@@ -66,5 +66,6 @@ TransactionSchema.pre('save', function (next) {
 TransactionSchema.index({ sender: 1, createdAt: -1 });
 TransactionSchema.index({ receiver: 1, createdAt: -1 });
 TransactionSchema.index({ status: 1, createdAt: -1 });
+TransactionSchema.index({ sender: 1, type: 1, createdAt: -1 });
 
 module.exports = mongoose.model('Transaction', TransactionSchema);
