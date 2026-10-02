@@ -11,12 +11,44 @@
   </section>
   <% if (success_msg && success_msg.length > 0) { %><div class="alert alert-success nb-loan-alert"><%= success_msg %></div><% } %>
   <% if (error_msg && error_msg.length > 0) { %><div class="alert alert-danger nb-loan-alert"><%= error_msg %></div><% } %>
+
   <% if (activeLoan) { %>
     <section class="nb-loan-grid">
       <div class="nb-loan-card dark">
         <span class="nb-loan-label">CURRENT FACILITY</span>
         <div class="nb-loan-amount">€<%= Number(activeLoan.amount || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></div>
-        <span class="nb-loan-status <%= activeLoan.status %>"><%= activeLoan.status %></span><% if (activeLoan.status === "approved") { %><div class="nb-loan-progress"><div><span>OUTSTANDING</span><b>€<%= Number(activeLoan.outstanding || activeLoan.amount || 0).toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2}) %></b></div><div class="nb-loan-progress-track"><i style="width:<%= Math.min(100, Math.max(0, ((Number(activeLoan.amountRepaid || 0) / Number(activeLoan.totalDue || activeLoan.amount || 1)) * 100))) %>%"></i></div><small>€<%= Number(activeLoan.amountRepaid || 0).toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2}) %> repaid</small></div><form id="loanRepayForm" action="/loans/repay" method="POST" class="nb-loan-repay"><label>Repayment amount (€)<input type="number" name="amount" min="0.01" max="<%= Number(activeLoan.outstanding || activeLoan.amount) %>" step="0.01" placeholder="0.00" required></label><input type="hidden" name="transactionPin" id="loanRepayPinInput"><input type="hidden" name="idempotencyKey" value="<%= activeLoan._id %>-<%= Date.now() %>"><button type="button" onclick="openPinModal('loanRepayForm')">Make repayment</button></form><% } %>
+        <span class="nb-loan-status <%= activeLoan.status %>"><%= activeLoan.status %></span>
+
+        <% if (activeLoan.status === "approved") { %>
+          <div class="nb-loan-progress">
+            <div><span>OUTSTANDING</span><b>€<%= Number(activeLoan.outstanding || activeLoan.amount || 0).toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2}) %></b></div>
+            <div class="nb-loan-progress-track"><i style="width:<%= Math.min(100, Math.max(0, ((Number(activeLoan.amountRepaid || 0) / Number(activeLoan.totalDue || activeLoan.amount || 1)) * 100))) %>%"></i></div>
+            <small>€<%= Number(activeLoan.amountRepaid || 0).toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2}) %> repaid</small>
+          </div>
+
+          <div class="nb-loan-repay-guide">
+            <span>PLANNED PERIODIC AMOUNT</span>
+            <strong>€<%= (Number(activeLoan.totalDue || activeLoan.amount || 0) / Math.max(1, Number(activeLoan.repaymentPeriod || 1))).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong>
+            <small>Based on the current total due and selected repayment period.</small>
+          </div>
+
+          <form id="loanRepayForm" action="/loans/repay" method="POST" class="nb-loan-repay">
+            <label>Repayment amount (€)
+              <input type="number" id="loanRepayAmount" name="amount" min="0.01" max="<%= Number(activeLoan.outstanding || activeLoan.amount) %>" step="0.01" placeholder="0.00" required>
+            </label>
+            <input type="hidden" name="loanId" value="<%= activeLoan._id %>">
+            <input type="hidden" name="transactionPin" id="loanRepayPinInput">
+            <input type="hidden" name="idempotencyKey" value="<%= activeLoan._id %>-<%= Date.now() %>">
+            <button type="button" onclick="openPinModal('loanRepayForm')">Make repayment</button>
+          </form>
+
+          <div class="nb-loan-repay-presets" aria-label="Repayment amount presets">
+            <button type="button" data-loan-preset="25">25%</button>
+            <button type="button" data-loan-preset="50">50%</button>
+            <button type="button" data-loan-preset="100">Full balance</button>
+          </div>
+        <% } %>
+
         <div class="nb-loan-details" style="margin-top:18px">
           <div class="nb-loan-detail"><span>Purpose</span><b><%= activeLoan.purpose %></b></div>
           <div class="nb-loan-detail"><span>Repayment period</span><b><%= activeLoan.repaymentPeriod %> months</b></div>
@@ -25,11 +57,18 @@
         </div>
         <% if (activeLoan.status === 'pending') { %><p class="nb-loan-note">Your request is under review. A notification will appear in your Secure Inbox when its status changes.</p><% } %>
       </div>
+
       <div class="nb-loan-card">
         <span class="nb-loan-label">LOAN OVERVIEW</span>
+        <div class="nb-loan-overview-head">
+          <div class="nb-loan-overview-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M4 7h16v12H4z"></path><path d="M8 7V5h8v2"></path><path d="M8 13h8"></path></svg>
+          </div>
+          <div><b>One place for your lending position</b><span>Track status, repayment progress and important account updates without leaving NovBank.</span></div>
+        </div>
         <div class="nb-loan-benefits">
           <div class="nb-loan-benefit"><i class="nb-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg></i><div><b>Clear application status</b><span>Keep track of the request currently associated with your account.</span></div></div>
-          <div class="nb-loan-benefit"><i class="nb-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v5l3 2"></path></svg></i><div><b>Flexible terms</b><span>Choose a repayment period that matches your request.</span></div></div>
+          <div class="nb-loan-benefit"><i class="nb-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v5l3 2"></path></svg></i><div><b>Flexible terms</b><span>Your selected repayment period remains visible throughout the facility.</span></div></div>
           <div class="nb-loan-benefit"><i class="nb-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v18"></path><path d="M6 7h12"></path><path d="M6 17h12"></path></svg></i><div><b>Secure notifications</b><span>Important lending updates are delivered to your account inbox.</span></div></div>
         </div>
       </div>
@@ -63,4 +102,23 @@
   </section>
   <% } %>
 </main></div>
+
+<script>
+(function () {
+  var buttons = document.querySelectorAll('[data-loan-preset]');
+  var input = document.getElementById('loanRepayAmount');
+  if (!input) return;
+
+  buttons.forEach(function (button) {
+    button.addEventListener('click', function () {
+      var outstanding = Number(input.getAttribute('max') || 0);
+      var percent = Number(button.getAttribute('data-loan-preset') || 0);
+      var amount = Math.round((outstanding * percent / 100) * 100) / 100;
+      input.value = amount.toFixed(2);
+      buttons.forEach(function (item) { item.classList.remove('active'); });
+      button.classList.add('active');
+    });
+  });
+})();
+</script>
 <%- include('../partials/footer') %>
