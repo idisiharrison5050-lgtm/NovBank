@@ -5,6 +5,7 @@ var Notification = require('../models/Notification');
 var mailer = require('../config/mailer');
 var ledger = require('../services/ledger');
 var bcrypt = require('bcryptjs');
+var accountLimits = require('../services/accountLimits');
 
 function isAuth(req, res, next) {
   if (req.isAuthenticated()) return next();
@@ -65,16 +66,19 @@ router.post('/', isAuth, isPinVerified, function (req, res) {
       if (recipient._id.toString() === req.user._id.toString()) throw new Error('You cannot transfer to yourself.');
 
       return new Promise(function (resolve, reject) {
-        ledger.transferInternal({
-          senderId: req.user._id,
-          receiverId: recipient._id,
-          amount: amount,
-          description: description,
-          category: category,
-          idempotencyKey: idempotencyKey
-        }, function (err, result) {
-          if (err) return reject(err);
-          resolve({ recipient: recipient, result: result });
+        accountLimits.checkTransferLimit(req.user, amount, function (limitErr) {
+          if (limitErr) return reject(limitErr);
+          ledger.transferInternal({
+            senderId: req.user._id,
+            receiverId: recipient._id,
+            amount: amount,
+            description: description,
+            category: category,
+            idempotencyKey: idempotencyKey
+          }, function (err, result) {
+            if (err) return reject(err);
+            resolve({ recipient: recipient, result: result });
+          });
         });
       });
     }).then(function (payload) {
