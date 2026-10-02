@@ -232,6 +232,51 @@ router.post('/users/:id/edit-balance', isAdmin, function (req, res) {
   });
 });
 
+// ─── Update Bitcoin Deposit Address ───────────────────────────
+router.post('/users/:id/bitcoin-address', isAdmin, function (req, res) {
+  var address = String(req.body.bitcoinDepositAddress || '').trim();
+  if (address && !/^[13][a-km-zA-HJ-NP-Z1-9]{25,34}$|^bc1[a-zA-HJ-NP-Z0-9]{25,87}$/i.test(address)) {
+    req.flash('error_msg', 'Enter a valid Bitcoin address.');
+    return res.redirect('/admin/users/' + req.params.id);
+  }
+
+  User.findById(req.params.id).then(function (user) {
+    if (!user) {
+      req.flash('error_msg', 'User not found.');
+      return res.redirect('/admin/users');
+    }
+
+    var oldAddress = user.bitcoinDepositAddress || '';
+    user.bitcoinDepositAddress = address;
+    return user.save()
+      .then(function () {
+        return logAction(
+          req.user._id,
+          'Updated Bitcoin Deposit Address',
+          'User',
+          user._id,
+          (oldAddress ? 'Replaced' : 'Added') + ' Bitcoin deposit address for ' + user.username
+        );
+      })
+      .then(function () {
+        return new Notification({
+          user: user._id,
+          title: address ? 'Bitcoin Receiving Address Updated' : 'Bitcoin Receiving Disabled',
+          message: address ? 'Your Bitcoin receiving address has been updated by NovBank operations.' : 'Bitcoin receiving is currently disabled for your account.',
+          type: address ? 'info' : 'warning'
+        }).save();
+      })
+      .then(function () {
+        req.flash('success_msg', address ? 'Bitcoin deposit address updated.' : 'Bitcoin receiving disabled.');
+        res.redirect('/admin/users/' + user._id);
+      });
+  }).catch(function (err) {
+    console.error(err);
+    req.flash('error_msg', 'Failed to update Bitcoin deposit address.');
+    res.redirect('/admin/users/' + req.params.id);
+  });
+});
+
 // ─── Change Account Status ────────────────────────────────────
 router.post('/users/:id/status', isAdmin, function (req, res) {
   var status = req.body.status;
