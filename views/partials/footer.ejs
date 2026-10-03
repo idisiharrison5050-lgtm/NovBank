@@ -46,7 +46,7 @@
     </div>
 
     <div class="receipt-actions">
-      <button class="btn btn-outline-secondary" onclick="downloadReceiptPDF()">Download Receipt</button>
+      <button class="btn btn-outline-secondary" onclick="downloadReceiptPDF()">Save receipt as PDF</button>
       <button class="btn btn-primary" onclick="closeReceipt()">Done</button>
     </div>
   </div>
@@ -174,7 +174,7 @@ function closeReceipt() {
 
 function downloadReceiptPDF() {
   if (!window.jspdf || !window.jspdf.jsPDF) {
-    window.print();
+    alert('The PDF generator is still loading. Please try again in a moment.');
     return;
   }
 
