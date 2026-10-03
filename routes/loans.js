@@ -153,7 +153,8 @@ router.post('/repay', isAuth, function (req, res) {
           user: req.user._id,
           title: completedLoan && completedLoan.status === 'repaid' ? 'Loan Repaid' : 'Loan Repayment Received',
           message: message,
-          type: 'success'
+          type: 'loan',
+          severity: 'success'
         }).save().catch(function (notificationErr) {
           console.error('Loan repayment notification error:', notificationErr);
         }).then(function () {
