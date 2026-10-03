@@ -55,6 +55,8 @@ function openWithdrawReview(){
 }
 function closeWithdrawReview(){var modal=document.getElementById('withdrawReview');if(modal){modal.classList.remove('open');modal.setAttribute('aria-hidden','true');document.body.classList.remove('wire-review-open');}}
 function authorizeWithdraw(){closeWithdrawReview();openPinModal('withdrawForm');}
+var withdrawReview=document.getElementById('withdrawReview');
+if(withdrawReview){withdrawReview.addEventListener('click',function(e){if(e.target===withdrawReview)closeWithdrawReview();});}
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeWithdrawReview();});
 </script>
 </main></div><%- include('../partials/footer') %>
