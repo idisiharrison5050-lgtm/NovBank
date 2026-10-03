@@ -19,3 +19,5 @@
 .nb-receive-card{box-shadow:0 14px 34px rgba(16,24,40,.055);transition:transform .18s ease,box-shadow .18s ease;position:relative;z-index:1}
 .nb-receive-card:hover{transform:translateY(-2px);box-shadow:0 20px 42px rgba(16,24,40,.08)}
 .nb-bitcoin-address{box-shadow:0 8px 22px rgba(16,24,40,.04)}
+/* Keyboard focus refinement */
+.dashboard-main a:focus-visible,.dashboard-main button:focus-visible{outline:3px solid rgba(21,94,239,.22);outline-offset:3px}
