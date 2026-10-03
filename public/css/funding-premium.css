@@ -87,3 +87,26 @@
 .nb-withdraw-page .nb-send-button{box-shadow:0 12px 26px rgba(21,94,239,.16)}
 .nb-withdraw-page .nb-withdraw-steps>div{box-shadow:0 6px 18px rgba(16,24,40,.045);transition:transform .16s ease}
 .nb-withdraw-page .nb-withdraw-steps>div:hover{transform:translateY(-2px)}
+
+/* Withdrawal review popup */
+.nb-withdraw-review-overlay{position:fixed;inset:0;background:rgba(2,6,23,.58);display:none;align-items:center;justify-content:center;padding:18px;z-index:1500}
+.nb-withdraw-review-overlay.open{display:flex}
+.nb-withdraw-review{width:min(560px,100%);max-height:calc(100vh - 36px);overflow:auto;background:#fff;border:1px solid #e4e7ec;border-radius:22px;box-shadow:0 30px 90px rgba(16,24,40,.24);padding:25px}
+.nb-withdraw-review-head{display:flex;align-items:flex-start;justify-content:space-between;gap:15px}
+.nb-withdraw-review-head span{font-size:9px;font-weight:850;letter-spacing:.12em;color:#98a2b3}
+.nb-withdraw-review-head h2{font-size:22px;letter-spacing:-.03em;margin:5px 0 0}
+.nb-withdraw-review-head button{width:34px;height:34px;border:1px solid #e4e7ec;border-radius:10px;background:#fff;color:#667085;font-size:24px;line-height:1;cursor:pointer}
+.nb-withdraw-review-amount{font-size:38px;font-weight:850;letter-spacing:-.045em;margin:25px 0 20px}
+.nb-withdraw-review-grid{display:grid;grid-template-columns:1fr 1fr;border:1px solid #e4e7ec;border-radius:16px;overflow:hidden}
+.nb-withdraw-review-grid>div{padding:14px;border-bottom:1px solid #eef0f4;min-width:0}
+.nb-withdraw-review-grid>div:nth-child(odd){border-right:1px solid #eef0f4}
+.nb-withdraw-review-grid>div:nth-last-child(-n+2){border-bottom:0}
+.nb-withdraw-review-grid span{display:block;font-size:8px;font-weight:850;letter-spacing:.08em;color:#98a2b3}
+.nb-withdraw-review-grid b{display:block;margin-top:6px;font-size:12px;overflow-wrap:anywhere}
+.nb-withdraw-review-notice{display:grid;gap:3px;margin-top:15px;padding:13px 14px;border:1px solid #dbe5f7;background:#f8fafc;border-radius:13px}
+.nb-withdraw-review-notice strong{font-size:11px}.nb-withdraw-review-notice span{font-size:10px;color:#667085;line-height:1.5}
+.nb-withdraw-review-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.nb-withdraw-review-actions button{min-height:46px;border-radius:11px;font:inherit;font-weight:750;cursor:pointer}
+.nb-withdraw-review-cancel{background:#fff;border:1px solid #d0d5dd;color:#344054}
+.nb-withdraw-review-confirm{border:1px solid #155eef;background:#155eef;color:#fff;box-shadow:0 10px 24px rgba(21,94,239,.18)}
+@media(max-width:560px){.nb-withdraw-review{padding:20px;border-radius:20px}.nb-withdraw-review-amount{font-size:32px;margin-top:20px}.nb-withdraw-review-grid{grid-template-columns:1fr}.nb-withdraw-review-grid>div:nth-child(odd){border-right:0}.nb-withdraw-review-grid>div:nth-last-child(-n+2){border-bottom:1px solid #eef0f4}.nb-withdraw-review-grid>div:last-child{border-bottom:0}.nb-withdraw-review-actions{grid-template-columns:1fr}}
