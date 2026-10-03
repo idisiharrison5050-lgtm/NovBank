@@ -72,7 +72,7 @@
           <div class="form-group"><label>Reference <small class="nb-optional">Optional</small></label><input type="text" name="reference" class="form-control" placeholder="Invoice #1234"/></div>
           <div class="form-group"><label>Description <small class="nb-optional">Optional</small></label><input type="text" name="description" class="form-control" placeholder="What is this transfer for?"/></div>
 
-          <input type="hidden" name="transactionPin" id="wirePinInput"/>
+          <input type="hidden" name="transactionPin" id="wirePinInput"/><input type="hidden" name="requestKey" value="<%= requestKey %>"/>
           <div class="nb-wire-review-note"><span>✓</span><p>You'll review the transfer and authorize it with your transaction PIN before it is submitted.</p></div>
           <button type="button" class="nb-flow-submit" onclick="openWireReview()">Review transfer <span>→</span></button>
         </form>
