@@ -290,7 +290,7 @@ router.post('/deposit', isAuth, isPinVerified, uploadDeposit.single('proofOfPaym
       var description = req.body.description || '';
       var proofUrl    = req.file ? req.file.path : null;
 
-      if (!amount || isNaN(amount) || amount <= 100) {
+      if (!amount || isNaN(amount) || amount < 100) {
         req.flash('error_msg', 'Please enter a valid amount (minimum €100).');
         return res.redirect('/transfer/deposit');
       }
