@@ -42,3 +42,16 @@
 .nb-empty-icon{width:52px;height:52px;margin:0 auto;display:grid;place-items:center;border-radius:16px;background:#eef4ff;color:#155eef}
 .nb-empty-icon svg{width:24px;height:24px}
 .nb-benefit-icon{font-style:normal!important}
+
+/* Customer blue-and-white shell refinement */
+.nb-sidebar{background:#1a56db;color:#fff;box-shadow:12px 0 40px rgba(26,86,219,.16)}
+.nb-sidebar .sidebar-link{color:rgba(255,255,255,.78)}
+.nb-sidebar .sidebar-link:hover{background:rgba(255,255,255,.12);color:#fff}
+.nb-sidebar .sidebar-link.active{background:#fff;color:#1446b5;box-shadow:0 8px 22px rgba(15,61,150,.20)}
+.nb-sidebar .sidebar-link.active .nb-nav-icon{color:#1a56db}
+.nb-sidebar-section{color:rgba(255,255,255,.62)}
+.nb-sidebar-logout{border-top-color:rgba(255,255,255,.16)!important;color:rgba(255,255,255,.76)!important}
+.nb-sidebar-logout:hover{background:rgba(255,255,255,.10);color:#fff!important}
+.mobile-topbar{background:#1a56db!important;box-shadow:0 8px 24px rgba(26,86,219,.18)!important}
+.dashboard-main{background:#f4f7fe}
+.nb-physical-card,.nb-card-controls,.nb-loan-card,.nb-airtime-card,.nb-wire-card,.nb-funding-panel,.nb-account-card,.nb-security-card,.nb-service-card,.nb-transactions-list{border-color:#e4ebf8}
