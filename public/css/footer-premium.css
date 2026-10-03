@@ -17,3 +17,62 @@
 .nb-premium-footer .footer-links a:hover{transform:translateX(2px)}
 .nb-mobile-bottom-nav a{transition:transform .16s ease,background .16s ease,box-shadow .16s ease}
 .nb-mobile-bottom-nav a.active{box-shadow:0 6px 16px rgba(21,94,239,.08)}
+
+
+/* ── Customer page header refinement ───────────── */
+.dashboard-main .nb-cards-heading h1,
+.dashboard-main .nb-transfer-head h1,
+.dashboard-main .nb-funding-head h1,
+.dashboard-main .nb-account-hero h1,
+.dashboard-main .nb-loan-hero h1,
+.dashboard-main .nb-airtime-head h1,
+.dashboard-main .nb-transactions-head h1,
+.dashboard-main .nb-security-hero h1,
+.dashboard-main .nb-flow-hero h1,
+.dashboard-main .nb-command-hero h1{
+  font-size:32px;
+  line-height:1.08;
+  letter-spacing:-.045em;
+  margin:6px 0 8px;
+}
+.dashboard-main .nb-cards-heading,
+.dashboard-main .nb-transfer-head,
+.dashboard-main .nb-funding-head,
+.dashboard-main .nb-account-hero,
+.dashboard-main .nb-loan-hero,
+.dashboard-main .nb-airtime-head,
+.dashboard-main .nb-transactions-head,
+.dashboard-main .nb-security-hero,
+.dashboard-main .nb-flow-hero,
+.dashboard-main .nb-command-hero{
+  margin-bottom:20px;
+}
+.dashboard-main .nb-cards-heading>div>span,
+.dashboard-main .nb-transfer-head>div:first-child>span,
+.dashboard-main .nb-funding-kicker,
+.dashboard-main .nb-account-label,
+.dashboard-main .nb-loan-kicker,
+.dashboard-main .nb-airtime-kicker,
+.dashboard-main .nb-transactions-head>div>span,
+.dashboard-main .nb-security-kicker,
+.dashboard-main .nb-flow-eyebrow,
+.dashboard-main .nb-command-kicker{
+  font-size:9px;
+  letter-spacing:.11em;
+}
+@media(max-width:768px){
+  .dashboard-main .nb-cards-heading h1,
+  .dashboard-main .nb-transfer-head h1,
+  .dashboard-main .nb-funding-head h1,
+  .dashboard-main .nb-account-hero h1,
+  .dashboard-main .nb-loan-hero h1,
+  .dashboard-main .nb-airtime-head h1,
+  .dashboard-main .nb-transactions-head h1,
+  .dashboard-main .nb-security-hero h1,
+  .dashboard-main .nb-flow-hero h1,
+  .dashboard-main .nb-command-hero h1{
+    font-size:28px;
+    line-height:1.08;
+    margin:5px 0 7px;
+  }
+}
