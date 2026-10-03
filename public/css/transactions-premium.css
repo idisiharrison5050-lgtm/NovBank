@@ -22,3 +22,11 @@
 }
 
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}.nb-filter-label{font-size:9px;letter-spacing:.1em;font-weight:850;color:#98a2b3;margin:14px 0 6px}.nb-transaction-search button{min-width:92px;min-height:42px;cursor:pointer}.nb-transaction-search button:focus-visible,.nb-transaction-search input:focus-visible,.nb-filter-bar a:focus-visible,.nb-transaction-card:focus-visible,.nb-pagination a:focus-visible,.nb-export-btn:focus-visible{outline:3px solid rgba(21,94,239,.18);outline-offset:2px}.nb-transaction-card:hover .nb-txn-main strong{color:#155eef}.nb-txn-main strong{transition:color .18s ease}.nb-txn-value .txn-status{padding:3px 7px;border-radius:999px;background:#f2f4f7;color:#475467;font-size:9px;font-weight:800;text-transform:capitalize}.nb-txn-value .status-completed{background:#ecfdf3;color:#067647}.nb-txn-value .status-pending,.nb-txn-value .status-processing{background:#fffaeb;color:#b54708}.nb-txn-value .status-failed,.nb-txn-value .status-cancelled,.nb-txn-value .status-reversed{background:#fef3f2;color:#b42318}.nb-transactions-list:focus-within{border-color:#c7d7fe;box-shadow:0 0 0 3px rgba(21,94,239,.06)}@media(max-width:480px){.nb-transaction-search button{width:100%}.nb-export-btn{width:100%;text-align:center;box-sizing:border-box}.nb-transactions-head{gap:14px}.nb-transactions-head>div{width:100%}}
+
+/* Visual depth pass */
+.nb-transactions-page{position:relative}
+.nb-transactions-page:before{content:"";position:absolute;right:-30px;top:-30px;width:150px;height:150px;border:1px solid rgba(21,94,239,.08);border-radius:50%;pointer-events:none}
+.nb-transactions-list{box-shadow:0 16px 38px rgba(16,24,40,.055);overflow:hidden}
+.nb-transaction-row{transition:transform .16s ease,box-shadow .16s ease,background .16s ease}
+.nb-transaction-row:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(16,24,40,.05)}
+.nb-transactions-head,.nb-filter-bar,.nb-transactions-list{position:relative;z-index:1}
