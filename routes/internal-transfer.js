@@ -107,7 +107,8 @@ router.post('/', isAuth, isPinVerified, function (req, res) {
           user: req.user._id,
           title: 'Transfer Sent',
           message: 'You sent €' + amount.toFixed(2) + ' to ' + recipient.firstName + ' ' + recipient.lastName + '.',
-          type: 'success'
+          type: 'transaction',
+          severity: 'success'
         }).save(),
         new Notification({
           user: recipient._id,
