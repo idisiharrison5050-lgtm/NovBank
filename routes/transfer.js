@@ -118,6 +118,20 @@ router.post('/', isAuth, isPinVerified, function (req, res) {
             resolve(txn);
           });
         }).then(function (txn) {
+          if (txn._novDuplicate) {
+            req.session.receipt = {
+              amount: txn.amount,
+              reference: txn.reference,
+              date: new Date(txn.createdAt).toLocaleString('en-GB'),
+              type: 'Internal Transfer',
+              from: req.user.firstName + ' ' + req.user.lastName + ' (' + req.user.accountNumber + ')',
+              to: recipient.firstName + ' ' + recipient.lastName + ' (' + recipient.accountNumber + ')',
+              description: txn.description || '-',
+              category: txn.category,
+              status: txn.status
+            };
+            return res.redirect('/transfer/receipt');
+          }
           var identifierKey = String(identifier).trim().toLowerCase();
           var saveRecipient = req.body.saveRecipient === 'on';
           var beneficiaryPromise;
