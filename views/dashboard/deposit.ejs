@@ -216,6 +216,28 @@
   }
 </script>
 
+<script>
+(function(){
+  var modal=document.getElementById('depositReviewModal');
+  var form=document.getElementById('depositForm');
+  function openReview(){
+    if(!form.checkValidity()){form.reportValidity();return;}
+    var amount=Number(form.querySelector('[name="amount"]').value||0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});
+    var file=document.getElementById('proofFile');
+    document.getElementById('depositReviewAmount').textContent='€ '+amount;
+    document.getElementById('depositReviewAmountSmall').textContent='€ '+amount;
+    document.getElementById('depositReviewProof').textContent=file&&file.files[0]?file.files[0].name:'Not attached';
+    document.getElementById('depositReviewDescription').textContent=(form.querySelector('[name="description"]').value||'Not provided').trim()||'Not provided';
+    modal.classList.add('is-open');modal.setAttribute('aria-hidden','false');document.body.classList.add('wire-review-open');
+  }
+  window.openDepositReview=openReview;
+  window.closeDepositReview=function(){modal.classList.remove('is-open');modal.setAttribute('aria-hidden','true');document.body.classList.remove('wire-review-open');};
+  window.authorizeDeposit=function(){closeDepositReview();openPinModal('depositForm');};
+  modal.querySelectorAll('[data-close-deposit-review]').forEach(function(el){el.addEventListener('click',closeDepositReview);});
+  modal.addEventListener('click',function(e){if(e.target===modal)closeDepositReview();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&modal.classList.contains('is-open'))closeDepositReview();});
+})();
+</script>
 <%- include('../partials/footer') %>
 <script>
 (function(){
