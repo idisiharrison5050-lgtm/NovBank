@@ -58,6 +58,7 @@
         <div class="nb-timeline-step <%= ['completed','failed','cancelled','reversed'].indexOf(transaction.status) >= 0 ? 'done' : '' %>"><i></i><div><b>Final status</b><small><%= transaction.processing && transaction.processing.processedAt ? new Date(transaction.processing.processedAt).toLocaleString('en-GB') : transaction.status.charAt(0).toUpperCase()+transaction.status.slice(1) %></small></div></div>
       </div>
       <% if (transaction.failureReason || transaction.reversalReason) { %><div class="nb-detail-warning"><b><%= transaction.status === 'reversed' ? 'Reversal reason' : 'Processing note' %></b><span><%= transaction.reversalReason || transaction.failureReason %></span></div><% } %>
+      <% if (transaction.processing && (transaction.processing['failure' + 'Reason'] || transaction.processing['reversal' + 'Reason'])) { %><div class="nb-detail-warning"><b><%= transaction.status === 'reversed' ? 'Reversal reason' : 'Processing note' %></b><span><%= transaction.processing['reversal' + 'Reason'] || transaction.processing['failure' + 'Reason'] %></span></div><% } %>
     </div>
     <% if (transaction.wireDetails) { %>
     <div class="nb-detail-wire">
