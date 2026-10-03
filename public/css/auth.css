@@ -191,7 +191,7 @@ label {
 }
 
 /* Premium authentication shell */
-.auth-wrapper{position:relative;min-height:calc(100vh - 1px);background:radial-gradient(circle at 15% 10%,rgba(21,94,239,.10),transparent 30%),linear-gradient(135deg,#f8fafc 0%,#eef4ff 100%);overflow:hidden}
+.auth-wrapper{position:relative;min-height:calc(100vh - 1px);background:#f8fafc;overflow:hidden}
 .auth-wrapper:before{content:"";position:absolute;width:520px;height:520px;border-radius:50%;background:rgba(21,94,239,.05);right:-180px;top:-220px}
 .auth-box{position:relative;border:1px solid rgba(16,24,40,.08);border-radius:22px;box-shadow:0 28px 80px rgba(16,24,40,.10);padding:42px 38px;max-width:450px}
 .auth-logo{color:#101828;font-size:1.35rem;letter-spacing:-.04em}
