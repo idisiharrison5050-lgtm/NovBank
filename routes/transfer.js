@@ -186,7 +186,7 @@ router.post('/', isAuth, isPinVerified, function (req, res) {
 
 // Wire Transfer
 router.get('/wire', isAuth, isPinVerified, function (req, res) {
-  res.render('dashboard/wire-transfer', { title: 'Wire Transfer', unreadCount: 0 });
+  res.render('dashboard/wire-transfer', { title: 'Wire Transfer', unreadCount: 0, requestKey: crypto.randomBytes(24).toString('hex') });
 });
 
 router.post('/wire', isAuth, isPinVerified, function (req, res) {
@@ -196,7 +196,7 @@ router.post('/wire', isAuth, isPinVerified, function (req, res) {
     if(isNaN(amount)||amount<=0){req.flash('error_msg','Enter a valid amount.');return res.redirect('/transfer/wire');}
     accountLimits.checkTransferLimit(req.user, amount, function(limitErr){
       if(limitErr){req.flash('error_msg',limitErr.message);return res.redirect('/transfer/wire');}
-      new Promise(function(resolve,reject){ledger.createDebit({userId:req.user._id,type:'wire_transfer',amount:amount,description:description,category:category,status:'pending',wireDetails:{recipientName:recipientName,iban:iban,bic:bic,bankName:bankName,bankCountry:bankCountry,reference:reference},idempotencyKey:'wire:'+req.user._id+':'+Date.now()+':'+Math.floor(Math.random()*1000000)},function(err,txn){if(err)reject(err);else resolve(txn);});})
+      new Promise(function(resolve,reject){ledger.createDebit({userId:req.user._id,type:'wire_transfer',amount:amount,description:description,category:category,status:'pending',wireDetails:{recipientName:recipientName,iban:iban,bic:bic,bankName:bankName,bankCountry:bankCountry,reference:reference},idempotencyKey:req.body.requestKey || ('wire:'+req.user._id+':'+Date.now()+':'+Math.floor(Math.random()*1000000))},function(err,txn){if(err)reject(err);else resolve(txn);});})
     .then(function(txn){return new Notification({user:req.user._id,title:'Wire Transfer Initiated',message:'Your wire transfer of €'+amount.toFixed(2)+' to '+recipientName+' is pending processing.',type:'transaction', severity:'info'}).save().then(function(){mailer.wireTransferEmail(req.user,amount,recipientName,iban,bankName);mailer.adminWithdrawalNotification(req.user.firstName+' '+req.user.lastName,req.user.email,req.user.accountNumber,amount,'Wire Transfer');req.session.receipt={amount:amount,reference:txn.reference,date:new Date().toLocaleString('en-GB'),type:'Wire Transfer',from:req.user.firstName+' '+req.user.lastName+' ('+req.user.accountNumber+')',to:recipientName+' — '+iban+' ('+bankName+')',description:description||'-',category:category,status:'pending'};res.redirect('/transfer/receipt');});})
     .catch(function(err){console.error(err);req.flash('error_msg',err.message==='Insufficient funds'?'Insufficient funds.':err.message);res.redirect('/transfer/wire');});
       });
@@ -204,7 +204,7 @@ router.post('/wire', isAuth, isPinVerified, function (req, res) {
 });
 // Withdrawal
 router.get('/withdraw', isAuth, isPinVerified, function (req, res) {
-  res.render('dashboard/withdraw', { title: 'Withdraw Funds', unreadCount: 0 });
+  res.render('dashboard/withdraw', { title: 'Withdraw Funds', unreadCount: 0, requestKey: crypto.randomBytes(24).toString('hex') });
 });
 
 router.post('/withdraw', isAuth, isPinVerified, function (req, res) {
@@ -240,7 +240,7 @@ router.post('/withdraw', isAuth, isPinVerified, function (req, res) {
             bankCountry: bankCountry,
             reference: req.body.reference || ''
           },
-          idempotencyKey: 'withdrawal:' + req.user._id + ':' + Date.now() + ':' + Math.floor(Math.random() * 1000000)
+          idempotencyKey: req.body.requestKey || ('withdrawal:' + req.user._id + ':' + Date.now() + ':' + Math.floor(Math.random() * 1000000))
         }, function (err, txn) {
           if (err) return reject(err);
           resolve(txn);
@@ -280,7 +280,8 @@ router.post('/withdraw', isAuth, isPinVerified, function (req, res) {
 router.get('/deposit', isAuth, isPinVerified, function (req, res) {
   res.render('dashboard/deposit', {
     title: 'Deposit Funds',
-    unreadCount: 0
+    unreadCount: 0,
+    requestKey: crypto.randomBytes(24).toString('hex')
   });
 });
 
