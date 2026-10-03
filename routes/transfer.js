@@ -211,7 +211,7 @@ router.post('/wire', isAuth, isPinVerified, function (req, res) {
     accountLimits.checkTransferLimit(req.user, amount, function(limitErr){
       if(limitErr){req.flash('error_msg',limitErr.message);return res.redirect('/transfer/wire');}
       new Promise(function(resolve,reject){ledger.createDebit({userId:req.user._id,type:'wire_transfer',amount:amount,description:description,category:category,status:'pending',wireDetails:{recipientName:recipientName,iban:iban,bic:bic,bankName:bankName,bankCountry:bankCountry,reference:reference},idempotencyKey:req.body.requestKey || ('wire:'+req.user._id+':'+Date.now()+':'+Math.floor(Math.random()*1000000))},function(err,txn){if(err)reject(err);else resolve(txn);});})
-    .then(function(txn){return new Notification({user:req.user._id,title:'Wire Transfer Initiated',message:'Your wire transfer of €'+amount.toFixed(2)+' to '+recipientName+' is pending processing.',type:'transaction', severity:'info'}).save().then(function(){mailer.wireTransferEmail(req.user,amount,recipientName,iban,bankName);mailer.adminWithdrawalNotification(req.user.firstName+' '+req.user.lastName,req.user.email,req.user.accountNumber,amount,'Wire Transfer');req.session.receipt={amount:amount,reference:txn.reference,date:new Date().toLocaleString('en-GB'),type:'Wire Transfer',from:req.user.firstName+' '+req.user.lastName+' ('+req.user.accountNumber+')',to:recipientName+' — '+iban+' ('+bankName+')',description:description||'-',category:category,status:'pending'};res.redirect('/transfer/receipt');});})
+    .then(function(txn){if(txn._novDuplicate){req.session.receipt={amount:txn.amount,reference:txn.reference,date:new Date(txn.createdAt).toLocaleString('en-GB'),type:'Wire Transfer',from:req.user.firstName+' '+req.user.lastName+' ('+req.user.accountNumber+')',to:recipientName+' — '+iban+' ('+bankName+')',description:txn.description||'-',category:txn.category,status:txn.status};return res.redirect('/transfer/receipt');}return new Notification({user:req.user._id,title:'Wire Transfer Initiated',message:'Your wire transfer of €'+amount.toFixed(2)+' to '+recipientName+' is pending processing.',type:'transaction', severity:'info'}).save().then(function(){mailer.wireTransferEmail(req.user,amount,recipientName,iban,bankName);mailer.adminWithdrawalNotification(req.user.firstName+' '+req.user.lastName,req.user.email,req.user.accountNumber,amount,'Wire Transfer');req.session.receipt={amount:amount,reference:txn.reference,date:new Date().toLocaleString('en-GB'),type:'Wire Transfer',from:req.user.firstName+' '+req.user.lastName+' ('+req.user.accountNumber+')',to:recipientName+' — '+iban+' ('+bankName+')',description:description||'-',category:category,status:'pending'};res.redirect('/transfer/receipt');});})
     .catch(function(err){console.error(err);req.flash('error_msg',err.message==='Insufficient funds'?'Insufficient funds.':err.message);res.redirect('/transfer/wire');});
       });
   });});
@@ -260,6 +260,10 @@ router.post('/withdraw', isAuth, isPinVerified, function (req, res) {
           resolve(txn);
         });
       }).then(function (txn) {
+        if (txn._novDuplicate) {
+          req.session.receipt = { amount: txn.amount, reference: txn.reference, date: new Date(txn.createdAt).toLocaleString('en-GB'), type: 'Withdrawal', from: req.user.firstName + ' ' + req.user.lastName + ' (' + req.user.accountNumber + ')', to: recipientName + ' — ' + accountNumber + ' (' + bankName + ')', description: txn.description || '-', category: 'Other', status: txn.status };
+          return res.redirect('/transfer/receipt');
+        }
         return new Notification({
           user: req.user._id,
           title: 'Withdrawal Request Received',
