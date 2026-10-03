@@ -153,8 +153,26 @@
       <input type="text" name="description" class="form-control" placeholder="e.g. Salary deposit, savings transfer"/>
     </div>
 
-    <button type="button" class="btn btn-primary btn-block" onclick="openPinModal('depositForm')">Submit Deposit Request</button>
+    <button type="button" class="btn btn-primary btn-block nb-flow-submit" onclick="openDepositReview()">Review deposit request <span>→</span></button>
   </form>
+</div>
+<div class="nb-wire-review-modal" id="depositReviewModal" aria-hidden="true">
+  <div class="nb-wire-review-backdrop" data-close-deposit-review></div>
+  <section class="nb-wire-review-dialog" role="dialog" aria-modal="true" aria-labelledby="depositReviewTitle">
+    <button type="button" class="nb-wire-review-close" aria-label="Close review" data-close-deposit-review>×</button>
+    <span class="nb-wire-review-kicker">FINAL REVIEW</span>
+    <h2 id="depositReviewTitle">Review your deposit request</h2>
+    <p class="nb-wire-review-intro">Confirm the amount and supporting information before securely submitting your deposit request.</p>
+    <div class="nb-wire-review-amount"><small>DEPOSIT AMOUNT</small><strong id="depositReviewAmount">€0.00</strong></div>
+    <div class="nb-wire-review-summary">
+      <div><span>Amount</span><b id="depositReviewAmountSmall">—</b></div>
+      <div><span>Proof</span><b id="depositReviewProof">Not attached</b></div>
+      <div><span>Description</span><b id="depositReviewDescription">Not provided</b></div>
+      <div><span>Status</span><b>Pending verification</b></div>
+    </div>
+    <div class="nb-wire-review-security"><span>✓</span><div><b>Ready to authorize</b><small>Your transaction PIN is the final authorization step. Your deposit will remain pending until verified.</small></div></div>
+    <div class="nb-wire-review-actions"><button type="button" class="nb-wire-edit" data-close-deposit-review>Go back and edit</button><button type="button" class="nb-wire-authorize" onclick="authorizeDeposit()">Authorize with PIN <span>→</span></button></div>
+  </section>
 </div>
 
 <script>
@@ -199,3 +217,24 @@
 </script>
 
 <%- include('../partials/footer') %>
+<script>
+(function(){
+  var modal=document.getElementById('depositReviewModal');
+  var form=document.getElementById('depositForm');
+  function openReview(){
+    if(!form.checkValidity()){form.reportValidity();return;}
+    var amount=Number(form.querySelector('[name="amount"]').value||0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});
+    var file=document.getElementById('proofFile');
+    document.getElementById('depositReviewAmount').textContent='€ '+amount;
+    document.getElementById('depositReviewAmountSmall').textContent='€ '+amount;
+    document.getElementById('depositReviewProof').textContent=file&&file.files[0]?file.files[0].name:'Not attached';
+    document.getElementById('depositReviewDescription').textContent=(form.querySelector('[name="description"]').value||'Not provided').trim()||'Not provided';
+    modal.classList.add('is-open');modal.setAttribute('aria-hidden','false');document.body.classList.add('wire-review-open');
+  }
+  window.openDepositReview=openReview;
+  window.closeDepositReview=function(){modal.classList.remove('is-open');modal.setAttribute('aria-hidden','true');document.body.classList.remove('wire-review-open');};
+  window.authorizeDeposit=function(){closeDepositReview();openPinModal('depositForm');};
+  modal.querySelectorAll('[data-close-deposit-review]').forEach(function(el){el.addEventListener('click',closeDepositReview);});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&modal.classList.contains('is-open'))closeDepositReview();});
+})();
+</script>
