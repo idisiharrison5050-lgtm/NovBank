@@ -46,7 +46,10 @@ function transferInternal(options, callback) {
     session = newSession;
     return session.withTransaction(function () {
       return Transaction.findOne({ idempotencyKey: idempotencyKey }).session(session).then(function (existing) {
-        if (existing) return existing;
+        if (existing) {
+          existing._novDuplicate = true;
+          return existing;
+        }
 
         return Promise.all([
           User.findById(options.senderId).session(session),
@@ -156,7 +159,10 @@ function createDebit(options, callback) {
     session = newSession;
     return session.withTransaction(function () {
       return Transaction.findOne({ idempotencyKey: idempotencyKey }).session(session).then(function (existing) {
-        if (existing) return existing;
+        if (existing) {
+          existing._novDuplicate = true;
+          return existing;
+        }
         return User.findById(options.userId).session(session).then(function (user) {
           if (!user) throw new Error('Account not found');
           if (user.accountStatus !== 'active') throw new Error('Account is not active');
