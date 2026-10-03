@@ -26,7 +26,7 @@
       <section class="nb-quick-actions" aria-label="Quick banking actions">
         <div class="nb-quick-actions-head">
           <div><span class="nb-section-eyebrow">QUICK BANKING</span><h2>Move money your way</h2></div>
-          <a href="/transactions">View activity</a>
+          <a href="/dashboard/transactions">View activity</a>
         </div>
         <div class="nb-action-rail">
           <a class="nb-action nb-action-send" href="/transfer">
@@ -37,11 +37,11 @@
             <span class="nb-action-circle"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H6"></path><path d="m11 18-6-6 6-6"></path></svg></span>
             <span><b>Receive</b><small>Get paid</small></span>
           </a>
-          <a class="nb-action" href="/deposit">
+          <a class="nb-action" href="/transfer/deposit">
             <span class="nb-action-circle"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"></path><path d="m6 13 6 6 6-6"></path></svg></span>
             <span><b>Add funds</b><small>Fund account</small></span>
           </a>
-          <a class="nb-action" href="/withdraw">
+          <a class="nb-action" href="/transfer/withdraw">
             <span class="nb-action-circle"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5"></path><path d="m6 11 6-6 6 6"></path></svg></span>
             <span><b>Withdraw</b><small>Move out</small></span>
           </a>
@@ -57,7 +57,7 @@
       </section>
 
       <article class="nb-card nb-wide">
-        <div class="nb-card-head"><h2>Recent activity</h2><a href="/transactions">View all</a></div>
+        <div class="nb-card-head"><h2>Recent activity</h2><a href="/dashboard/transactions">View all</a></div>
         <% if (typeof transactions !== 'undefined' && transactions.length) { %>
           <% transactions.slice(0, 6).forEach(function (tx) { %>
             <div class="nb-transaction">
