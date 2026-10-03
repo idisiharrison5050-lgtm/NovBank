@@ -35,7 +35,24 @@ function verifyPin(req, res, callback) {
 
 router.get('/', isAuth, isPinVerified, function (req, res) {
   req.session.transferRequestKey = 'WEB-' + req.user._id.toString() + '-' + Date.now() + '-' + Math.floor(Math.random() * 1000000);
-  res.render('dashboard/transfer', { title: 'Send Money', unreadCount: 0 });
+
+  /*
+   * The transfer view supports an optional prefilled recipient and a
+   * saved-recipient section. These values were previously omitted from
+   * render(), which caused EJS to throw ReferenceError when the page loaded.
+   *
+   * Keep the saved-recipient collection empty until a persistent beneficiary
+   * model/service is wired into this route; an empty collection is valid for
+   * the view and preserves the transfer flow.
+   */
+  var prefillRecipient = typeof req.query.recipient === 'string' ? req.query.recipient : '';
+
+  res.render('dashboard/transfer', {
+    title: 'Send Money',
+    unreadCount: 0,
+    prefillRecipient: prefillRecipient,
+    beneficiaries: []
+  });
 });
 
 router.post('/', isAuth, isPinVerified, function (req, res) {
