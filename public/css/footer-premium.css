@@ -30,9 +30,9 @@
 .dashboard-main .nb-security-hero h1,
 .dashboard-main .nb-flow-hero h1,
 .dashboard-main .nb-command-hero h1{
-  font-size:32px;
-  line-height:1.08;
-  letter-spacing:-.045em;
+  font-size:30px;
+  line-height:1.1;
+  letter-spacing:-.04em;
   margin:6px 0 8px;
 }
 .dashboard-main .nb-cards-heading,
@@ -71,8 +71,8 @@
   .dashboard-main .nb-security-hero h1,
   .dashboard-main .nb-flow-hero h1,
   .dashboard-main .nb-command-hero h1{
-    font-size:28px;
-    line-height:1.08;
+    font-size:26px;
+    line-height:1.1;
     margin:5px 0 7px;
   }
 }
