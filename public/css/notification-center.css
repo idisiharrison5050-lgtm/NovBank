@@ -7,3 +7,5 @@
 .nb-notification.unread{border-left:3px solid #155eef;box-shadow:0 12px 30px rgba(21,94,239,.08)}
 .nb-notification-icon{box-shadow:0 4px 12px rgba(16,24,40,.05)}
 .nb-unread-label{letter-spacing:.08em;font-weight:850}
+
+.nb-notification-wrap a:focus-visible,.nb-notification-wrap button:focus-visible,.nb-notification-center a:focus-visible,.nb-notification-center button:focus-visible{outline:3px solid rgba(21,94,239,.22);outline-offset:3px}
