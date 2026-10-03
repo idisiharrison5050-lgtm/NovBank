@@ -145,7 +145,8 @@ router.post('/', isAuth, isPinVerified, function (req, res) {
                 user: req.user._id,
                 title: 'Transfer Sent',
                 message: 'You sent €' + amount.toFixed(2) + ' to ' + recipient.firstName + ' ' + recipient.lastName + '.',
-                type: 'success'
+                type: 'transaction',
+                severity: 'success'
               }).save(),
               new Notification({
                 user: recipient._id,
@@ -308,7 +309,8 @@ router.post('/deposit', isAuth, isPinVerified, uploadDeposit.single('proofOfPaym
           user:    req.user._id,
           title:   'Deposit Request Received',
           message: 'Your deposit of €' + amount.toFixed(2) + ' is pending verification. It will be credited once confirmed.',
-          type:    'info'
+          type:    'transaction',
+          severity: 'info'
         });
         return notif.save();
       }).then(function () {
