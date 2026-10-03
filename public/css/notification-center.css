@@ -1,5 +1,1 @@
 .nb-notification-wrap{position:relative}.nb-notification-panel{display:none;position:absolute;right:0;top:48px;width:360px;max-width:calc(100vw - 32px);background:#fff;border:1px solid #e7eaf0;border-radius:18px;box-shadow:0 20px 60px rgba(16,24,40,.16);overflow:hidden;z-index:1000}.nb-notification-panel.is-open{display:block}.nb-notification-item{display:flex;gap:12px;padding:16px;border-bottom:1px solid #eef0f4;text-decoration:none;color:#101828}.nb-notification-item:hover{background:#f8fafc}.nb-notification-item strong{display:block;font-size:14px}.nb-notification-item small{display:block;color:#667085;line-height:1.45;margin-top:4px}.nb-notification-dot{width:9px;height:9px;border-radius:50%;background:#98a2b3;margin-top:5px;flex:none}.nb-notification-dot.nb-success{background:#12b76a}.nb-notification-dot.nb-warning{background:#f79009}.nb-notification-dot.nb-critical{background:#f04438}.nb-notification-empty{padding:32px 20px;text-align:center;color:#667085}
-
-
-/* Customer notification depth */
-.notification-center,.notification-panel{box-shadow:0 18px 44px rgba(26,86,219,.08)}
