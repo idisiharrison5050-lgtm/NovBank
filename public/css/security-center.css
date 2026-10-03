@@ -5,3 +5,6 @@
 .nb-security-card:hover{transform:translateY(-2px);box-shadow:0 20px 42px rgba(16,24,40,.08)}
 .nb-security-event{box-shadow:0 5px 16px rgba(16,24,40,.025)}
 .nb-security-note{box-shadow:0 16px 36px rgba(11,18,32,.14)}
+
+/* Keyboard focus refinement */
+.dashboard-main a:focus-visible,.dashboard-main button:focus-visible{outline:3px solid rgba(21,94,239,.22);outline-offset:3px}
