@@ -231,3 +231,14 @@
  .nb-networth-card{box-shadow:0 16px 34px rgba(11,18,32,.16)}
  .nb-fin-card:nth-child(1),.nb-fin-card:nth-child(2),.nb-fin-card:nth-child(3),.nb-fin-card:nth-child(4){border-top-width:2px}
 }
+
+/* Customer depth refinement */
+.nb-command-hero,.nb-networth-card,.nb-financial-grid,.nb-command-actions-grid,.nb-command-footer-card{position:relative;z-index:1}
+.nb-command-hero{padding:4px 2px 2px}
+.nb-command-hero h1{letter-spacing:-.05em}
+.nb-networth-card{border:1px solid rgba(255,255,255,.06);box-shadow:0 22px 55px rgba(11,18,32,.18);overflow:hidden}
+.nb-networth-card:after{content:"";position:absolute;width:190px;height:190px;border:1px solid rgba(255,255,255,.08);border-radius:50%;right:-75px;top:-75px;pointer-events:none}
+.nb-fin-card{box-shadow:0 12px 30px rgba(16,24,40,.055);transition:transform .18s ease,box-shadow .18s ease}
+.nb-fin-card:hover{transform:translateY(-2px);box-shadow:0 20px 42px rgba(16,24,40,.09)}
+.nb-command-actions-grid>a{box-shadow:0 10px 25px rgba(16,24,40,.045);transition:transform .18s ease,box-shadow .18s ease}
+.nb-command-actions-grid>a:hover{transform:translateY(-2px);box-shadow:0 18px 36px rgba(16,24,40,.08)}
