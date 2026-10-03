@@ -67,7 +67,7 @@ router.post('/recharge', isAuth, checkAccountActive, function (req, res) {
       return new Airtime({user:req.user._id,phone:phone,network:network,amount:amount,status:'success'}).save();
     })
     .then(function () {
-      return new Notification({user:req.user._id,title:'Airtime Recharge Successful',message:'€'+amount.toFixed(2)+' airtime sent to '+phone+' ('+network+').',type:'success'}).save();
+      return new Notification({user:req.user._id,title:'Airtime Recharge Successful',message:'€'+amount.toFixed(2)+' airtime sent to '+phone+' ('+network+').',type:'transaction',severity:'success'}).save();
     })
     .then(function () {
       req.flash('success_msg','Airtime recharge of €'+amount.toFixed(2)+' to '+phone+' was successful.');
