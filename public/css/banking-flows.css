@@ -70,9 +70,3 @@
  .nb-wire-review-actions{grid-template-columns:1fr}
  .nb-wire-authorize{order:-1}
 }
-
-
-/* Blue-and-white banking flow treatment */
-.nb-wire-authorize{background:#1a56db;box-shadow:0 10px 24px rgba(26,86,219,.20)}
-.nb-wire-authorize:hover{background:#1446b5}
-.nb-wire-review-dialog{box-shadow:0 28px 80px rgba(26,86,219,.16)}
