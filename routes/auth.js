@@ -227,7 +227,8 @@ router.post('/register/step3', isGuest, function (req, res) {
           user:    user._id,
           title:   'Welcome!',
           message: 'Your account has been created. Account number: ' + user.accountNumber,
-          type:    'success'
+          type:    'system',
+          severity: 'success'
         });
 
         var code     = Math.floor(100000 + Math.random() * 900000).toString();
