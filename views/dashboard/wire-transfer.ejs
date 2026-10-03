@@ -74,8 +74,42 @@
 
           <input type="hidden" name="transactionPin" id="wirePinInput"/>
           <div class="nb-wire-review-note"><span>✓</span><p>You'll review the transfer and authorize it with your transaction PIN before it is submitted.</p></div>
-          <button type="button" class="nb-flow-submit" onclick="openPinModal('wireForm')">Continue to secure review <span>→</span></button>
+          <button type="button" class="nb-flow-submit" onclick="openWireReview()">Review transfer <span>→</span></button>
         </form>
+
+      <div class="nb-wire-review-modal" id="wireReviewModal" aria-hidden="true">
+        <div class="nb-wire-review-backdrop" data-close-wire-review></div>
+        <section class="nb-wire-review-dialog" role="dialog" aria-modal="true" aria-labelledby="wireReviewTitle">
+          <button type="button" class="nb-wire-review-close" aria-label="Close review" data-close-wire-review>×</button>
+          <span class="nb-wire-review-kicker">FINAL REVIEW</span>
+          <h2 id="wireReviewTitle">Review your wire transfer</h2>
+          <p class="nb-wire-review-intro">Check the recipient and amount carefully. Your transfer will not be submitted until you enter your transaction PIN.</p>
+
+          <div class="nb-wire-review-amount">
+            <small>YOU ARE SENDING</small>
+            <strong id="wireReviewAmount">€0.00</strong>
+          </div>
+
+          <div class="nb-wire-review-summary">
+            <div><span>Recipient</span><b id="wireReviewRecipient">—</b></div>
+            <div><span>Bank</span><b id="wireReviewBank">—</b></div>
+            <div><span>IBAN</span><b id="wireReviewIban">—</b></div>
+            <div><span>BIC / SWIFT</span><b id="wireReviewBic">—</b></div>
+            <div><span>Country</span><b id="wireReviewCountry">—</b></div>
+            <div><span>Reference</span><b id="wireReviewReference">—</b></div>
+          </div>
+
+          <div class="nb-wire-review-security">
+            <span>✓</span>
+            <div><b>Ready to authorize</b><small>Your PIN is the final authorization step. Review these details before continuing.</small></div>
+          </div>
+
+          <div class="nb-wire-review-actions">
+            <button type="button" class="nb-wire-edit" data-close-wire-review>Go back and edit</button>
+            <button type="button" class="nb-wire-authorize" onclick="authorizeWireTransfer()">Authorize with PIN <span>→</span></button>
+          </div>
+        </section>
+      </div>
       </section>
 
       <aside class="nb-wire-aside nb-flow-aside">
@@ -91,6 +125,39 @@
         <div class="nb-aside-foot"><span>SECURITY</span><b>Your PIN is requested only at authorization.</b></div>
       </aside>
     </div>
-  </main>
+  <script>
+(function(){
+  var modal=document.getElementById('wireReviewModal');
+  var form=document.getElementById('wireForm');
+  function value(name){var el=form.querySelector('[name="'+name+'"]');return el ? el.value.trim() : '';}
+  function money(){var n=parseFloat(value('amount')||'0');return '€ '+n.toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});}
+  function set(id,text){var el=document.getElementById(id);if(el)el.textContent=text||'—';}
+  window.openWireReview=function(){
+    if(!form.checkValidity()){form.reportValidity();return;}
+    set('wireReviewAmount',money());
+    set('wireReviewRecipient',value('recipientName'));
+    set('wireReviewBank',value('bankName'));
+    set('wireReviewIban',value('iban'));
+    set('wireReviewBic',value('bic'));
+    set('wireReviewCountry',value('bankCountry'));
+    set('wireReviewReference',value('reference')||'Not provided');
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden','false');
+    document.body.classList.add('wire-review-open');
+  };
+  window.closeWireReview=function(){
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden','true');
+    document.body.classList.remove('wire-review-open');
+  };
+  window.authorizeWireTransfer=function(){
+    closeWireReview();
+    openPinModal('wireForm');
+  };
+  modal.querySelectorAll('[data-close-wire-review]').forEach(function(el){el.addEventListener('click',closeWireReview);});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&modal.classList.contains('is-open'))closeWireReview();});
+})();
+</script>
+</main>
 </div>
 <%- include('../partials/footer') %>
