@@ -5,8 +5,8 @@
 .nb-mobile-nav-link{height:58px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#7b8494;text-decoration:none;border-radius:18px;font-size:9px;font-weight:700}
 .nb-mobile-nav-link svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .nb-mobile-nav-link.active:not(.nb-mobile-nav-home){color:#155eef;background:#f4f7ff}
-.nb-mobile-nav-home{position:relative;height:82px;margin-top:-25px;color:#fff!important;background:#155eef;border-radius:23px;box-shadow:0 12px 25px rgba(21,94,239,.28)}
+.nb-mobile-nav-home{position:relative;height:82px;margin-top:-25px;color:#fff!important;background:#0b1220!important;border:1px solid #1d2939;border-radius:23px;box-shadow:0 12px 25px rgba(11,18,32,.28)}
 .nb-mobile-nav-home>span:last-child{font-size:10px}
-.nb-mobile-home-icon{width:48px;height:48px;border-radius:17px;background:rgba(255,255,255,.15);display:grid;place-items:center}
+.nb-mobile-home-icon{width:48px;height:48px;border-radius:17px;background:#1d2939;display:grid;place-items:center}
 .nb-mobile-home-icon svg{width:25px;height:25px;stroke-width:2}
 }
