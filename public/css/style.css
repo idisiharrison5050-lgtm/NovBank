@@ -392,7 +392,7 @@ a {
   border-radius:13px;
   display:grid;
   place-items:center;
-  background:linear-gradient(145deg,#155eef,#16a3d9);
+  background:#155eef;
   box-shadow:0 0 0 7px rgba(21,94,239,.08),0 0 42px rgba(21,94,239,.34);
   animation:nbCorePulse 1.8s ease-in-out infinite;
 }
