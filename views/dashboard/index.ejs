@@ -39,17 +39,17 @@
     </article>
     <article class="nb-fin-card nb-fin-card-profit">
       <div class="nb-fin-card-icon"><svg viewBox="0 0 24 24"><path d="M4 19V5"></path><path d="M4 19h16"></path><path d="m7 15 4-4 3 2 5-7"></path><path d="M16 6h3v3"></path></svg></div>
-      <span>TOTAL EARNINGS</span>
-      <strong>€ <%= Number(user.totalProfit || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong>
-      <small>Recorded account earnings</small>
-      <a href="/dashboard/transactions">Review earnings <b>→</b></a>
+      <span>MONTHLY RECEIVED</span>
+      <strong>€ <%= Number(monthIncoming || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong>
+      <small>Completed money in this month</small>
+      <a href="/dashboard/transactions">View transactions <b>→</b></a>
     </article>
     <article class="nb-fin-card nb-fin-card-active">
       <div class="nb-fin-card-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M8 8h8"></path><path d="M8 12h5"></path><circle cx="17" cy="15" r="2"></circle></svg></div>
-      <span>ACTIVE ALLOCATION</span>
-      <strong>€ <%= Number(user.activeDeposit || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong>
-      <small>Funds currently allocated</small>
-      <a href="/dashboard/profile">Account details <b>→</b></a>
+      <span>MONTHLY SENT</span>
+      <strong>€ <%= Number(monthOutgoing || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong>
+      <small>Completed money out this month</small>
+      <a href="/dashboard/transactions">View transactions <b>→</b></a>
     </article>
     <article class="nb-fin-card nb-fin-card-limit">
       <div class="nb-fin-card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v5l3 2"></path><path d="M8 3h8"></path></svg></div>
