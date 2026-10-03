@@ -6,6 +6,7 @@ var mailer = require('../config/mailer');
 var ledger = require('../services/ledger');
 var bcrypt = require('bcryptjs');
 var accountLimits = require('../services/accountLimits');
+var Beneficiary = require('../models/Beneficiary');
 
 function isAuth(req, res, next) {
   if (req.isAuthenticated()) return next();
@@ -47,16 +48,26 @@ router.get('/', isAuth, isPinVerified, function (req, res) {
    */
   var prefillRecipient = typeof req.query.recipient === 'string' ? req.query.recipient : '';
 
-  res.render('dashboard/transfer', {
-    title: 'Send Money',
-    unreadCount: 0,
-    prefillRecipient: prefillRecipient,
-    beneficiaries: []
+  Beneficiary.find({ user: req.user._id, kind: 'local' }).sort({ lastUsedAt: -1, createdAt: -1 }).limit(8).exec(function (err, beneficiaries) {
+    if (err) {
+      console.error('Transfer beneficiary load failed:', err);
+      beneficiaries = [];
+    }
+    res.render('dashboard/transfer', {
+      title: 'Send Money',
+      unreadCount: 0,
+      prefillRecipient: prefillRecipient,
+      beneficiaries: beneficiaries || []
+    });
   });
 });
 
 router.post('/', isAuth, isPinVerified, function (req, res) {
   verifyPin(req, res, function () {
+    if (req.user.accountStatus !== 'active') {
+      req.flash('error_msg', 'Your account is suspended or closed. You cannot make transactions. Please contact support.');
+      return res.redirect('/transfer');
+    }
     var identifier = req.body.identifier;
     var amount = parseFloat(req.body.amount);
     var description = req.body.description || '';
@@ -102,7 +113,22 @@ router.post('/', isAuth, isPinVerified, function (req, res) {
       var txn = payload.result.transaction;
       var recipient = payload.recipient;
 
-      return Promise.all([
+      var identifierKey = String(identifier).trim().toLowerCase();
+      var saveRecipient = req.body.saveRecipient === 'on';
+
+      var beneficiaryPromise = saveRecipient
+        ? Beneficiary.findOneAndUpdate(
+            { user: req.user._id, identifier: identifierKey, kind: 'local' },
+            { user: req.user._id, identifier: identifierKey, name: recipient.firstName + ' ' + recipient.lastName, kind: 'local', lastUsedAt: new Date() },
+            { upsert: true, new: true, setDefaultsOnInsert: true }
+          )
+        : Beneficiary.updateOne(
+            { user: req.user._id, identifier: identifierKey, kind: 'local' },
+            { $set: { lastUsedAt: new Date() } }
+          );
+
+      return beneficiaryPromise.then(function () {
+        return Promise.all([
         new Notification({
           user: req.user._id,
           title: 'Transfer Sent',
@@ -119,7 +145,8 @@ router.post('/', isAuth, isPinVerified, function (req, res) {
         }).save(),
         mailer.transferSentEmail(req.user, amount, recipient.firstName + ' ' + recipient.lastName),
         mailer.transferReceivedEmail(recipient, amount, req.user.firstName + ' ' + req.user.lastName)
-      ]).then(function () {
+      ]);
+      }).then(function () {
         req.session.transferRequestKey = null;
         req.session.receipt = {
           amount: txn.amount,
@@ -139,6 +166,18 @@ router.post('/', isAuth, isPinVerified, function (req, res) {
       req.flash('error_msg', err.message || 'Transfer failed. Please try again.');
       res.redirect('/transfer');
     });
+  });
+});
+
+
+router.post('/beneficiaries/:id/delete', isAuth, isPinVerified, function (req, res) {
+  Beneficiary.deleteOne({ _id: req.params.id, user: req.user._id, kind: 'local' }).then(function () {
+    req.flash('success_msg', 'Saved recipient removed.');
+    res.redirect('/transfer');
+  }).catch(function (err) {
+    console.error(err);
+    req.flash('error_msg', 'Unable to remove saved recipient.');
+    res.redirect('/transfer');
   });
 });
 
