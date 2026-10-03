@@ -41,6 +41,8 @@
 <script>
 function withdrawField(name){var f=document.getElementById('withdrawForm');var el=f&&f.querySelector('[name="'+name+'"]');return el?el.value.trim():'';}
 function openWithdrawReview(){
+ var form=document.getElementById('withdrawForm');
+ if(form && !form.checkValidity()){form.reportValidity();return;}
  var amount=Number(withdrawField('amount')||0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});
  document.getElementById('withdrawReviewAmount').textContent='€ '+amount;
  document.getElementById('withdrawReviewName').textContent=withdrawField('recipientName')||'—';
@@ -49,9 +51,9 @@ function openWithdrawReview(){
  document.getElementById('withdrawReviewCountry').textContent=withdrawField('bankCountry')||'—';
  document.getElementById('withdrawReviewReference').textContent=withdrawField('reference')||'—';
  document.getElementById('withdrawReviewNote').textContent=withdrawField('description')||'—';
- var modal=document.getElementById('withdrawReview');modal.classList.add('open');modal.setAttribute('aria-hidden','false');
+ var modal=document.getElementById('withdrawReview');modal.classList.add('open');modal.setAttribute('aria-hidden','false');document.body.classList.add('wire-review-open');
 }
-function closeWithdrawReview(){var modal=document.getElementById('withdrawReview');if(modal){modal.classList.remove('open');modal.setAttribute('aria-hidden','true');}}
+function closeWithdrawReview(){var modal=document.getElementById('withdrawReview');if(modal){modal.classList.remove('open');modal.setAttribute('aria-hidden','true');document.body.classList.remove('wire-review-open');}}
 function authorizeWithdraw(){closeWithdrawReview();openPinModal('withdrawForm');}
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeWithdrawReview();});
 </script>
