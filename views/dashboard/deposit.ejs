@@ -121,7 +121,7 @@
   <p class="form-card-sub">After completing your bank transfer, fill in the details below.</p>
 
   <form action="/transfer/deposit" method="POST" enctype="multipart/form-data" id="depositForm">
-    <input type="hidden" name="transactionPin" id="depositPinInput"/>
+    <input type="hidden" name="transactionPin" id="depositPinInput"/><input type="hidden" name="requestKey" value="<%= requestKey %>"/>
 
     <div class="form-group">
       <label>Amount Transferred (€)</label>
