@@ -271,3 +271,11 @@
   .bank-card { width: 100%; height: 200px; }
   .cards-grid { gap: 20px; }
 }
+
+/* Customer card surface refinement */
+.nb-cards-page .nb-physical-card{box-shadow:0 22px 48px rgba(16,24,40,.16);transition:transform .18s ease,box-shadow .18s ease}
+.nb-cards-page .nb-physical-card:hover{transform:translateY(-4px) rotate(-.4deg);box-shadow:0 28px 58px rgba(16,24,40,.20)}
+.nb-cards-page .nb-card-management{box-shadow:0 14px 34px rgba(16,24,40,.055);transition:transform .18s ease,box-shadow .18s ease}
+.nb-cards-page .nb-card-management:hover{transform:translateY(-2px);box-shadow:0 20px 42px rgba(16,24,40,.08)}
+.nb-cards-page .nb-card-command-bar{box-shadow:0 12px 30px rgba(16,24,40,.05)}
+.nb-cards-page .nb-request-card{box-shadow:0 16px 38px rgba(16,24,40,.06)}
