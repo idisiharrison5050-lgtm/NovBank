@@ -46,7 +46,7 @@ function transferInternal(options, callback) {
     session = newSession;
     return session.withTransaction(function () {
       return Transaction.findOne({ idempotencyKey: idempotencyKey }).session(session).then(function (existing) {
-        if (existing) return { transaction: existing, duplicate: true };
+        if (existing) return existing;
 
         return Promise.all([
           User.findById(options.senderId).session(session),
