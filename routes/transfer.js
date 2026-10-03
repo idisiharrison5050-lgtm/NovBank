@@ -1,4 +1,5 @@
 var express = require('express');
+var crypto = require('crypto');
 var router = express.Router();
 var User = require('../models/User');
 var Transaction = require('../models/Transaction');
@@ -57,7 +58,8 @@ router.get('/', isAuth, isPinVerified, function (req, res) {
       user: req.user,
       unreadCount: 0,
       beneficiaries: beneficiaries || [],
-      prefillRecipient: req.query.recipient || ''
+      prefillRecipient: req.query.recipient || '',
+      requestKey: crypto.randomBytes(24).toString('hex')
     });
   });
 });
@@ -110,7 +112,7 @@ router.post('/', isAuth, isPinVerified, function (req, res) {
             amount: amount,
             description: description,
             category: category,
-            idempotencyKey: 'internal:' + req.user._id + ':' + Date.now() + ':' + Math.floor(Math.random() * 1000000)
+            idempotencyKey: req.body.requestKey || ('internal:' + req.user._id + ':' + Date.now() + ':' + Math.floor(Math.random() * 1000000))
           }, function (err, txn) {
             if (err) return reject(err);
             resolve(txn);
