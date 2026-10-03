@@ -15,7 +15,7 @@
         <div class="form-group"><label>Amount (€)</label><input class="form-control" name="amount" type="number" min="0.01" step="0.01" placeholder="0.00" required></div>
         <div class="form-group"><label>Reference <span class="optional">OPTIONAL</span></label><input class="form-control" name="reference" placeholder="Payment reference"></div>
         <div class="form-group"><label>Note <span class="optional">OPTIONAL</span></label><input class="form-control" name="description" placeholder="Reason for withdrawal"></div>
-        <input type="hidden" name="transactionPin" id="withdrawPinInput">
+        <input type="hidden" name="transactionPin" id="withdrawPinInput"><input type="hidden" name="requestKey" value="<%= requestKey %>">
         <button type="button" class="nb-send-button" onclick="openWithdrawReview()">Review withdrawal</button>
       </form>
     </section>
