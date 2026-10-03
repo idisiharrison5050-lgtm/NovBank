@@ -35,3 +35,11 @@
 .nb-notification.unread .nb-notification-icon{background:#eef4ff;color:#155eef}
 .nb-notification-body{min-width:0;flex:1}
 .nb-unread-label{display:inline-block;margin-top:8px;padding:3px 7px;border-radius:999px;background:#eef4ff;color:#155eef;font-size:8px;font-weight:850;letter-spacing:.08em}
+
+/* Visual depth pass */
+.nb-account-center{position:relative}
+.nb-account-center:before{content:"";position:absolute;right:0;top:-25px;width:145px;height:145px;border:1px solid rgba(21,94,239,.08);border-radius:50%;pointer-events:none}
+.nb-account-card{box-shadow:0 14px 34px rgba(16,24,40,.055);transition:transform .18s ease,box-shadow .18s ease}
+.nb-account-card:hover{transform:translateY(-2px);box-shadow:0 20px 42px rgba(16,24,40,.08)}
+.nb-account-card.dark{box-shadow:0 20px 44px rgba(11,18,32,.18)}
+.nb-account-grid,.nb-account-hero{position:relative;z-index:1}
