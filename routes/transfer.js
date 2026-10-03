@@ -305,7 +305,8 @@ router.post('/deposit', isAuth, isPinVerified, uploadDeposit.single('proofOfPaym
         description:    description,
         category:       'Transfer',
         status:         'pending',
-        proofOfPayment: proofUrl
+        proofOfPayment: proofUrl,
+        idempotencyKey: req.body.requestKey || ('deposit:' + req.user._id + ':' + Date.now() + ':' + Math.floor(Math.random() * 1000000))
       });
 
       txn.save().then(function () {
