@@ -48,3 +48,6 @@
 .nb-account-hero:after{content:"";display:block;width:42px;height:3px;border-radius:3px;background:#155eef;margin-top:12px}
 .nb-account-card{background:#fff;border:1px solid #e4e7ec}
 .nb-account-card h2{letter-spacing:-.025em}
+
+/* final accessibility pass: preserve clear keyboard focus */
+.nb-account-center button:focus-visible,.nb-account-center a:focus-visible,.nb-account-center input:focus-visible{outline:3px solid rgba(26,86,219,.28);outline-offset:3px}
