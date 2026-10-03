@@ -48,7 +48,11 @@ router.get('/', isAuth, isPinVerified, kycGate, function (req, res) {
         }
         var monthIncoming = 0;
         var monthOutgoing = 0;
+        var monthStart = new Date();
+        monthStart.setDate(1);
+        monthStart.setHours(0, 0, 0, 0);
         cashflowTransactions.forEach(function (txn) {
+          if (new Date(txn.createdAt) < monthStart) return;
           var outgoingTxn = txn.sender && txn.sender.toString() === userId.toString();
           if (outgoingTxn) monthOutgoing += Number(txn.amount || 0);
           else monthIncoming += Number(txn.amount || 0);
