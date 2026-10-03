@@ -47,11 +47,16 @@ function checkAccountActive(req, res, redirectOnFail, callback) {
 
 // Internal Transfer
 router.get('/', isAuth, isPinVerified, function (req, res) {
-  Beneficiary.find({ user: req.user._id, kind: 'local' }).sort({ lastUsedAt: -1, createdAt: -1 }).limit(8).then(function (beneficiaries) {
+  Beneficiary.find({ user: req.user._id, kind: 'local' }).sort({ lastUsedAt: -1, createdAt: -1 }).limit(8).exec(function (err, beneficiaries) {
+    if (err) {
+      console.error('Transfer page beneficiary load failed:', err);
+      beneficiaries = [];
+    }
     res.render('dashboard/transfer', {
       title: 'Send Money',
+      user: req.user,
       unreadCount: 0,
-      beneficiaries: beneficiaries,
+      beneficiaries: beneficiaries || [],
       prefillRecipient: req.query.recipient || ''
     });
   });
