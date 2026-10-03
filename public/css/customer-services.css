@@ -7,3 +7,8 @@
 .nb-service-form button{transition:transform .15s ease,box-shadow .15s ease}
 .nb-service-form button:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(21,94,239,.2)}
 @media(max-width:600px){.nb-service-hero{gap:18px}.nb-service-icon{width:50px;height:50px;flex-basis:50px;border-radius:15px}.nb-service-icon svg{width:23px;height:23px}}
+
+
+/* Blue-and-white customer service treatment */
+.nb-service-hero{background:#1a56db!important;box-shadow:0 18px 42px rgba(26,86,219,.16)}
+.nb-service-card{box-shadow:0 12px 30px rgba(26,86,219,.06)}
