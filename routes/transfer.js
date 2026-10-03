@@ -152,7 +152,8 @@ router.post('/', isAuth, isPinVerified, function (req, res) {
                 user: recipient._id,
                 title: 'Money Received',
                 message: 'You received €' + amount.toFixed(2) + ' from ' + req.user.firstName + ' ' + req.user.lastName + '.',
-                type: 'success'
+                type: 'transaction',
+                severity: 'success'
               }).save(),
               mailer.transferSentEmail(req.user, amount, recipient.firstName + ' ' + recipient.lastName),
               mailer.transferReceivedEmail(recipient, amount, req.user.firstName + ' ' + req.user.lastName)
