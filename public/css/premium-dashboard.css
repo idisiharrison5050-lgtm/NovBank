@@ -82,10 +82,3 @@
   .nb-action-rail{grid-template-columns:repeat(2,1fr)}
   .nb-action-rail .nb-action{min-height:106px}
 }
-
-/* Blue-and-white customer brand treatment */
-.nb-shell{background:#f4f7fe}
-.nb-balance{background:#1a56db;color:#fff;box-shadow:0 22px 50px rgba(26,86,219,.20)}
-.nb-balance:after{border-color:rgba(255,255,255,.18)}
-.nb-card{box-shadow:0 14px 36px rgba(26,86,219,.07)}
-.nb-action-circle{box-shadow:0 6px 16px rgba(26,86,219,.08)}
