@@ -231,14 +231,3 @@
  .nb-networth-card{box-shadow:0 16px 34px rgba(11,18,32,.16)}
  .nb-fin-card:nth-child(1),.nb-fin-card:nth-child(2),.nb-fin-card:nth-child(3),.nb-fin-card:nth-child(4){border-top-width:2px}
 }
-
-
-/* Restore NovBank blue-and-white customer palette */
-.nb-networth-card,.nb-portfolio-total{background:#1a56db;color:#fff;box-shadow:0 22px 50px rgba(26,86,219,.20)}
-.nb-networth-top a{background:#1446b5;border-color:rgba(255,255,255,.16)}
-.nb-dashboard-insight{background:#1a56db;border-radius:22px;padding:28px;box-shadow:0 18px 42px rgba(26,86,219,.16)}
-.nb-command-primary{background:#1a56db}
-.nb-command-actions-grid>a>span,.nb-command-actions-grid>a>span.nb-action-icon{background:#eef2ff;color:#1a56db}
-.nb-quick-actions .nb-action-icon,.nb-modal-icon,.nb-fin-card-icon,.nb-attention-icon{color:#1a56db}
-.nb-fin-card:nth-child(1){border-top-color:#1a56db}
-.nb-fin-card:before{background:rgba(26,86,219,.07)}
