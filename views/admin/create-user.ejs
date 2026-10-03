@@ -1,0 +1,31 @@
+<%- include('partials/admin-header') %>
+<div class="admin-layout">
+  <%- include('partials/admin-sidebar') %>
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div>
+        <p class="admin-kicker">Customers</p>
+        <h1 class="admin-page-title">Create New User</h1>
+      </div>
+    </div>
+    <% if (error_msg && error_msg.length) { %><div class="alert alert-danger"><%= error_msg %></div><% } %>
+    <div class="admin-card" style="max-width:760px;">
+      <div class="admin-card-header"><h5>Customer profile</h5></div>
+      <form action="/admin/create-user" method="POST">
+        <div class="row">
+          <div class="col-md-6"><div class="form-group"><label>First name</label><input name="firstName" class="form-control" required></div></div>
+          <div class="col-md-6"><div class="form-group"><label>Last name</label><input name="lastName" class="form-control" required></div></div>
+        </div>
+        <div class="row">
+          <div class="col-md-6"><div class="form-group"><label>Username</label><input name="username" class="form-control" required></div></div>
+          <div class="col-md-6"><div class="form-group"><label>Email</label><input type="email" name="email" class="form-control" required></div></div>
+        </div>
+        <div class="form-group"><label>Phone</label><input name="phone" class="form-control" required></div>
+        <div class="form-group"><label>Temporary password</label><input type="password" name="password" class="form-control" minlength="8" required></div>
+        <div class="admin-callout">The customer will receive a normal account. The administrator does not see the plaintext password after creation.</div>
+        <button class="btn btn-primary">Create customer account</button>
+      </form>
+    </div>
+  </main>
+</div>
+<%- include('partials/admin-footer') %>

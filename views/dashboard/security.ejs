@@ -1,0 +1,47 @@
+<%- include('../partials/header') %>
+<link rel="stylesheet" href="/css/dashboard.css"/>
+<link rel="stylesheet" href="/css/security-center.css"/>
+<div class="mobile-topbar"><span class="mobile-logo">NovBank</span><button class="hamburger-btn" id="hamburgerBtn" aria-label="Open navigation"><span></span><span></span><span></span></button></div><div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="dashboard-layout"><%- include('../partials/sidebar') %><main class="dashboard-main nb-security-center">
+  <div class="nb-security-hero">
+    <div><span class="nb-security-kicker">ACCOUNT PROTECTION</span><h1>Security Center</h1><p>Review the protection controls connected to your NovBank account.</p></div>
+    <div class="nb-security-state"><span class="nb-security-dot"></span><strong><%= user.accountStatus === 'active' ? 'Account active' : 'Account ' + user.accountStatus %></strong></div>
+  </div>
+
+  <div class="nb-security-grid">
+    <section class="nb-security-card nb-security-overview">
+      <span class="nb-security-kicker">PROTECTION CHECKLIST</span>
+      <h2>Your security controls</h2>
+      <p class="nb-security-muted">Keep the important account protections configured and up to date.</p>
+      <div class="nb-security-checks">
+        <div class="<%= user.emailVerified ? 'complete' : 'attention' %>"><b>Email verification</b><span><%= user.emailVerified ? 'Verified' : 'Action required' %></span></div>
+        <div class="<%= user.pinSet ? 'complete' : 'attention' %>"><b>Transaction PIN</b><span><%= user.pinSet ? 'Configured' : 'Set a PIN' %></span></div>
+        <div class="<%= user.kycStatus === 'approved' ? 'complete' : 'attention' %>"><b>Identity verification</b><span><%= user.kycStatus === 'approved' ? 'Approved' : user.kycStatus.charAt(0).toUpperCase()+user.kycStatus.slice(1) %></span></div>
+        <div class="complete"><b>Account password</b><span>Configured</span></div>
+      </div>
+    </section>
+
+    <section class="nb-security-card nb-security-actions">
+      <span class="nb-security-kicker">QUICK CONTROLS</span>
+      <h2>Manage access</h2>
+      <a href="/dashboard/profile#password" class="nb-security-action"><span><b>Change password</b><small>Update your account sign-in password.</small></span><strong>›</strong></a>
+      <a href="/dashboard/profile#pin" class="nb-security-action"><span><b>Manage transaction PIN</b><small>Change or configure your protected transaction PIN.</small></span><strong>›</strong></a>
+      <a href="/cards" class="nb-security-action"><span><b>Manage cards</b><small>Freeze an active card when you need to.</small></span><strong>›</strong></a>
+    </section>
+  </div>
+
+  <section class="nb-security-card nb-security-activity">
+    <div class="nb-security-activity-head"><div><span class="nb-security-kicker">ACCOUNT ACTIVITY</span><h2>Recent security-related notifications</h2></div><a href="/dashboard/notifications">View secure inbox</a></div>
+    <% if (notifications.length > 0) { %>
+      <div class="nb-security-events">
+      <% notifications.forEach(function(item) { %>
+        <div class="nb-security-event <%= item.isRead ? '' : 'unread' %>"><div class="nb-security-event-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 5 6v5c0 4.5 2.9 8.1 7 10 4.1-1.9 7-5.5 7-10V6l-7-3Z"></path><path d="m9.5 12 1.7 1.7 3.6-4"></path></svg></div><div><b><%= item.title %></b><p><%= item.message %></p><small><%= new Date(item.createdAt).toLocaleString() %></small></div></div>
+      <% }); %>
+      </div>
+    <% } else { %>
+      <div class="nb-security-empty">No account notifications to review.</div>
+    <% } %>
+  </section>
+
+  <section class="nb-security-note"><strong>Protect your account</strong><span>NovBank will never ask you to share your password or transaction PIN through an unsolicited message.</span></section>
+</main></div><%- include('../partials/footer') %>

@@ -12,7 +12,17 @@ var LoanSchema = new mongoose.Schema({
   },
   declineReason: { type: String, default: '' },
   approvedAt:    { type: Date },
-  createdAt:     { type: Date, default: Date.now }
+  totalDue:      { type: Number, default: 0 },
+  amountRepaid:  { type: Number, default: 0 },
+  outstanding:   { type: Number, default: 0 },
+  nextPaymentAt: { type: Date, default: null },
+  createdAt:     { type: Date, default: Date.now },
+  updatedAt:     { type: Date, default: Date.now }
+});
+
+LoanSchema.pre('save', function (next) {
+  this.updatedAt = new Date();
+  next();
 });
 
 module.exports = mongoose.model('Loan', LoanSchema);

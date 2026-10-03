@@ -11,15 +11,17 @@ var KYC  = require('../models/KYC');
 var Card = require('../models/Card');
 var Loan = require('../models/Loan');
 var mailer = require('../config/mailer');
+var ledger = require('../services/ledger');
+var loanApproval = require('../services/loanApproval');
 
 // ─── Middleware ───────────────────────────────────────────────
 function isAdmin(req, res, next) {
-  if (req.isAuthenticated() && req.user.role === 'superadmin') return next();
+  if (req.isAuthenticated() && (req.user.role === 'superadmin' || req.user.role === 'manager')) return next();
   res.redirect('/admin/login');
 }
 
 function isAdminGuest(req, res, next) {
-  if (req.isAuthenticated() && req.user.role === 'superadmin') return res.redirect('/admin/dashboard');
+  if (req.isAuthenticated() && (req.user.role === 'superadmin' || req.user.role === 'manager')) return res.redirect('/admin/dashboard');
   next();
 }
 
@@ -169,6 +171,48 @@ router.get('/users', isAdmin, function (req, res) {
     });
 });
 
+// ─── Super Admin User Login / Impersonation ──────────────────
+router.post('/users/:id/impersonate', isAdmin, function (req, res) {
+  User.findById(req.params.id).then(function (user) {
+    if (!user) {
+      req.flash('error_msg', 'User not found.');
+      return res.redirect('/admin/users');
+    }
+    if (user.accountStatus !== 'active') {
+      req.flash('error_msg', 'Only active user accounts can be opened.');
+      return res.redirect('/admin/users/' + user._id);
+    }
+
+    var adminId = req.user._id.toString();
+    req.session.impersonating = {
+      adminId: adminId,
+      userId: user._id.toString(),
+      startedAt: new Date()
+    };
+    req.session.pinVerified = true;
+
+    return req.logIn(user, function (err) {
+      if (err) throw err;
+      return logAction(
+        adminId,
+        'Started User Impersonation',
+        'User',
+        user._id,
+        'Super admin opened the user account session for ' + user.username
+      ).then(function () {
+        req.session.save(function (sessionErr) {
+          if (sessionErr) throw sessionErr;
+          res.redirect('/dashboard');
+        });
+      });
+    });
+  }).catch(function (err) {
+    console.error(err);
+    req.flash('error_msg', 'Unable to open user account.');
+    res.redirect('/admin/users/' + req.params.id);
+  });
+});
+
 // ─── User Detail ─────────────────────────────────────────────
 router.get('/users/:id', isAdmin, function (req, res) {
   User.findById(req.params.id)
@@ -227,6 +271,185 @@ router.post('/users/:id/edit-balance', isAdmin, function (req, res) {
   }).catch(function (err) {
     console.error(err);
     req.flash('error_msg', 'Failed to update balance.');
+    res.redirect('/admin/users/' + req.params.id);
+  });
+});
+
+// ─── Super Admin Account Controls ────────────────────────────
+router.post('/users/:id/update-profile', isAdmin, function (req, res) {
+  var fields = {
+    firstName: String(req.body.firstName || '').trim(),
+    lastName: String(req.body.lastName || '').trim(),
+    email: String(req.body.email || '').trim().toLowerCase(),
+    phone: String(req.body.phone || '').trim(),
+    currency: String(req.body.currency || 'EUR').trim().toUpperCase()
+  };
+  if (!fields.firstName || !fields.lastName || !fields.email || !fields.phone) {
+    req.flash('error_msg', 'Name, email and phone are required.');
+    return res.redirect('/admin/users/' + req.params.id);
+  }
+  User.findById(req.params.id).then(function (user) {
+    if (!user) throw new Error('User not found');
+    user.firstName = fields.firstName;
+    user.lastName = fields.lastName;
+    user.email = fields.email;
+    user.phone = fields.phone;
+    user.currency = fields.currency;
+    return user.save().then(function () {
+      return logAction(req.user._id, 'Updated User Profile', 'User', user._id, 'Super admin updated core profile fields for ' + user.username);
+    }).then(function () {
+      req.flash('success_msg', 'User profile updated.');
+      res.redirect('/admin/users/' + user._id);
+    });
+  }).catch(function (err) {
+    console.error(err);
+    req.flash('error_msg', 'Failed to update user profile.');
+    res.redirect('/admin/users/' + req.params.id);
+  });
+});
+
+router.post('/users/:id/update-bank-details', isAdmin, function (req, res) {
+  User.findById(req.params.id).then(function (user) {
+    if (!user) throw new Error('User not found');
+    user.bankDetails = user.bankDetails || {};
+    user.bankDetails.bankName = String(req.body.bankName || 'NovBank').trim();
+    user.bankDetails.iban = String(req.body.iban || '').trim();
+    user.bankDetails.swift = String(req.body.swift || '').trim();
+    user.bankDetails.routingNumber = String(req.body.routingNumber || '').trim();
+    user.bankDetails.sortCode = String(req.body.sortCode || '').trim();
+    user.bankDetails.bankAddress = String(req.body.bankAddress || '').trim();
+    return user.save().then(function () {
+      return logAction(req.user._id, 'Updated Bank Details', 'User', user._id, 'Super admin updated receiving bank details for ' + user.username);
+    }).then(function () {
+      req.flash('success_msg', 'Bank details updated.');
+      res.redirect('/admin/users/' + user._id);
+    });
+  }).catch(function (err) {
+    console.error(err);
+    req.flash('error_msg', 'Failed to update bank details.');
+    res.redirect('/admin/users/' + req.params.id);
+  });
+});
+
+router.post('/users/:id/adjust-balance', isAdmin, function (req, res) {
+  var target = Number(req.body.targetBalance);
+  var reason = String(req.body.reason || '').trim();
+  if (!isFinite(target) || target < 0 || !reason) {
+    req.flash('error_msg', 'Enter a valid target balance and an adjustment reason.');
+    return res.redirect('/admin/users/' + req.params.id);
+  }
+  User.findById(req.params.id).then(function (user) {
+    if (!user) throw new Error('User not found');
+    return new Promise(function (resolve, reject) {
+      ledger.getBalance(user._id, function (err, current) {
+        if (err) return reject(err);
+        resolve(Number(current || 0));
+      });
+    }).then(function (current) {
+      var delta = Math.round((target - current) * 100) / 100;
+      if (delta === 0) return null;
+      var operation = delta > 0 ? ledger.createCredit : ledger.createDebit;
+      return new Promise(function (resolve, reject) {
+        operation({
+          userId: user._id,
+          type: 'admin_adjustment',
+          amount: Math.abs(delta),
+          description: 'Super admin balance adjustment: ' + reason,
+          category: 'Admin adjustment',
+          idempotencyKey: 'admin-adjustment:' + user._id + ':' + Date.now()
+        }, function (err, txn) {
+          if (err) return reject(err);
+          resolve(txn);
+        });
+      });
+    }).then(function () {
+      return logAction(req.user._id, 'Adjusted User Balance', 'User', user._id, 'Target €' + target.toFixed(2) + '. Reason: ' + reason);
+    }).then(function () {
+      return new Notification({
+        user: user._id,
+        title: 'Account Balance Adjusted',
+        message: 'Your account balance was adjusted by NovBank operations. Please contact support if you need clarification.',
+        type: 'info'
+      }).save();
+    }).then(function () {
+      req.flash('success_msg', 'Balance adjusted through the ledger.');
+      res.redirect('/admin/users/' + user._id);
+    });
+  }).catch(function (err) {
+    console.error(err);
+    req.flash('error_msg', 'Balance adjustment failed: ' + err.message);
+    res.redirect('/admin/users/' + req.params.id);
+  });
+});
+
+router.post('/users/:id/verification', isAdmin, function (req, res) {
+  var action = req.body.action;
+  User.findById(req.params.id).then(function (user) {
+    if (!user) throw new Error('User not found');
+    if (action === 'email') {
+      user.emailVerified = req.body.value === 'true';
+    } else if (action === 'kyc') {
+      var allowed = ['none', 'pending', 'approved', 'declined'];
+      if (allowed.indexOf(req.body.value) === -1) throw new Error('Invalid KYC status.');
+      user.kycStatus = req.body.value;
+      user.isVerified = req.body.value === 'approved';
+    } else {
+      throw new Error('Unknown verification action.');
+    }
+    return user.save().then(function () {
+      return logAction(req.user._id, 'Changed User Verification', 'User', user._id, 'Action: ' + action + ', value: ' + req.body.value);
+    }).then(function () {
+      req.flash('success_msg', 'Verification control applied.');
+      res.redirect('/admin/users/' + user._id);
+    });
+  }).catch(function (err) {
+    console.error(err);
+    req.flash('error_msg', err.message);
+    res.redirect('/admin/users/' + req.params.id);
+  });
+});
+
+// ─── Update Bitcoin Deposit Address ───────────────────────────
+router.post('/users/:id/bitcoin-address', isAdmin, function (req, res) {
+  var address = String(req.body.bitcoinDepositAddress || '').trim();
+  if (address && !/^[13][a-km-zA-HJ-NP-Z1-9]{25,34}$|^bc1[a-zA-HJ-NP-Z0-9]{25,87}$/i.test(address)) {
+    req.flash('error_msg', 'Enter a valid Bitcoin address.');
+    return res.redirect('/admin/users/' + req.params.id);
+  }
+
+  User.findById(req.params.id).then(function (user) {
+    if (!user) {
+      req.flash('error_msg', 'User not found.');
+      return res.redirect('/admin/users');
+    }
+
+    var oldAddress = user.bitcoinDepositAddress || '';
+    user.bitcoinDepositAddress = address;
+    return user.save()
+      .then(function () {
+        return logAction(
+          req.user._id,
+          'Updated Bitcoin Deposit Address',
+          'User',
+          user._id,
+          (oldAddress ? 'Replaced' : 'Added') + ' Bitcoin deposit address for ' + user.username
+        );
+      })
+      .then(function () {
+        return new Notification({
+          user: user._id,
+          title: address ? 'Bitcoin Receiving Address Updated' : 'Bitcoin Receiving Disabled',
+          message: address ? 'Your Bitcoin receiving address has been updated by NovBank operations.' : 'Bitcoin receiving is currently disabled for your account.',
+          type: address ? 'info' : 'warning'
+        }).save();
+      })
+      .then(function () {
+        req.flash('success_msg', address ? 'Bitcoin deposit address updated.' : 'Bitcoin receiving disabled.');
+        res.redirect('/admin/users/' + user._id);
+      });
+  }).catch(function (err) {
+    console.error(err);
+    req.flash('error_msg', 'Failed to update Bitcoin deposit address.');
     res.redirect('/admin/users/' + req.params.id);
   });
 });
@@ -324,127 +547,35 @@ router.get('/transactions', isAdmin, function (req, res) {
 
 // ─── Approve Transaction ──────────────────────────────────────
 router.post('/transactions/:id/approve', isAdmin, function (req, res) {
-  Transaction.findById(req.params.id)
-    .then(function (txn) {
-      if (!txn || txn.status !== 'pending') {
-        req.flash('error_msg', 'Transaction not found or already processed.');
-        return res.redirect('/admin/transactions');
-      }
-
-      txn.status = 'completed';
-
-      return txn.save()
-        .then(function () {
-          // Credit balance if it is a deposit
-          if (txn.type === 'deposit' && txn.sender) {
-            return User.findByIdAndUpdate(txn.sender, { $inc: { balance: txn.amount } });
-          }
-        })
-        .then(function () {
-          return logAction(
-            req.user._id, 'Approved Transaction', 'Transaction', txn._id,
-            'Approved ' + txn.type + ' of €' + txn.amount.toFixed(2)
-          );
-        })
-        .then(function () {
-          if (txn.sender) {
-            var notif = new Notification({
-              user:    txn.sender,
-              title:   txn.type === 'deposit' ? 'Deposit Approved' : 'Transfer Approved',
-              message: txn.type === 'deposit'
-                ? 'Your deposit of €' + txn.amount.toFixed(2) + ' has been approved and credited to your account.'
-                : 'Your ' + txn.type.replace('_', ' ') + ' of €' + txn.amount.toFixed(2) + ' has been approved.',
-              type: 'success'
-            });
-            return notif.save();
-          }
-        })
-        .then(function () {
-          if (txn.type === 'wire_transfer' && txn.sender) {
-            return User.findById(txn.sender).then(function (user) {
-              if (user && txn.wireDetails) {
-                return mailer.wireTransferSuccessEmail(
-                  user,
-                  txn.amount,
-                  txn.wireDetails.recipientName,
-                  txn.wireDetails.iban,
-                  txn.wireDetails.bankName
-                );
-              }
-            });
-          }
-        })
-        .then(function () {
-          if (txn.type === 'deposit' && txn.sender) {
-            return User.findById(txn.sender).then(function (user) {
-              if (user) {
-                return mailer.depositApprovedEmail(user, txn.amount);
-              }
-            });
-          }
-        })
-        .then(function () {
-          req.flash('success_msg', 'Transaction approved successfully.');
-          res.redirect('/admin/transactions');
-        });
-    }).catch(function (err) {
-      console.error(err);
-      req.flash('error_msg', 'Failed to approve transaction.');
-      res.redirect('/admin/transactions');
-    });
+  Transaction.findById(req.params.id).then(function(txn){
+    if(!txn || txn.status!=='pending'){req.flash('error_msg','Transaction not found or already processed.');return res.redirect('/admin/transactions');}
+    var action;
+    if(txn.type==='deposit'){
+      action=new Promise(function(resolve,reject){ledger.creditExisting(txn._id,function(err,result){if(err)reject(err);else resolve(result);});});
+    } else if(txn.type==='wire_transfer'){
+      txn.status='completed';txn.processing.processedAt=new Date();action=txn.save();
+    } else { txn.status='completed';txn.processing.processedAt=new Date();action=txn.save(); }
+    return action.then(function(){return logAction(req.user._id,'Approved Transaction','Transaction',txn._id,'Approved '+txn.type+' of €'+txn.amount.toFixed(2));})
+      .then(function(){if(txn.sender)return new Notification({user:txn.sender,title:txn.type==='deposit'?'Deposit Approved':'Transfer Approved',message:txn.type==='deposit'?'Your deposit of €'+txn.amount.toFixed(2)+' has been approved and credited to your account.':'Your '+txn.type.replace('_',' ')+' of €'+txn.amount.toFixed(2)+' has been approved.',type:'success'}).save();})
+      .then(function(){if(txn.type==='wire_transfer'&&txn.sender)return User.findById(txn.sender).then(function(user){if(user&&txn.wireDetails)return mailer.wireTransferSuccessEmail(user,txn.amount,txn.wireDetails.recipientName,txn.wireDetails.iban,txn.wireDetails.bankName);});})
+      .then(function(){if(txn.type==='deposit'&&txn.sender)return User.findById(txn.sender).then(function(user){if(user)return mailer.depositApprovedEmail(user,txn.amount);});})
+      .then(function(){req.flash('success_msg','Transaction approved successfully.');res.redirect('/admin/transactions');});
+  }).catch(function(err){console.error(err);req.flash('error_msg','Failed to approve transaction.');res.redirect('/admin/transactions');});
 });
-
 // ─── Decline Transaction ──────────────────────────────────────
 router.post('/transactions/:id/decline', isAdmin, function (req, res) {
-  Transaction.findById(req.params.id)
-    .then(function (txn) {
-      if (!txn || txn.status !== 'pending') {
-        req.flash('error_msg', 'Transaction not found or already processed.');
-        return res.redirect('/admin/transactions');
-      }
-
-      txn.status = 'failed';
-      return txn.save()
-        .then(function () {
-          // Refund sender balance
-          // Only refund if it's a wire transfer or internal transfer
-        if (txn.type !== 'deposit' && txn.sender) {
-          return User.findByIdAndUpdate(txn.sender, { $inc: { balance: txn.amount } });
-        }
-        })
-        .then(function () {
-          return logAction(
-            req.user._id, 'Declined Transaction', 'Transaction', txn._id,
-            'Declined ' + txn.type + ' of €' + txn.amount.toFixed(2)
-          );
-        })
-        .then(function () {
-          if (txn.sender) {
-            var notif = new Notification({
-              user:    txn.sender,
-              title:   'Transfer Declined',
-              message: 'Your ' + txn.type.replace('_', ' ') + ' of €' + txn.amount.toFixed(2) + ' was declined. The amount has been refunded to your account.',
-              type:    'warning'
-            });
-            return notif.save();
-          }
-        })
-        .then(function () {
-          if (txn.type === 'deposit') {
-           User.findById(txn.sender).then(function (u) {
-          if (u) mailer.depositDeclinedEmail(u, txn.amount);
-         });
-         }
-          req.flash('success_msg', 'Transaction declined and amount refunded.');
-          res.redirect('/admin/transactions');
-        });
-    }).catch(function (err) {
-      console.error(err);
-      req.flash('error_msg', 'Failed to decline transaction.');
-      res.redirect('/admin/transactions');
-    });
+  Transaction.findById(req.params.id).then(function(txn){
+    if(!txn || txn.status!=='pending'){req.flash('error_msg','Transaction not found or already processed.');return res.redirect('/admin/transactions');}
+    var reason=req.body.reason || 'Transaction declined by operations.';
+    var action;
+    if(txn.type==='wire_transfer'||txn.type==='withdrawal'){action=new Promise(function(resolve,reject){ledger.reverseDebit(txn._id,reason,function(err,result){if(err)reject(err);else resolve(result);});});}
+    else {txn.status='failed';txn.processing.failureReason=reason;txn.processing.processedAt=new Date();txn.processing.processedBy=req.user._id;action=txn.save();}
+    return action.then(function(){return logAction(req.user._id,'Declined Transaction','Transaction',txn._id,'Declined '+txn.type+' of €'+txn.amount.toFixed(2)+' — '+reason);})
+      .then(function(){if(txn.sender)return new Notification({user:txn.sender,title:'Transaction Declined',message:'Your '+txn.type.replace('_',' ')+' of €'+txn.amount.toFixed(2)+' was declined. '+((txn.type==='wire_transfer'||txn.type==='withdrawal')?'The amount has been returned to your account.':'Please review the transaction details.'),type:'warning'}).save();})
+      .then(function(){if(txn.type==='deposit'&&txn.sender)return User.findById(txn.sender).then(function(u){if(u)return mailer.depositDeclinedEmail(u,txn.amount);});})
+      .then(function(){req.flash('success_msg','Transaction declined successfully.');res.redirect('/admin/transactions');});
+  }).catch(function(err){console.error(err);req.flash('error_msg','Failed to decline transaction.');res.redirect('/admin/transactions');});
 });
-
 // ─── Send Notification ────────────────────────────────────────
 router.get('/notifications', isAdmin, function (req, res) {
   User.find({}, 'firstName lastName username email').sort({ firstName: 1 })
@@ -722,49 +853,49 @@ router.get('/loans', isAdmin, function (req, res) {
 });
 
 router.post('/loans/:id/approve', isAdmin, function (req, res) {
-  Loan.findById(req.params.id)
-    .then(function (loan) {
-      loan.status     = 'approved';
-      loan.approvedAt = new Date();
-      return loan.save()
-        .then(function () {
-          return User.findByIdAndUpdate(loan.user, { $inc: { balance: loan.amount } });
-        })
-        .then(function () {
-          var txn = new Transaction({
-            sender:      loan.user,
-            type:        'loan_credit',
-            amount:      loan.amount,
-            description: 'Loan credited to account',
-            category:    'Loan',
-            status:      'completed'
-          });
-          return txn.save();
-        })
-        .then(function () {
-          return logAction(req.user._id, 'Approved Loan', 'User', loan.user, '€' + loan.amount + ' loan approved');
-        })
-        .then(function () {
-          var notif = new Notification({
-            user:    loan.user,
-            title:   'Loan Approved',
-            message: 'Your loan of €' + loan.amount.toFixed(2) + ' has been approved and credited to your account.',
-            type:    'success'
-          });
-          return notif.save();
-        })
-        .then(function () {
-          User.findById(loan.user).then(function (u) {
-         if (u) mailer.loanApprovedEmail(u, loan.amount);
-         });
-          req.flash('success_msg', 'Loan approved and credited.');
-          res.redirect('/admin/loans');
-        });
-    }).catch(function (err) {
+  loanApproval.approveLoan({
+    loanId: req.params.id,
+    adminId: req.user._id
+  }, function (err, result) {
+    if (err) {
       console.error(err);
-      req.flash('error_msg', 'Failed to approve loan.');
+      req.flash('error_msg', err.message || 'Failed to approve loan.');
+      return res.redirect('/admin/loans');
+    }
+
+    var loan = result.loan;
+
+    if (result.duplicate) {
+      req.flash('success_msg', 'Loan approval was already processed.');
+      return res.redirect('/admin/loans');
+    }
+
+    return logAction(
+      req.user._id,
+      'Approved Loan',
+      'User',
+      loan.user,
+      '€' + loan.amount + ' loan approved'
+    ).then(function () {
+      return new Notification({
+        user: loan.user,
+        title: 'Loan Approved',
+        message: 'Your loan of €' + loan.amount.toFixed(2) + ' has been approved and credited to your account.',
+        type: 'success'
+      }).save();
+    }).then(function () {
+      return User.findById(loan.user).then(function (u) {
+        if (u) return mailer.loanApprovedEmail(u, loan.amount);
+      });
+    }).then(function () {
+      req.flash('success_msg', 'Loan approved and credited.');
+      res.redirect('/admin/loans');
+    }).catch(function (notificationErr) {
+      console.error(notificationErr);
+      req.flash('success_msg', 'Loan approved and credited. Some notifications may be delayed.');
       res.redirect('/admin/loans');
     });
+  });
 });
 
 router.post('/loans/:id/decline', isAdmin, function (req, res) {
@@ -801,77 +932,16 @@ router.post('/loans/:id/decline', isAdmin, function (req, res) {
 });
  
 router.post('/users/:id/deposit', isAdmin, function (req, res) {
-  var amount        = parseFloat(req.body.amount);
-  var bankName      = req.body.bankName;
-  var accountName   = req.body.accountName;
-  var accountNumber = req.body.accountNumber;
-  var swiftCode     = req.body.swiftCode || '';
-  var description   = req.body.description || '';
-
-  if (!amount || isNaN(amount) || amount <= 0) {
-    req.flash('error_msg', 'Please enter a valid amount.');
-    return res.redirect('/admin/users/' + req.params.id);
-  }
-
-  if (!bankName || !accountName || !accountNumber) {
-    req.flash('error_msg', 'Please fill in all required deposit details.');
-    return res.redirect('/admin/users/' + req.params.id);
-  }
-
-  User.findById(req.params.id)
-    .then(function (user) {
-      if (!user) {
-        req.flash('error_msg', 'User not found.');
-        return res.redirect('/admin/users');
-      }
-
-      return User.findByIdAndUpdate(req.params.id, { $inc: { balance: amount } })
-        .then(function () {
-          var txn = new Transaction({
-            sender:      req.params.id,
-            type:        'deposit',
-            amount:      amount,
-            description: description || 'Bank deposit credit',
-            category:    'Transfer',
-            status:      'completed',
-            wireDetails: {
-              bankName:      bankName,
-              accountName:   accountName,
-              accountNumber: accountNumber,
-              swiftCode:     swiftCode,
-              description:   description
-            }
-          });
-          return txn.save();
-        })
-        .then(function (txn) {
-          var notif = new Notification({
-            user:    req.params.id,
-            title:   'Deposit Received',
-            message: '€' + amount.toFixed(2) + ' has been credited to your account from ' + accountName + ' via ' + bankName + '.',
-            type:    'success'
-          });
-          return notif.save().then(function () { return txn; });
-        })
-        .then(function (txn) {
-          return logAction(
-            req.user._id, 'Admin Deposit', 'User', req.params.id,
-            '€' + amount.toFixed(2) + ' deposited into account of ' + user.username
-          ).then(function () {
-            var mailer = require('../config/mailer');
-            mailer.adminDepositEmail(user, amount, bankName, accountName, accountNumber, swiftCode, description);
-            req.flash('success_msg', '€' + amount.toFixed(2) + ' deposited successfully into ' + user.firstName + '\'s account.');
-            res.redirect('/admin/users/' + req.params.id);
-          });
-        });
-    })
-    .catch(function (err) {
-      console.error(err);
-      req.flash('error_msg', 'Failed to process deposit.');
-      res.redirect('/admin/users/' + req.params.id);
-    });
+  var amount=parseFloat(req.body.amount), bankName=req.body.bankName, accountName=req.body.accountName, accountNumber=req.body.accountNumber, swiftCode=req.body.swiftCode||'', description=req.body.description||'';
+  if(!amount||isNaN(amount)||amount<=0){req.flash('error_msg','Please enter a valid amount.');return res.redirect('/admin/users/'+req.params.id);}
+  if(!bankName||!accountName||!accountNumber){req.flash('error_msg','Please fill in all required deposit details.');return res.redirect('/admin/users/'+req.params.id);}
+  User.findById(req.params.id).then(function(user){
+    if(!user){req.flash('error_msg','User not found.');return res.redirect('/admin/users');}
+    return new Promise(function(resolve,reject){ledger.createCredit({userId:user._id,type:'deposit',amount:amount,description:description||'Bank deposit credit',category:'Transfer',idempotencyKey:'admin-deposit:'+user._id+':'+Date.now(),wireDetails:{bankName:bankName,accountName:accountName,accountNumber:accountNumber,swiftCode:swiftCode,description:description}},function(err,txn){if(err)reject(err);else resolve(txn);});})
+      .then(function(txn){return new Notification({user:user._id,title:'Deposit Received',message:'€'+amount.toFixed(2)+' has been credited to your account from '+accountName+' via '+bankName+'.',type:'success'}).save().then(function(){return txn;});})
+      .then(function(txn){return logAction(req.user._id,'Admin Deposit','User',user._id,'€'+amount.toFixed(2)+' deposited into account of '+user.username).then(function(){mailer.adminDepositEmail(user,amount,bankName,accountName,accountNumber,swiftCode,description);req.flash('success_msg','€'+amount.toFixed(2)+' deposited successfully into '+user.firstName+'\'s account.');res.redirect('/admin/users/'+user._id);});});
+  }).catch(function(err){console.error(err);req.flash('error_msg','Failed to process deposit.');res.redirect('/admin/users/'+req.params.id);});
 });
-
 router.get('/deposits/:id', isAdmin, function (req, res) {
   Transaction.findById(req.params.id)
     .populate('sender', 'firstName lastName email username accountNumber phone')

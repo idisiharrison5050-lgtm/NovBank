@@ -1,137 +1,14 @@
 <%- include('../partials/header') %>
 <link rel="stylesheet" href="/css/dashboard.css"/>
 <link rel="stylesheet" href="/css/cards.css"/>
-
-<div class="mobile-topbar">
-  <span class="mobile-logo">NovBank</span>
-  <button class="hamburger-btn" id="hamburgerBtn">
-    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-  </button>
-</div>
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-<div class="dashboard-layout">
-  <%- include('../partials/sidebar') %>
-
-  <main class="dashboard-main">
-    <div class="dash-topbar">
-      <h1 class="dash-greeting">My Cards</h1>
-    </div>
-
-    <% if (success_msg && success_msg.length > 0) { %>
-      <div class="alert alert-success"><%= success_msg %></div>
-    <% } %>
-    <% if (error_msg && error_msg.length > 0) { %>
-      <div class="alert alert-danger"><%= error_msg %></div>
-    <% } %>
-
-    <!-- Cards Display -->
-    <div class="cards-grid">
-      <% cards.forEach(function(card) { %>
-        <div class="bank-card card-<%= card.cardType %> card-status-<%= card.status %>">
-          <div class="card-top-row">
-            <div class="card-bank-name">NovBank</div>
-            <div class="card-contactless">
-              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.93 4.93a10 10 0 0 0 0 14.14"/><path d="M7.76 7.76a6 6 0 0 0 0 8.48"/><path d="M10.6 10.6a2 2 0 0 0 0 2.83"/></svg>
-            </div>
-          </div>
-
-          <div class="card-chip">
-            <div class="chip-body">
-              <div class="chip-line"></div>
-              <div class="chip-line"></div>
-              <div class="chip-line"></div>
-              <div class="chip-center"></div>
-            </div>
-          </div>
-
-    <div class="card-number" 
-     data-full="<%= card.cardNumber.slice(0,4) %> <%= card.cardNumber.slice(4,8) %> <%= card.cardNumber.slice(8,12) %> <%= card.cardNumber.slice(12,16) %>"
-     data-masked="<%= card.cardNumber.slice(0,4) %> &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull;"
-     data-revealed="false"
-     onclick="toggleCardNumber(this)">
-  <%= card.cardNumber.slice(0,4) %> &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull;
-</div>
-<p class="card-reveal-hint">Tap number to reveal</p>
-
-          <div class="card-bottom-row">
-            <div class="card-holder-wrap">
-              <p class="card-label">Card Holder</p>
-              <p class="card-holder-name"><%= card.cardHolder.toUpperCase() %></p>
-            </div>
-            <div class="card-expiry-wrap">
-              <p class="card-label">Expires</p>
-              <p class="card-expiry"><%= card.expiry %></p>
-            </div>
-            <div class="card-network-logo">
-              <% if (card.cardType === 'mastercard') { %>
-                <div class="mc-logo">
-                  <div class="mc-circle mc-red"></div>
-                  <div class="mc-circle mc-orange"></div>
-                </div>
-              <% } else { %>
-                <div class="visa-logo">VISA</div>
-              <% } %>
-            </div>
-          </div>
-
-          <% if (card.status === 'pending') { %>
-            <div class="card-pending-overlay">
-              <span>Pending Approval</span>
-            </div>
-          <% } else if (card.status === 'blocked') { %>
-            <div class="card-blocked-overlay">
-              <span>Blocked</span>
-            </div>
-          <% } %>
-        </div>
-      <% }); %>
-    </div>
-
-    <!-- Request Card -->
-    <div class="form-card" style="max-width: 500px; margin-top: 28px;">
-      <h5 class="form-section-heading">Request a New Card</h5>
-      <form action="/cards/request" method="POST">
-        <div class="form-group">
-          <label>Card Type</label>
-          <div class="card-type-select">
-            <label class="card-type-option">
-              <input type="radio" name="cardType" value="visa" required/>
-              <div class="card-type-box">
-                <div class="visa-logo-sm">VISA</div>
-                <span>Visa</span>
-              </div>
-            </label>
-            <label class="card-type-option">
-              <input type="radio" name="cardType" value="mastercard"/>
-              <div class="card-type-box">
-                <div class="mc-logo-sm">
-                  <div class="mc-circle mc-red"></div>
-                  <div class="mc-circle mc-orange"></div>
-                </div>
-                <span>Mastercard</span>
-              </div>
-            </label>
-          </div>
-        </div>
-        <button type="submit" class="btn btn-primary btn-block">Request Card</button>
-      </form>
-    </div>
-
-  </main>
-</div>
-
-<script>
-  function toggleCardNumber(el) {
-    var revealed = el.getAttribute('data-revealed') === 'true';
-    if (revealed) {
-      el.innerHTML = el.getAttribute('data-masked');
-      el.setAttribute('data-revealed', 'false');
-    } else {
-      el.innerHTML = el.getAttribute('data-full');
-      el.setAttribute('data-revealed', 'true');
-    }
-  }
-</script>
-
-<%- include('../partials/footer') %>
+<link rel="stylesheet" href="/css/cards-premium.css"/>
+<link rel="stylesheet" href="/css/banking-flows.css?v=cards2"/>
+<div class="mobile-topbar"><span class="mobile-logo">NovBank</span><button class="hamburger-btn" id="hamburgerBtn" aria-label="Open navigation"><span></span><span></span><span></span></button></div><div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="dashboard-layout"><%- include('../partials/sidebar') %><main class="dashboard-main nb-cards-page">
+  <div class="nb-cards-heading"><div><span>CARDS & PAYMENTS</span><h1>Your cards</h1><p>Manage your NovBank cards and keep control of how you spend.</p></div><a class="nb-card-action" href="#request-card">Request a card</a></div>
+  <% if (success_msg && success_msg.length > 0) { %><div class="alert alert-success"><%= success_msg %></div><% } %><% if (error_msg && error_msg.length > 0) { %><div class="alert alert-danger"><%= error_msg %></div><% } %>
+  <% if (cards.length > 0) { %><div class="nb-card-grid"><% cards.forEach(function(card) { %><div class="nb-physical-card card-<%= card.cardType %>"><div class="nb-card-brand">NovBank <span><%= card.cardType.toUpperCase() %></span></div><div class="nb-card-chip"><i></i><i></i><i></i></div><div class="nb-card-number">•••• &nbsp;•••• &nbsp;•••• &nbsp;<%= card.last4 %></div><div class="nb-card-bottom"><div><small>CARDHOLDER</small><b><%= card.cardHolder.toUpperCase() %></b></div><div><small>EXPIRES</small><b><%= card.expiry %></b></div></div><div class="nb-card-status"><%= card.status.charAt(0).toUpperCase()+card.status.slice(1) %></div></div><div class="nb-card-management"><div><span class="nb-account-label">CARD CONTROL</span><strong><%= card.status === "blocked" ? (card.userFrozen ? "Card is frozen" : "Card is blocked") : card.status === "active" ? "Card is active" : "Card pending" %></strong><small><%= card.status === "blocked" ? (card.userFrozen ? "Payments are disabled until you unfreeze this card." : "This card has been restricted by NovBank and cannot be unfrozen here.") : card.status === "active" ? "Freeze the card instantly if you do not recognize activity." : "Your card is waiting for approval." %></small></div><div class="nb-card-control-meta"><span>Spending limit</span><b><%= card.spendingLimit > 0 ? "€" + Number(card.spendingLimit).toLocaleString("en-GB",{minimumFractionDigits:2}) : "Set by NovBank" %></b></div><div class="nb-card-control-meta"><span>Issued</span><b><%= card.createdAt ? new Date(card.createdAt).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}) : "—" %></b></div><% if (card.status === "active") { %><form id="freezeCard_<%= card._id %>" action="/cards/<%= card._id %>/freeze" method="POST"><input type="hidden" name="transactionPin" value=""><button type="button" class="nb-card-control danger" onclick="openPinModal('freezeCard_<%= card._id %>')">Freeze card</button></form><% } else if (card.status === "blocked" && card.userFrozen) { %><form id="unfreezeCard_<%= card._id %>" action="/cards/<%= card._id %>/unfreeze" method="POST"><input type="hidden" name="transactionPin" value=""><button type="button" class="nb-card-control" onclick="openPinModal('unfreezeCard_<%= card._id %>')">Unfreeze card</button></form><% } %></div></div><% }); %></div><% } else { %><div class="nb-empty-card"><div class="nb-empty-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 10h18"></path></svg></div><h2>No cards yet</h2><p>Request your first NovBank card to get started.</p><a class="nb-card-action" href="#request-card">Request a card</a></div><% } %>
+  <section class="nb-card-command-bar"><div><span>CARDS AT A GLANCE</span><strong>Protect your spending with clear controls.</strong></div><div><b><%= cards.length %></b><small>Card<%= cards.length === 1 ? "" : "s" %></small></div><div><b><%= cards.filter(function(c){return c.status === "active";}).length %></b><small>Active</small></div><div><b><%= cards.filter(function(c){return c.status === "blocked";}).length %></b><small>Frozen</small></div></section>
+  <div class="nb-card-controls"><div><span>SECURITY</span><h2>Card controls, without the clutter.</h2><p>Keep card management simple with clear status information and protected card details.</p></div><div class="nb-control-list"><div><b>Protected details</b><span>Only the last four digits are displayed.</span></div><div><b>Status visibility</b><span>See whether a card is pending, active or blocked.</span></div><div><b>Dedicated card management</b><span>Keep card activity separate from your main account overview.</span></div></div></div>
+  <div class="form-card nb-request-card" id="request-card"><h2>Request a new card</h2><p>Select the card network you'd like to request.</p><form action="/cards/request" method="POST"><div class="nb-card-options"><label tabindex="0"><input type="radio" name="cardType" value="visa" required><span><strong>VISA</strong>Personal card</span></label><label tabindex="0"><input type="radio" name="cardType" value="mastercard"><span><strong>MASTERCARD</strong>Personal card</span></label></div><button type="submit" class="nb-card-action primary">Request card</button></form></div>
+</main></div><%- include('../partials/footer') %>

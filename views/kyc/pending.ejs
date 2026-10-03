@@ -1,30 +1,24 @@
 <%- include('../partials/header') %>
-<link rel="stylesheet" href="/css/kyc.css"/>
+<link rel="stylesheet" href="/css/kyc-premium.css"/>
 
-<div class="kyc-wrapper">
-  <div class="kyc-box kyc-status-box">
-    <div class="kyc-status-icon pending-icon">
-      <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+<div class="nb-kyc-shell">
+  <div class="nb-kyc-card nb-kyc-status">
+    <div class="nb-kyc-icon">
+      <span>◷</span>
     </div>
-    <h2 class="kyc-title">Verification Pending</h2>
-    <p class="kyc-subtitle">Your identity documents have been submitted and are currently under review. This usually takes 1 to 2 business days.</p>
-    <div class="kyc-status-steps">
-      <div class="kyc-step done">
-        <div class="kyc-step-dot"></div>
-        <p>Documents Submitted</p>
-      </div>
-      <div class="kyc-step-line"></div>
-      <div class="kyc-step active">
-        <div class="kyc-step-dot"></div>
-        <p>Under Review</p>
-      </div>
-      <div class="kyc-step-line"></div>
-      <div class="kyc-step">
-        <div class="kyc-step-dot"></div>
-        <p>Verified</p>
-      </div>
+    <div class="nb-kyc-kicker">IDENTITY REVIEW</div>
+    <h1 class="nb-kyc-title">Verification pending</h1>
+    <p class="nb-kyc-sub">Your identity documents have been submitted and are currently being reviewed. You’ll receive a notification when the review is complete.</p>
+
+    <div class="nb-kyc-steps">
+      <div class="nb-kyc-step done"><div class="nb-kyc-dot"></div><span>Submitted</span></div>
+      <div class="nb-kyc-line"></div>
+      <div class="nb-kyc-step active"><div class="nb-kyc-dot"></div><span>Under review</span></div>
+      <div class="nb-kyc-line"></div>
+      <div class="nb-kyc-step"><div class="nb-kyc-dot"></div><span>Verified</span></div>
     </div>
-    <p class="kyc-footer-note">You will receive a notification once your account is verified.</p>
+
+    <p class="nb-kyc-sub">Review times can vary depending on document quality and verification volume.</p>
   </div>
 </div>
 

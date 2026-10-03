@@ -1,73 +1,93 @@
 <%- include('../partials/header') %>
 <link rel="stylesheet" href="/css/dashboard.css"/>
-
-<!-- Mobile topbar -->
-<div class="mobile-topbar">
-  <span class="mobile-logo">NovBank</span>
-  <button class="hamburger-btn" id="hamburgerBtn">
-    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <line x1="3" y1="6" x2="21" y2="6"/>
-      <line x1="3" y1="12" x2="21" y2="12"/>
-      <line x1="3" y1="18" x2="21" y2="18"/>
-    </svg>
-  </button>
-</div>
-
-<!-- Overlay -->
+<link rel="stylesheet" href="/css/transfer-premium.css"/>
+<link rel="stylesheet" href="/css/banking-flows.css?v=wire2"/>
+<div class="mobile-topbar"><span class="mobile-logo">NovBank</span><button class="hamburger-btn" id="hamburgerBtn" aria-label="Open navigation"><span></span><span></span><span></span></button></div>
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
-<div class="dashboard-layout">
-  <%- include('../partials/sidebar') %>
-
-  <main class="dashboard-main">
-    <div class="dash-topbar">
-      <h1 class="dash-greeting">Send Money</h1>
+<div class="dashboard-layout"><%- include('../partials/sidebar') %>
+<main class="dashboard-main nb-transfer-page nb-flow-screen">
+  <div class="nb-transfer-switcher" aria-label="Transfer type navigation"><a href="/transfer" class="active"><span>Local transfer</span><small>NovBank</small></a><a href="/transfer/wire"><span>International</span><small>Bank transfer</small></a></div>
+  <section class="nb-flow-hero"><div><span class="nb-flow-eyebrow">PAYMENTS · LOCAL TRANSFER</span><h1>Send money, simply.</h1><p>Send funds to another NovBank customer using a username, email address or account number. Review everything before you authorize the payment.</p></div><div class="nb-flow-balance"><span>AVAILABLE BALANCE</span><strong>€ <%= Number(user.balance || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong><small>Available to send</small></div></section>
+  <% if (success_msg.length > 0) { %><div class="alert alert-success"><%= success_msg %></div><% } %><% if (error_msg.length > 0) { %><div class="alert alert-danger"><%= error_msg %></div><% } %>
+  <div class="nb-wire-layout nb-flow-layout">
+    <section class="nb-wire-card nb-flow-form-card">
+      <div class="nb-flow-card-head"><div><span>NEW TRANSFER</span><h2>Recipient & payment details</h2><p>Use a NovBank identifier and enter the amount you want to send.</p></div><div class="nb-flow-secure">Secure payment</div></div>
+      <div class="nb-wire-steps"><div class="active"><b>1</b><span>Recipient</span></div><i></i><div><b>2</b><span>Payment</span></div><i></i><div><b>3</b><span>Authorize</span></div></div>
+      <form id="transferForm" class="nb-premium-form" action="/transfer" method="POST">
+        <div class="nb-form-section"><span>01</span><div><b>Recipient</b><small>Who should receive the funds?</small></div></div>
+        <div class="form-group"><label>Username, email or account number</label><input type="text" name="identifier" class="form-control" value="<%= prefillRecipient || '' %>" placeholder="e.g. alex@example.com" autocomplete="off" required/></div>
+        <div class="nb-form-section nb-form-section-spaced"><span>02</span><div><b>Payment details</b><small>Set the amount and describe the transfer.</small></div></div>
+        <div class="form-group"><label>Amount (€)</label><div class="nb-amount-input"><span>€</span><input id="transferAmount" type="number" name="amount" class="form-control" placeholder="0.00" min="0.01" step="0.01" required/></div><div class="nb-amount-presets" aria-label="Amount shortcuts"><button type="button" data-amount="50">€50</button><button type="button" data-amount="100">€100</button><button type="button" data-amount="250">€250</button><button type="button" data-amount="500">€500</button></div></div>
+        <div class="nb-saved-recipients">
+  <div class="nb-saved-head"><span>SAVED RECIPIENTS</span><small>Use a recipient you've sent to before</small></div>
+  <% if (beneficiaries && beneficiaries.length) { %>
+    <div class="nb-recipient-list">
+      <% beneficiaries.forEach(function(b){ %>
+        <div class="nb-recipient">
+          <a href="/transfer?recipient=<%= encodeURIComponent(b.identifier) %>"><span class="nb-recipient-avatar"><%= b.name.charAt(0).toUpperCase() %></span><span><b><%= b.name %></b><small><%= b.identifier %></small></span></a>
+          <form action="/transfer/beneficiaries/<%= b._id %>/delete" method="POST"><button type="submit" aria-label="Remove saved recipient">×</button></form>
+        </div>
+      <% }); %>
     </div>
-
-    <div class="form-card">
-      <p class="form-card-sub">Available Balance: <strong>€ <%= user.balance.toFixed(2) %></strong></p>
-
-      <% if (success_msg.length > 0) { %>
-        <div class="alert alert-success"><%= success_msg %></div>
-      <% } %>
-      <% if (error_msg.length > 0) { %>
-        <div class="alert alert-danger"><%= error_msg %></div>
-      <% } %>
-
-      <form id="transferForm" class="transferForm" action="/transfer" method="POST">
-        <div class="form-group">
-          <label>Recipient (Username, Email, or Account Number)</label>
-          <input type="text" name="identifier" class="form-control" placeholder="e.g. johndoe or EU1234567890" required/>
-        </div>
-        <div class="form-group">
-          <label>Amount (€)</label>
-          <input type="number" name="amount" class="form-control" placeholder="0.00" min="0.01" step="0.01" required/>
-        </div>
-        <div class="form-group">
-          <label>Category</label>
-          <select name="category" class="form-control">
-            <option value="Transfer">Transfer</option>
-            <option value="Food">Food</option>
-            <option value="Rent">Rent</option>
-            <option value="Utilities">Utilities</option>
-            <option value="Shopping">Shopping</option>
-            <option value="Healthcare">Healthcare</option>
-            <option value="Entertainment">Entertainment</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Description (optional)</label>
-          <input type="text" name="description" class="form-control" placeholder="e.g. Rent for June"/>
-        </div>
-          <input type="hidden" name="transactionPin" id="transferPinInput"/>
-        <button type="button" class="btn btn-primary btn-block" onclick="openPinModal('transferForm')">Send Money</button>
+  <% } else { %><div class="nb-saved-empty">Recipients you save during transfers will appear here.</div><% } %>
+</div><div class="form-group"><label>Category</label><select name="category" class="form-control"><option value="Transfer">Transfer</option><option value="Food">Food</option><option value="Rent">Rent</option><option value="Utilities">Utilities</option><option value="Shopping">Shopping</option><option value="Healthcare">Healthcare</option><option value="Entertainment">Entertainment</option><option value="Other">Other</option></select></div>
+        <label class="nb-save-recipient"><input type="checkbox" name="saveRecipient"><span><b>Save this recipient</b><small>Keep the details ready for your next transfer.</small></span></label><div class="form-group"><label>Description <small class="nb-optional">Optional</small></label><input type="text" name="description" class="form-control" placeholder="What is this transfer for?"/></div>
+        <input type="hidden" name="transactionPin" id="transferPinInput"/><input type="hidden" name="requestKey" value="<%= requestKey %>"/>
+        <div class="nb-wire-review-note"><span>✓</span><p>Your transaction PIN is requested only when you authorize the transfer.</p></div>
+        <button type="button" class="nb-flow-submit" onclick="openLocalTransferReview()">Continue to secure review <span>→</span></button>
       </form>
-
-      <div class="alt-transfer-link">
-        Want to send to another bank? <a href="/transfer/wire">Use Wire Transfer</a>
-      </div>
+<div class="nb-wire-review-modal nb-local-review-modal" id="localTransferReview" aria-hidden="true">
+  <div class="nb-wire-review-backdrop" data-close-local-review></div>
+  <section class="nb-wire-review-dialog" role="dialog" aria-modal="true" aria-labelledby="localReviewTitle">
+    <button type="button" class="nb-wire-review-close" aria-label="Close review" data-close-local-review>×</button>
+    <span class="nb-wire-review-kicker">FINAL REVIEW</span>
+    <h2 id="localReviewTitle">Review your transfer</h2>
+    <p class="nb-wire-review-intro">Check the recipient and amount carefully. Your transfer will not be submitted until you enter your transaction PIN.</p>
+    <div class="nb-wire-review-amount"><small>YOU ARE SENDING</small><strong id="localReviewAmount">€0.00</strong></div>
+    <div class="nb-wire-review-summary">
+      <div><span>Recipient</span><b id="localReviewRecipient">—</b></div>
+      <div><span>Amount</span><b id="localReviewAmountSmall">—</b></div>
+      <div><span>Category</span><b id="localReviewCategory">—</b></div>
+      <div><span>Description</span><b id="localReviewDescription">—</b></div>
     </div>
-  </main>
+    <div class="nb-wire-review-security"><span>✓</span><div><b>Ready to authorize</b><small>Your PIN is the final authorization step. Review these details before continuing.</small></div></div>
+    <div class="nb-wire-review-actions"><button type="button" class="nb-wire-edit" data-close-local-review>Go back and edit</button><button type="button" class="nb-wire-authorize" onclick="authorizeLocalTransfer()">Authorize with PIN <span>→</span></button></div>
+  </section>
 </div>
-
-<%- include('../partials/footer') %>
+<script>
+(function(){
+  var modal=document.getElementById('localTransferReview');
+  var form=document.getElementById('transferForm');
+  function value(name){var el=form&&form.querySelector('[name="'+name+'"]');return el?el.value.trim():'';}
+  function money(){var n=parseFloat(value('amount')||'0');return '€ '+n.toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});}
+  function set(id,val){var el=document.getElementById(id);if(el)el.textContent=val||'—';}
+  window.openLocalTransferReview=function(){
+    if(!form.checkValidity()){form.reportValidity();return;}
+    var m=money(); set('localReviewAmount',m); set('localReviewAmountSmall',m);
+    set('localReviewRecipient',value('identifier')); set('localReviewCategory',value('category')||'Transfer'); set('localReviewDescription',value('description')||'Not provided');
+    modal.classList.add('is-open'); modal.setAttribute('aria-hidden','false'); document.body.classList.add('wire-review-open');
+  };
+  window.closeLocalTransferReview=function(){modal.classList.remove('is-open');modal.setAttribute('aria-hidden','true');document.body.classList.remove('wire-review-open');};
+  window.authorizeLocalTransfer=function(){closeLocalTransferReview();openPinModal('transferForm');};
+  modal.querySelectorAll('[data-close-local-review]').forEach(function(el){el.addEventListener('click',closeLocalTransferReview);});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&modal.classList.contains('is-open'))closeLocalTransferReview();});
+})();
+</script>
+    </section>
+    <aside class="nb-wire-aside nb-flow-aside"><span>LOCAL TRANSFER</span><h2>Move money between NovBank accounts.</h2><p>Fast account-to-account payments with a clear recipient and authorization flow.</p><div class="nb-aside-stat"><span>Available now</span><strong>€ <%= Number(user.balance || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong></div><div class="nb-aside-list"><div><b>01</b><span>Find the recipient using their NovBank details</span></div><div><b>02</b><span>Confirm amount and payment category</span></div><div><b>03</b><span>Authorize securely with your transaction PIN</span></div></div><div class="nb-aside-foot"><span>NEED A BANK ACCOUNT?</span><b>Use International to send a wire transfer.</b></div></aside>
+  </div>
+<script>
+(function(){
+  var input=document.getElementById('transferAmount');
+  document.querySelectorAll('[data-amount]').forEach(function(button){
+    button.addEventListener('click',function(){
+      if(!input)return;
+      input.value=button.getAttribute('data-amount');
+      input.focus();
+      document.querySelectorAll('[data-amount]').forEach(function(item){item.classList.remove('active');});
+      button.classList.add('active');
+    });
+  });
+})();
+</script>
+</main></div><%- include('../partials/footer') %>

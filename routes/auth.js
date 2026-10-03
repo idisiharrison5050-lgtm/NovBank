@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var passport = require('passport');
 var User = require('../models/User');
+var Admin = require('../models/Admin');
 var Notification = require('../models/Notification');
 var mailer = require('../config/mailer');
 var https = require('https');
@@ -80,18 +81,16 @@ router.post('/login', isGuest, function (req, res, next) {
       if (!user.emailVerified) {
         req.session.verifyUserId = user._id.toString();
         req.flash('error_msg', 'Please verify your email address before logging in.');
-        router.get('/logout', function(req, res, next) {
-        req.logout(function(err) {
-             if (err) { 
-                 return next(err); 
-             }
-             res.redirect('/login'); // Redirect inside the callback
-         });
-     });
-        return res.redirect('/verify-email');
+        return req.logout(function (logoutErr) {
+          if (logoutErr) return next(logoutErr);
+          res.redirect('/verify-email');
+        });
       }
       req.session.pinVerified = false;
-      res.redirect('/pin');
+      req.session.save(function (sessionErr) {
+        if (sessionErr) return next(sessionErr);
+        res.redirect('/pin');
+      });
     });
     })(req, res, next);
   });
@@ -114,8 +113,15 @@ router.post('/register/step1', isGuest, function (req, res) {
     return res.redirect('/register');
   }
 
-  req.session.regStep1 = { firstName, lastName, email, phone, dateOfBirth: dob };
-  res.redirect('/register/step2');
+  req.session.regStep1 = { firstName, lastName, email: email.toLowerCase().trim(), phone, dateOfBirth: dob };
+  req.session.save(function (err) {
+    if (err) {
+      console.error('Registration session save error:', err);
+      req.flash('error_msg', 'We could not continue your registration. Please try again.');
+      return res.redirect('/register');
+    }
+    res.redirect('/register/step2');
+  });
 });
 
 // Register Step 2
@@ -136,7 +142,14 @@ router.post('/register/step2', isGuest, function (req, res) {
   }
 
   req.session.regStep2 = { street, city, country, zip };
-  res.redirect('/register/step3');
+  req.session.save(function (err) {
+    if (err) {
+      console.error('Registration session save error:', err);
+      req.flash('error_msg', 'We could not continue your registration. Please try again.');
+      return res.redirect('/register/step2');
+    }
+    res.redirect('/register/step3');
+  });
 });
 
 // Register Step 3
@@ -209,7 +222,8 @@ router.post('/register/step3', isGuest, function (req, res) {
           user:    user._id,
           title:   'Welcome!',
           message: 'Your account has been created. Account number: ' + user.accountNumber,
-          type:    'success'
+          type:    'system',
+          severity: 'success'
         });
 
         var code     = Math.floor(100000 + Math.random() * 900000).toString();
@@ -232,7 +246,13 @@ router.post('/register/step3', isGuest, function (req, res) {
             delete req.session.regStep2;
             req.session.verifyUserId = user._id.toString();
             req.flash('success_msg', 'Account created! Check your email for the verification code.');
-            res.redirect('/verify-email');
+            req.session.save(function (sessionErr) {
+              if (sessionErr) {
+                console.error('Verification session save error:', sessionErr);
+                return res.redirect('/register');
+              }
+              res.redirect('/verify-email');
+            });
           });
       });
     })
@@ -242,6 +262,36 @@ router.post('/register/step3', isGuest, function (req, res) {
       res.redirect('/register');
     });
 });
+});
+
+// Exit Super Admin User Session
+router.get('/admin-session/exit', function (req, res, next) {
+  if (!req.session.impersonating || !req.session.impersonating.adminId) {
+    return res.redirect('/dashboard');
+  }
+
+  var adminId = req.session.impersonating.adminId;
+  var impersonatedUserId = req.session.impersonating.userId;
+
+  Admin.findById(adminId, function (findErr, admin) {
+    if (findErr || !admin || admin.role !== 'superadmin') {
+      req.session.impersonating = null;
+      return req.logout(function (logoutErr) {
+        if (logoutErr) return next(logoutErr);
+        res.redirect('/admin/login');
+      });
+    }
+
+    req.logIn(admin, function (loginErr) {
+      if (loginErr) return next(loginErr);
+      req.session.impersonating = null;
+      req.session.pinVerified = false;
+      req.session.save(function (saveErr) {
+        if (saveErr) return next(saveErr);
+        res.redirect('/admin/users/' + impersonatedUserId);
+      });
+    });
+  });
 });
 
 // Logout

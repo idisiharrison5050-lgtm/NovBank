@@ -1,0 +1,9 @@
+<link rel="stylesheet" href="/css/notification-center.css">
+<div class="nb-notification-wrap">
+  <button type="button" data-notification-toggle aria-label="Notifications">Notifications</button>
+  <div class="nb-notification-panel" data-notification-panel></div>
+</div>
+<script src="/js/notification-center.js"></script>
+<script>
+  if (window.NovBankNotifications) window.NovBankNotifications.mount({ endpoint: '/notifications/api' });
+</script>

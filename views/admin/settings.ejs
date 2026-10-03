@@ -1,0 +1,49 @@
+<%- include('partials/admin-header') %>
+<div class="admin-layout">
+  <%- include('partials/admin-sidebar') %>
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div>
+        <p class="admin-kicker">Configuration</p>
+        <h1 class="admin-page-title">System Settings</h1>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-7">
+        <div class="admin-card">
+          <div class="admin-card-header"><h5>Application</h5><span class="admin-status-badge status-active">Running</span></div>
+          <div class="admin-setting-row"><span>Application name</span><strong><%= settings.appName %></strong></div>
+          <div class="admin-setting-row"><span>Default currency</span><strong><%= settings.currency %></strong></div>
+          <div class="admin-setting-row"><span>Support email</span><strong><%= settings.supportEmail || 'Not configured' %></strong></div>
+          <div class="admin-setting-row"><span>Environment</span><strong><%= settings.environment %></strong></div>
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-card-header"><h5>Security controls</h5></div>
+          <div class="admin-setting-row"><span>Admin authentication</span><span class="admin-status-badge status-active">Enabled</span></div>
+          <div class="admin-setting-row"><span>Audit logging</span><span class="admin-status-badge status-active">Enabled</span></div>
+          <div class="admin-setting-row"><span>Ledger-backed balance changes</span><span class="admin-status-badge status-active">Enabled</span></div>
+          <div class="admin-setting-row"><span>Session cookies</span><span class="admin-status-badge status-active">HttpOnly</span></div>
+        </div>
+      </div>
+
+      <div class="col-md-5">
+        <div class="admin-card">
+          <div class="admin-card-header"><h5>Admin shortcuts</h5></div>
+          <a class="admin-setting-link" href="/admin/administrators">Manage administrators <span>→</span></a>
+          <a class="admin-setting-link" href="/admin/audit-log">Open audit log <span>→</span></a>
+          <a class="admin-setting-link" href="/admin/kyc">Review KYC <span>→</span></a>
+          <a class="admin-setting-link" href="/admin/cards">Manage cards <span>→</span></a>
+          <a class="admin-setting-link" href="/admin/loans">Manage loans <span>→</span></a>
+          <a class="admin-setting-link" href="/admin/transactions">Review transactions <span>→</span></a>
+        </div>
+        <div class="admin-card admin-danger-zone">
+          <h5 class="admin-card-title danger-title">Operational note</h5>
+          <p class="admin-danger-text">Production secrets, payment provider credentials and database credentials remain environment variables. They are intentionally not editable from this page.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<%- include('partials/admin-footer') %>

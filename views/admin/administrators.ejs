@@ -1,0 +1,64 @@
+<%- include('partials/admin-header') %>
+<div class="admin-layout">
+  <%- include('partials/admin-sidebar') %>
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div>
+        <p class="admin-kicker">Access Control</p>
+        <h1 class="admin-page-title">Administrators</h1>
+      </div>
+    </div>
+
+    <% if (success_msg && success_msg.length) { %><div class="alert alert-success"><%= success_msg %></div><% } %>
+    <% if (error_msg && error_msg.length) { %><div class="alert alert-danger"><%= error_msg %></div><% } %>
+
+    <div class="row">
+      <div class="col-md-7">
+        <div class="admin-card">
+          <div class="admin-card-header"><h5>Admin accounts</h5><span class="admin-muted"><%= admins.length %> total</span></div>
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead><tr><th>Administrator</th><th>Email</th><th>Role</th><th>Created</th><th>Actions</th></tr></thead>
+              <tbody>
+                <% admins.forEach(function(admin) { %>
+                  <tr>
+                    <td><strong><%= admin.firstName %> <%= admin.lastName %></strong><div class="admin-muted">@<%= admin.username %></div></td>
+                    <td><%= admin.email %></td>
+                    <td><span class="admin-type-badge"><%= admin.role %></span></td>
+                    <td><%= new Date(admin.createdAt).toLocaleDateString('en-GB') %></td>
+                    <td>
+                      <% if (String(user._id) !== String(admin._id)) { %>
+                        <form action="/admin/administrators/<%= admin._id %>/toggle-role" method="POST" class="admin-inline-form">
+                          <button class="admin-btn-view"><%= admin.role === 'superadmin' ? 'Make Manager' : 'Make Super Admin' %></button>
+                        </form>
+                        <form action="/admin/administrators/<%= admin._id %>/delete" method="POST" class="admin-inline-form" onsubmit="return confirm('Delete this administrator account?');">
+                          <button class="admin-btn-decline">Delete</button>
+                        </form>
+                      <% } else { %><span class="admin-processed">Current account</span><% } %>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-5">
+        <div class="admin-card">
+          <div class="admin-card-header"><h5>Add Manager</h5></div>
+          <form action="/admin/administrators" method="POST">
+            <div class="form-group"><label>First name</label><input name="firstName" class="form-control" required></div>
+            <div class="form-group"><label>Last name</label><input name="lastName" class="form-control" required></div>
+            <div class="form-group"><label>Username</label><input name="username" class="form-control" required></div>
+            <div class="form-group"><label>Email</label><input type="email" name="email" class="form-control" required></div>
+            <div class="form-group"><label>Temporary password</label><input type="password" name="password" class="form-control" minlength="8" required></div>
+            <div class="form-group"><label>Role</label><select name="role" class="form-control"><option value="manager">Manager</option><option value="superadmin">Super Admin</option></select></div>
+            <button class="btn btn-primary btn-block">Create administrator</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<%- include('partials/admin-footer') %>

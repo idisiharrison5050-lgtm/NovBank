@@ -1,48 +1,10 @@
 <%- include('../partials/header') %>
-<link rel="stylesheet" href="/css/dashboard.css"/>
-<!-- Mobile topbar -->
-<div class="mobile-topbar">
-  <span class="mobile-logo">NovBank</span>
-  <button class="hamburger-btn" id="hamburgerBtn">
-    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <line x1="3" y1="6" x2="21" y2="6"/>
-      <line x1="3" y1="12" x2="21" y2="12"/>
-      <line x1="3" y1="18" x2="21" y2="18"/>
-    </svg>
-  </button>
-</div>
-
-<!-- Overlay -->
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-
-<div class="dashboard-layout">
-  <%- include('../partials/sidebar') %>
-
-  <main class="dashboard-main">
-    <div class="dash-topbar">
-      <h1 class="dash-greeting">Notifications</h1>
-    </div>
-
-    <% if (notifications.length === 0) { %>
-      <div class="empty-state">
-        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-        <p>No notifications yet.</p>
-      </div>
-    <% } else { %>
-      <div class="notif-list">
-        <% notifications.forEach(function(notif) { %>
-          <div class="notif-item notif-<%= notif.type %> <%= notif.isRead ? '' : 'unread' %>">
-            <div class="notif-item-header">
-              <strong><%= notif.title %></strong>
-              <span class="notif-time"><%= new Date(notif.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) %></span>
-            </div>
-            <p class="notif-message"><%= notif.message %></p>
-          </div>
-        <% }); %>
-      </div>
-    <% } %>
-  </main>
-</div>
-
-<%- include('../partials/footer') %>
+<link rel="stylesheet" href="/css/dashboard.css"/><link rel="stylesheet" href="/css/account-center.css"/>
+<div class="mobile-topbar"><span class="mobile-logo">NovBank</span><a class="nb-mobile-alert" href="/dashboard/notifications" aria-label="Notifications"><svg viewBox="0 0 24 24"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path><path d="M10 21h4"></path></svg></a><button class="hamburger-btn" id="hamburgerBtn" aria-label="Open navigation"><span></span><span></span><span></span></button></div><div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="dashboard-layout"><%- include('../partials/sidebar') %><main class="dashboard-main nb-account-center">
+<div class="nb-account-hero"><div><span class="nb-account-label">SECURE INBOX</span><h1>Notifications</h1><p>Important updates and account activity in one place.</p></div></div>
+<% if (notifications.length === 0) { %><div class="nb-empty-account"><div class="nb-empty-inbox-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z"></path><path d="m4 7 8 6 8-6"></path></svg></div><strong>No notifications yet.</strong><div>Important account updates will appear here.</div></div><% } else { %><div class="nb-notification-center"><% notifications.forEach(function(notif) { %><article class="nb-notification <%= notif.isRead ? '' : 'unread' %>">
+  <div class="nb-notification-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path><path d="M10 21h4"></path></svg></div>
+  <div class="nb-notification-body"><div class="nb-notification-top"><b><%= notif.title %></b><span><%= new Date(notif.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) %></span></div><p><%= notif.message %></p><% if (!notif.isRead) { %><small class="nb-unread-label">NEW</small><% } %></div>
+</article><% }); %></div><% } %>
+</main></div><%- include('../partials/footer') %>

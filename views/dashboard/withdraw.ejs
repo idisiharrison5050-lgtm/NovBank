@@ -1,0 +1,62 @@
+<%- include('../partials/header') %>
+<link rel="stylesheet" href="/css/dashboard.css"/><link rel="stylesheet" href="/css/funding-premium.css"/>
+<div class="mobile-topbar"><span class="mobile-logo">NovBank</span><button class="hamburger-btn" id="hamburgerBtn" aria-label="Open navigation"><span></span><span></span><span></span></button></div><div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="dashboard-layout"><%- include('../partials/sidebar') %><main class="dashboard-main nb-withdraw-page">
+  <div class="nb-funding-head"><div><span class="nb-funding-kicker">MOVE MONEY OUT</span><h1>Withdraw funds</h1><p>Request a withdrawal to your bank account. Your available balance is debited immediately and the request remains pending until operations completes it.</p></div><div class="nb-funding-balance"><span>AVAILABLE BALANCE</span><b>€ <%= Number(user.balance || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></b></div></div>
+  <% if (success_msg.length > 0) { %><div class="alert alert-success"><%= success_msg %></div><% } %><% if (error_msg.length > 0) { %><div class="alert alert-danger"><%= error_msg %></div><% } %>
+  <div class="nb-withdraw-grid">
+    <section class="nb-funding-panel nb-withdraw-form">
+      <div class="nb-withdraw-section"><span>01</span><div><h2>Destination account</h2><p>Enter the bank account that should receive your funds.</p></div></div>
+      <form action="/transfer/withdraw" method="POST" id="withdrawForm">
+        <div class="form-group"><label>Account holder</label><input class="form-control" name="recipientName" placeholder="Full name" required></div>
+        <div class="form-group"><label>Bank name</label><input class="form-control" name="bankName" placeholder="Bank name" required></div>
+        <div class="form-group"><label>Account number / IBAN</label><input class="form-control" name="accountNumber" placeholder="Account number or IBAN" required></div>
+        <div class="form-group"><label>Bank country</label><input class="form-control" name="bankCountry" placeholder="Country" required></div>
+        <div class="form-group"><label>Amount (€)</label><input class="form-control" name="amount" type="number" min="0.01" step="0.01" placeholder="0.00" required></div>
+        <div class="form-group"><label>Reference <span class="optional">OPTIONAL</span></label><input class="form-control" name="reference" placeholder="Payment reference"></div>
+        <div class="form-group"><label>Note <span class="optional">OPTIONAL</span></label><input class="form-control" name="description" placeholder="Reason for withdrawal"></div>
+        <input type="hidden" name="transactionPin" id="withdrawPinInput">
+        <button type="button" class="nb-send-button" onclick="openWithdrawReview()">Review withdrawal</button>
+      </form>
+    </section>
+    <aside class="nb-wire-aside nb-withdraw-side"><span>WITHDRAWAL PROTECTION</span><h2>Your PIN protects this request.</h2><p>The withdrawal is recorded as a pending transaction. If operations declines it, the reserved amount is returned through the ledger.</p><div class="nb-withdraw-steps"><div><b>1</b><span>Confirm details</span></div><div><b>2</b><span>Enter PIN</span></div><div><b>3</b><span>Operations processes request</span></div></div></aside>
+  </div>
+
+<div class="nb-withdraw-review-overlay" id="withdrawReview" aria-hidden="true">
+  <div class="nb-withdraw-review" role="dialog" aria-modal="true" aria-labelledby="withdrawReviewTitle">
+    <div class="nb-withdraw-review-head"><div><span>FINAL REVIEW</span><h2 id="withdrawReviewTitle">Review withdrawal</h2></div><button type="button" onclick="closeWithdrawReview()" aria-label="Close">×</button></div>
+    <div class="nb-withdraw-review-amount" id="withdrawReviewAmount">€0.00</div>
+    <div class="nb-withdraw-review-grid">
+      <div><span>ACCOUNT HOLDER</span><b id="withdrawReviewName">—</b></div>
+      <div><span>BANK</span><b id="withdrawReviewBank">—</b></div>
+      <div><span>ACCOUNT / IBAN</span><b id="withdrawReviewAccount">—</b></div>
+      <div><span>COUNTRY</span><b id="withdrawReviewCountry">—</b></div>
+      <div><span>REFERENCE</span><b id="withdrawReviewReference">—</b></div>
+      <div><span>NOTE</span><b id="withdrawReviewNote">—</b></div>
+    </div>
+    <div class="nb-withdraw-review-notice"><strong>Protected transaction</strong><span>Your PIN will be required to authorize this withdrawal. Review the destination and amount before continuing.</span></div>
+    <div class="nb-withdraw-review-actions"><button type="button" class="nb-withdraw-review-cancel" onclick="closeWithdrawReview()">Go back</button><button type="button" class="nb-withdraw-review-confirm" onclick="authorizeWithdraw()">Authorize with PIN</button></div>
+  </div>
+</div>
+<script>
+function withdrawField(name){var f=document.getElementById('withdrawForm');var el=f&&f.querySelector('[name="'+name+'"]');return el?el.value.trim():'';}
+function openWithdrawReview(){
+ var form=document.getElementById('withdrawForm');
+ if(form && !form.checkValidity()){form.reportValidity();return;}
+ var amount=Number(withdrawField('amount')||0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});
+ document.getElementById('withdrawReviewAmount').textContent='€ '+amount;
+ document.getElementById('withdrawReviewName').textContent=withdrawField('recipientName')||'—';
+ document.getElementById('withdrawReviewBank').textContent=withdrawField('bankName')||'—';
+ document.getElementById('withdrawReviewAccount').textContent=withdrawField('accountNumber')||'—';
+ document.getElementById('withdrawReviewCountry').textContent=withdrawField('bankCountry')||'—';
+ document.getElementById('withdrawReviewReference').textContent=withdrawField('reference')||'—';
+ document.getElementById('withdrawReviewNote').textContent=withdrawField('description')||'—';
+ var modal=document.getElementById('withdrawReview');modal.classList.add('open');modal.setAttribute('aria-hidden','false');document.body.classList.add('wire-review-open');
+}
+function closeWithdrawReview(){var modal=document.getElementById('withdrawReview');if(modal){modal.classList.remove('open');modal.setAttribute('aria-hidden','true');document.body.classList.remove('wire-review-open');}}
+function authorizeWithdraw(){closeWithdrawReview();openPinModal('withdrawForm');}
+var withdrawReview=document.getElementById('withdrawReview');
+if(withdrawReview){withdrawReview.addEventListener('click',function(e){if(e.target===withdrawReview)closeWithdrawReview();});}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeWithdrawReview();});
+</script>
+</main></div><%- include('../partials/footer') %>

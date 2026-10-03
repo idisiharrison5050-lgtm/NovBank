@@ -67,6 +67,67 @@
       <!-- Actions -->
       <div class="col-md-8">
 
+        <div class="admin-card">
+          <h5 class="admin-card-title">Super Admin Profile Control</h5>
+          <form action="/admin/users/<%= targetUser._id %>/update-profile" method="POST">
+            <div class="row">
+              <div class="col-md-6"><div class="form-group"><label>First name</label><input name="firstName" class="form-control" value="<%= targetUser.firstName %>" required></div></div>
+              <div class="col-md-6"><div class="form-group"><label>Last name</label><input name="lastName" class="form-control" value="<%= targetUser.lastName %>" required></div></div>
+            </div>
+            <div class="row">
+              <div class="col-md-6"><div class="form-group"><label>Email</label><input type="email" name="email" class="form-control" value="<%= targetUser.email %>" required></div></div>
+              <div class="col-md-6"><div class="form-group"><label>Phone</label><input name="phone" class="form-control" value="<%= targetUser.phone %>" required></div></div>
+            </div>
+            <div class="form-group"><label>Account currency</label><input name="currency" class="form-control" value="<%= targetUser.currency || 'EUR' %>" maxlength="3"></div>
+            <button class="btn btn-primary">Save profile</button>
+          </form>
+        </div>
+
+        <div class="admin-card">
+          <h5 class="admin-card-title">Bank Receiving Details</h5>
+          <form action="/admin/users/<%= targetUser._id %>/update-bank-details" method="POST">
+            <div class="row">
+              <div class="col-md-6"><div class="form-group"><label>Bank name</label><input name="bankName" class="form-control" value="<%= targetUser.bankDetails && targetUser.bankDetails.bankName || 'NovBank' %>"></div></div>
+              <div class="col-md-6"><div class="form-group"><label>IBAN</label><input name="iban" class="form-control" value="<%= targetUser.bankDetails && targetUser.bankDetails.iban || '' %>"></div></div>
+            </div>
+            <div class="row">
+              <div class="col-md-4"><div class="form-group"><label>SWIFT / BIC</label><input name="swift" class="form-control" value="<%= targetUser.bankDetails && targetUser.bankDetails.swift || '' %>"></div></div>
+              <div class="col-md-4"><div class="form-group"><label>Routing number</label><input name="routingNumber" class="form-control" value="<%= targetUser.bankDetails && targetUser.bankDetails.routingNumber || '' %>"></div></div>
+              <div class="col-md-4"><div class="form-group"><label>Sort code</label><input name="sortCode" class="form-control" value="<%= targetUser.bankDetails && targetUser.bankDetails.sortCode || '' %>"></div></div>
+            </div>
+            <div class="form-group"><label>Bank address</label><input name="bankAddress" class="form-control" value="<%= targetUser.bankDetails && targetUser.bankDetails.bankAddress || '' %>"></div>
+            <button class="btn btn-primary">Save bank details</button>
+          </form>
+        </div>
+
+        <div class="admin-card">
+          <h5 class="admin-card-title">Ledger Balance Control</h5>
+          <p class="admin-danger-text">Set a target balance and provide a reason. The adjustment is recorded in the ledger and audit log.</p>
+          <form action="/admin/users/<%= targetUser._id %>/adjust-balance" method="POST">
+            <div class="form-inline-row">
+              <input type="number" name="targetBalance" class="form-control" value="<%= targetUser.balance.toFixed(2) %>" step="0.01" min="0" required>
+              <input type="text" name="reason" class="form-control" placeholder="Reason for adjustment" required>
+              <button class="btn btn-warning">Apply adjustment</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="admin-card">
+          <h5 class="admin-card-title">Verification Controls</h5>
+          <div class="form-inline-row">
+            <form action="/admin/users/<%= targetUser._id %>/verification" method="POST"><input type="hidden" name="action" value="email"><input type="hidden" name="value" value="<%= targetUser.emailVerified ? 'false' : 'true' %>"><button class="btn btn-info"><%= targetUser.emailVerified ? 'Mark email unverified' : 'Verify email' %></button></form>
+            <form action="/admin/users/<%= targetUser._id %>/verification" method="POST"><input type="hidden" name="action" value="kyc"><select name="value" class="form-control"><option value="none" <%= targetUser.kycStatus === 'none' ? 'selected' : '' %>>KYC: None</option><option value="pending" <%= targetUser.kycStatus === 'pending' ? 'selected' : '' %>>KYC: Pending</option><option value="approved" <%= targetUser.kycStatus === 'approved' ? 'selected' : '' %>>KYC: Approved</option><option value="declined" <%= targetUser.kycStatus === 'declined' ? 'selected' : '' %>>KYC: Declined</option></select><button class="btn btn-info">Apply KYC</button></form>
+          </div>
+        </div>
+
+        <div class="admin-card" style="border:1px solid #f5c542;background:#fffbeb;">
+          <h5 class="admin-card-title">User Session</h5>
+          <p style="color:#667085;font-size:13px;">Open this active user's account exactly as they see it. Financial and security actions remain subject to the existing controls.</p>
+          <form action="/admin/users/<%= targetUser._id %>/impersonate" method="POST" onsubmit="return confirm('Open this user account as Super Admin? Your admin session will be preserved so you can return safely.');">
+            <button class="btn btn-primary">Open user account</button>
+          </form>
+        </div>
+
         <!-- Edit Balance -->
         <div class="admin-card">
           <h5 class="admin-card-title">Edit Balance</h5>
@@ -145,6 +206,63 @@
           </form>
         </div>
 
+        <div class="admin-card">
+          <h5 class="admin-card-title">Account Operations</h5>
+          <div class="admin-operation-grid">
+            <form action="/admin/users/<%= targetUser._id %>/credit" method="POST" class="admin-operation-box">
+              <strong>Credit Account</strong>
+              <input type="number" name="amount" class="form-control" step="0.01" min="0.01" placeholder="Amount" required>
+              <input type="text" name="reason" class="form-control" placeholder="Reason" required>
+              <button class="btn btn-success">Credit</button>
+            </form>
+            <form action="/admin/users/<%= targetUser._id %>/debit" method="POST" class="admin-operation-box">
+              <strong>Debit Account</strong>
+              <input type="number" name="amount" class="form-control" step="0.01" min="0.01" placeholder="Amount" required>
+              <input type="text" name="reason" class="form-control" placeholder="Reason" required>
+              <button class="btn btn-warning">Debit</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <h5 class="admin-card-title">Account Usage Limits</h5>
+          <form action="/admin/users/<%= targetUser._id %>/limits" method="POST">
+            <div class="row">
+              <div class="col-md-4"><label>Daily transfers</label><input type="number" name="dailyTransfer" class="form-control" min="0" step="0.01" value="<%= targetUser.accountLimits && targetUser.accountLimits.dailyTransfer != null ? targetUser.accountLimits.dailyTransfer : 10000 %>"></div>
+              <div class="col-md-4"><label>Monthly transfers</label><input type="number" name="monthlyTransfer" class="form-control" min="0" step="0.01" value="<%= targetUser.accountLimits && targetUser.accountLimits.monthlyTransfer != null ? targetUser.accountLimits.monthlyTransfer : 50000 %>"></div>
+              <div class="col-md-4"><label>Card spending</label><input type="number" name="cardSpending" class="form-control" min="0" step="0.01" value="<%= targetUser.accountLimits && targetUser.accountLimits.cardSpending != null ? targetUser.accountLimits.cardSpending : 5000 %>"></div>
+            </div>
+            <button class="btn btn-primary">Save limits</button>
+          </form>
+        </div>
+
+        <div class="admin-card">
+          <h5 class="admin-card-title">Security Controls</h5>
+          <div class="admin-security-grid">
+            <form action="/admin/users/<%= targetUser._id %>/two-factor" method="POST">
+              <input type="hidden" name="enabled" value="<%= targetUser.twoFactorEnabled ? 'false' : 'true' %>">
+              <button class="btn btn-info"><%= targetUser.twoFactorEnabled ? 'Disable 2FA' : 'Enable 2FA' %></button>
+            </form>
+            <form action="/admin/users/<%= targetUser._id %>/reset-password" method="POST">
+              <input type="password" name="password" class="form-control" minlength="8" placeholder="Temporary password" required>
+              <button class="btn btn-secondary">Reset Password</button>
+            </form>
+          </div>
+          <p class="admin-muted" style="margin-top:12px;">Transaction PINs and passwords are never displayed in plaintext in this panel.</p>
+        </div>
+
+        <div class="admin-card admin-danger-zone">
+          <h5 class="admin-card-title danger-title">Account Status</h5>
+          <form action="/admin/users/<%= targetUser._id %>/status" method="POST" class="form-inline-row">
+            <select name="status" class="form-control">
+              <option value="active" <%= targetUser.accountStatus === 'active' ? 'selected' : '' %>>Active</option>
+              <option value="suspended" <%= targetUser.accountStatus === 'suspended' ? 'selected' : '' %>>Suspended</option>
+              <option value="closed" <%= targetUser.accountStatus === 'closed' ? 'selected' : '' %>>Closed</option>
+            </select>
+            <button class="btn btn-dark">Update status</button>
+          </form>
+        </div>
+
         <!-- Transaction History -->
         <div class="admin-card">
           <h5 class="admin-card-title">Transaction History</h5>
@@ -180,7 +298,16 @@
 
       </div>
     </div>
-  </main>
+  <section class="admin-card" style="margin-top:20px;">
+  <div class="admin-card-header"><h2>Bitcoin Receiving</h2><span class="admin-status-badge <%= targetUser.bitcoinDepositAddress ? 'status-active' : 'status-suspended' %>"><%= targetUser.bitcoinDepositAddress ? 'Configured' : 'Not configured' %></span></div>
+  <p style="color:#667085;font-size:13px;">Set or replace the Bitcoin deposit address used on this user's Receive Money page. Leave empty to disable Bitcoin receiving for the account.</p>
+  <form action="/admin/users/<%= targetUser._id %>/bitcoin-address" method="POST">
+    <div class="form-group"><label>Bitcoin deposit address</label><input type="text" name="bitcoinDepositAddress" class="form-control" value="<%= targetUser.bitcoinDepositAddress || '' %>" placeholder="bc1... or 1... / 3..."></div>
+    <button type="submit" class="btn btn-primary">Save Bitcoin address</button>
+  </form>
+  <% if (targetUser.bitcoinDepositAddress) { %><small style="display:block;margin-top:10px;color:#98a2b3;word-break:break-all;">Current: <%= targetUser.bitcoinDepositAddress %></small><% } %>
+</section>
+</main>
 </div>
 
 <%- include('partials/admin-footer') %>

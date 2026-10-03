@@ -4,14 +4,14 @@ var TransactionSchema = new mongoose.Schema({
   sender:   { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   receiver: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
 
-   type: {
+  type: {
     type: String,
-    enum: ['internal_transfer', 'wire_transfer', 'deposit', 'withdrawal', 'airtime', 'loan_credit'],
+    enum: ['internal_transfer', 'wire_transfer', 'deposit', 'withdrawal', 'airtime', 'loan_credit', 'loan_repayment', 'admin_credit', 'admin_debit', 'grant_credit', 'refund_credit'],
     required: true
- },
+  },
 
   amount:      { type: Number, required: true },
-  currency:    { type: String, default: 'EUR' },
+  currency:    { type: String, default: 'EUR', uppercase: true },
   description: { type: String, default: '' },
   category: {
     type: String,
@@ -23,8 +23,16 @@ var TransactionSchema = new mongoose.Schema({
 
   status: {
     type: String,
-    enum: ['pending', 'completed', 'failed', 'cancelled'],
+    enum: ['pending', 'processing', 'completed', 'failed', 'cancelled', 'reversed'],
     default: 'pending'
+  },
+
+  processing: {
+    submittedAt: { type: Date, default: null },
+    processedAt: { type: Date, default: null },
+    processedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+    failureReason: { type: String, default: '' },
+    reversalReason: { type: String, default: '' }
   },
 
   wireDetails: {
@@ -37,14 +45,27 @@ var TransactionSchema = new mongoose.Schema({
     reference:     { type: String }
   },
 
+  idempotencyKey: { type: String, unique: true, sparse: true, index: true },
   reference: {
     type: String,
+    unique: true,
     default: function () {
       return 'TXN' + Date.now() + Math.floor(Math.random() * 1000);
     }
   },
 
-  createdAt: { type: Date, default: Date.now }
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
 });
+
+TransactionSchema.pre('save', function (next) {
+  this.updatedAt = new Date();
+  next();
+});
+
+TransactionSchema.index({ sender: 1, createdAt: -1 });
+TransactionSchema.index({ receiver: 1, createdAt: -1 });
+TransactionSchema.index({ status: 1, createdAt: -1 });
+TransactionSchema.index({ sender: 1, type: 1, createdAt: -1 });
 
 module.exports = mongoose.model('Transaction', TransactionSchema);

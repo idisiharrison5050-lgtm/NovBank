@@ -1,173 +1,169 @@
 <%- include('../partials/header') %>
 <link rel="stylesheet" href="/css/dashboard.css"/>
-<!-- Mobile topbar -->
+<link rel="stylesheet" href="/css/dashboard-premium.css"/>
+<link rel="stylesheet" href="/css/dashboard-command.css?v=command6"/>
 <div class="mobile-topbar">
-    <img src="/images/nav.png" 
-       alt="NovBank Logo" 
-       width="32" 
-       height="32" 
-       class="d-inline-block align-text-top me-2" 
-       style="border-radius: 6px;">
-  
+  <img src="/images/nav.png" alt="NovBank Logo" width="32" height="32" class="d-inline-block me-2" style="border-radius:6px;">
   <span class="mobile-logo">NovBank</span>
-</a>
-  <button class="hamburger-btn" id="hamburgerBtn">
-    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <line x1="3" y1="6" x2="21" y2="6"/>
-      <line x1="3" y1="12" x2="21" y2="12"/>
-      <line x1="3" y1="18" x2="21" y2="18"/>
-    </svg>
-  </button>
+  <a class="nb-mobile-alert" href="/dashboard/notifications" aria-label="Notifications">
+    <svg viewBox="0 0 24 24"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path><path d="M10 21h4"></path></svg>
+    <% if (unreadCount > 0) { %><i><%= unreadCount > 9 ? '9+' : unreadCount %></i><% } %>
+  </a>
+  <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open navigation"><span></span><span></span><span></span></button>
 </div>
-
-<!-- Overlay -->
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-
-<div class="dashboard-layout">
-
-  <!-- SIDEBAR -->
-  <%- include('../partials/sidebar') %>
-
-  <!-- MAIN CONTENT -->
-  <main class="dashboard-main">
-
-    <!-- Top Bar -->
-    <div class="dash-topbar">
-      <div>
-        <h1 class="dash-greeting">Good day, <%= user.firstName %>.</h1>
-        <p class="dash-date"><%= new Date().toDateString() %></p>
+<div class="dashboard-layout"><%- include('../partials/sidebar') %><main class="dashboard-main nb-command-dashboard">
+  <section class="nb-command-hero">
+    <div><span class="nb-command-kicker">PERSONAL BANKING</span><h1>Good day, <%= user.firstName %>.</h1><p>Your money, activity and banking tools at a glance.</p></div>
+    <div class="nb-command-status"><span class="nb-command-status-dot"></span><span>Secure banking session</span></div>
+  </section>
+  <% if (success_msg.length > 0) { %><div class="alert alert-success"><%= success_msg %></div><% } %><% if (error_msg.length > 0) { %><div class="alert alert-danger"><%= error_msg %></div><% } %>
+  <section class="nb-command-grid"><div class="nb-networth-card"><div class="nb-networth-top"><span>AVAILABLE BALANCE</span><a href="/dashboard/profile">Account details →</a></div><strong>€ <%= Number(user.balance || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong><div class="nb-networth-meta"><span><i></i><%= user.accountStatus.charAt(0).toUpperCase()+user.accountStatus.slice(1) %> account</span><span>•••• <%= String(user.accountNumber).slice(-4) %></span></div>
+      <div class="nb-balance-actions" aria-label="Quick banking actions">
+        <button type="button" data-action-popup="send"><span class="nb-balance-action-icon"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></span><b>Send</b></button>
+        <button type="button" data-action-popup="receive"><span class="nb-balance-action-icon"><svg viewBox="0 0 24 24"><path d="M19 12H5"></path><path d="m11 18-6-6 6-6"></path></svg></span><b>Receive</b></button>
+        <button type="button" data-action-popup="add"><span class="nb-balance-action-icon"><svg viewBox="0 0 24 24"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg></span><b>Add funds</b></button>
+        <button type="button" data-action-popup="withdraw"><span class="nb-balance-action-icon"><svg viewBox="0 0 24 24"><path d="M12 19V5"></path><path d="m6 11 6-6 6 6"></path></svg></span><b>Withdraw</b></button>
+        <button type="button" data-action-popup="cards"><span class="nb-balance-action-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 10h18"></path></svg></span><b>Cards</b></button>
+        <button type="button" data-action-popup="airtime"><span class="nb-balance-action-icon"><svg viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2"></rect><path d="M10 6h4"></path><circle cx="12" cy="17" r="1"></circle></svg></span><b>Airtime</b></button>
       </div>
-      <a href="/dashboard/notifications" class="notif-btn">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-        <% if (unreadCount > 0) { %><span class="notif-dot"></span><% } %>
-      </a>
+    </div><div class="nb-health-card"><span>ACCOUNT HEALTH</span><div class="nb-health-ring"><b><%= user.kycStatus === 'approved' ? '100%' : user.kycStatus === 'pending' ? '75%' : '50%' %></b></div><strong><%= user.kycStatus === 'approved' ? 'Verification complete' : user.kycStatus === 'pending' ? 'Verification in progress' : 'Complete your profile' %></strong><p><%= user.kycStatus === 'approved' ? 'Your account is fully set up.' : 'Finish the remaining steps to unlock all banking features.' %></p><a href="/kyc">Review account →</a></div></section>
+
+  <section class="nb-financial-cards" aria-label="Financial overview">
+    <article class="nb-fin-card nb-fin-card-balance">
+      <div class="nb-fin-card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><path d="M8 12h8"></path><path d="M12 8v8"></path></svg></div>
+      <span>MONTHLY TRANSFER LIMIT</span>
+      <strong>€ <%= Number((user.accountLimits && user.accountLimits.monthlyTransfer) || 0).toLocaleString('en-GB',{minimumFractionDigits:0,maximumFractionDigits:0}) %></strong>
+      <small>Maximum outgoing volume</small>
+      <a href="/dashboard/profile">Manage limits <b>→</b></a>
+    </article>
+    <article class="nb-fin-card nb-fin-card-profit">
+      <div class="nb-fin-card-icon"><svg viewBox="0 0 24 24"><path d="M4 19V5"></path><path d="M4 19h16"></path><path d="m7 15 4-4 3 2 5-7"></path><path d="M16 6h3v3"></path></svg></div>
+      <span>MONTHLY RECEIVED</span>
+      <strong>€ <%= Number(monthIncoming || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong>
+      <small>Completed money in this month</small>
+      <a href="/dashboard/transactions">View transactions <b>→</b></a>
+    </article>
+    <article class="nb-fin-card nb-fin-card-active">
+      <div class="nb-fin-card-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M8 8h8"></path><path d="M8 12h5"></path><circle cx="17" cy="15" r="2"></circle></svg></div>
+      <span>MONTHLY SENT</span>
+      <strong>€ <%= Number(monthOutgoing || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong>
+      <small>Completed money out this month</small>
+      <a href="/dashboard/transactions">View transactions <b>→</b></a>
+    </article>
+    <article class="nb-fin-card nb-fin-card-limit">
+      <div class="nb-fin-card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v5l3 2"></path><path d="M8 3h8"></path></svg></div>
+      <span>TRANSFER LIMIT</span>
+      <strong>€ <%= Number((user.accountLimits && user.accountLimits.dailyTransfer) || 0).toLocaleString('en-GB',{minimumFractionDigits:0,maximumFractionDigits:0}) %></strong>
+      <small>Daily outgoing limit</small>
+      <a href="/dashboard/profile">Manage limits <b>→</b></a>
+    </article>
+  </section>
+
+  <section class="nb-financial-pulse">
+    <div class="nb-pulse-intro"><span>FINANCIAL PULSE</span><h2>Your money at a glance.</h2><p>Based on completed account activity over the current month.</p></div>
+    <div class="nb-pulse-stat"><span>RECEIVED</span><strong>€ <%= Number(monthIncoming || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong><small>Money in</small></div>
+    <div class="nb-pulse-stat"><span>SENT</span><strong>€ <%= Number(monthOutgoing || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong><small>Money out</small></div>
+    <div class="nb-pulse-stat <%= Number(monthIncoming || 0) - Number(monthOutgoing || 0) >= 0 ? 'positive' : 'negative' %>"><span>NET MOVEMENT</span><strong><%= Number(monthIncoming || 0) - Number(monthOutgoing || 0) >= 0 ? '+' : '−' %>€ <%= Math.abs(Number(monthIncoming || 0) - Number(monthOutgoing || 0)).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong><small><%= Number(monthIncoming || 0) - Number(monthOutgoing || 0) >= 0 ? 'More received than sent' : 'More sent than received' %></small></div>
+  </section>
+
+  <div class="nb-action-modal" id="nbActionModal" aria-hidden="true">
+    <div class="nb-action-backdrop" data-action-close></div>
+    <div class="nb-action-dialog" role="dialog" aria-modal="true">
+      <button class="nb-action-close" type="button" data-action-close aria-label="Close">×</button>
+      <span class="nb-modal-icon" id="nbActionIcon"></span><span class="nb-modal-kicker">NOVBANK</span>
+      <h2 id="nbActionTitle">Banking action</h2><p id="nbActionText"></p>
+      <div class="nb-modal-options" id="nbActionOptions"></div>
     </div>
+  </div>
 
-    <% if (success_msg.length > 0) { %>
-      <div class="alert alert-success"><%= success_msg %></div>
-    <% } %>
-    <% if (error_msg.length > 0) { %>
-      <div class="alert alert-danger"><%= error_msg %></div>
-    <% } %>
-
-    <!-- Balance Card + Account Info -->
-    <div class="row dash-cards">
-      <div class="col-md-5">
-        <div class="balance-card">
-          <p class="balance-label">Available Balance</p>
-           <p class="balance-amount">
-             € <%= (user.balance !== undefined && user.balance !== null) ? Number(user.balance).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00' %>
-           </p>
-          <p class="balance-account"><%= user.accountNumber %></p>
-          <p class="balance-name"><%= user.firstName %> <%= user.lastName %></p>
-        </div>
+  <section class="nb-command-two-col">
+    <div class="nb-command-panel nb-activity-panel">
+      <div class="nb-panel-heading">
+        <div><span>RECENT ACTIVITY</span><h2>Money movement</h2></div>
+        <a href="/dashboard/transactions">View all →</a>
       </div>
-      <div class="col-md-7">
-        <div class="row">
-          <div class="col-6">
-            <div class="info-card">
-              <p class="info-card-label">Account Status</p>
-              <p class="info-card-value status-<%= user.accountStatus %>"><%= user.accountStatus.charAt(0).toUpperCase() + user.accountStatus.slice(1) %></p>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="info-card">
-              <p class="info-card-label">Currency</p>
-              <p class="info-card-value"><%= user.currency %></p>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="info-card">
-              <p class="info-card-label">Member Since</p>
-              <p class="info-card-value"><%= new Date(user.createdAt).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }) %></p>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="info-card">
-              <p class="info-card-label">Username</p>
-              <p class="info-card-value">@<%= user.username %></p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Quick Actions -->
-    <div class="quick-actions">
-      <a href="/transfer" class="quick-btn">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-        Send Money
-      </a>
-      <a href="/transfer/wire" class="quick-btn">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-        Wire Transfer
-      </a>
-      <a href="/transfer/deposit" class="quick-btn">
-       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20"/></svg>
-       Deposit
-      </a>
-    </div>
-
-    <!-- Spending Summary -->
-    <% if (spending.length > 0) { %>
-    <div class="dash-section">
-      <h3 class="section-title">Spending This Month</h3>
-      <div class="spending-grid">
-        <% spending.forEach(function(item) { %>
-          <div class="spending-item">
-            <p class="spending-category"><%= item._id %></p>
-            <p class="spending-amount">€ <%= Number(item.total).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></p>
-          </div>
-        <% }); %>
-      </div>
-    </div>
-    <% } %>
-
-    <!-- Recent Transactions -->
-    <div class="dash-section">
-      <div class="section-header-row">
-        <h3 class="section-title">Recent Transactions</h3>
-        <a href="/dashboard/transactions" class="view-all-link">View All</a>
-      </div>
+      <div class="nb-activity-list">
       <% if (transactions.length === 0) { %>
-        <div class="empty-state">
-          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-          <p>No transactions yet.</p>
-        </div>
-      <% } else { %>
-        <div class="txn-list">
-          <% transactions.forEach(function(txn) { %>
-            <div class="txn-item">
-              <div class="txn-icon txn-<%= txn.type %>">
-                <% if (txn.type === 'internal_transfer') { %>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                <% } else if (txn.type === 'wire_transfer') { %>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-                <% } else { %>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                <% } %>
-              </div>
-              <div class="txn-info">
-                <p class="txn-desc"><%= txn.description || txn.type.replace('_', ' ') %></p>
-                <p class="txn-meta">
-                  <%= txn.category %> &bull;
-                  <%= new Date(txn.createdAt).toLocaleDateString('en-GB') %>
-                </p>
-              </div>
-              <div class="txn-right">
-                <p class="<%= txn.type === 'deposit' || txn.type === 'loan_credit' ? 'credit' : (txn.sender && txn.sender._id && txn.sender._id.toString() === user._id.toString() ? 'debit' : 'credit') %>">
-                  <%= txn.type === 'deposit' || txn.type === 'loan_credit' ? '+' : (txn.sender && txn.sender._id && txn.sender._id.toString() === user._id.toString() ? '-' : '+') %>€<%= Number(txn.amount).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %>
-                </p>
-                <span class="txn-status status-<%= txn.status %>"><%= txn.status %></span>
-              </div>
-            </div>
-          <% }); %>
-        </div>
-      <% } %>
+        <div class="nb-empty-state"><b>No activity yet</b><span>Your account activity will appear here.</span></div>
+      <% } else { transactions.forEach(function(txn) {
+        var outgoing = txn.sender && txn.sender._id && txn.sender._id.toString() === user._id.toString();
+        var credit = txn.type === 'deposit' || txn.type === 'loan_credit' || !outgoing;
+        var other = outgoing ? txn.receiver : txn.sender;
+        var otherName = other && other.firstName ? (other.firstName + ' ' + (other.lastName || '')) : (txn.description || txn.type.replace(/_/g,' '));
+        var icon = txn.type === 'airtime' ? 'phone' : txn.type === 'wire_transfer' ? 'transfer' : txn.type === 'deposit' ? 'down' : txn.type === 'loan_credit' ? 'loan' : credit ? 'down' : 'up';
+      %>
+        <a class="nb-activity-item" href="/dashboard/transactions/<%= txn._id %>">
+          <span class="nb-activity-icon <%= credit ? 'credit' : '' %>">
+            <% if (icon === 'phone') { %><svg viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2"></rect><path d="M10 6h4"></path><circle cx="12" cy="17" r="1"></circle></svg>
+            <% } else if (icon === 'transfer') { %><svg viewBox="0 0 24 24"><path d="M5 7h14"></path><path d="m15 4 4 3-4 3"></path><path d="M19 17H5"></path><path d="m9 14-4 3 4 3"></path></svg>
+            <% } else if (icon === 'loan') { %><svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="13" rx="2"></rect><path d="M8 6V4h8v2"></path><path d="M8 13h8"></path></svg>
+            <% } else if (icon === 'down') { %><svg viewBox="0 0 24 24"><path d="M12 4v15"></path><path d="m6 13 6 6 6-6"></path></svg>
+            <% } else { %><svg viewBox="0 0 24 24"><path d="M12 20V5"></path><path d="m6 11 6-6 6 6"></path></svg><% } %>
+          </span>
+          <div class="nb-activity-copy">
+            <b><%= otherName.trim() || 'Account activity' %></b>
+            <small><%= txn.category || txn.type.replace(/_/g,' ') %> · <%= new Date(txn.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) %></small>
+          </div>
+          <div class="nb-activity-amount">
+            <strong class="<%= credit ? 'credit' : '' %>"><%= credit ? '+' : '-' %>€<%= Number(txn.amount).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong>
+            <small><%= txn.status || 'completed' %></small>
+          </div>
+        </a>
+      <% }); } %>
+      </div>
     </div>
-
-  </main>
-</div>
-
-<%- include('../partials/footer') %>
+    <div class="nb-command-panel nb-spending-panel">
+      <div class="nb-panel-heading">
+        <div><span>SPENDING PROFILE</span><h2>Where your money goes</h2></div>
+        <span class="nb-spending-period">30 DAYS</span>
+      </div>
+      <% if (spending.length === 0) { %>
+        <div class="nb-empty-state"><b>No spending data yet</b><span>Completed spending will be grouped here.</span></div>
+      <% } else { var spendTotal = spending.reduce(function(sum,item){return sum + Number(item.total || 0);},0); spending.forEach(function(item){ var pct = spendTotal ? Math.round((Number(item.total)/spendTotal)*100) : 0; %>
+        <div class="nb-spend-row"><div><b><%= item._id || 'Other' %></b><span>€ <%= Number(item.total).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></span></div><div class="nb-spend-track"><i style="width:<%= pct %>%"></i></div><small><%= pct %>% of spending</small></div>
+      <% }); } %>
+      <% if (spending.length > 0) { %><div class="nb-spending-total"><span>Total spending</span><b>€ <%= Number(spendTotal).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></b></div><% } %>
+    </div>
+  </section>
+  <section class="nb-command-panel nb-cashflow-overview">
+    <div class="nb-panel-heading">
+      <div><span>CASH FLOW</span><h2>Money movement this month.</h2></div>
+      <div class="nb-cashflow-summary"><b>+€ <%= Number(monthIncoming || 0).toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2}) %></b><span>received</span><strong>−€ <%= Number(monthOutgoing || 0).toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong><span>sent</span></div>
+    </div>
+    <div class="nb-cashflow-chart">
+      <% var maxFlow = 1; (cashflow || []).forEach(function(day){ maxFlow = Math.max(maxFlow, Number(day.incoming || 0), Number(day.outgoing || 0)); }); %>
+      <% (cashflow || []).forEach(function(day){ var inHeight = Math.max(4, Math.round((Number(day.incoming || 0) / maxFlow) * 100)); var outHeight = Math.max(4, Math.round((Number(day.outgoing || 0) / maxFlow) * 100)); %>
+        <div class="nb-cashflow-day"><div class="nb-cashflow-columns"><i style="height:<%= inHeight %>%"></i><b style="height:<%= outHeight %>%"></b></div><small><%= day.label %></small></div>
+      <% }); %>
+    </div>
+    <div class="nb-cashflow-legend"><span><i></i>Money in</span><span><b></b>Money out</span><a href="/dashboard/transactions">View transactions →</a></div>
+  </section>
+  <section class="nb-dashboard-command-row">
+    <div class="nb-command-panel nb-attention-panel">
+      <div class="nb-panel-heading"><div><span>ATTENTION CENTER</span><h2>Things to keep an eye on.</h2></div><a href="/dashboard/notifications">Secure inbox →</a></div>
+      <div class="nb-attention-list">
+        <a href="/kyc" class="nb-attention-item"><span class="nb-attention-icon"><i></i></span><div><b>Identity & account</b><small><%= user.kycStatus === 'approved' ? 'Verification complete. Your account is fully set up.' : 'Complete the remaining verification steps.' %></small></div><em><%= user.kycStatus === 'approved' ? 'Complete' : 'Review' %></em></a>
+        <a href="/dashboard/security" class="nb-attention-item"><span class="nb-attention-icon shield">✓</span><div><b>Account security</b><small>Review your security settings and recent account activity.</small></div><em>Review</em></a>
+        <a href="/dashboard/notifications" class="nb-attention-item"><span class="nb-attention-icon inbox">●</span><div><b>Secure inbox</b><small><%= unreadCount || 0 %> unread notification<%= (unreadCount || 0) === 1 ? '' : 's' %>.</small></div><em><%= unreadCount > 0 ? 'Open' : 'Clear' %></em></a>
+      </div>
+    </div>
+    <div class="nb-command-panel nb-account-snapshot">
+      <div class="nb-panel-heading"><div><span>ACCOUNT SNAPSHOT</span><h2>Your NovBank status.</h2></div></div>
+      <div class="nb-snapshot-row"><span>Account status</span><b><i></i><%= user.accountStatus.charAt(0).toUpperCase()+user.accountStatus.slice(1) %></b></div>
+      <div class="nb-snapshot-row"><span>Verification</span><b><%= user.kycStatus === 'approved' ? 'Verified' : user.kycStatus === 'pending' ? 'In review' : 'Incomplete' %></b></div>
+      <div class="nb-snapshot-row"><span>Account number</span><b>•••• <%= String(user.accountNumber).slice(-4) %></b></div>
+      <a class="nb-snapshot-link" href="/dashboard/profile">Manage account →</a>
+    </div>
+  </section>
+<script>
+(function(){
+var modal=document.getElementById('nbActionModal');if(!modal)return;
+var title=document.getElementById('nbActionTitle'),desc=document.getElementById('nbActionText'),icon=document.getElementById('nbActionIcon'),options=document.getElementById('nbActionOptions');
+var data={send:['Send money','Choose how you want to move money from your NovBank account.','→',[['Local transfer','Send money to another NovBank account.','/transfer'],['International wire','Send funds to an external bank account using wire transfer.','/transfer/wire']]],receive:['Receive money','Choose how you want to receive money into your account.','↓',[['Bank transfer details','Get your account number, IBAN and SWIFT details for a bank transfer.','/receive'],['Bitcoin / Crypto deposit','View your Bitcoin deposit address and crypto receiving instructions.','/receive']]],add:['Add funds','Choose a funding method for your account.','↓',[['Deposit','Add money to your balance.','/transfer/deposit']]],withdraw:['Withdraw','Move available funds out securely.','↑',[['Withdraw funds','Start a secure withdrawal.','/transfer/withdraw']]],cards:['Cards','Manage your NovBank cards.','▣',[['Manage cards','View cards and controls.','/cards']]],airtime:['Airtime','Recharge a mobile line from your account.','☎',[['Buy airtime','Recharge a mobile line.','/airtime']]],more:['More banking','Everything else is grouped here so the dashboard stays clean.','•••',[['Airtime','Recharge a mobile line.','/airtime'],['Loans','View loan services.','/loans'],['Transactions','Review account activity.','/dashboard/transactions'],['Security','Review account security.','/dashboard/security']]]};
+function open(key){var d=data[key];if(!d)return;title.textContent=d[0];desc.textContent=d[1];icon.textContent=d[2];options.innerHTML='';d[3].forEach(function(x){var a=document.createElement('a');a.href=x[2];a.innerHTML='<b>'+x[0]+'</b><small>'+x[1]+'</small><span>→</span>';options.appendChild(a);});modal.classList.add('is-open');modal.setAttribute('aria-hidden','false');document.body.classList.add('nb-modal-open');}
+function close(){modal.classList.remove('is-open');modal.setAttribute('aria-hidden','true');document.body.classList.remove('nb-modal-open');}
+document.querySelectorAll('[data-action-popup]').forEach(function(b){b.addEventListener('click',function(){open(b.getAttribute('data-action-popup'));});});
+modal.addEventListener('click',function(e){if(e.target.hasAttribute('data-action-close'))close();});document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
+})();
+</script></main></div><%- include('../partials/footer') %>

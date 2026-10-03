@@ -1,0 +1,94 @@
+<%- include('../partials/header') %>
+<link rel="stylesheet" href="/css/dashboard.css"/><link rel="stylesheet" href="/css/transaction-detail.css"/>
+
+<div class="mobile-topbar">
+  <span class="mobile-logo">NovBank</span>
+  <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open navigation"><span></span><span></span><span></span></button>
+</div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="dashboard-layout">
+  <%- include('../partials/sidebar') %>
+  <main class="dashboard-main nb-detail-page">
+    <a class="nb-back" href="/dashboard/transactions" aria-label="Back to transactions"><span aria-hidden="true">←</span><span>Back to transactions</span></a>
+
+    <div class="nb-detail-head">
+      <div class="nb-detail-icon <%= isCredit ? 'credit' : '' %>" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg></div>
+      <div>
+        <span>TRANSACTION DETAILS</span>
+        <h1><%= transaction.description || transaction.type.replace(/_/g,' ') %></h1>
+        <p><%= new Date(transaction.createdAt).toLocaleString('en-GB',{dateStyle:'long',timeStyle:'short'}) %></p>
+      </div>
+    </div>
+
+    <div class="nb-receipt">
+      <div class="nb-receipt-total <%= isCredit ? 'credit' : '' %>">
+        <small><%= isCredit ? 'Money received' : 'Money sent' %></small>
+        <strong><%= isCredit ? '+' : '-' %>€<%= Number(transaction.amount).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong>
+        <span class="txn-status status-<%= transaction.status %>"><%= transaction.status %></span>
+      </div>
+
+      <div class="nb-detail-grid">
+        <div>
+          <span>REFERENCE</span>
+          <b class="nb-reference"><%= transaction.reference %></b>
+          <button type="button" class="nb-copy" aria-label="Copy transaction reference" onclick="copyReference('<%= transaction.reference %>')">Copy reference</button>
+        </div>
+        <div><span>TYPE</span><b><%= transaction.type.replace(/_/g,' ') %></b></div>
+        <div><span>CATEGORY</span><b><%= transaction.category || 'Account activity' %></b></div>
+        <div><span>DATE</span><b><%= new Date(transaction.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}) %></b></div>
+        <div>
+          <span>FROM</span>
+          <b><%= transaction.sender ? ((transaction.sender.firstName || '')+' '+(transaction.sender.lastName || '')).trim() : '—' %></b>
+          <small><%= transaction.sender ? transaction.sender.accountNumber : '' %></small>
+        </div>
+        <div>
+          <span>TO</span>
+          <b><%= transaction.receiver ? ((transaction.receiver.firstName || '')+' '+(transaction.receiver.lastName || '')).trim() : '—' %></b>
+          <small><%= transaction.receiver ? transaction.receiver.accountNumber : '' %></small>
+        </div>
+      </div>
+    </div>
+
+    <div class="nb-detail-timeline">
+      <div class="nb-timeline-head"><span>STATUS</span><strong>Transaction progress</strong></div>
+      <div class="nb-timeline">
+        <div class="nb-timeline-step <%= ['pending','processing','completed','failed','cancelled','reversed'].indexOf(transaction.status) >= 0 ? 'done' : '' %>"><i></i><div><b>Submitted</b><small><%= transaction.processing && transaction.processing.submittedAt ? new Date(transaction.processing.submittedAt).toLocaleString('en-GB') : new Date(transaction.createdAt).toLocaleString('en-GB') %></small></div></div>
+        <div class="nb-timeline-step <%= ['processing','completed','failed','cancelled','reversed'].indexOf(transaction.status) >= 0 ? 'done' : '' %>"><i></i><div><b>Processing</b><small><%= transaction.processing && transaction.processing.submittedAt ? 'Processing record created' : 'Waiting for processing' %></small></div></div>
+        <div class="nb-timeline-step <%= ['completed','failed','cancelled','reversed'].indexOf(transaction.status) >= 0 ? 'done' : '' %>"><i></i><div><b>Final status</b><small><%= transaction.processing && transaction.processing.processedAt ? new Date(transaction.processing.processedAt).toLocaleString('en-GB') : transaction.status.charAt(0).toUpperCase()+transaction.status.slice(1) %></small></div></div>
+      </div>
+      <% if (transaction.failureReason || transaction.reversalReason) { %><div class="nb-detail-warning"><b><%= transaction.status === 'reversed' ? 'Reversal reason' : 'Processing note' %></b><span><%= transaction.reversalReason || transaction.failureReason %></span></div><% } %>
+    </div>
+    <% if (transaction.wireDetails) { %>
+    <div class="nb-detail-wire">
+      <div class="nb-timeline-head"><span>WIRE DETAILS</span><strong>Recipient bank information</strong></div>
+      <div class="nb-wire-detail-grid">
+        <div><span>RECIPIENT</span><b><%= transaction.wireDetails.recipientName || '—' %></b></div>
+        <div><span>BANK</span><b><%= transaction.wireDetails.bankName || '—' %></b></div>
+        <div><span>IBAN</span><b><%= transaction.wireDetails.iban || '—' %></b></div>
+        <div><span>BIC / SWIFT</span><b><%= transaction.wireDetails.bic || '—' %></b></div>
+        <div><span>COUNTRY</span><b><%= transaction.wireDetails.bankCountry || '—' %></b></div>
+        <div><span>REFERENCE</span><b><%= transaction.wireDetails.reference || '—' %></b></div>
+      </div>
+    </div>
+    <% } %>
+    <div class="nb-detail-actions">
+      <a href="/dashboard/transactions">Done</a>
+    </div>
+  </main>
+</div>
+
+<script>
+  function copyReference(reference) {
+    if (!navigator.clipboard) return;
+    navigator.clipboard.writeText(reference).then(function () {
+      var button = document.querySelector('.nb-copy');
+      if (button) {
+        button.textContent = 'Copied';
+        setTimeout(function () { button.textContent = 'Copy reference'; }, 1400);
+      }
+    });
+  }
+</script>
+
+<%- include('../partials/footer') %>

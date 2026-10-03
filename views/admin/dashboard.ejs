@@ -6,7 +6,7 @@
   <main class="admin-main">
     <div class="admin-topbar">
       <h1 class="admin-page-title">Dashboard</h1>
-      <p class="admin-date"><%= new Date().toDateString() %></p>
+      <div><p class="admin-date"><%= new Date().toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"}) %></p></div>
     </div>
 
     <% if (success_msg && success_msg.length > 0) { %>
@@ -134,6 +134,21 @@
         </div>
       </div>
     </div>
+
+    <section class="admin-quick-ops">
+      <div class="admin-quick-ops-head">
+        <div><p class="admin-kicker">OPERATIONS</p><h3>Quick actions</h3><span>Jump directly into the areas that need attention.</span></div>
+        <a href="/admin/operations">Open operations</a>
+      </div>
+      <div class="admin-quick-ops-grid">
+        <a href="/admin/transactions?status=pending"><strong>Review transactions</strong><span>Approve or decline pending money movement.</span><b>→</b></a>
+        <a href="/admin/users"><strong>Manage customers</strong><span>Search accounts, profiles and account status.</span><b>→</b></a>
+        <a href="/admin/kyc"><strong>Review KYC</strong><span>Open identity verification cases.</span><b>→</b></a>
+        <a href="/admin/transactions?filter=deposit&status=pending"><strong>Review deposits</strong><span>Check funding evidence and deposit status.</span><b>→</b></a>
+        <a href="/admin/loans"><strong>Loan operations</strong><span>Review applications and active lending records.</span><b>→</b></a>
+        <a href="/admin/audit-log"><strong>Audit trail</strong><span>Inspect administrator activity and changes.</span><b>→</b></a>
+      </div>
+    </section>
   </main>
 </div>
 

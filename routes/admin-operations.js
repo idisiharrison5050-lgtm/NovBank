@@ -1,0 +1,586 @@
+var express = require('express');
+var bcrypt = require('bcryptjs');
+var router = express.Router();
+var Admin = require('../models/Admin');
+var User = require('../models/User');
+var Grant = require('../models/Grant');
+var Refund = require('../models/Refund');
+var AuditLog = require('../models/AuditLog');
+var Notification = require('../models/Notification');
+var ledger = require('../services/ledger');
+
+function isAdmin(req, res, next) {
+  if (req.isAuthenticated() && (req.user.role === 'superadmin' || req.user.role === 'manager')) return next();
+  res.redirect('/admin/login');
+}
+
+function logAction(adminId, action, targetType, targetId, details) {
+  return new AuditLog({
+    admin: adminId,
+    action: action,
+    targetType: targetType || 'System',
+    targetId: targetId || null,
+    details: details || ''
+  }).save();
+}
+
+function renderList(req, res, model, title, filter, statuses, extra) {
+  var query = filter && filter !== 'all' ? { status: filter } : {};
+  model.find(query).sort({ createdAt: -1 }).populate('user', 'firstName lastName username email accountNumber')
+    .then(function (items) {
+      res.render('admin/operations', {
+        title: title,
+        items: items,
+        filter: filter || 'all',
+        statuses: statuses,
+        operation: extra.operation,
+        columns: extra.columns,
+        emptyText: extra.emptyText
+      });
+    })
+    .catch(function (err) {
+      console.error(err);
+      req.flash('error_msg', 'Unable to load ' + title.toLowerCase() + '.');
+      res.redirect('/admin/dashboard');
+    });
+}
+
+router.get('/grants', isAdmin, function (req, res) {
+  renderList(req, res, Grant, 'Grant Applications', req.query.filter || 'all',
+    ['all', 'processing', 'approved', 'rejected', 'disbursed'],
+    {
+      operation: 'grants',
+      emptyText: 'No grant applications found.',
+      columns: ['Applicant', 'Amount', 'Purpose', 'Applied', 'Status', 'Actions']
+    });
+});
+
+router.post('/grants/:id/approve', isAdmin, function (req, res) {
+  Grant.findById(req.params.id).then(function (grant) {
+    if (!grant || grant.status !== 'processing') throw new Error('Grant is unavailable or already processed.');
+    grant.status = 'approved';
+    grant.reviewNote = String(req.body.note || 'Grant application approved.').trim();
+    grant.reviewedBy = req.user._id;
+    grant.reviewedAt = new Date();
+    return grant.save().then(function () {
+      return logAction(req.user._id, 'Approved Grant', 'User', grant.user, 'Approved grant of €' + grant.amount.toFixed(2));
+    }).then(function () {
+      return new Notification({
+        user: grant.user,
+        type: 'system',
+        title: 'Grant Application Approved',
+        message: 'Your grant application has been approved and is awaiting disbursement.',
+        severity: 'success'
+      }).save();
+    }).then(function () {
+      req.flash('success_msg', 'Grant approved. It is ready for disbursement.');
+      res.redirect('/admin/grants');
+    });
+  }).catch(function (err) {
+    req.flash('error_msg', err.message);
+    res.redirect('/admin/grants');
+  });
+});
+
+router.post('/grants/:id/reject', isAdmin, function (req, res) {
+  Grant.findById(req.params.id).then(function (grant) {
+    if (!grant || grant.status !== 'processing') throw new Error('Grant is unavailable or already processed.');
+    grant.status = 'rejected';
+    grant.reviewNote = String(req.body.note || 'Grant application rejected.').trim();
+    grant.reviewedBy = req.user._id;
+    grant.reviewedAt = new Date();
+    return grant.save().then(function () {
+      return logAction(req.user._id, 'Rejected Grant', 'User', grant.user, grant.reviewNote);
+    }).then(function () {
+      return new Notification({
+        user: grant.user,
+        type: 'system',
+        title: 'Grant Application Update',
+        message: 'Your grant application was not approved. ' + grant.reviewNote,
+        severity: 'warning'
+      }).save();
+    }).then(function () {
+      req.flash('success_msg', 'Grant rejected.');
+      res.redirect('/admin/grants');
+    });
+  }).catch(function (err) {
+    req.flash('error_msg', err.message);
+    res.redirect('/admin/grants');
+  });
+});
+
+router.post('/grants/:id/disburse', isAdmin, function (req, res) {
+  Grant.findById(req.params.id).then(function (grant) {
+    if (!grant || grant.status !== 'approved') throw new Error('Only approved grants can be disbursed.');
+    return new Promise(function (resolve, reject) {
+      ledger.createCredit({
+        userId: grant.user,
+        type: 'grant_credit',
+        amount: grant.amount,
+        description: 'Grant disbursement',
+        category: 'Other',
+        idempotencyKey: 'grant:' + grant._id + ':disbursement'
+      }, function (err, txn) {
+        if (err) return reject(err);
+        resolve(txn);
+      });
+    }).then(function () {
+      grant.status = 'disbursed';
+      grant.disbursedAt = new Date();
+      return grant.save();
+    }).then(function () {
+      return logAction(req.user._id, 'Disbursed Grant', 'User', grant.user, 'Disbursed €' + grant.amount.toFixed(2));
+    }).then(function () {
+      return new Notification({
+        user: grant.user,
+        type: 'transaction',
+        title: 'Grant Disbursed',
+        message: '€' + grant.amount.toFixed(2) + ' has been credited to your account as a grant.',
+        severity: 'success'
+      }).save();
+    }).then(function () {
+      req.flash('success_msg', 'Grant disbursed and credited through the ledger.');
+      res.redirect('/admin/grants');
+    });
+  }).catch(function (err) {
+    console.error(err);
+    req.flash('error_msg', 'Grant disbursement failed: ' + err.message);
+    res.redirect('/admin/grants');
+  });
+});
+
+router.get('/refunds', isAdmin, function (req, res) {
+  renderList(req, res, Refund, 'Refund Management', req.query.filter || 'all',
+    ['all', 'pending', 'approved', 'rejected', 'completed'],
+    {
+      operation: 'refunds',
+      emptyText: 'No refund requests found.',
+      columns: ['Customer', 'Amount', 'Reason', 'Requested', 'Status', 'Actions']
+    });
+});
+
+router.post('/refunds/:id/approve', isAdmin, function (req, res) {
+  Refund.findById(req.params.id).then(function (refund) {
+    if (!refund || refund.status !== 'pending') throw new Error('Refund is unavailable or already processed.');
+    refund.status = 'approved';
+    refund.reviewNote = String(req.body.note || 'Refund approved.').trim();
+    refund.reviewedBy = req.user._id;
+    refund.reviewedAt = new Date();
+    return refund.save().then(function () {
+      return logAction(req.user._id, 'Approved Refund', 'User', refund.user, 'Approved refund of €' + refund.amount.toFixed(2));
+    }).then(function () {
+      return new Notification({
+        user: refund.user,
+        type: 'system',
+        title: 'Refund Approved',
+        message: 'Your refund request has been approved and is awaiting completion.',
+        severity: 'success'
+      }).save();
+    }).then(function () {
+      req.flash('success_msg', 'Refund approved. Complete it when funds are ready.');
+      res.redirect('/admin/refunds');
+    });
+  }).catch(function (err) {
+    req.flash('error_msg', err.message);
+    res.redirect('/admin/refunds');
+  });
+});
+
+router.post('/refunds/:id/reject', isAdmin, function (req, res) {
+  Refund.findById(req.params.id).then(function (refund) {
+    if (!refund || refund.status !== 'pending') throw new Error('Refund is unavailable or already processed.');
+    refund.status = 'rejected';
+    refund.reviewNote = String(req.body.note || 'Refund rejected.').trim();
+    refund.reviewedBy = req.user._id;
+    refund.reviewedAt = new Date();
+    return refund.save().then(function () {
+      return logAction(req.user._id, 'Rejected Refund', 'User', refund.user, refund.reviewNote);
+    }).then(function () {
+      return new Notification({
+        user: refund.user,
+        type: 'system',
+        title: 'Refund Request Update',
+        message: 'Your refund request was rejected. ' + refund.reviewNote,
+        severity: 'warning'
+      }).save();
+    }).then(function () {
+      req.flash('success_msg', 'Refund rejected.');
+      res.redirect('/admin/refunds');
+    });
+  }).catch(function (err) {
+    req.flash('error_msg', err.message);
+    res.redirect('/admin/refunds');
+  });
+});
+
+router.post('/refunds/:id/complete', isAdmin, function (req, res) {
+  Refund.findById(req.params.id).then(function (refund) {
+    if (!refund || refund.status !== 'approved') throw new Error('Only approved refunds can be completed.');
+    return new Promise(function (resolve, reject) {
+      ledger.createCredit({
+        userId: refund.user,
+        type: 'refund_credit',
+        amount: refund.amount,
+        description: 'Refund completion',
+        category: 'Other',
+        idempotencyKey: 'refund:' + refund._id + ':completion'
+      }, function (err, txn) {
+        if (err) return reject(err);
+        resolve(txn);
+      });
+    }).then(function () {
+      refund.status = 'completed';
+      refund.completedAt = new Date();
+      return refund.save();
+    }).then(function () {
+      return logAction(req.user._id, 'Completed Refund', 'User', refund.user, 'Completed refund of €' + refund.amount.toFixed(2));
+    }).then(function () {
+      return new Notification({
+        user: refund.user,
+        type: 'transaction',
+        title: 'Refund Completed',
+        message: '€' + refund.amount.toFixed(2) + ' has been credited to your account.',
+        severity: 'success'
+      }).save();
+    }).then(function () {
+      req.flash('success_msg', 'Refund completed and credited through the ledger.');
+      res.redirect('/admin/refunds');
+    });
+  }).catch(function (err) {
+    console.error(err);
+    req.flash('error_msg', 'Refund completion failed: ' + err.message);
+    res.redirect('/admin/refunds');
+  });
+});
+
+router.get('/administrators', isAdmin, function (req, res) {
+  Admin.find().sort({ createdAt: -1 }).then(function (admins) {
+    res.render('admin/administrators', { title: 'Administrators', admins: admins });
+  }).catch(function (err) {
+    console.error(err);
+    res.redirect('/admin/dashboard');
+  });
+});
+
+router.post('/administrators', isAdmin, function (req, res) {
+  var firstName = String(req.body.firstName || '').trim();
+  var lastName = String(req.body.lastName || '').trim();
+  var username = String(req.body.username || '').trim().toLowerCase();
+  var email = String(req.body.email || '').trim().toLowerCase();
+  var password = String(req.body.password || '');
+  var role = req.body.role === 'manager' ? 'manager' : 'superadmin';
+
+  if (!firstName || !lastName || !username || !email || password.length < 8) {
+    req.flash('error_msg', 'Complete all administrator fields. Password must be at least 8 characters.');
+    return res.redirect('/admin/administrators');
+  }
+
+  Admin.findOne({ $or: [{ username: username }, { email: email }] }).then(function (existing) {
+    if (existing) throw new Error('Username or email is already in use.');
+    return new Admin({
+      firstName: firstName,
+      lastName: lastName,
+      username: username,
+      email: email,
+      password: password,
+      role: role
+    }).save();
+  }).then(function (admin) {
+    return logAction(req.user._id, 'Created Administrator', 'System', null, 'Created ' + role + ' account ' + admin.username);
+  }).then(function () {
+    req.flash('success_msg', 'Administrator created.');
+    res.redirect('/admin/administrators');
+  }).catch(function (err) {
+    req.flash('error_msg', err.message);
+    res.redirect('/admin/administrators');
+  });
+});
+
+router.post('/administrators/:id/toggle-role', isAdmin, function (req, res) {
+  if (String(req.user._id) === String(req.params.id)) {
+    req.flash('error_msg', 'You cannot change your own administrator role.');
+    return res.redirect('/admin/administrators');
+  }
+  Admin.findById(req.params.id).then(function (admin) {
+    if (!admin) throw new Error('Administrator not found.');
+    admin.role = admin.role === 'superadmin' ? 'manager' : 'superadmin';
+    return admin.save();
+  }).then(function () {
+    return logAction(req.user._id, 'Changed Administrator Role', 'System', null, 'Administrator ' + req.params.id + ' role changed.');
+  }).then(function () {
+    req.flash('success_msg', 'Administrator role updated.');
+    res.redirect('/admin/administrators');
+  }).catch(function (err) {
+    req.flash('error_msg', err.message);
+    res.redirect('/admin/administrators');
+  });
+});
+
+router.post('/administrators/:id/delete', isAdmin, function (req, res) {
+  if (String(req.user._id) === String(req.params.id)) {
+    req.flash('error_msg', 'You cannot delete your own administrator account.');
+    return res.redirect('/admin/administrators');
+  }
+  Admin.findByIdAndDelete(req.params.id).then(function (admin) {
+    if (!admin) throw new Error('Administrator not found.');
+    return logAction(req.user._id, 'Deleted Administrator', 'System', null, 'Deleted administrator ' + admin.username);
+  }).then(function () {
+    req.flash('success_msg', 'Administrator deleted.');
+    res.redirect('/admin/administrators');
+  }).catch(function (err) {
+    req.flash('error_msg', err.message);
+    res.redirect('/admin/administrators');
+  });
+});
+
+router.get('/settings', isAdmin, function (req, res) {
+  res.render('admin/settings', {
+    title: 'System Settings',
+    settings: {
+      appName: process.env.APP_NAME || 'NovBank',
+      currency: process.env.DEFAULT_CURRENCY || 'EUR',
+      supportEmail: process.env.ADMIN_EMAIL || '',
+      environment: process.env.NODE_ENV || 'development'
+    }
+  });
+});
+
+router.get('/generate-transaction', isAdmin, function (req, res) {
+  User.find().sort({ firstName: 1, lastName: 1 }).select('firstName lastName username email accountNumber currency').then(function (users) {
+    res.render('admin/generate-transaction', { title: 'Generate Transaction', users: users });
+  }).catch(function (err) {
+    console.error(err);
+    res.redirect('/admin/dashboard');
+  });
+});
+
+router.post('/generate-transaction', isAdmin, function (req, res) {
+  var amount = Number(req.body.amount);
+  var direction = req.body.direction === 'debit' ? 'debit' : 'credit';
+  var description = String(req.body.description || 'Manual admin transaction').trim();
+  if (!req.body.userId || !isFinite(amount) || amount <= 0 || !description) {
+    req.flash('error_msg', 'Select a customer and enter a valid amount and description.');
+    return res.redirect('/admin/generate-transaction');
+  }
+  User.findById(req.body.userId).then(function (user) {
+    if (!user) throw new Error('User not found.');
+    var operation = direction === 'credit' ? ledger.createCredit : ledger.createDebit;
+    return new Promise(function (resolve, reject) {
+      operation({
+        userId: user._id,
+        type: direction === 'credit' ? 'admin_credit' : 'admin_debit',
+        amount: amount,
+        description: description,
+        category: 'Other',
+        idempotencyKey: 'generated:' + user._id + ':' + Date.now()
+      }, function (err, txn) {
+        if (err) return reject(err);
+        resolve(txn);
+      });
+    }).then(function (txn) {
+      return logAction(req.user._id, 'Generated Transaction', 'Transaction', txn._id, direction.toUpperCase() + ' €' + amount.toFixed(2) + ' for ' + user.username + ' — ' + description);
+    }).then(function () {
+      req.flash('success_msg', 'Transaction generated and posted to the ledger.');
+      res.redirect('/admin/transactions');
+    });
+  }).catch(function (err) {
+    console.error(err);
+    req.flash('error_msg', 'Transaction generation failed: ' + err.message);
+    res.redirect('/admin/generate-transaction');
+  });
+});
+
+router.get('/create-user', isAdmin, function (req, res) {
+  res.render('admin/create-user', { title: 'Create New User' });
+});
+
+router.post('/create-user', isAdmin, function (req, res) {
+  var firstName = String(req.body.firstName || '').trim();
+  var lastName = String(req.body.lastName || '').trim();
+  var username = String(req.body.username || '').trim().toLowerCase();
+  var email = String(req.body.email || '').trim().toLowerCase();
+  var phone = String(req.body.phone || '').trim();
+  var password = String(req.body.password || '');
+
+  if (!firstName || !lastName || !username || !email || !phone || password.length < 8) {
+    req.flash('error_msg', 'Complete all fields. Password must be at least 8 characters.');
+    return res.redirect('/admin/create-user');
+  }
+
+  User.findOne({ $or: [{ username: username }, { email: email }] }).then(function (existing) {
+    if (existing) throw new Error('Username or email is already in use.');
+    return new User({
+      firstName: firstName,
+      lastName: lastName,
+      username: username,
+      email: email,
+      phone: phone,
+      password: password
+    }).save();
+  }).then(function (user) {
+    return logAction(req.user._id, 'Created User', 'User', user._id, 'Created customer account ' + user.username);
+  }).then(function () {
+    req.flash('success_msg', 'Customer account created successfully.');
+    res.redirect('/admin/users');
+  }).catch(function (err) {
+    req.flash('error_msg', err.message);
+    res.redirect('/admin/create-user');
+  });
+});
+
+/* ─── Individual customer controls ─────────────────────────── */
+router.post('/users/:id/credit', isAdmin, function (req, res) {
+  var amount = Number(req.body.amount);
+  var reason = String(req.body.reason || 'Admin credit').trim();
+  if (!isFinite(amount) || amount <= 0) {
+    req.flash('error_msg', 'Enter a valid credit amount.');
+    return res.redirect('/admin/users/' + req.params.id);
+  }
+  User.findById(req.params.id).then(function (user) {
+    if (!user) throw new Error('User not found.');
+    return new Promise(function (resolve, reject) {
+      ledger.createCredit({
+        userId: user._id,
+        type: 'admin_credit',
+        amount: amount,
+        description: reason,
+        category: 'Other',
+        idempotencyKey: 'admin-credit:' + user._id + ':' + Date.now()
+      }, function (err, txn) {
+        if (err) return reject(err);
+        resolve(txn);
+      });
+    }).then(function () {
+      return logAction(req.user._id, 'Credited User Account', 'User', user._id, '€' + amount.toFixed(2) + ' — ' + reason);
+    }).then(function () {
+      return new Notification({
+        user: user._id,
+        type: 'transaction',
+        title: 'Account Credit',
+        message: '€' + amount.toFixed(2) + ' was credited to your account.',
+        severity: 'success'
+      }).save();
+    }).then(function () {
+      req.flash('success_msg', 'Account credited through the ledger.');
+      res.redirect('/admin/users/' + user._id);
+    });
+  }).catch(function (err) {
+    console.error(err);
+    req.flash('error_msg', 'Credit failed: ' + err.message);
+    res.redirect('/admin/users/' + req.params.id);
+  });
+});
+
+router.post('/users/:id/debit', isAdmin, function (req, res) {
+  var amount = Number(req.body.amount);
+  var reason = String(req.body.reason || 'Admin debit').trim();
+  if (!isFinite(amount) || amount <= 0) {
+    req.flash('error_msg', 'Enter a valid debit amount.');
+    return res.redirect('/admin/users/' + req.params.id);
+  }
+  User.findById(req.params.id).then(function (user) {
+    if (!user) throw new Error('User not found.');
+    return new Promise(function (resolve, reject) {
+      ledger.createDebit({
+        userId: user._id,
+        type: 'admin_debit',
+        amount: amount,
+        description: reason,
+        category: 'Other',
+        idempotencyKey: 'admin-debit:' + user._id + ':' + Date.now()
+      }, function (err, txn) {
+        if (err) return reject(err);
+        resolve(txn);
+      });
+    }).then(function () {
+      return logAction(req.user._id, 'Debited User Account', 'User', user._id, '€' + amount.toFixed(2) + ' — ' + reason);
+    }).then(function () {
+      return new Notification({
+        user: user._id,
+        type: 'transaction',
+        title: 'Account Debit',
+        message: '€' + amount.toFixed(2) + ' was debited from your account.',
+        severity: 'warning'
+      }).save();
+    }).then(function () {
+      req.flash('success_msg', 'Account debited through the ledger.');
+      res.redirect('/admin/users/' + user._id);
+    });
+  }).catch(function (err) {
+    console.error(err);
+    req.flash('error_msg', 'Debit failed: ' + err.message);
+    res.redirect('/admin/users/' + req.params.id);
+  });
+});
+
+router.post('/users/:id/reset-password', isAdmin, function (req, res) {
+  var password = String(req.body.password || '');
+  if (password.length < 8) {
+    req.flash('error_msg', 'Temporary password must be at least 8 characters.');
+    return res.redirect('/admin/users/' + req.params.id);
+  }
+  User.findById(req.params.id).then(function (user) {
+    if (!user) throw new Error('User not found.');
+    return new Promise(function (resolve, reject) {
+      bcrypt.genSalt(10, function (err, salt) {
+        if (err) return reject(err);
+        bcrypt.hash(password, salt, function (hashErr, hash) {
+          if (hashErr) return reject(hashErr);
+          user.password = hash;
+          user.emailVerified = false;
+          resolve(user.save());
+        });
+      });
+    }).then(function () {
+      return logAction(req.user._id, 'Reset User Password', 'User', user._id, 'Admin reset the password and required re-verification.');
+    }).then(function () {
+      req.flash('success_msg', 'Password reset. Give the temporary password to the customer through a secure channel.');
+      res.redirect('/admin/users/' + user._id);
+    });
+  }).catch(function (err) {
+    req.flash('error_msg', 'Password reset failed: ' + err.message);
+    res.redirect('/admin/users/' + req.params.id);
+  });
+});
+
+router.post('/users/:id/two-factor', isAdmin, function (req, res) {
+  User.findById(req.params.id).then(function (user) {
+    if (!user) throw new Error('User not found.');
+    user.twoFactorEnabled = req.body.enabled === 'true';
+    return user.save().then(function () {
+      return logAction(req.user._id, 'Changed User Two-Factor Authentication', 'User', user._id, '2FA ' + (user.twoFactorEnabled ? 'enabled' : 'disabled'));
+    }).then(function () {
+      req.flash('success_msg', 'Two-factor authentication setting updated.');
+      res.redirect('/admin/users/' + user._id);
+    });
+  }).catch(function (err) {
+    req.flash('error_msg', 'Unable to change 2FA: ' + err.message);
+    res.redirect('/admin/users/' + req.params.id);
+  });
+});
+
+router.post('/users/:id/limits', isAdmin, function (req, res) {
+  var daily = Number(req.body.dailyTransfer);
+  var monthly = Number(req.body.monthlyTransfer);
+  var card = Number(req.body.cardSpending);
+  if (![daily, monthly, card].every(function (v) { return isFinite(v) && v >= 0; })) {
+    req.flash('error_msg', 'All account limits must be valid non-negative numbers.');
+    return res.redirect('/admin/users/' + req.params.id);
+  }
+  User.findById(req.params.id).then(function (user) {
+    if (!user) throw new Error('User not found.');
+    user.accountLimits = { dailyTransfer: daily, monthlyTransfer: monthly, cardSpending: card };
+    return user.save().then(function () {
+      return logAction(req.user._id, 'Updated Account Limits', 'User', user._id, 'Daily €' + daily + ', monthly €' + monthly + ', card €' + card);
+    }).then(function () {
+      req.flash('success_msg', 'Account usage limits updated.');
+      res.redirect('/admin/users/' + user._id);
+    });
+  }).catch(function (err) {
+    req.flash('error_msg', 'Unable to update limits: ' + err.message);
+    res.redirect('/admin/users/' + req.params.id);
+  });
+});
+
+
+module.exports = router;

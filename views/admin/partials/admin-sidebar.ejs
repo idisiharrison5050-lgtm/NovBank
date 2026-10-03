@@ -5,58 +5,38 @@
   </div>
 
   <nav class="admin-nav">
-    <p class="admin-nav-label">Main</p>
+    <p class="admin-nav-label">Overview</p>
+    <a href="/admin/dashboard" class="admin-nav-link <%= title === 'Admin Dashboard' ? 'active' : '' %>">▦ <span>Dashboard</span></a>
 
-    <a href="/admin/dashboard" class="admin-nav-link <%= title === 'Admin Dashboard' ? 'active' : '' %>">
-      <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-      Dashboard
-    </a>
+    <p class="admin-nav-label">Customers</p>
+    <a href="/admin/users" class="admin-nav-link <%= title === 'All Users' ? 'active' : '' %>">◉ <span>Manage Users</span></a>
+    <a href="/admin/create-user" class="admin-nav-link <%= title === 'Create New User' ? 'active' : '' %>">＋ <span>Create New User</span></a>
+    <a href="/admin/kyc" class="admin-nav-link <%= title === 'KYC Verification' || title === 'KYC Detail' ? 'active' : '' %>">✓ <span>KYC Verification</span></a>
+    <a href="/admin/notifications" class="admin-nav-link <%= title === 'Notifications' ? 'active' : '' %>">✉ <span>Email & Notifications</span></a>
 
-    <p class="admin-nav-label">Management</p>
+    <p class="admin-nav-label">Money Movement</p>
+    <a href="/admin/transactions" class="admin-nav-link <%= title === 'Transactions' ? 'active' : '' %>">↕ <span>Transaction History</span></a>
+    <a href="/admin/generate-transaction" class="admin-nav-link <%= title === 'Generate Transaction' ? 'active' : '' %>">＋ <span>Generate Transaction</span></a>
+    <a href="/admin/transactions?filter=wire_transfer&status=all" class="admin-nav-link">↗ <span>Transfer Transactions</span></a>
+    <a href="/admin/transactions?filter=deposit&status=all" class="admin-nav-link">↓ <span>User Deposits</span></a>
+    <a href="/admin/refunds" class="admin-nav-link <%= title === 'Refund Management' ? 'active' : '' %>">↩ <span>Refunds</span></a>
 
-    <a href="/admin/users" class="admin-nav-link <%= title === 'All Users' ? 'active' : '' %>">
-      <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      Users
-    </a>
+    <p class="admin-nav-label">Credit & Benefits</p>
+    <a href="/admin/grants" class="admin-nav-link <%= title === 'Grant Applications' ? 'active' : '' %>">◈ <span>Grant Applications</span></a>
+    <a href="/admin/loans" class="admin-nav-link <%= title === 'Loan Requests' ? 'active' : '' %>">▣ <span>Loan Applications</span></a>
+    <a href="/admin/cards" class="admin-nav-link <%= title === 'Card Requests' ? 'active' : '' %>">▤ <span>Virtual Cards</span></a>
 
-    <a href="/admin/transactions" class="admin-nav-link <%= title === 'Transactions' ? 'active' : '' %>">
-      <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-      Transactions
-    </a>
-
-    <a href="/admin/kyc" class="admin-nav-link">
-  <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-  KYC
-</a>
-<a href="/admin/loans" class="admin-nav-link">
-  <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-  Loans
-</a>
-<a href="/admin/cards" class="admin-nav-link">
-  <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-  Cards
-</a>
-
-    <a href="/admin/notifications" class="admin-nav-link <%= title === 'Notifications' ? 'active' : '' %>">
-      <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-      Notifications
-    </a>
-
-    <p class="admin-nav-label">System</p>
-
-    <a href="/admin/audit-log" class="admin-nav-link <%= title === 'Audit Log' ? 'active' : '' %>">
-      <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-      Audit Log
-    </a>
+    <p class="admin-nav-label">Administration</p>
+    <a href="/admin/administrators" class="admin-nav-link <%= title === 'Administrators' ? 'active' : '' %>">♟ <span>Administrators</span></a>
+    <a href="/admin/audit-log" class="admin-nav-link <%= title === 'Audit Log' ? 'active' : '' %>">◷ <span>Audit Log</span></a>
+    <a href="/admin/settings" class="admin-nav-link <%= title === 'System Settings' ? 'active' : '' %>">⚙ <span>Settings</span></a>
   </nav>
 
   <div class="admin-sidebar-footer">
     <div class="admin-user-info">
       <p class="admin-user-name"><%= user.firstName %> <%= user.lastName %></p>
-      <p class="admin-user-role">Super Admin</p>
+      <p class="admin-user-role"><%= user.role === 'manager' ? 'Manager' : 'Super Admin' %></p>
     </div>
-    <a href="/admin/logout" class="admin-logout-btn">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-    </a>
+    <a href="/admin/logout" class="admin-logout-btn">↪</a>
   </div>
 </aside>
