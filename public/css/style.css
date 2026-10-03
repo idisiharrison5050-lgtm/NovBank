@@ -469,3 +469,5 @@ a {
   .nb-loader-orbit,.nb-loader-core{animation:none}
   .nb-navigation-loader{transition:none}
 }
+/* Customer blue/white navigation loader */
+.nb-loader-core{background:#1a56db;box-shadow:0 0 0 7px rgba(26,86,219,.08),0 0 42px rgba(26,86,219,.22)}
