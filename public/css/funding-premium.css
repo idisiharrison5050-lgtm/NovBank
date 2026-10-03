@@ -77,3 +77,13 @@
 .nb-funding-panel{box-shadow:0 14px 34px rgba(16,24,40,.055);transition:transform .18s ease,box-shadow .18s ease}
 .nb-funding-panel:hover{transform:translateY(-2px);box-shadow:0 20px 42px rgba(16,24,40,.08)}
 .nb-funding-head,.nb-funding-tabs,.nb-funding-grid{position:relative;z-index:1}
+
+/* Withdrawal and funding interaction depth */
+.nb-withdraw-page .nb-withdraw-form{box-shadow:0 18px 42px rgba(16,24,40,.07)}
+.nb-withdraw-page .nb-withdraw-side{box-shadow:0 18px 42px rgba(11,18,32,.14)}
+.nb-withdraw-page .nb-withdraw-form .form-group{position:relative}
+.nb-withdraw-page .nb-withdraw-form .form-control{transition:border-color .16s ease,box-shadow .16s ease,transform .16s ease}
+.nb-withdraw-page .nb-withdraw-form .form-control:focus{transform:translateY(-1px);box-shadow:0 8px 20px rgba(21,94,239,.08)}
+.nb-withdraw-page .nb-send-button{box-shadow:0 12px 26px rgba(21,94,239,.16)}
+.nb-withdraw-page .nb-withdraw-steps>div{box-shadow:0 6px 18px rgba(16,24,40,.045);transition:transform .16s ease}
+.nb-withdraw-page .nb-withdraw-steps>div:hover{transform:translateY(-2px)}
