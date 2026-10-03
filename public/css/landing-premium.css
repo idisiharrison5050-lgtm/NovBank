@@ -570,3 +570,9 @@
  .nb-hero-inner:after{margin-top:24px;width:48px;height:3px}
  .nb-product,.nb-stat-grid div,.nb-capability-grid article{box-shadow:0 7px 20px rgba(16,24,40,.045)}
 }
+
+/* Final homepage depth pass */
+.nb-product,.nb-capability-grid article,.nb-stat-grid div{transition:transform .18s ease,box-shadow .18s ease}
+.nb-product:hover,.nb-capability-grid article:hover,.nb-stat-grid div:hover{transform:translateY(-3px);box-shadow:0 20px 45px rgba(16,24,40,.09)}
+.nb-showcase{box-shadow:0 24px 60px rgba(16,24,40,.09)}
+.nb-cta{box-shadow:0 20px 50px rgba(16,24,40,.10)}
