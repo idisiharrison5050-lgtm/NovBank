@@ -12,3 +12,10 @@
 .nb-copy-toast{position:fixed;left:50%;bottom:24px;z-index:100;transform:translate(-50%,12px);opacity:0;pointer-events:none;padding:10px 14px;border-radius:999px;background:#101828;color:#fff;font-size:10px;font-weight:800;box-shadow:0 12px 30px rgba(16,24,40,.2);transition:.18s ease}
 .nb-copy-toast.show{opacity:1;transform:translate(-50%,0)}
 @media(max-width:600px){.nb-receive-value{align-items:flex-start}.nb-receive-value strong{overflow-wrap:anywhere}.nb-inline-copy{flex:0 0 auto}}
+
+/* Visual depth pass */
+.nb-receive-grid{position:relative}
+.nb-receive-grid:before{content:"";position:absolute;left:-30px;bottom:-25px;width:125px;height:125px;border:1px solid rgba(21,94,239,.08);border-radius:50%;pointer-events:none}
+.nb-receive-card{box-shadow:0 14px 34px rgba(16,24,40,.055);transition:transform .18s ease,box-shadow .18s ease;position:relative;z-index:1}
+.nb-receive-card:hover{transform:translateY(-2px);box-shadow:0 20px 42px rgba(16,24,40,.08)}
+.nb-bitcoin-address{box-shadow:0 8px 22px rgba(16,24,40,.04)}
