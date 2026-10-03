@@ -30,3 +30,6 @@
 .nb-transaction-row{transition:transform .16s ease,box-shadow .16s ease,background .16s ease}
 .nb-transaction-row:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(16,24,40,.05)}
 .nb-transactions-head,.nb-filter-bar,.nb-transactions-list{position:relative;z-index:1}
+
+.nb-filter-bar{box-shadow:0 10px 28px rgba(16,24,40,.045);border:1px solid #e4e7ec;border-radius:16px;padding:10px}
+.nb-transactions-head{padding-bottom:4px}
