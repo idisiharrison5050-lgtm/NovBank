@@ -73,7 +73,8 @@ router.post('/request', isAuth, function (req, res) {
           user:    req.user._id,
           title:   'Loan Request Received',
           message: 'Your loan request of €' + amount.toFixed(2) + ' is under review.',
-          type:    'info'
+          type:    'loan',
+          severity: 'info'
         }).save();
       }).then(function () {
         req.flash('success_msg', 'Loan request submitted successfully.');
