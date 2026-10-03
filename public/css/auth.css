@@ -206,8 +206,3 @@ label {
 
 /* Premium auth refinement */
 .nb-auth-premium{font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.auth-brand-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:34px}.auth-brand-row>span{font-size:8px;font-weight:850;letter-spacing:.14em;color:#98a2b3}.auth-kicker{font-size:9px;letter-spacing:.12em;font-weight:850;color:#155eef;margin-bottom:8px}.auth-label-row{display:flex;justify-content:space-between;align-items:center}.auth-label-row a{font-size:10px;font-weight:800;color:#155eef}.auth-security-strip{display:flex;gap:10px;align-items:flex-start;margin-top:18px;padding:12px 13px;border:1px solid #e4e7ec;background:#f8fafc;border-radius:12px}.auth-security-strip>span{width:20px;height:20px;border-radius:50%;background:#ecfdf3;color:#039855;display:grid;place-items:center;font-size:10px;font-weight:900;flex:0 0 20px}.auth-security-strip strong,.auth-security-strip small{display:block}.auth-security-strip strong{font-size:10px;color:#344054}.auth-security-strip small{font-size:9px;color:#98a2b3;line-height:1.5;margin-top:2px}.auth-home-link{text-align:center;margin:16px 0 0}.auth-home-link a{font-size:10px;color:#667085;font-weight:700}@media(max-width:500px){.auth-brand-row{margin-bottom:25px}.auth-box{padding:30px 22px}}
-
-
-/* NovBank customer blue-and-white depth */
-.auth-container{background:#f4f7fe}
-.auth-card{box-shadow:0 22px 55px rgba(26,86,219,.10);border-color:#e2e8f0}
