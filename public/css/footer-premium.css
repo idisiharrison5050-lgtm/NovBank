@@ -10,3 +10,10 @@
 .nb-mobile-home-icon{width:48px;height:48px;border-radius:17px;background:#1d2939;display:grid;place-items:center}
 .nb-mobile-home-icon svg{width:25px;height:25px;stroke-width:2}
 }
+
+/* Customer footer depth */
+.nb-premium-footer{box-shadow:0 -14px 35px rgba(16,24,40,.08)}
+.nb-premium-footer .footer-links a{transition:transform .16s ease,color .16s ease}
+.nb-premium-footer .footer-links a:hover{transform:translateX(2px)}
+.nb-mobile-bottom-nav a{transition:transform .16s ease,background .16s ease,box-shadow .16s ease}
+.nb-mobile-bottom-nav a.active{box-shadow:0 6px 16px rgba(21,94,239,.08)}
