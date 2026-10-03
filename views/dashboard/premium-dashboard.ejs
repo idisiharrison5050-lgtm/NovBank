@@ -18,9 +18,9 @@
       </article>
 
       <div class="nb-stat">
-        <div class="nb-stat-box"><span class="nb-stat-label">Monthly inflow</span><span class="nb-stat-value">₦0.00</span></div>
-        <div class="nb-stat-box"><span class="nb-stat-label">Monthly spending</span><span class="nb-stat-value">₦0.00</span></div>
-        <div class="nb-stat-box"><span class="nb-stat-label">Savings</span><span class="nb-stat-value">₦0.00</span></div>
+        <div class="nb-stat-box"><span class="nb-stat-label">Monthly received</span><span class="nb-stat-value">€ <%= Number(monthIncoming || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></span></div>
+        <div class="nb-stat-box"><span class="nb-stat-label">Monthly sent</span><span class="nb-stat-value">€ <%= Number(monthOutgoing || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></span></div>
+        <div class="nb-stat-box"><span class="nb-stat-label">Available balance</span><span class="nb-stat-value">€ <%= Number(user.balance || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></span></div>
       </div>
 
       <section class="nb-quick-actions" aria-label="Quick banking actions">
