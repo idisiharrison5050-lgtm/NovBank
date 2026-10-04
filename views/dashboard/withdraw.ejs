@@ -8,7 +8,7 @@
     <section class="nb-funding-panel nb-withdraw-form">
       <div class="nb-withdraw-section"><span>01</span><div><h2>Destination account</h2><p>Enter the bank account that should receive your funds.</p></div></div>
       <form action="/transfer/withdraw" method="POST" id="withdrawForm">
-        <div class="form-group"><label>Payout method</label><select class="form-control" name="payoutMethod" id="payoutMethod" required><option value="bank">Bank account</option><option value="paypal">PayPal</option><option value="revolut">Revolut</option><option value="payoneer">Payoneer</option></select></div>
+        <div class="form-group"><label>Payout method</label><select class="form-control" name="payoutMethod" id="payoutMethod" required><option value="bank" <%= payoutMethod === "bank" ? "selected" : "" %>>Bank account</option><option value="paypal" <%= payoutMethod === "paypal" ? "selected" : "" %>>PayPal</option><option value="revolut" <%= payoutMethod === "revolut" ? "selected" : "" %>>Revolut</option><option value="payoneer" <%= payoutMethod === "payoneer" ? "selected" : "" %>>Payoneer</option></select></div>
         <div class="form-group"><label>Recipient name</label><input class="form-control" name="recipientName" placeholder="Full name" required></div>
         <div class="form-group payout-bank-only"><label>Bank name</label><input class="form-control" name="bankName" placeholder="Bank name"></div>
         <div class="form-group"><label id="destinationLabel">Account number / IBAN</label><input class="form-control" name="accountNumber" id="destinationAccount" placeholder="Account number or IBAN" required></div>
