@@ -7,6 +7,7 @@ var Notification = require('../models/Notification');
 var mailer = require('../config/mailer');
 var ledger = require('../services/ledger');
 var bcrypt = require('bcryptjs');
+var kycGate = require('./kyc').kycGate;
 
 function isAuth(req, res, next) {
   if (req.isAuthenticated()) return next();
@@ -22,7 +23,7 @@ function checkAccountActive(req, res, redirectOnFail, callback) {
   callback();
 }
 
-router.get('/', isAuth, function (req, res) {
+router.get('/', isAuth, kycGate, function (req, res) {
   Airtime.find({ user: req.user._id }).sort({ createdAt: -1 }).limit(10)
     .then(function (history) {
       res.render('dashboard/airtime', {
@@ -36,7 +37,7 @@ router.get('/', isAuth, function (req, res) {
     });
 });
 
-router.post('/recharge', isAuth, checkAccountActive, function (req, res) {
+router.post('/recharge', isAuth, kycGate, checkAccountActive, function (req, res) {
   if (!req.session.pinVerified) {
     req.flash('error_msg', 'Please verify your transaction PIN before making an airtime recharge.');
     return res.redirect('/pin');
