@@ -9,6 +9,7 @@ var ledger = require('../services/ledger');
 var { uploadDeposit } = require('../config/cloudinary');
 var accountLimits = require('../services/accountLimits');
 var Beneficiary = require('../models/Beneficiary');
+var kycGate = require('./kyc').kycGate;
 
 function isAuth(req, res, next) {
   if (req.isAuthenticated()) return next();
@@ -47,7 +48,7 @@ function checkAccountActive(req, res, redirectOnFail, callback) {
 }
 
 // Internal Transfer
-router.get('/', isAuth, isPinVerified, function (req, res) {
+router.get('/', isAuth, kycGate, isPinVerified, function (req, res) {
   Beneficiary.find({ user: req.user._id, kind: 'local' }).sort({ lastUsedAt: -1, createdAt: -1 }).limit(8).exec(function (err, beneficiaries) {
     if (err) {
       console.error('Transfer page beneficiary load failed:', err);
@@ -75,7 +76,7 @@ router.post('/beneficiaries/:id/delete', isAuth, isPinVerified, function (req, r
   });
 });
 
-router.post('/', isAuth, isPinVerified, function (req, res) {
+router.post('/', isAuth, kycGate, isPinVerified, function (req, res) {
   verifyPin(req, res, '/transfer', function () {
     checkAccountActive(req, res, '/transfer', function () {
       var identifier = req.body.identifier;
@@ -199,11 +200,11 @@ router.post('/', isAuth, isPinVerified, function (req, res) {
 });
 
 // Wire Transfer
-router.get('/wire', isAuth, isPinVerified, function (req, res) {
+router.get('/wire', isAuth, kycGate, isPinVerified, function (req, res) {
   res.render('dashboard/wire-transfer', { title: 'Wire Transfer', unreadCount: 0, requestKey: crypto.randomBytes(24).toString('hex') });
 });
 
-router.post('/wire', isAuth, isPinVerified, function (req, res) {
+router.post('/wire', isAuth, kycGate, isPinVerified, function (req, res) {
   verifyPin(req,res,'/transfer/wire',function(){checkAccountActive(req,res,'/transfer/wire',function(){
     var amount=parseFloat(req.body.amount), recipientName=req.body.recipientName, iban=req.body.iban, bic=req.body.bic, bankName=req.body.bankName, bankCountry=req.body.bankCountry, reference=req.body.reference||'', description=req.body.description||'', category=req.body.category||'Transfer';
     if(!amount||!recipientName||!iban||!bic||!bankName||!bankCountry){req.flash('error_msg','Please fill in all required wire transfer fields.');return res.redirect('/transfer/wire');}
@@ -217,11 +218,11 @@ router.post('/wire', isAuth, isPinVerified, function (req, res) {
   });});
 });
 // Withdrawal
-router.get('/withdraw', isAuth, isPinVerified, function (req, res) {
+router.get('/withdraw', isAuth, kycGate, isPinVerified, function (req, res) {
   res.render('dashboard/withdraw', { title: 'Withdraw Funds', unreadCount: 0, requestKey: crypto.randomBytes(24).toString('hex') });
 });
 
-router.post('/withdraw', isAuth, isPinVerified, function (req, res) {
+router.post('/withdraw', isAuth, kycGate, isPinVerified, function (req, res) {
   verifyPin(req, res, '/transfer/withdraw', function () {
     checkAccountActive(req, res, '/transfer/withdraw', function () {
       var amount = parseFloat(req.body.amount);
@@ -295,7 +296,7 @@ router.post('/withdraw', isAuth, isPinVerified, function (req, res) {
 });
 
 // Deposit Page
-router.get('/deposit', isAuth, isPinVerified, function (req, res) {
+router.get('/deposit', isAuth, kycGate, isPinVerified, function (req, res) {
   res.render('dashboard/deposit', {
     title: 'Deposit Funds',
     unreadCount: 0,
@@ -304,7 +305,7 @@ router.get('/deposit', isAuth, isPinVerified, function (req, res) {
 });
 
 // Deposit Submission
-router.post('/deposit', isAuth, isPinVerified, uploadDeposit.single('proofOfPayment'), function (req, res) {
+router.post('/deposit', isAuth, kycGate, isPinVerified, uploadDeposit.single('proofOfPayment'), function (req, res) {
   verifyPin(req, res, '/transfer/deposit', function () {
     checkAccountActive(req, res, '/transfer/deposit', function () {
       var amount      = parseFloat(req.body.amount);
@@ -356,7 +357,7 @@ router.post('/deposit', isAuth, isPinVerified, uploadDeposit.single('proofOfPaym
   });
 });
 
-router.get('/receipt', isAuth, isPinVerified, function (req, res) {
+router.get('/receipt', isAuth, kycGate, isPinVerified, function (req, res) {
   if (!req.session.receipt) return res.redirect('/dashboard');
   var receipt = req.session.receipt;
   delete req.session.receipt;
