@@ -5,6 +5,7 @@ var Notification = require('../models/Notification');
 var CardToken = require('../models/CardToken');
 var crypto = require('crypto');
 var bcrypt = require('bcryptjs');
+var kycGate = require('./kyc').kycGate;
 
 function isAuth(req, res, next) {
   if (req.isAuthenticated()) return next();
@@ -40,7 +41,7 @@ router.get('/', isAuth, function (req, res) {
   });
 });
 
-router.post('/request', isAuth, pinGate, function (req, res) {
+router.post('/request', isAuth, kycGate, pinGate, function (req, res) {
   var cardType = req.body.cardType;
   if (!cardType || ['visa', 'mastercard'].indexOf(cardType) === -1) {
     req.flash('error_msg', 'Please select a valid card type.');
@@ -108,7 +109,7 @@ function pinGate(req, res, next) {
   });
 }
 
-router.post('/:id/freeze', isAuth, pinGate, function (req, res) {
+router.post('/:id/freeze', isAuth, kycGate, pinGate, function (req, res) {
   Card.findOne({ _id: req.params.id, user: req.user._id }).then(function (card) {
     if (!card) {
       req.flash('error_msg', 'Card not found.');
@@ -139,7 +140,7 @@ router.post('/:id/freeze', isAuth, pinGate, function (req, res) {
   });
 });
 
-router.post('/:id/unfreeze', isAuth, pinGate, function (req, res) {
+router.post('/:id/unfreeze', isAuth, kycGate, pinGate, function (req, res) {
   Card.findOne({ _id: req.params.id, user: req.user._id }).then(function (card) {
     if (!card) {
       req.flash('error_msg', 'Card not found.');
