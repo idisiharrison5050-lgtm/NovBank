@@ -277,3 +277,20 @@
 .nb-bank-product-card small{display:block;margin-top:4px;color:#667085;font-size:9px;line-height:1.35}
 .nb-bank-product-card>strong{margin-left:auto;font-size:10px;color:#155eef;white-space:nowrap}
 @media(max-width:700px){.nb-bank-product-strip{padding:17px;border-radius:19px}.nb-bank-product-grid{grid-template-columns:1fr}.nb-bank-product-head h2{font-size:17px}}
+
+/* Send destination chooser */
+.nb-action-dialog{width:min(560px,calc(100vw - 28px));padding:30px;border:1px solid #e1e6ed;background:#fff;box-shadow:0 28px 80px rgba(15,23,42,.22);border-radius:24px}
+.nb-action-dialog .nb-modal-icon{width:52px;height:52px;border-radius:16px;background:#eef4ff;color:#155eef;display:grid;place-items:center;font-size:24px;font-weight:900;margin-bottom:13px;border:1px solid #dce7ff}
+.nb-action-dialog .nb-modal-kicker{display:block;font-size:9px;letter-spacing:1.6px;font-weight:900;color:#7b8798;margin-bottom:5px}
+.nb-action-dialog h2{margin:0;color:#101828;font-size:25px;letter-spacing:-.045em}
+.nb-action-dialog>p{margin:7px 0 22px;color:#667085;font-size:12px;line-height:1.55}
+.nb-modal-options{display:grid;gap:9px}
+.nb-action-option{display:flex;align-items:center;gap:13px;padding:13px 14px;border:1px solid #e3e8ef;border-radius:16px;background:#fbfcfe;color:#101828;text-decoration:none;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease,background .16s ease}
+.nb-action-option:hover{transform:translateY(-2px);border-color:#c8d7f8;background:#fff;box-shadow:0 10px 24px rgba(16,24,40,.08)}
+.nb-option-icon{width:43px;height:43px;flex:0 0 43px;border-radius:13px;display:grid;place-items:center;background:#eef4ff;color:#155eef;font-size:17px;font-weight:900;border:1px solid #dce7ff}
+.nb-option-paypal{background:#eef5ff;color:#1769e0}.nb-option-revolut{background:#f2f4f7;color:#111827}.nb-option-payoneer{background:#fff3ec;color:#c65317}.nb-option-globe{background:#eef7f4;color:#16745b}.nb-option-crypto{background:#fff7e8;color:#9a6500}.nb-option-phone{background:#f2efff;color:#6546c7}
+.nb-option-copy{min-width:0;flex:1}.nb-option-copy b{display:block;font-size:13px}.nb-option-copy small{display:block;margin-top:3px;color:#6b7789;font-size:10px;line-height:1.4}
+.nb-option-arrow{font-size:17px;color:#7a8799;font-weight:800;transition:transform .16s ease,color .16s ease}.nb-action-option:hover .nb-option-arrow{transform:translateX(3px);color:#155eef}
+.nb-action-close{width:34px;height:34px;border-radius:50%;border:1px solid #e2e7ed;background:#fff;color:#667085;font-size:20px;display:grid;place-items:center;position:absolute;right:16px;top:16px;cursor:pointer}
+.nb-action-close:hover{background:#f4f6f8;color:#101828}
+@media(max-width:600px){.nb-action-dialog{padding:24px 18px;border-radius:22px}.nb-action-dialog h2{font-size:22px}.nb-action-option{padding:12px}.nb-option-icon{width:40px;height:40px;flex-basis:40px}.nb-option-copy small{font-size:9px}}
