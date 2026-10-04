@@ -2,6 +2,9 @@ var express     = require('express');
 var router      = express.Router();
 var Transaction = require('../models/Transaction');
 var Notification= require('../models/Notification');
+var LedgerAccount = require('../models/LedgerAccount');
+var LedgerEntry = require('../models/LedgerEntry');
+var Card = require('../models/Card');
 var { kycGate } = require('./kyc');
 function escapeRegex(value) { return String(value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
 
@@ -79,21 +82,49 @@ router.get('/statement', isAuth, isPinVerified, kycGate, function (req, res) {
     req.flash('error_msg', 'Choose valid statement dates.');
     return res.redirect('/dashboard/transactions');
   }
+  from.setHours(0, 0, 0, 0);
   to.setHours(23, 59, 59, 999);
   if (to < from) {
     req.flash('error_msg', 'Statement end date must be after the start date.');
     return res.redirect('/dashboard/transactions');
   }
-  Transaction.find({
-    $or: [{ sender: userId }, { receiver: userId }],
-    createdAt: { $gte: from, $lte: to }
-  }).sort({ createdAt: 1 }).then(function (transactions) {
-    res.render('dashboard/statement', {
-      title: 'Account Statement',
-      transactions: transactions,
-      statementFrom: from,
-      statementTo: to,
-      openingBalance: Number(req.user.balance || 0)
+
+  LedgerAccount.findOne({ owner: userId }).then(function (ledgerAccount) {
+    if (!ledgerAccount) {
+      return res.render('dashboard/statement', {
+        title: 'Account Statement',
+        transactions: [],
+        statementFrom: from,
+        statementTo: to,
+        openingBalance: 0,
+        closingBalance: 0
+      });
+    }
+
+    return Promise.all([
+      Transaction.find({
+        $or: [{ sender: userId }, { receiver: userId }],
+        createdAt: { $gte: from, $lte: to }
+      }).sort({ createdAt: 1 }),
+      LedgerEntry.find({
+        ledgerAccount: ledgerAccount._id,
+        createdAt: { $lte: to }
+      }).sort({ createdAt: 1 })
+    ]).then(function (results) {
+      var transactions = results[0] || [];
+      var entries = results[1] || [];
+      var openingBalance = entries.length ? Number(entries[0].balanceAfter) + (entries[0].direction === 'debit' ? Number(entries[0].amount) : -Number(entries[0].amount)) : Number(ledgerAccount.balance || 0);
+      var closingEntry = entries.length ? entries[entries.length - 1] : null;
+      var closingBalance = closingEntry ? Number(closingEntry.balanceAfter) : Number(ledgerAccount.balance || 0);
+
+      res.render('dashboard/statement', {
+        title: 'Account Statement',
+        transactions: transactions,
+        statementFrom: from,
+        statementTo: to,
+        openingBalance: openingBalance,
+        closingBalance: closingBalance
+      });
     });
   }).catch(function (err) {
     console.error(err);
