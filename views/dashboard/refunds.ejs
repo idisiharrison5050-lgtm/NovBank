@@ -11,7 +11,7 @@
       <span class="nb-service-label">NEW REQUEST</span><h2>Request a refund</h2>
       <p>Choose an eligible completed transaction and explain why you are requesting a refund.</p>
       <% if (eligibleTransactions.length) { %>
-      <form action="/refunds/request" method="POST" class="nb-service-form">
+      <form action="/refunds/request" method="POST" class="nb-service-form"><input type="hidden" name="requestKey" value="<%= require('crypto').randomBytes(24).toString('hex') %>">
         <label>Transaction<select name="transactionId" id="refundTransaction" required><option value="">Select transaction</option><% eligibleTransactions.forEach(function(txn){ %><option value="<%= txn._id %>" data-amount="<%= txn.amount %>"><%= txn.reference %> · €<%= Number(txn.amount).toFixed(2) %> · <%= txn.description || txn.type.replace(/_/g,' ') %></option><% }); %></select></label>
         <label>Amount (€)<input id="refundAmount" type="number" name="amount" min="0.01" step="0.01" required></label>
         <label>Reason<textarea name="reason" rows="5" maxlength="500" required placeholder="Explain the reason for your refund request..."></textarea></label>
