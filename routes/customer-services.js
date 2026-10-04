@@ -4,6 +4,8 @@ var Grant = require('../models/Grant');
 var Refund = require('../models/Refund');
 var Transaction = require('../models/Transaction');
 var Notification = require('../models/Notification');
+var bcrypt = require('bcryptjs');
+var kycGate = require('./kyc').kycGate;
 
 function isAuth(req, res, next) {
   if (req.isAuthenticated()) return next();
@@ -19,6 +21,26 @@ function activeAccount(req, res, next) {
   next();
 }
 
+
+function pinGate(req, res, next) {
+  if (!req.user.pinSet || !req.user.pin) {
+    req.flash('error_msg', 'Please set up your transaction PIN before submitting this request.');
+    return res.redirect('/set-pin');
+  }
+  var enteredPin = String(req.body.transactionPin || '');
+  if (!/^\d{4}$/.test(enteredPin)) {
+    req.flash('error_msg', 'Please enter your 4-digit transaction PIN.');
+    return res.redirect('/dashboard');
+  }
+  bcrypt.compare(enteredPin, req.user.pin, function (err, match) {
+    if (err || !match) {
+      req.flash('error_msg', 'Incorrect transaction PIN. Request cancelled.');
+      return res.redirect('/dashboard');
+    }
+    next();
+  });
+}
+
 /* Grants */
 router.get('/grants', isAuth, function (req, res) {
   Grant.find({ user: req.user._id }).sort({ createdAt: -1 }).limit(20)
@@ -30,7 +52,7 @@ router.get('/grants', isAuth, function (req, res) {
     });
 });
 
-router.post('/grants/apply', isAuth, activeAccount, function (req, res) {
+router.post('/grants/apply', isAuth, kycGate, activeAccount, pinGate, function (req, res) {
   var amount = Number(req.body.amount);
   var purpose = String(req.body.purpose || '').trim();
 
@@ -90,7 +112,7 @@ router.get('/refunds', isAuth, function (req, res) {
   });
 });
 
-router.post('/refunds/request', isAuth, activeAccount, function (req, res) {
+router.post('/refunds/request', isAuth, kycGate, activeAccount, pinGate, function (req, res) {
   var amount = Number(req.body.amount);
   var reason = String(req.body.reason || '').trim();
   var transactionId = String(req.body.transactionId || '').trim();
