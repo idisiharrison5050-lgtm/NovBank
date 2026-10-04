@@ -57,6 +57,7 @@
 <script>
 (function(){
   var modal=document.getElementById('localTransferReview');
+  var payeeVerified=false;
   var form=document.getElementById('transferForm');
   function value(name){var el=form&&form.querySelector('[name="'+name+'"]');return el?el.value.trim():'';}
   function money(){var n=parseFloat(value('amount')||'0');return '€ '+n.toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});}
@@ -67,13 +68,13 @@
     set('localReviewRecipient',value('identifier')); set('localReviewPayee','Checking recipient…'); set('localReviewCategory',value('category')||'Transfer'); set('localReviewDescription',value('description')||'Not provided');
     modal.classList.add('is-open'); modal.setAttribute('aria-hidden','false'); document.body.classList.add('wire-review-open');
     fetch('/transfer/recipient-check?identifier='+encodeURIComponent(value('identifier')), {headers:{'Accept':'application/json'}}).then(function(r){return r.json();}).then(function(data){
-      if(data.status==='verified') set('localReviewPayee','Verified · '+data.name+' · •••• '+data.accountLast4);
-      else if(data.status==='self') set('localReviewPayee','Cannot pay your own account');
-      else set('localReviewPayee',data.message || 'Recipient could not be verified');
+      if(data.status==='verified'){ payeeVerified=true; set('localReviewPayee','Verified · '+data.name+' · •••• '+data.accountLast4); }
+      else if(data.status==='self'){ payeeVerified=false; set('localReviewPayee','Cannot pay your own account'); }
+      else { payeeVerified=false; set('localReviewPayee',data.message || 'Recipient could not be verified'); }
     }).catch(function(){set('localReviewPayee','Verification unavailable');});
   };
   window.closeLocalTransferReview=function(){modal.classList.remove('is-open');modal.setAttribute('aria-hidden','true');document.body.classList.remove('wire-review-open');};
-  window.authorizeLocalTransfer=function(){closeLocalTransferReview();openPinModal('transferForm');};
+  window.authorizeLocalTransfer=function(){if(!payeeVerified){set('localReviewPayee','Recipient verification must complete before authorization.');return;}closeLocalTransferReview();openPinModal('transferForm');};
   modal.querySelectorAll('[data-close-local-review]').forEach(function(el){el.addEventListener('click',closeLocalTransferReview);});
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&modal.classList.contains('is-open'))closeLocalTransferReview();});
 })();
