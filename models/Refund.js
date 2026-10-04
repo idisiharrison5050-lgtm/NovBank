@@ -4,6 +4,7 @@ var RefundSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
   transaction: { type: mongoose.Schema.Types.ObjectId, ref: 'Transaction', default: null },
   amount: { type: Number, required: true, min: 0.01 },
+  requestKey: { type: String, unique: true, sparse: true, index: true },
   reason: { type: String, required: true, trim: true },
   status: {
     type: String,
