@@ -99,6 +99,7 @@ router.post('/recharge', isAuth, checkAccountActive, function (req, res) {
       req.flash('error_msg',err.message==='Insufficient funds'?'Insufficient balance.':'Recharge failed. Please try again.');
       res.redirect('/airtime');
     });
+  }
 });
 
 module.exports = router;
