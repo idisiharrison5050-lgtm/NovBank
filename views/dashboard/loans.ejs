@@ -82,7 +82,7 @@
         <div><label>Loan amount (€)<input type="number" name="amount" placeholder="5,000.00" min="100" step="0.01" required></label></div>
         <div><label>Repayment period<select name="repaymentPeriod" required><option value="" disabled selected>Select period</option><option value="3">3 months</option><option value="6">6 months</option><option value="12">12 months</option><option value="24">24 months</option><option value="36">36 months</option><option value="48">48 months</option><option value="60">60 months</option></select></label></div>
         <div class="full"><label>Purpose<input type="text" name="purpose" placeholder="Business, education, home improvement, working capital..." required></label></div>
-        <div class="full"><button type="submit">Submit loan request</button></div>
+        <div class="full"><label>Transaction PIN<input type="password" name="transactionPin" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="off" placeholder="••••" required></label></div><div class="full"><button type="submit">Submit loan request</button></div>
       </form>
       <p class="nb-loan-disclaimer">Submitting a request does not guarantee approval. Any applicable terms, fees and repayment obligations are presented through the lending process.</p>
     </section>
