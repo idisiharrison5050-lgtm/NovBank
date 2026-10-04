@@ -40,7 +40,7 @@ router.get('/', isAuth, function (req, res) {
   });
 });
 
-router.post('/request', isAuth, function (req, res) {
+router.post('/request', isAuth, pinGate, function (req, res) {
   var cardType = req.body.cardType;
   if (!cardType || ['visa', 'mastercard'].indexOf(cardType) === -1) {
     req.flash('error_msg', 'Please select a valid card type.');
@@ -95,13 +95,13 @@ function pinGate(req, res, next) {
     return res.redirect('/set-pin');
   }
   var enteredPin = String(req.body.transactionPin || '');
-  if (!/^\\d{4}$/.test(enteredPin)) {
+  if (!/^\d{4}$/.test(enteredPin)) {
     req.flash('error_msg', 'Enter your 4-digit PIN to confirm this card action.');
     return res.redirect('/cards');
   }
   bcrypt.compare(enteredPin, req.user.pin, function (err, isMatch) {
     if (err || !isMatch) {
-      req.flash('error_msg', 'Incorrect PIN. Your card was not changed.');
+      req.flash('error_msg', 'Incorrect PIN. Your card action was cancelled.');
       return res.redirect('/cards');
     }
     return next();
