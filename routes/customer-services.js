@@ -42,7 +42,7 @@ function pinGate(req, res, next) {
 }
 
 /* Grants */
-router.get('/grants', isAuth, function (req, res) {
+router.get('/grants', isAuth, kycGate, function (req, res) {
   Grant.find({ user: req.user._id }).sort({ createdAt: -1 }).limit(20)
     .then(function (grants) {
       res.render('dashboard/grants', { title: 'Grants', grants: grants });
@@ -92,7 +92,7 @@ router.post('/grants/apply', isAuth, kycGate, activeAccount, pinGate, function (
 });
 
 /* Refunds */
-router.get('/refunds', isAuth, function (req, res) {
+router.get('/refunds', isAuth, kycGate, function (req, res) {
   Promise.all([
     Refund.find({ user: req.user._id }).sort({ createdAt: -1 }).limit(20).populate('transaction', 'reference amount description createdAt'),
     Transaction.find({
