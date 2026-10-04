@@ -71,6 +71,37 @@ router.get('/', isAuth, isPinVerified, kycGate, function (req, res) {
   }).catch(function (err) { console.error(err); res.render('dashboard/index', { title: 'Dashboard', transactions: [], unreadCount: 0, spending: [] }); });
 });
 
+router.get('/statement', isAuth, isPinVerified, kycGate, function (req, res) {
+  var userId = req.user._id;
+  var from = req.query.from ? new Date(req.query.from) : new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+  var to = req.query.to ? new Date(req.query.to) : new Date();
+  if (isNaN(from.getTime()) || isNaN(to.getTime())) {
+    req.flash('error_msg', 'Choose valid statement dates.');
+    return res.redirect('/dashboard/transactions');
+  }
+  to.setHours(23, 59, 59, 999);
+  if (to < from) {
+    req.flash('error_msg', 'Statement end date must be after the start date.');
+    return res.redirect('/dashboard/transactions');
+  }
+  Transaction.find({
+    $or: [{ sender: userId }, { receiver: userId }],
+    createdAt: { $gte: from, $lte: to }
+  }).sort({ createdAt: 1 }).then(function (transactions) {
+    res.render('dashboard/statement', {
+      title: 'Account Statement',
+      transactions: transactions,
+      statementFrom: from,
+      statementTo: to,
+      openingBalance: Number(req.user.balance || 0)
+    });
+  }).catch(function (err) {
+    console.error(err);
+    req.flash('error_msg', 'Unable to load your account statement.');
+    res.redirect('/dashboard/transactions');
+  });
+});
+
 router.get('/transactions', isAuth, isPinVerified, kycGate, function (req, res) {
   var userId = req.user._id;
   var page = parseInt(req.query.page) || 1;
