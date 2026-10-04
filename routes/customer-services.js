@@ -6,6 +6,7 @@ var Transaction = require('../models/Transaction');
 var Notification = require('../models/Notification');
 var bcrypt = require('bcryptjs');
 var kycGate = require('./kyc').kycGate;
+var crypto = require('crypto');
 
 function isAuth(req, res, next) {
   if (req.isAuthenticated()) return next();
@@ -30,12 +31,12 @@ function pinGate(req, res, next) {
   var enteredPin = String(req.body.transactionPin || '');
   if (!/^\d{4}$/.test(enteredPin)) {
     req.flash('error_msg', 'Please enter your 4-digit transaction PIN.');
-    return res.redirect('/dashboard');
+    return res.redirect(req.path.indexOf('/grants') === 0 ? '/grants' : '/refunds');
   }
   bcrypt.compare(enteredPin, req.user.pin, function (err, match) {
     if (err || !match) {
       req.flash('error_msg', 'Incorrect transaction PIN. Request cancelled.');
-      return res.redirect('/dashboard');
+      return res.redirect(req.path.indexOf('/grants') === 0 ? '/grants' : '/refunds');
     }
     next();
   });
@@ -55,7 +56,7 @@ router.get('/grants', isAuth, kycGate, function (req, res) {
 router.post('/grants/apply', isAuth, kycGate, activeAccount, pinGate, function (req, res) {
   var amount = Number(req.body.amount);
   var purpose = String(req.body.purpose || '').trim();
-  var requestKey = String(req.body.requestKey || '').trim();
+  var requestKey = String(req.body.requestKey || '').trim() || ('grant:' + req.user._id + ':' + crypto.randomBytes(18).toString('hex'));
 
   if (!isFinite(amount) || amount <= 0 || !purpose || purpose.length > 500) {
     req.flash('error_msg', 'Enter a valid amount and explain the purpose of the grant.');
@@ -67,6 +68,10 @@ router.post('/grants/apply', isAuth, kycGate, activeAccount, pinGate, function (
     return Grant.findOne({ user: req.user._id, status: 'processing' });
   }).then(function (existing) {
     if (existing) {
+      if (existing.requestKey === requestKey) {
+        req.flash('success_msg', 'This grant application was already submitted.');
+        return res.redirect('/grants');
+      }
       throw new Error('You already have a grant application under review.');
     }
 
@@ -121,7 +126,7 @@ router.post('/refunds/request', isAuth, kycGate, activeAccount, pinGate, functio
   var amount = Number(req.body.amount);
   var reason = String(req.body.reason || '').trim();
   var transactionId = String(req.body.transactionId || '').trim();
-  var requestKey = String(req.body.requestKey || '').trim();
+  var requestKey = String(req.body.requestKey || '').trim() || ('refund:' + req.user._id + ':' + crypto.randomBytes(18).toString('hex'));
 
   if (!transactionId || !isFinite(amount) || amount <= 0 || !reason || reason.length > 500) {
     req.flash('error_msg', 'Select a transaction, amount and reason for the refund.');
