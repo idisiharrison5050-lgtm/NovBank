@@ -256,11 +256,14 @@ router.post('/withdraw', isAuth, kycGate, isPinVerified, function (req, res) {
       var accountNumber = (req.body.accountNumber || '').trim();
       var bankName = (req.body.bankName || '').trim();
       var bankCountry = (req.body.bankCountry || '').trim();
+      var payoutMethod = (req.body.payoutMethod || 'bank').trim().toLowerCase();
       var description = req.body.description || '';
-      if (!amount || isNaN(amount) || amount <= 0 || !recipientName || !accountNumber || !bankName || !bankCountry) {
+      if (!amount || isNaN(amount) || amount <= 0 || !recipientName || !accountNumber) {
         req.flash('error_msg', 'Please complete all withdrawal details.');
         return res.redirect('/transfer/withdraw');
       }
+      if (['bank', 'paypal', 'revolut', 'payoneer'].indexOf(payoutMethod) === -1) { req.flash('error_msg', 'Choose a valid payout method.'); return res.redirect('/transfer/withdraw'); }
+      if (payoutMethod === 'bank' && (!bankName || !bankCountry)) { req.flash('error_msg', 'Bank name and country are required for bank withdrawals.'); return res.redirect('/transfer/withdraw'); }
       accountLimits.checkTransferLimit(req.user, amount, function(limitErr) {
         if (limitErr) {
           req.flash('error_msg', limitErr.message);
@@ -275,6 +278,7 @@ router.post('/withdraw', isAuth, kycGate, isPinVerified, function (req, res) {
           category: 'Other',
           status: 'pending',
           wireDetails: {
+            payoutMethod: payoutMethod,
             recipientName: recipientName,
             iban: accountNumber,
             bankName: bankName,
@@ -288,7 +292,7 @@ router.post('/withdraw', isAuth, kycGate, isPinVerified, function (req, res) {
         });
       }).then(function (txn) {
         if (txn._novDuplicate) {
-          req.session.receipt = { amount: txn.amount, reference: txn.reference, date: new Date(txn.createdAt).toLocaleString('en-GB'), type: 'Withdrawal', from: req.user.firstName + ' ' + req.user.lastName + ' (' + req.user.accountNumber + ')', to: recipientName + ' — ' + accountNumber + ' (' + bankName + ')', description: txn.description || '-', category: 'Other', status: txn.status };
+          req.session.receipt = { amount: txn.amount, reference: txn.reference, date: new Date(txn.createdAt).toLocaleString('en-GB'), type: 'Withdrawal', from: req.user.firstName + ' ' + req.user.lastName + ' (' + req.user.accountNumber + ')', to: recipientName + ' — ' + accountNumber + ' (' + (bankName || payoutMethod) + ')', description: txn.description || '-', category: 'Other', status: txn.status };
           return res.redirect('/transfer/receipt');
         }
         return new Notification({
@@ -304,7 +308,7 @@ router.post('/withdraw', isAuth, kycGate, isPinVerified, function (req, res) {
             date: new Date(txn.createdAt).toLocaleString('en-GB'),
             type: 'Withdrawal',
             from: req.user.firstName + ' ' + req.user.lastName + ' (' + req.user.accountNumber + ')',
-            to: recipientName + ' — ' + accountNumber + ' (' + bankName + ')',
+            to: recipientName + ' — ' + accountNumber + ' (' + (bankName || payoutMethod) + ')',
             description: description || '-',
             category: 'Other',
             status: 'pending'
