@@ -36,6 +36,7 @@ var TransactionSchema = new mongoose.Schema({
   },
 
   wireDetails: {
+    payoutMethod: { type: String, enum: ['bank', 'paypal', 'revolut', 'payoneer'], default: 'bank' },
     recipientName: { type: String },
     iban:          { type: String },
     bic:           { type: String },
