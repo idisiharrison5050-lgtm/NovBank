@@ -45,7 +45,7 @@
     <p class="nb-wire-review-intro">Check the recipient and amount carefully. Your transfer will not be submitted until you enter your transaction PIN.</p>
     <div class="nb-wire-review-amount"><small>YOU ARE SENDING</small><strong id="localReviewAmount">€0.00</strong></div>
     <div class="nb-wire-review-summary">
-      <div><span>Recipient</span><b id="localReviewRecipient">—</b></div>
+      <div><span>Recipient</span><b id="localReviewRecipient">—</b></div><div><span>Payee check</span><b id="localReviewPayee">Checking…</b></div>
       <div><span>Amount</span><b id="localReviewAmountSmall">—</b></div>
       <div><span>Category</span><b id="localReviewCategory">—</b></div>
       <div><span>Description</span><b id="localReviewDescription">—</b></div>
@@ -64,8 +64,13 @@
   window.openLocalTransferReview=function(){
     if(!form.checkValidity()){form.reportValidity();return;}
     var m=money(); set('localReviewAmount',m); set('localReviewAmountSmall',m);
-    set('localReviewRecipient',value('identifier')); set('localReviewCategory',value('category')||'Transfer'); set('localReviewDescription',value('description')||'Not provided');
+    set('localReviewRecipient',value('identifier')); set('localReviewPayee','Checking recipient…'); set('localReviewCategory',value('category')||'Transfer'); set('localReviewDescription',value('description')||'Not provided');
     modal.classList.add('is-open'); modal.setAttribute('aria-hidden','false'); document.body.classList.add('wire-review-open');
+    fetch('/transfer/recipient-check?identifier='+encodeURIComponent(value('identifier')), {headers:{'Accept':'application/json'}}).then(function(r){return r.json();}).then(function(data){
+      if(data.status==='verified') set('localReviewPayee','Verified · '+data.name+' · •••• '+data.accountLast4);
+      else if(data.status==='self') set('localReviewPayee','Cannot pay your own account');
+      else set('localReviewPayee',data.message || 'Recipient could not be verified');
+    }).catch(function(){set('localReviewPayee','Verification unavailable');});
   };
   window.closeLocalTransferReview=function(){modal.classList.remove('is-open');modal.setAttribute('aria-hidden','true');document.body.classList.remove('wire-review-open');};
   window.authorizeLocalTransfer=function(){closeLocalTransferReview();openPinModal('transferForm');};
