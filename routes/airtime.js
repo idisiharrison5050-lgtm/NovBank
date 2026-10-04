@@ -6,6 +6,8 @@ var Airtime      = require('../models/Airtime');
 var Notification = require('../models/Notification');
 var mailer = require('../config/mailer');
 var ledger = require('../services/ledger');
+var bcrypt = require('bcryptjs');
+var crypto = require('crypto');
 
 function isAuth(req, res, next) {
   if (req.isAuthenticated()) return next();
@@ -36,7 +38,27 @@ router.get('/', isAuth, function (req, res) {
 });
 
 router.post('/recharge', isAuth, checkAccountActive, function (req, res) {
-  var phone   = req.body.phone;
+  if (!req.session.pinVerified) {
+    req.flash('error_msg', 'Please verify your transaction PIN before making an airtime recharge.');
+    return res.redirect('/pin');
+  }
+
+  if (!req.user.pinSet || !req.user.pin) {
+    req.flash('error_msg', 'Please set up your transaction PIN in your profile before making an airtime recharge.');
+    return res.redirect('/account/profile');
+  }
+
+  bcrypt.compare(req.body.transactionPin || '', req.user.pin, function (pinErr, pinMatch) {
+    if (pinErr || !pinMatch) {
+      req.flash('error_msg', 'Incorrect transaction PIN. Recharge cancelled.');
+      return res.redirect('/airtime');
+    }
+
+    processRecharge();
+  });
+
+  function processRecharge() {
+  var phone   = String(req.body.phone || '').trim();
   var network = req.body.network;
   var amount  = parseFloat(req.body.amount);
 
@@ -61,7 +83,7 @@ router.post('/recharge', isAuth, checkAccountActive, function (req, res) {
   }
 
   new Promise(function(resolve,reject){
-    ledger.createDebit({userId:req.user._id,type:'airtime',amount:amount,description:network+' airtime recharge to '+phone,category:'Airtime',status:'completed',idempotencyKey:'airtime:'+req.user._id+':'+phone+':'+amount+':'+Date.now()},function(err,txn){if(err)reject(err);else resolve(txn);});
+    ledger.createDebit({userId:req.user._id,type:'airtime',amount:amount,description:network+' airtime recharge to '+phone,category:'Airtime',status:'completed',idempotencyKey:req.body.requestKey || ('airtime:'+req.user._id+':'+Date.now()+':'+Math.floor(Math.random()*1000000))},function(err,txn){if(err)reject(err);else resolve(txn);});
   })
     .then(function () {
       return new Airtime({user:req.user._id,phone:phone,network:network,amount:amount,status:'success'}).save();
