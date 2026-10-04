@@ -55,19 +55,24 @@ router.get('/grants', isAuth, kycGate, function (req, res) {
 router.post('/grants/apply', isAuth, kycGate, activeAccount, pinGate, function (req, res) {
   var amount = Number(req.body.amount);
   var purpose = String(req.body.purpose || '').trim();
+  var requestKey = String(req.body.requestKey || '').trim();
 
-  if (!isFinite(amount) || amount <= 0 || !purpose) {
+  if (!isFinite(amount) || amount <= 0 || !purpose || purpose.length > 500) {
     req.flash('error_msg', 'Enter a valid amount and explain the purpose of the grant.');
     return res.redirect('/grants');
   }
 
-  Grant.findOne({ user: req.user._id, status: 'processing' }).then(function (existing) {
+  Grant.findOne({ requestKey: requestKey }).then(function (duplicate) {
+    if (duplicate) return duplicate;
+    return Grant.findOne({ user: req.user._id, status: 'processing' });
+  }).then(function (existing) {
     if (existing) {
       throw new Error('You already have a grant application under review.');
     }
 
     return new Grant({
       user: req.user._id,
+      requestKey: requestKey || undefined,
       amount: amount,
       purpose: purpose
     }).save();
@@ -116,8 +121,9 @@ router.post('/refunds/request', isAuth, kycGate, activeAccount, pinGate, functio
   var amount = Number(req.body.amount);
   var reason = String(req.body.reason || '').trim();
   var transactionId = String(req.body.transactionId || '').trim();
+  var requestKey = String(req.body.requestKey || '').trim();
 
-  if (!transactionId || !isFinite(amount) || amount <= 0 || !reason) {
+  if (!transactionId || !isFinite(amount) || amount <= 0 || !reason || reason.length > 500) {
     req.flash('error_msg', 'Select a transaction, amount and reason for the refund.');
     return res.redirect('/refunds');
   }
@@ -142,6 +148,7 @@ router.post('/refunds/request', isAuth, kycGate, activeAccount, pinGate, functio
       return new Refund({
         user: req.user._id,
         transaction: transaction._id,
+        requestKey: requestKey || undefined,
         amount: amount,
         reason: reason
       }).save();
