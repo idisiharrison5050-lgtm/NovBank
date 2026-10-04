@@ -62,6 +62,20 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 
+// European-style banking sessions: the transaction PIN is a separate authorization step
+// and expires independently so a long-lived login cannot silently remain payment-authorized.
+app.use(function (req, res, next) {
+  if (req.session && req.session.pinVerified && req.session.pinVerifiedAt) {
+    var pinAge = Date.now() - Number(req.session.pinVerifiedAt);
+    var maxPinAge = 1000 * 60 * 15;
+    if (pinAge > maxPinAge) {
+      req.session.pinVerified = false;
+      req.session.pinVerifiedAt = null;
+    }
+  }
+  next();
+});
+
 app.use(function (req, res, next) {
   res.locals.user        = req.user || null;
   res.locals.session     = req.session;
