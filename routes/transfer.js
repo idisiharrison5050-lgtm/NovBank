@@ -245,7 +245,7 @@ router.post('/wire', isAuth, kycGate, isPinVerified, function (req, res) {
 });
 // Withdrawal
 router.get('/withdraw', isAuth, kycGate, isPinVerified, function (req, res) {
-  res.render('dashboard/withdraw', { title: 'Withdraw Funds', unreadCount: 0, requestKey: crypto.randomBytes(24).toString('hex') });
+  res.render('dashboard/withdraw', { title: 'Withdraw Funds', unreadCount: 0, requestKey: crypto.randomBytes(24).toString('hex'), payoutMethod: ['bank','paypal','revolut','payoneer'].indexOf(String(req.query.payout || '').toLowerCase()) !== -1 ? String(req.query.payout).toLowerCase() : 'bank' });
 });
 
 router.post('/withdraw', isAuth, kycGate, isPinVerified, function (req, res) {
