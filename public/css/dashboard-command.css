@@ -322,3 +322,10 @@
 .nb-option-revolut .nb-brand-logo{width:27px!important;height:27px!important}
 .nb-option-payoneer .nb-brand-logo{width:28px!important;height:28px!important}
 @media(max-width:600px){.nb-brand-logo{width:22px!important;height:22px!important}.nb-option-paypal .nb-brand-logo,.nb-option-revolut .nb-brand-logo,.nb-option-payoneer .nb-brand-logo{width:24px!important;height:24px!important}}
+
+
+/* Official brand assets: never redraw or recolor provider marks */
+.nb-option-paypal .nb-brand-logo{width:30px!important;height:30px!important;object-fit:contain!important}
+.nb-option-revolut .nb-brand-logo{width:30px!important;height:30px!important;object-fit:contain!important}
+.nb-option-payoneer .nb-brand-logo{width:39px!important;height:25px!important;object-fit:contain!important}
+@media(max-width:600px){.nb-option-paypal .nb-brand-logo{width:25px!important;height:25px!important}.nb-option-revolut .nb-brand-logo{width:25px!important;height:25px!important}.nb-option-payoneer .nb-brand-logo{width:35px!important;height:22px!important}}
