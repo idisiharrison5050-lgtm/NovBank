@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var kycGate = require('./kyc').kycGate;
 
 function isAuth(req, res, next) {
   if (req.isAuthenticated()) return next();
@@ -7,7 +8,7 @@ function isAuth(req, res, next) {
   return res.redirect('/login');
 }
 
-router.get('/', isAuth, function (req, res) {
+router.get('/', isAuth, kycGate, function (req, res) {
   var user = req.user;
   var bitcoinAddress = user.bitcoinDepositAddress || process.env.BITCOIN_DEPOSIT_ADDRESS || '';
 
