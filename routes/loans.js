@@ -4,6 +4,7 @@ var bcrypt       = require('bcryptjs');
 var Loan         = require('../models/Loan');
 var Notification = require('../models/Notification');
 var loanRepayment = require('../services/loanRepayment');
+var kycGate = require('./kyc').kycGate;
 
 function isAuth(req, res, next) {
   if (req.isAuthenticated()) return next();
@@ -36,7 +37,7 @@ router.get('/', isAuth, function (req, res) {
   });
 });
 
-router.post('/request', isAuth, function (req, res) {
+router.post('/request', isAuth, kycGate, function (req, res) {
   if (req.user.accountStatus !== 'active') {
     req.flash('error_msg', 'Your account is not active. Please contact support.');
     return res.redirect('/loans');
@@ -113,7 +114,7 @@ router.post('/request', isAuth, function (req, res) {
   }
 });
 
-router.post('/repay', isAuth, function (req, res) {
+router.post('/repay', isAuth, kycGate, function (req, res) {
   checkAccountActive(req, res, '/loans', function () {
     var enteredPin = String(req.body.transactionPin || '');
 
