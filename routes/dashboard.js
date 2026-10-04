@@ -22,7 +22,12 @@ function isPinVerified(req, res, next) {
 router.get('/', isAuth, isPinVerified, kycGate, function (req, res) {
   var userId = req.user._id;
   Transaction.find({ $or: [{ sender: userId }, { receiver: userId }] }).sort({ createdAt: -1 }).limit(6).populate('sender receiver', 'firstName lastName accountNumber').then(function (transactions) {
-    return Notification.countDocuments({ user: userId, isRead: false }).then(function (unreadCount) {
+    return Promise.all([
+        Notification.countDocuments({ user: userId, isRead: false }),
+        Card.find({ user: userId }).sort({ createdAt: -1 }).limit(3).select('cardType status frozenAt spendingLimit createdAt')
+      ]).then(function (dashboardMeta) {
+      var unreadCount = dashboardMeta[0];
+      var cards = dashboardMeta[1] || [];
       var thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
       return Promise.all([
         Transaction.aggregate([{ $match: { sender: userId, status: 'completed', type: { $in: ['internal_transfer', 'wire_transfer', 'airtime'] }, createdAt: { $gte: thirtyDaysAgo } } }, { $group: { _id: '$category', total: { $sum: '$amount' } } }]),
@@ -66,6 +71,8 @@ router.get('/', isAuth, isPinVerified, kycGate, function (req, res) {
           unreadCount: unreadCount,
           spending: spending,
           cashflow: cashflow,
+          cards: cards,
+          monthPending: cashflowTransactions.filter(function (txn) { return txn.status === 'pending' || txn.status === 'processing'; }).length,
           monthIncoming: monthIncoming,
           monthOutgoing: monthOutgoing
         });
