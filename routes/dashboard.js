@@ -1,4 +1,5 @@
 var express     = require('express');
+var PDFDocument = require('pdfkit');
 var router      = express.Router();
 var Transaction = require('../models/Transaction');
 var Notification= require('../models/Notification');
@@ -214,6 +215,52 @@ router.get('/transactions', isAuth, isPinVerified, kycGate, function (req, res) 
       });
     });
   }).catch(function (err) { console.error(err); res.redirect('/dashboard'); });
+});
+
+router.get('/transactions/:id/receipt', isAuth, isPinVerified, kycGate, function (req, res) {
+  Transaction.findOne({ _id: req.params.id, $or: [{ sender: req.user._id }, { receiver: req.user._id }] }).populate('sender receiver', 'firstName lastName accountNumber').then(function (transaction) {
+    if (!transaction) return res.status(404).send('Transaction not found');
+    var isCredit = transaction.type === 'deposit' || transaction.type === 'loan_credit' || !(transaction.sender && transaction.sender._id && transaction.sender._id.toString() === req.user._id.toString());
+    var doc = new PDFDocument({ size: 'A4', margin: 48 });
+    var filename = 'novbank-' + String(transaction.reference || transaction._id) + '-receipt.pdf';
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename="' + filename + '"');
+    doc.pipe(res);
+    function line(label, value) {
+      doc.fontSize(8).fillColor('#667085').text(String(label).toUpperCase(), { characterSpacing: 0.6 });
+      doc.moveDown(0.25).fontSize(11).fillColor('#101828').text(String(value || '—'));
+      doc.moveDown(0.8);
+    }
+    doc.fontSize(22).fillColor('#101828').text('NovBank');
+    doc.fontSize(9).fillColor('#667085').text('TRANSACTION RECEIPT');
+    doc.moveDown(1.2);
+    doc.roundedRect(48, doc.y, 499, 105, 12).fill('#f8fafc');
+    doc.fillColor('#667085').fontSize(9).text(isCredit ? 'MONEY RECEIVED' : 'MONEY SENT', 68, doc.y + 20);
+    doc.fillColor(isCredit ? '#039855' : '#101828').fontSize(27).text((isCredit ? '+' : '-') + transaction.currency + ' ' + Number(transaction.amount || 0).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), 68, doc.y + 7);
+    doc.fillColor('#667085').fontSize(9).text('Status: ' + transaction.status, 68, doc.y + 7);
+    doc.y = 185;
+    line('Reference', transaction.reference);
+    line('Date', new Date(transaction.createdAt).toLocaleString('en-GB'));
+    line('Type', transaction.type.replace(/_/g, ' '));
+    line('Category', transaction.category || 'Account activity');
+    line('Description', transaction.description || '—');
+    if (transaction.wireDetails) {
+      line('Payout method', transaction.wireDetails.payoutMethod || 'bank');
+      line('Recipient', transaction.wireDetails.recipientName || '—');
+      line('Bank', transaction.wireDetails.bankName || '—');
+      line('Destination', transaction.wireDetails.iban || '—');
+      line('Country', transaction.wireDetails.bankCountry || '—');
+    } else {
+      line('From', transaction.sender ? ((transaction.sender.firstName || '') + ' ' + (transaction.sender.lastName || '')).trim() : '—');
+      line('To', transaction.receiver ? ((transaction.receiver.firstName || '') + ' ' + (transaction.receiver.lastName || '')).trim() : '—');
+    }
+    doc.moveTo(48, 745).lineTo(547, 745).strokeColor('#e4e7ec').stroke();
+    doc.fontSize(8).fillColor('#98a2b3').text('Generated from your NovBank account activity.', 48, 758);
+    doc.end();
+  }).catch(function (err) {
+    console.error('Receipt generation failed:', err);
+    res.status(404).send('Unable to generate receipt');
+  });
 });
 
 router.get('/transactions/:id', isAuth, isPinVerified, kycGate, function (req, res) {
