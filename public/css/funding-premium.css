@@ -110,3 +110,15 @@
 .nb-withdraw-review-cancel{background:#fff;border:1px solid #d0d5dd;color:#344054}
 .nb-withdraw-review-confirm{border:1px solid #155eef;background:#155eef;color:#fff;box-shadow:0 10px 24px rgba(21,94,239,.18)}
 @media(max-width:560px){.nb-withdraw-review{padding:20px;border-radius:20px}.nb-withdraw-review-amount{font-size:32px;margin-top:20px}.nb-withdraw-review-grid{grid-template-columns:1fr}.nb-withdraw-review-grid>div:nth-child(odd){border-right:0}.nb-withdraw-review-grid>div:nth-last-child(-n+2){border-bottom:1px solid #eef0f4}.nb-withdraw-review-grid>div:last-child{border-bottom:0}.nb-withdraw-review-actions{grid-template-columns:1fr}}
+
+
+/* Premium payout destination selector */
+.nb-payout-methods{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:8px}
+.nb-payout-method{appearance:none;display:flex;align-items:center;gap:10px;text-align:left;padding:12px;border:1px solid #e4e7ec;border-radius:14px;background:#fff;color:#101828;cursor:pointer;transition:border-color .16s ease,box-shadow .16s ease,transform .16s ease}
+.nb-payout-method:hover{transform:translateY(-1px);border-color:#c7d7fe;box-shadow:0 8px 20px rgba(16,24,40,.06)}
+.nb-payout-method.active{border-color:#155eef;background:#f5f8ff;box-shadow:0 0 0 2px rgba(21,94,239,.08)}
+.nb-payout-mark{width:35px;height:35px;flex:0 0 35px;border-radius:11px;display:grid;place-items:center;font-weight:900;font-size:17px;background:#eef4ff;color:#155eef}
+.nb-payout-mark.paypal{background:#eef5ff;color:#003087}.nb-payout-mark.revolut{background:#f2f4f7;color:#111}.nb-payout-mark.payoneer{background:#fff3ec;color:#ff4800}
+.nb-payout-method b{display:block;font-size:11px}.nb-payout-method small{display:block;margin-top:3px;color:#667085;font-size:8px}
+.nb-payout-hidden{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important}
+@media(max-width:600px){.nb-payout-methods{grid-template-columns:1fr 1fr}.nb-payout-method{padding:10px}.nb-payout-mark{width:32px;height:32px;flex-basis:32px}}
