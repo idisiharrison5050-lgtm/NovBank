@@ -31,10 +31,12 @@ router.get('/', isAuth, isPinVerified, kycGate, function (req, res) {
       var thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
       return Promise.all([
         Transaction.aggregate([{ $match: { sender: userId, status: 'completed', type: { $in: ['internal_transfer', 'wire_transfer', 'airtime'] }, createdAt: { $gte: thirtyDaysAgo } } }, { $group: { _id: '$category', total: { $sum: '$amount' } } }]),
-        Transaction.find({ $or: [{ sender: userId }, { receiver: userId }], status: 'completed', createdAt: { $gte: thirtyDaysAgo } }).sort({ createdAt: 1 }).select('sender receiver amount createdAt type')
+        Transaction.find({ $or: [{ sender: userId }, { receiver: userId }], status: 'completed', createdAt: { $gte: thirtyDaysAgo } }).sort({ createdAt: 1 }).select('sender receiver amount createdAt type'),
+        Transaction.countDocuments({ $or: [{ sender: userId }, { receiver: userId }], status: { $in: ['pending', 'processing'] }, createdAt: { $gte: thirtyDaysAgo } })
       ]).then(function (results) {
         var spending = results[0];
         var cashflowTransactions = results[1];
+        var pendingCount = results[2] || 0;
         var cashflow = [];
         for (var day = 6; day >= 0; day--) {
           var date = new Date();
@@ -72,7 +74,7 @@ router.get('/', isAuth, isPinVerified, kycGate, function (req, res) {
           spending: spending,
           cashflow: cashflow,
           cards: cards,
-          monthPending: cashflowTransactions.filter(function (txn) { return txn.status === 'pending' || txn.status === 'processing'; }).length,
+          monthPending: pendingCount,
           monthIncoming: monthIncoming,
           monthOutgoing: monthOutgoing
         });
