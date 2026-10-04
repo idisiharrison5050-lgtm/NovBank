@@ -50,6 +50,11 @@ router.get('/', function (req, res) {
   res.render('landing', { title: 'Welcome' });
 });
 
+// Public product page
+router.get('/products', function (req, res) {
+  res.render('public/products', { title: 'Products' });
+});
+
 // Login
 router.get('/login', isGuest, function (req, res) {
   res.render('auth/login', { title: 'Login' });
