@@ -7,7 +7,6 @@ var Notification = require('../models/Notification');
 var mailer = require('../config/mailer');
 var ledger = require('../services/ledger');
 var bcrypt = require('bcryptjs');
-var crypto = require('crypto');
 
 function isAuth(req, res, next) {
   if (req.isAuthenticated()) return next();
