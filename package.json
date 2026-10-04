@@ -4,6 +4,7 @@
   "main": "app.js",
   "scripts": {
     "test": "node scripts/syntax-check.js",
+    "prestart": "npm test",
     "start": "node app.js"
   },
   "author": "",
