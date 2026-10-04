@@ -47,6 +47,32 @@ function checkAccountActive(req, res, redirectOnFail, callback) {
   callback();
 }
 
+// Recipient check used by the customer review flow before authorization.
+router.get('/recipient-check', isAuth, kycGate, isPinVerified, function (req, res) {
+  var identifier = String(req.query.identifier || '').trim();
+  if (!identifier) return res.status(400).json({ status: 'unavailable', message: 'Enter a recipient first.' });
+
+  User.findOne({
+    $or: [
+      { accountNumber: identifier },
+      { email: identifier.toLowerCase() },
+      { username: identifier.toLowerCase() }
+    ]
+  }).select('firstName lastName accountNumber').then(function (recipient) {
+    if (!recipient) return res.json({ status: 'not_found', message: 'Recipient could not be found.' });
+    if (recipient._id.toString() === req.user._id.toString()) return res.json({ status: 'self', message: 'You cannot send money to yourself.' });
+
+    res.json({
+      status: 'verified',
+      name: (recipient.firstName + ' ' + recipient.lastName).trim(),
+      accountLast4: String(recipient.accountNumber || '').slice(-4)
+    });
+  }).catch(function (err) {
+    console.error('Recipient check failed:', err);
+    res.status(500).json({ status: 'unavailable', message: 'Recipient verification is temporarily unavailable.' });
+  });
+});
+
 // Internal Transfer
 router.get('/', isAuth, kycGate, isPinVerified, function (req, res) {
   Beneficiary.find({ user: req.user._id, kind: 'local' }).sort({ lastUsedAt: -1, createdAt: -1 }).limit(8).exec(function (err, beneficiaries) {
