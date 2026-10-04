@@ -84,6 +84,72 @@ router.get('/', isAuth, isPinVerified, kycGate, function (req, res) {
   }).catch(function (err) { console.error(err); res.render('dashboard/index', { title: 'Dashboard', transactions: [], unreadCount: 0, spending: [] }); });
 });
 
+router.get('/statement/pdf', isAuth, isPinVerified, kycGate, function (req, res) {
+  var userId = req.user._id;
+  var from = req.query.from ? new Date(req.query.from) : new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+  var to = req.query.to ? new Date(req.query.to) : new Date();
+  if (isNaN(from.getTime()) || isNaN(to.getTime()) || to < from) return res.status(400).send('Invalid statement period');
+  from.setHours(0, 0, 0, 0);
+  to.setHours(23, 59, 59, 999);
+  Promise.all([
+    Transaction.find({ $or: [{ sender: userId }, { receiver: userId }], createdAt: { $gte: from, $lte: to } }).sort({ createdAt: 1 }),
+    LedgerAccount.findOne({ owner: userId })
+  ]).then(function (results) {
+    var transactions = results[0] || [];
+    var ledgerAccount = results[1];
+    var openingBalance = Number(ledgerAccount && ledgerAccount.balance || 0);
+    var closingBalance = openingBalance;
+    if (ledgerAccount) {
+      return LedgerEntry.find({ ledgerAccount: ledgerAccount._id, createdAt: { $lte: to } }).sort({ createdAt: 1 }).then(function (entries) {
+        var before = null;
+        var atEnd = null;
+        entries.forEach(function (entry) {
+          if (new Date(entry.createdAt) < from) before = entry;
+          atEnd = entry;
+        });
+        if (before) openingBalance = Number(before.balanceAfter || 0);
+        else if (entries.length && new Date(entries[0].createdAt) >= from) openingBalance = Number(entries[0].balanceAfter || 0) + (entries[0].direction === 'debit' ? Number(entries[0].amount || 0) : -Number(entries[0].amount || 0));
+        closingBalance = atEnd ? Number(atEnd.balanceAfter || 0) : openingBalance;
+        return { transactions: transactions, openingBalance: openingBalance, closingBalance: closingBalance };
+      });
+    }
+    return { transactions: transactions, openingBalance: openingBalance, closingBalance: closingBalance };
+  }).then(function (data) {
+    var doc = new PDFDocument({ size: 'A4', margin: 42 });
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename="novbank-statement-' + from.toISOString().slice(0, 10) + '-to-' + to.toISOString().slice(0, 10) + '.pdf"');
+    doc.pipe(res);
+    doc.fontSize(22).fillColor('#101828').text('NovBank');
+    doc.fontSize(9).fillColor('#667085').text('ACCOUNT STATEMENT');
+    doc.moveDown(1);
+    doc.fontSize(10).fillColor('#101828').text('Account: •••• ' + String(req.user.accountNumber || '').slice(-4));
+    doc.fontSize(9).fillColor('#667085').text('Period: ' + from.toLocaleDateString('en-GB') + ' — ' + to.toLocaleDateString('en-GB'));
+    doc.moveDown(1);
+    doc.roundedRect(42, doc.y, 511, 58, 10).fill('#f8fafc');
+    doc.fillColor('#667085').fontSize(8).text('OPENING BALANCE', 56, doc.y + 14);
+    doc.fillColor('#101828').fontSize(14).text('€' + data.openingBalance.toLocaleString('en-GB', { minimumFractionDigits: 2 }), 56, doc.y + 7);
+    doc.fillColor('#667085').fontSize(8).text('CLOSING BALANCE', 310, doc.y + 7);
+    doc.fillColor('#101828').fontSize(14).text('€' + data.closingBalance.toLocaleString('en-GB', { minimumFractionDigits: 2 }), 310, doc.y + 7);
+    doc.y = 170;
+    data.transactions.forEach(function (txn) {
+      if (doc.y > 730) doc.addPage();
+      var outgoing = txn.sender && txn.sender.toString() === userId.toString() && txn.type !== 'deposit';
+      doc.moveTo(42, doc.y).lineTo(553, doc.y).strokeColor('#eaecf0').stroke();
+      doc.moveDown(0.45);
+      doc.fontSize(9).fillColor('#101828').text(new Date(txn.createdAt).toLocaleDateString('en-GB') + '  ' + (txn.description || txn.type.replace(/_/g, ' ')), 42, doc.y, { width: 330 });
+      doc.fontSize(9).fillColor(outgoing ? '#101828' : '#039855').text((outgoing ? '-' : '+') + (txn.currency || 'EUR') + ' ' + Number(txn.amount || 0).toLocaleString('en-GB', { minimumFractionDigits: 2 }), 390, doc.y, { width: 160, align: 'right' });
+      doc.moveDown(0.25).fontSize(7).fillColor('#667085').text((txn.reference || '') + ' · ' + txn.status, 42, doc.y);
+      doc.moveDown(0.65);
+    });
+    doc.moveTo(42, 760).lineTo(553, 760).strokeColor('#e4e7ec').stroke();
+    doc.fontSize(7).fillColor('#98a2b3').text('Generated from your NovBank account activity.', 42, 770);
+    doc.end();
+  }).catch(function (err) {
+    console.error('Statement PDF generation failed:', err);
+    res.status(500).send('Unable to generate statement');
+  });
+});
+
 router.get('/statement', isAuth, isPinVerified, kycGate, function (req, res) {
   var userId = req.user._id;
   var from = req.query.from ? new Date(req.query.from) : new Date(new Date().getFullYear(), new Date().getMonth(), 1);
@@ -103,6 +169,7 @@ router.get('/statement', isAuth, isPinVerified, kycGate, function (req, res) {
     if (!ledgerAccount) {
       return res.render('dashboard/statement', {
         title: 'Account Statement',
+        user: req.user,
         transactions: [],
         statementFrom: from,
         statementTo: to,
@@ -141,6 +208,7 @@ router.get('/statement', isAuth, isPinVerified, kycGate, function (req, res) {
 
       res.render('dashboard/statement', {
         title: 'Account Statement',
+        user: req.user,
         transactions: transactions,
         statementFrom: from,
         statementTo: to,
