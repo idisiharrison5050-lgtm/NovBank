@@ -8,10 +8,11 @@
     <section class="nb-funding-panel nb-withdraw-form">
       <div class="nb-withdraw-section"><span>01</span><div><h2>Destination account</h2><p>Enter the bank account that should receive your funds.</p></div></div>
       <form action="/transfer/withdraw" method="POST" id="withdrawForm">
-        <div class="form-group"><label>Account holder</label><input class="form-control" name="recipientName" placeholder="Full name" required></div>
-        <div class="form-group"><label>Bank name</label><input class="form-control" name="bankName" placeholder="Bank name" required></div>
-        <div class="form-group"><label>Account number / IBAN</label><input class="form-control" name="accountNumber" placeholder="Account number or IBAN" required></div>
-        <div class="form-group"><label>Bank country</label><input class="form-control" name="bankCountry" placeholder="Country" required></div>
+        <div class="form-group"><label>Payout method</label><select class="form-control" name="payoutMethod" id="payoutMethod" required><option value="bank">Bank account</option><option value="paypal">PayPal</option><option value="revolut">Revolut</option><option value="payoneer">Payoneer</option></select></div>
+        <div class="form-group"><label>Recipient name</label><input class="form-control" name="recipientName" placeholder="Full name" required></div>
+        <div class="form-group payout-bank-only"><label>Bank name</label><input class="form-control" name="bankName" placeholder="Bank name"></div>
+        <div class="form-group"><label id="destinationLabel">Account number / IBAN</label><input class="form-control" name="accountNumber" id="destinationAccount" placeholder="Account number or IBAN" required></div>
+        <div class="form-group payout-bank-only"><label>Bank country</label><input class="form-control" name="bankCountry" placeholder="Country"></div>
         <div class="form-group"><label>Amount (€)</label><input class="form-control" name="amount" type="number" min="0.01" step="0.01" placeholder="0.00" required></div>
         <div class="form-group"><label>Reference <span class="optional">OPTIONAL</span></label><input class="form-control" name="reference" placeholder="Payment reference"></div>
         <div class="form-group"><label>Note <span class="optional">OPTIONAL</span></label><input class="form-control" name="description" placeholder="Reason for withdrawal"></div>
@@ -27,6 +28,7 @@
     <div class="nb-withdraw-review-head"><div><span>FINAL REVIEW</span><h2 id="withdrawReviewTitle">Review withdrawal</h2></div><button type="button" onclick="closeWithdrawReview()" aria-label="Close">×</button></div>
     <div class="nb-withdraw-review-amount" id="withdrawReviewAmount">€0.00</div>
     <div class="nb-withdraw-review-grid">
+      <div><span>PAYOUT METHOD</span><b id="withdrawReviewMethod">—</b></div>
       <div><span>ACCOUNT HOLDER</span><b id="withdrawReviewName">—</b></div>
       <div><span>BANK</span><b id="withdrawReviewBank">—</b></div>
       <div><span>ACCOUNT / IBAN</span><b id="withdrawReviewAccount">—</b></div>
@@ -45,7 +47,7 @@ function openWithdrawReview(){
  if(form && !form.checkValidity()){form.reportValidity();return;}
  var amount=Number(withdrawField('amount')||0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});
  document.getElementById('withdrawReviewAmount').textContent='€ '+amount;
- document.getElementById('withdrawReviewName').textContent=withdrawField('recipientName')||'—';
+ var method=withdrawField('payoutMethod')||'bank'; document.getElementById('withdrawReviewMethod').textContent=method.charAt(0).toUpperCase()+method.slice(1); document.getElementById('withdrawReviewName').textContent=withdrawField('recipientName')||'—';
  document.getElementById('withdrawReviewBank').textContent=withdrawField('bankName')||'—';
  document.getElementById('withdrawReviewAccount').textContent=withdrawField('accountNumber')||'—';
  document.getElementById('withdrawReviewCountry').textContent=withdrawField('bankCountry')||'—';
@@ -58,5 +60,8 @@ function authorizeWithdraw(){closeWithdrawReview();openPinModal('withdrawForm');
 var withdrawReview=document.getElementById('withdrawReview');
 if(withdrawReview){withdrawReview.addEventListener('click',function(e){if(e.target===withdrawReview)closeWithdrawReview();});}
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeWithdrawReview();});
+var payoutMethod=document.getElementById('payoutMethod');
+function syncPayoutFields(){var method=payoutMethod?payoutMethod.value:'bank';var bankOnly=document.querySelectorAll('.payout-bank-only');bankOnly.forEach(function(el){el.style.display=method==='bank'?'':'none';});var label=document.getElementById('destinationLabel');var input=document.getElementById('destinationAccount');if(method==='paypal'){label.textContent='PayPal email';input.placeholder='name@example.com';}else if(method==='revolut'){label.textContent='Revolut username / phone';input.placeholder='@username or phone';}else if(method==='payoneer'){label.textContent='Payoneer email';input.placeholder='name@example.com';}else{label.textContent='Account number / IBAN';input.placeholder='Account number or IBAN';}}
+if(payoutMethod){payoutMethod.addEventListener('change',syncPayoutFields);syncPayoutFields();}
 </script>
 </main></div><%- include('../partials/footer') %>
