@@ -64,24 +64,21 @@ router.post('/grants/apply', isAuth, kycGate, activeAccount, pinGate, function (
   }
 
   Grant.findOne({ requestKey: requestKey }).then(function (duplicate) {
-    if (duplicate) return duplicate;
-    return Grant.findOne({ user: req.user._id, status: 'processing' });
-  }).then(function (existing) {
-    if (existing) {
-      if (existing.requestKey === requestKey) {
-        req.flash('success_msg', 'This grant application was already submitted.');
-        return res.redirect('/grants');
-      }
-      throw new Error('You already have a grant application under review.');
+    if (duplicate) {
+      req.flash('success_msg', 'This grant application was already submitted.');
+      return null;
     }
-
-    return new Grant({
-      user: req.user._id,
-      requestKey: requestKey || undefined,
-      amount: amount,
-      purpose: purpose
-    }).save();
+    return Grant.findOne({ user: req.user._id, status: 'processing' }).then(function (existing) {
+      if (existing) throw new Error('You already have a grant application under review.');
+      return new Grant({
+        user: req.user._id,
+        requestKey: requestKey,
+        amount: amount,
+        purpose: purpose
+      }).save();
+    });
   }).then(function (grant) {
+    if (!grant) return null;
     return new Notification({
       user: req.user._id,
       type: 'system',
@@ -92,7 +89,8 @@ router.post('/grants/apply', isAuth, kycGate, activeAccount, pinGate, function (
       referenceType: 'Grant',
       referenceId: grant._id
     }).save();
-  }).then(function () {
+  }).then(function (result) {
+    if (!result) return;
     req.flash('success_msg', 'Your grant application has been submitted.');
     res.redirect('/grants');
   }).catch(function (err) {
@@ -133,11 +131,18 @@ router.post('/refunds/request', isAuth, kycGate, activeAccount, pinGate, functio
     return res.redirect('/refunds');
   }
 
-  Transaction.findOne({
-    _id: transactionId,
-    status: 'completed',
-    $or: [{ sender: req.user._id }, { receiver: req.user._id }]
+  Refund.findOne({ requestKey: requestKey }).then(function (duplicate) {
+    if (duplicate) {
+      req.flash('success_msg', 'This refund request was already submitted.');
+      return null;
+    }
+    return Transaction.findOne({
+      _id: transactionId,
+      status: 'completed',
+      $or: [{ sender: req.user._id }, { receiver: req.user._id }]
+    });
   }).then(function (transaction) {
+    if (!transaction) return null;
     if (!transaction) throw new Error('That transaction is not eligible for a refund.');
 
     if (amount > Number(transaction.amount || 0)) {
@@ -159,6 +164,7 @@ router.post('/refunds/request', isAuth, kycGate, activeAccount, pinGate, functio
       }).save();
     });
   }).then(function (refund) {
+    if (!refund) return null;
     return new Notification({
       user: req.user._id,
       type: 'system',
@@ -169,7 +175,8 @@ router.post('/refunds/request', isAuth, kycGate, activeAccount, pinGate, functio
       referenceType: 'Refund',
       referenceId: refund._id
     }).save();
-  }).then(function () {
+  }).then(function (result) {
+    if (!result) return;
     req.flash('success_msg', 'Your refund request has been submitted.');
     res.redirect('/refunds');
   }).catch(function (err) {
