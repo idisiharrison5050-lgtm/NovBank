@@ -134,15 +134,16 @@ router.post('/refunds/request', isAuth, kycGate, activeAccount, pinGate, functio
   Refund.findOne({ requestKey: requestKey }).then(function (duplicate) {
     if (duplicate) {
       req.flash('success_msg', 'This refund request was already submitted.');
-      return null;
+      return { duplicate: true };
     }
     return Transaction.findOne({
       _id: transactionId,
       status: 'completed',
       $or: [{ sender: req.user._id }, { receiver: req.user._id }]
     });
-  }).then(function (transaction) {
-    if (!transaction) return null;
+  }).then(function (transactionResult) {
+    if (transactionResult && transactionResult.duplicate) return transactionResult;
+    var transaction = transactionResult;
     if (!transaction) throw new Error('That transaction is not eligible for a refund.');
 
     if (amount > Number(transaction.amount || 0)) {
@@ -164,6 +165,7 @@ router.post('/refunds/request', isAuth, kycGate, activeAccount, pinGate, functio
       }).save();
     });
   }).then(function (refund) {
+    if (refund && refund.duplicate) return refund;
     if (!refund) return null;
     return new Notification({
       user: req.user._id,
