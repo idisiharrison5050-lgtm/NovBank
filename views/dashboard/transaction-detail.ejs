@@ -35,6 +35,7 @@
           <button type="button" class="nb-copy" aria-label="Copy transaction reference" onclick="copyReference('<%= transaction.reference %>')">Copy reference</button>
         </div>
         <div><span>TYPE</span><b><%= transaction.type.replace(/_/g,' ') %></b></div>
+        <% if (transaction.wireDetails && transaction.wireDetails.payoutMethod) { %><div><span>PAYOUT METHOD</span><b><%= transaction.wireDetails.payoutMethod %></b></div><% } %>
         <div><span>CATEGORY</span><b><%= transaction.category || 'Account activity' %></b></div>
         <div><span>DATE</span><b><%= new Date(transaction.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}) %></b></div>
         <div>
@@ -74,7 +75,8 @@
     </div>
     <% } %>
     <div class="nb-detail-actions">
-      <a href="/dashboard/transactions">Done</a>
+      <a class="primary" href="/dashboard/transactions">Done</a>
+      <a class="secondary" href="/dashboard/transactions/<%= transaction._id %>/receipt">Save PDF receipt</a>
     </div>
   </main>
 </div>
