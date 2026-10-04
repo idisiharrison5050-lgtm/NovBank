@@ -15,6 +15,7 @@
         <label>Transaction<select name="transactionId" id="refundTransaction" required><option value="">Select transaction</option><% eligibleTransactions.forEach(function(txn){ %><option value="<%= txn._id %>" data-amount="<%= txn.amount %>"><%= txn.reference %> · €<%= Number(txn.amount).toFixed(2) %> · <%= txn.description || txn.type.replace(/_/g,' ') %></option><% }); %></select></label>
         <label>Amount (€)<input id="refundAmount" type="number" name="amount" min="0.01" step="0.01" required></label>
         <label>Reason<textarea name="reason" rows="5" maxlength="500" required placeholder="Explain the reason for your refund request..."></textarea></label>
+        <label>Transaction PIN<input type="password" name="transactionPin" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="off" placeholder="••••" required></label>
         <button type="submit">Submit refund request</button>
       </form>
       <script>
