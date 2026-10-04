@@ -19,9 +19,11 @@
       <section class="nb-airtime-card">
         <div class="nb-airtime-card-head"><div><span>NEW RECHARGE</span><h2>Choose amount</h2></div><div class="nb-airtime-mark">€</div></div>
         <form action="/airtime/recharge" method="POST">
+          <input type="hidden" name="requestKey" value="<%= require('crypto').randomBytes(24).toString('hex') %>"/>
           <div class="form-group"><label>Network provider</label><select name="network" class="form-control" required><option value="" disabled selected>Select network</option><option value="Telekom">Telekom</option><option value="Vodafone">Vodafone</option><option value="O2">O2</option></select></div>
           <div class="form-group"><label>Phone number</label><input type="tel" name="phone" class="form-control" placeholder="+00 000 000 0000" autocomplete="tel" required/></div>
           <div class="form-group"><label>Amount <span>Minimum €50</span></label><input type="number" name="amount" class="form-control" placeholder="50.00" min="50" step="0.01" required/></div>
+          <div class="form-group"><label>Transaction PIN</label><input type="password" name="transactionPin" class="form-control" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" placeholder="••••" autocomplete="off" required/></div>
           <button type="submit" class="btn btn-primary btn-block nb-airtime-submit">Recharge now</button>
         </form>
         <div class="nb-airtime-note">Your recharge is recorded in your account activity after a successful request.</div>
