@@ -7,6 +7,11 @@
     <h1>Account statement</h1>
     <p>A clear record of your NovBank account activity for the selected period.</p>
   </section>
+  <form class="nb-statement-filters" method="GET" action="/dashboard/statement">
+    <label><span>FROM</span><input type="date" name="from" value="<%= statementFrom.toISOString().slice(0,10) %>"></label>
+    <label><span>TO</span><input type="date" name="to" value="<%= statementTo.toISOString().slice(0,10) %>"></label>
+    <button type="submit">Apply period</button>
+  </form>
   <section class="nb-statement-card">
     <div class="nb-statement-top">
       <div><span>STATEMENT PERIOD</span><strong><%= statementFrom.toLocaleDateString('en-GB') %> — <%= statementTo.toLocaleDateString('en-GB') %></strong></div>
