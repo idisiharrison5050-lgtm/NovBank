@@ -87,6 +87,7 @@ router.post('/login', isGuest, function (req, res, next) {
         });
       }
       req.session.pinVerified = false;
+      req.session.pinVerifiedAt = null;
       req.session.save(function (sessionErr) {
         if (sessionErr) return next(sessionErr);
         res.redirect('/pin');
@@ -318,6 +319,7 @@ router.post('/pin', function (req, res) {
 
   if (!req.user.pinSet) {
     req.session.pinVerified = true;
+    req.session.pinVerifiedAt = Date.now();
     return res.redirect('/dashboard');
   }
 
@@ -328,7 +330,11 @@ router.post('/pin', function (req, res) {
       return res.redirect('/pin');
     }
     req.session.pinVerified = true;
-    res.redirect('/dashboard');
+    req.session.pinVerifiedAt = Date.now();
+    req.session.save(function (saveErr) {
+      if (saveErr) return res.redirect('/pin');
+      res.redirect('/dashboard');
+    });
   });
 });
 
