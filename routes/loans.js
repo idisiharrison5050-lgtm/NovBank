@@ -37,6 +37,31 @@ router.get('/', isAuth, function (req, res) {
 });
 
 router.post('/request', isAuth, function (req, res) {
+  if (req.user.accountStatus !== 'active') {
+    req.flash('error_msg', 'Your account is not active. Please contact support.');
+    return res.redirect('/loans');
+  }
+
+  if (!req.user.pinSet || !req.user.pin) {
+    req.flash('error_msg', 'Please set up your transaction PIN before requesting a loan.');
+    return res.redirect('/set-pin');
+  }
+
+  var requestPin = String(req.body.transactionPin || '');
+  if (!/^\d{4}$/.test(requestPin)) {
+    req.flash('error_msg', 'Please enter your 4-digit transaction PIN.');
+    return res.redirect('/loans');
+  }
+
+  bcrypt.compare(requestPin, req.user.pin, function (pinErr, pinMatch) {
+    if (pinErr || !pinMatch) {
+      req.flash('error_msg', 'Incorrect transaction PIN. Loan request cancelled.');
+      return res.redirect('/loans');
+    }
+    submitLoanRequest();
+  });
+
+  function submitLoanRequest() {
   var amount          = parseFloat(req.body.amount);
   var purpose         = String(req.body.purpose || '').trim();
   var repaymentPeriod = parseInt(req.body.repaymentPeriod, 10);
@@ -85,6 +110,7 @@ router.post('/request', isAuth, function (req, res) {
       req.flash('error_msg', 'Failed to submit loan request.');
       res.redirect('/loans');
     });
+  }
 });
 
 router.post('/repay', isAuth, function (req, res) {
