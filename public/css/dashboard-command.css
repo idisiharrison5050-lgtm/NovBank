@@ -162,7 +162,7 @@
 .nb-modal-options a:hover{border-color:#b9c7df;background:#f8fafc}
 .nb-modal-options b{display:block;font-size:12px}
 .nb-modal-options small{display:block;margin-top:4px;color:#667085;font-size:10px;line-height:1.4}
-.nb-modal-options span{position:absolute;right:15px;top:50%;transform:translateY(-50%);color:#155eef;font-weight:800}
+.nb-modal-options > a > .nb-option-arrow{margin-left:auto;flex:0 0 auto;color:#7a8799;font-weight:900;font-size:16px;line-height:1;transition:transform .16s ease,color .16s ease}.nb-action-option:hover .nb-option-arrow{transform:translateX(3px);color:#155eef}
 .nb-modal-open{overflow:hidden}
 @media(max-width:950px){.nb-quick-actions{grid-template-columns:repeat(3,1fr)!important}}
 @media(max-width:600px){
@@ -294,3 +294,17 @@
 .nb-action-close{width:34px;height:34px;border-radius:50%;border:1px solid #e2e7ed;background:#fff;color:#667085;font-size:20px;display:grid;place-items:center;position:absolute;right:16px;top:16px;cursor:pointer}
 .nb-action-close:hover{background:#f4f6f8;color:#101828}
 @media(max-width:600px){.nb-action-dialog{padding:24px 18px;border-radius:22px}.nb-action-dialog h2{font-size:22px}.nb-action-option{padding:12px}.nb-option-icon{width:40px;height:40px;flex-basis:40px}.nb-option-copy small{font-size:9px}}
+
+
+/* Send money destination icon alignment and SVG treatment */
+.nb-modal-options > .nb-action-option{position:relative;display:flex;align-items:center;text-align:left;min-height:68px;padding:12px 14px;gap:13px;box-sizing:border-box}
+.nb-modal-options > .nb-action-option > .nb-option-icon{position:relative;inset:auto;right:auto;top:auto;transform:none;width:44px;height:44px;min-width:44px;flex:0 0 44px;border-radius:13px;display:grid;place-items:center;font-size:0;border:1px solid #dce7ff;box-sizing:border-box}
+.nb-modal-options > .nb-action-option > .nb-option-icon svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;display:block}
+.nb-modal-options > .nb-action-option > .nb-option-copy{position:relative;min-width:0;flex:1;text-align:left}
+.nb-modal-options > .nb-action-option > .nb-option-copy b{font-size:13px;line-height:1.2;text-align:left}
+.nb-modal-options > .nb-action-option > .nb-option-copy small{font-size:10px;line-height:1.4;text-align:left}
+.nb-modal-options > .nb-action-option > .nb-option-arrow{position:relative;inset:auto;right:auto;top:auto;transform:none;margin-left:auto;flex:0 0 auto;display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#f2f4f7;color:#667085;font-size:15px}
+.nb-modal-options > .nb-action-option:hover > .nb-option-arrow{transform:translateX(3px);background:#eef4ff;color:#155eef}
+.nb-option-send{background:#eef4ff;color:#155eef}.nb-option-wire{background:#f2f6ff;color:#344054}.nb-option-paypal{background:#eef5ff;color:#1769e0}.nb-option-revolut{background:#f3f4f6;color:#111827}.nb-option-payoneer{background:#fff3ec;color:#c65317}
+.nb-modal-icon svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+@media(max-width:600px){.nb-modal-options > .nb-action-option{min-height:64px;padding:11px 12px;gap:11px}.nb-modal-options > .nb-action-option > .nb-option-icon{width:40px;height:40px;min-width:40px;flex-basis:40px;border-radius:12px}.nb-modal-options > .nb-action-option > .nb-option-icon svg{width:19px;height:19px}.nb-modal-options > .nb-action-option > .nb-option-copy b{font-size:12px}.nb-modal-options > .nb-action-option > .nb-option-copy small{font-size:9px}.nb-modal-options > .nb-action-option > .nb-option-arrow{width:26px;height:26px}}
