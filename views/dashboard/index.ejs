@@ -42,6 +42,27 @@
     </div>
   </section>
 
+  <section class="nb-bank-product-strip" aria-label="Banking products">
+    <div class="nb-bank-product-head"><div><span class="nb-command-kicker">YOUR BANKING PRODUCTS</span><h2>Cards & account activity</h2></div><a href="/cards">Manage cards →</a></div>
+    <div class="nb-bank-product-grid">
+      <a class="nb-bank-product-card" href="/cards">
+        <span class="nb-bank-product-icon">▣</span>
+        <div><b>Cards</b><small><%= (cards || []).length %> card<%= (cards || []).length === 1 ? '' : 's' %> on your account</small></div>
+        <strong><%= (cards || []).length ? ((cards || [])[0].status || 'pending').charAt(0).toUpperCase() + ((cards || [])[0].status || 'pending').slice(1) : 'Request' %></strong>
+      </a>
+      <a class="nb-bank-product-card" href="/dashboard/transactions?filter=all">
+        <span class="nb-bank-product-icon">↕</span>
+        <div><b>Pending activity</b><small>Transactions still being processed</small></div>
+        <strong><%= monthPending || 0 %></strong>
+      </a>
+      <a class="nb-bank-product-card" href="/dashboard/statement">
+        <span class="nb-bank-product-icon">▤</span>
+        <div><b>Account statements</b><small>Review your official account activity</small></div>
+        <strong>View</strong>
+      </a>
+    </div>
+  </section>
+
   <section class="nb-financial-cards" aria-label="Financial overview">
     <article class="nb-fin-card nb-fin-card-balance">
       <div class="nb-fin-card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><path d="M8 12h8"></path><path d="M12 8v8"></path></svg></div>
