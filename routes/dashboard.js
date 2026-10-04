@@ -122,7 +122,19 @@ router.get('/statement', isAuth, isPinVerified, kycGate, function (req, res) {
     ]).then(function (results) {
       var transactions = results[0] || [];
       var entries = results[1] || [];
-      var openingBalance = entries.length ? Number(entries[0].balanceAfter) + (entries[0].direction === 'debit' ? Number(entries[0].amount) : -Number(entries[0].amount)) : Number(ledgerAccount.balance || 0);
+      var firstPeriodIndex = -1;
+      for (var i = 0; i < entries.length; i += 1) {
+        if (new Date(entries[i].createdAt) >= from) { firstPeriodIndex = i; break; }
+      }
+      var openingBalance;
+      if (firstPeriodIndex > 0) {
+        openingBalance = Number(entries[firstPeriodIndex - 1].balanceAfter);
+      } else if (firstPeriodIndex === 0) {
+        var firstEntry = entries[0];
+        openingBalance = Number(firstEntry.balanceAfter) + (firstEntry.direction === 'debit' ? Number(firstEntry.amount) : -Number(firstEntry.amount));
+      } else {
+        openingBalance = Number(ledgerAccount.balance || 0);
+      }
       var closingEntry = entries.length ? entries[entries.length - 1] : null;
       var closingBalance = closingEntry ? Number(closingEntry.balanceAfter) : Number(ledgerAccount.balance || 0);
 
