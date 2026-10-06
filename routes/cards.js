@@ -89,7 +89,6 @@ router.post('/request', isAuth, kycGate, pinGate, function (req, res) {
   });
 });
 
-
 function pinGate(req, res, next) {
   if (!req.user.pinSet || !req.user.pin) {
     req.flash('error_msg', 'Set your transaction PIN before managing a card.');
@@ -167,6 +166,45 @@ router.post('/:id/unfreeze', isAuth, kycGate, pinGate, function (req, res) {
   }).catch(function (err) {
     console.error(err);
     req.flash('error_msg', 'Unable to update card status.');
+    res.redirect('/cards');
+  });
+});
+
+router.post('/:id/limit', isAuth, kycGate, pinGate, function (req, res) {
+  var requestedLimit = Number(req.body.spendingLimit);
+  if (!isFinite(requestedLimit) || requestedLimit < 50 || requestedLimit > 10000) {
+    req.flash('error_msg', 'Card spending limit must be between €50 and €10,000.');
+    return res.redirect('/cards');
+  }
+
+  requestedLimit = Math.round(requestedLimit * 100) / 100;
+
+  Card.findOne({ _id: req.params.id, user: req.user._id }).then(function (card) {
+    if (!card) {
+      req.flash('error_msg', 'Card not found.');
+      return res.redirect('/cards');
+    }
+    if (card.status !== 'active') {
+      req.flash('error_msg', 'Only active cards can have their spending limit changed.');
+      return res.redirect('/cards');
+    }
+
+    card.spendingLimit = requestedLimit;
+    return card.save().then(function () {
+      return new Notification({
+        user: req.user._id,
+        title: 'Card spending limit updated',
+        message: card.cardType.toUpperCase() + ' spending limit is now €' + requestedLimit.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '.',
+        type: 'card',
+        severity: 'info'
+      }).save();
+    }).then(function () {
+      req.flash('success_msg', 'Card spending limit updated successfully.');
+      res.redirect('/cards');
+    });
+  }).catch(function (err) {
+    console.error(err);
+    req.flash('error_msg', 'Unable to update card spending limit.');
     res.redirect('/cards');
   });
 });
