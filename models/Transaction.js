@@ -64,6 +64,34 @@ TransactionSchema.pre('save', function (next) {
   next();
 });
 
+// Keep the beneficiary list in sync with real wire transactions.
+// The transfer itself remains authoritative: a beneficiary is only persisted after
+// the wire transaction document has been successfully created.
+TransactionSchema.post('save', function (doc) {
+  if (doc.type !== 'wire_transfer' || !doc.sender || !doc.wireDetails || !doc.wireDetails.iban) return;
+
+  var Beneficiary = require('./Beneficiary');
+  var identifier = String(doc.wireDetails.iban).trim().toLowerCase();
+  if (!identifier) return;
+
+  Beneficiary.findOneAndUpdate(
+    { user: doc.sender, identifier: identifier, kind: 'wire' },
+    {
+      user: doc.sender,
+      identifier: identifier,
+      name: String(doc.wireDetails.recipientName || '').trim() || 'International beneficiary',
+      kind: 'wire',
+      bankName: String(doc.wireDetails.bankName || '').trim(),
+      iban: String(doc.wireDetails.iban || '').trim().toUpperCase(),
+      bic: String(doc.wireDetails.bic || '').trim().toUpperCase(),
+      lastUsedAt: new Date()
+    },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  ).catch(function (err) {
+    console.error('Wire beneficiary sync failed:', err);
+  });
+});
+
 TransactionSchema.index({ sender: 1, createdAt: -1 });
 TransactionSchema.index({ receiver: 1, createdAt: -1 });
 TransactionSchema.index({ status: 1, createdAt: -1 });
