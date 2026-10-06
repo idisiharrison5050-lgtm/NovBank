@@ -31,6 +31,7 @@ router.get('/beneficiaries', isAuth, kycGate, isPinVerified, function (req, res)
             name: item.name,
             identifier: item.identifier,
             bankName: item.bankName || '',
+            bankCountry: item.bankCountry || '',
             iban: item.iban || '',
             bic: item.bic || '',
             lastUsedAt: item.lastUsedAt
