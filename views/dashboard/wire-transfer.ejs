@@ -1,7 +1,7 @@
 <%- include('../partials/header') %>
 <link rel="stylesheet" href="/css/dashboard.css"/>
 <link rel="stylesheet" href="/css/funding-premium.css"/>
-<link rel="stylesheet" href="/css/banking-flows.css?v=wire2"/>
+<link rel="stylesheet" href="/css/banking-flows.css?v=wire3"/>
 
 <style>
 .nb-wire-beneficiaries{margin:0 0 22px;padding:18px;border:1px solid #e4eaf2;border-radius:18px;background:#fff}
@@ -167,7 +167,7 @@
   function escapeHtml(text){return String(text||'').replace(/[&<>'"]/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch];});}
   function firstLetter(name){var clean=String(name||'?').trim();return escapeHtml(clean ? clean.charAt(0).toUpperCase() : '?');}
   function fillBeneficiary(item){
-    var fields={recipientName:item.name||'',iban:item.iban||item.identifier||'',bic:item.bic||'',bankName:item.bankName||'',bankCountry:''};
+    var fields={recipientName:item.name||'',iban:item.iban||item.identifier||'',bic:item.bic||'',bankName:item.bankName||'',bankCountry:item.bankCountry||''};
     Object.keys(fields).forEach(function(key){var el=form.querySelector('[name="'+key+'"]');if(el)el.value=fields[key];});
     var target=form.querySelector('[name="recipientName"]');
     if(target)target.focus();
@@ -181,12 +181,13 @@
         return;
       }
       beneficiaryList.innerHTML=data.beneficiaries.map(function(item){
+        var bankLine=(item.bankName || 'International bank') + (item.bankCountry ? ' · '+item.bankCountry : '') + (item.bic ? ' · '+item.bic : '');
         return '<div class="nb-wire-beneficiary">' +
           '<div class="nb-wire-beneficiary-avatar">'+firstLetter(item.name)+'</div>' +
           '<div class="nb-wire-beneficiary-main" data-beneficiary="'+escapeHtml(item.id)+'" role="button" tabindex="0">' +
             '<span class="nb-wire-beneficiary-name">'+escapeHtml(item.name)+'</span>' +
             '<span class="nb-wire-beneficiary-meta">'+escapeHtml(item.iban || item.identifier)+'</span>' +
-            '<span class="nb-wire-beneficiary-bank">'+escapeHtml(item.bankName || 'International bank')+(item.bic ? ' · '+escapeHtml(item.bic) : '')+'</span>' +
+            '<span class="nb-wire-beneficiary-bank">'+escapeHtml(bankLine)+'</span>' +
           '</div>' +
           '<form method="POST" action="/transfer/wire/beneficiaries/'+escapeHtml(item.id)+'/delete" onsubmit="return confirm(\'Remove this saved beneficiary?\');">' +
             '<button class="nb-wire-beneficiary-delete" type="submit" aria-label="Remove saved beneficiary">×</button>' +
