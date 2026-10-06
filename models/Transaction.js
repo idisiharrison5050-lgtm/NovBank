@@ -82,6 +82,7 @@ TransactionSchema.post('save', function (doc) {
       name: String(doc.wireDetails.recipientName || '').trim() || 'International beneficiary',
       kind: 'wire',
       bankName: String(doc.wireDetails.bankName || '').trim(),
+      bankCountry: String(doc.wireDetails.bankCountry || '').trim(),
       iban: String(doc.wireDetails.iban || '').trim().toUpperCase(),
       bic: String(doc.wireDetails.bic || '').trim().toUpperCase(),
       lastUsedAt: new Date()
