@@ -1,7 +1,28 @@
 <%- include('../partials/header') %>
 <link rel="stylesheet" href="/css/dashboard.css"/>
 <link rel="stylesheet" href="/css/funding-premium.css"/>
-<link rel="stylesheet" href="/css/banking-flows.css?v=wire1"/>
+<link rel="stylesheet" href="/css/banking-flows.css?v=wire2"/>
+
+<style>
+.nb-wire-beneficiaries{margin:0 0 22px;padding:18px;border:1px solid #e4eaf2;border-radius:18px;background:#fff}
+.nb-wire-beneficiary-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:14px}
+.nb-wire-beneficiary-head span{display:block;font-size:10px;letter-spacing:.14em;font-weight:800;color:#6d7b8f;margin-bottom:5px}
+.nb-wire-beneficiary-head h3{margin:0;font-size:17px;color:#0b1220;font-weight:800}
+.nb-wire-beneficiary-head small{color:#7a8798}
+.nb-wire-beneficiary-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.nb-wire-beneficiary{display:flex;align-items:center;gap:11px;padding:12px;border:1px solid #e6ebf2;border-radius:14px;background:#f8fafc;transition:border-color .18s ease,transform .18s ease,background .18s ease}
+.nb-wire-beneficiary:hover{border-color:#b8c7da;background:#fff;transform:translateY(-1px)}
+.nb-wire-beneficiary-main{min-width:0;flex:1;cursor:pointer}
+.nb-wire-beneficiary-avatar{width:38px;height:38px;flex:0 0 38px;border-radius:12px;background:#0b1220;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800}
+.nb-wire-beneficiary-name{display:block;font-weight:800;color:#111b2b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nb-wire-beneficiary-meta{display:block;margin-top:2px;font-size:11px;color:#718096;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nb-wire-beneficiary-bank{display:block;margin-top:2px;font-size:10px;color:#8a96a7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nb-wire-beneficiary-delete{border:0;background:transparent;color:#8b97a7;padding:7px;border-radius:9px;cursor:pointer}
+.nb-wire-beneficiary-delete:hover{background:#eef2f7;color:#d04b4b}
+.nb-wire-beneficiary-empty{padding:14px;border:1px dashed #d8e0ea;border-radius:13px;color:#7b8798;font-size:13px;background:#fbfcfe}
+.nb-wire-beneficiary-loading{color:#7b8798;font-size:13px}
+@media(max-width:767px){.nb-wire-beneficiaries{padding:14px;border-radius:16px}.nb-wire-beneficiary-list{grid-template-columns:1fr}.nb-wire-beneficiary-head{align-items:flex-start;flex-direction:column;gap:3px}.nb-wire-beneficiary{padding:11px}}
+</style>
 
 <div class="mobile-topbar">
   <span class="mobile-logo">NovBank</span>
@@ -47,6 +68,16 @@
           <div class="active"><b>1</b><span>Recipient</span></div><i></i><div><b>2</b><span>Transfer</span></div><i></i><div><b>3</b><span>Review</span></div>
         </div>
 
+        <div class="nb-wire-beneficiaries" id="wireBeneficiaries" aria-live="polite">
+          <div class="nb-wire-beneficiary-head">
+            <div><span>SAVED BENEFICIARIES</span><h3>Recent international recipients</h3></div>
+            <small>Tap a recipient to reuse their bank details.</small>
+          </div>
+          <div class="nb-wire-beneficiary-list" id="wireBeneficiaryList">
+            <div class="nb-wire-beneficiary-loading">Loading saved recipients…</div>
+          </div>
+        </div>
+
         <div class="nb-flow-notice">
           <span>i</span>
           <div><b>Receiving time varies</b><small>International and bank wires may take longer depending on the receiving bank.</small></div>
@@ -73,7 +104,7 @@
           <div class="form-group"><label>Description <small class="nb-optional">Optional</small></label><input type="text" name="description" class="form-control" placeholder="What is this transfer for?"/></div>
 
           <input type="hidden" name="transactionPin" id="wirePinInput"/><input type="hidden" name="requestKey" value="<%= requestKey %>"/>
-          <div class="nb-wire-review-note"><span>✓</span><p>You'll review the transfer and authorize it with your transaction PIN before it is submitted.</p></div>
+          <div class="nb-wire-review-note"><span>✓</span><p>Your international recipients are saved after a successful wire so you can reuse verified banking details next time.</p></div>
           <button type="button" class="nb-flow-submit" onclick="openWireReview()">Review transfer <span>→</span></button>
         </form>
 
@@ -129,9 +160,48 @@
 (function(){
   var modal=document.getElementById('wireReviewModal');
   var form=document.getElementById('wireForm');
+  var beneficiaryList=document.getElementById('wireBeneficiaryList');
   function value(name){var el=form.querySelector('[name="'+name+'"]');return el ? el.value.trim() : '';}
   function money(){var n=parseFloat(value('amount')||'0');return '€ '+n.toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});}
   function set(id,text){var el=document.getElementById(id);if(el)el.textContent=text||'—';}
+  function escapeHtml(text){return String(text||'').replace(/[&<>'"]/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch];});}
+  function firstLetter(name){var clean=String(name||'?').trim();return escapeHtml(clean ? clean.charAt(0).toUpperCase() : '?');}
+  function fillBeneficiary(item){
+    var fields={recipientName:item.name||'',iban:item.iban||item.identifier||'',bic:item.bic||'',bankName:item.bankName||'',bankCountry:''};
+    Object.keys(fields).forEach(function(key){var el=form.querySelector('[name="'+key+'"]');if(el)el.value=fields[key];});
+    var target=form.querySelector('[name="recipientName"]');
+    if(target)target.focus();
+    var notice=document.querySelector('.nb-wire-beneficiary-head small');
+    if(notice)notice.textContent='Recipient loaded. Confirm the details before continuing.';
+  }
+  function loadBeneficiaries(){
+    fetch('/transfer/wire/beneficiaries',{headers:{'Accept':'application/json'}}).then(function(response){return response.json();}).then(function(data){
+      if(!data || data.status!=='ok' || !data.beneficiaries || !data.beneficiaries.length){
+        beneficiaryList.innerHTML='<div class="nb-wire-beneficiary-empty">No saved international recipients yet. Your successful wire recipients will appear here.</div>';
+        return;
+      }
+      beneficiaryList.innerHTML=data.beneficiaries.map(function(item){
+        return '<div class="nb-wire-beneficiary">' +
+          '<div class="nb-wire-beneficiary-avatar">'+firstLetter(item.name)+'</div>' +
+          '<div class="nb-wire-beneficiary-main" data-beneficiary="'+escapeHtml(item.id)+'" role="button" tabindex="0">' +
+            '<span class="nb-wire-beneficiary-name">'+escapeHtml(item.name)+'</span>' +
+            '<span class="nb-wire-beneficiary-meta">'+escapeHtml(item.iban || item.identifier)+'</span>' +
+            '<span class="nb-wire-beneficiary-bank">'+escapeHtml(item.bankName || 'International bank')+(item.bic ? ' · '+escapeHtml(item.bic) : '')+'</span>' +
+          '</div>' +
+          '<form method="POST" action="/transfer/wire/beneficiaries/'+escapeHtml(item.id)+'/delete" onsubmit="return confirm(\'Remove this saved beneficiary?\');">' +
+            '<button class="nb-wire-beneficiary-delete" type="submit" aria-label="Remove saved beneficiary">×</button>' +
+          '</form>' +
+        '</div>';
+      }).join('');
+      beneficiaryList.querySelectorAll('[data-beneficiary]').forEach(function(el){
+        function select(){var id=el.getAttribute('data-beneficiary');var item=data.beneficiaries.find(function(entry){return entry.id===id;});if(item)fillBeneficiary(item);}
+        el.addEventListener('click',select);
+        el.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();select();}});
+      });
+    }).catch(function(){
+      beneficiaryList.innerHTML='<div class="nb-wire-beneficiary-empty">Saved recipients are temporarily unavailable. You can still enter the banking details manually.</div>';
+    });
+  }
   window.openWireReview=function(){
     if(!form.checkValidity()){form.reportValidity();return;}
     set('wireReviewAmount',money());
@@ -156,6 +226,7 @@
   };
   modal.querySelectorAll('[data-close-wire-review]').forEach(function(el){el.addEventListener('click',closeWireReview);});
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&modal.classList.contains('is-open'))closeWireReview();});
+  loadBeneficiaries();
 })();
 </script>
 </main>
