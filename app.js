@@ -105,6 +105,7 @@ app.get('/ready', function (req, res) {
 app.use('/',          require('./routes/auth'));
 app.use('/dashboard', require('./routes/dashboard'));
 app.use('/dashboard', require('./routes/transaction-details'));
+app.use('/dashboard', require('./routes/notification-actions'));
 app.use('/transfer',  require('./routes/transfer'));
 app.use('/transfer/wire', require('./routes/wire-beneficiaries'));
 app.use('/account',   require('./routes/account'));
