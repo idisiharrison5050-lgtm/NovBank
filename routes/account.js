@@ -156,6 +156,7 @@ router.post('/convert-currency', isAuth, function (req, res) {
       }
 
       currencyExchange.getRate(source, target).then(function (quote) {
+        if (quote.stale) throw new Error('A fresh exchange rate is unavailable. Please try again before converting your balance.');
         var session;
         return mongoose.startSession().then(function (newSession) {
           session = newSession;
