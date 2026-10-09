@@ -290,7 +290,8 @@ router.get('/transactions', isAuth, isPinVerified, kycGate, function (req, res) 
 router.get('/transactions/:id/receipt', isAuth, isPinVerified, kycGate, function (req, res) {
   Transaction.findOne({ _id: req.params.id, $or: [{ sender: req.user._id }, { receiver: req.user._id }] }).populate('sender receiver', 'firstName lastName accountNumber').then(function (transaction) {
     if (!transaction) return res.status(404).send('Transaction not found');
-    var isCredit = transaction.type === 'deposit' || transaction.type === 'loan_credit' || !(transaction.sender && transaction.sender._id && transaction.sender._id.toString() === req.user._id.toString());
+    var isConversion = transaction.type === 'currency_conversion';
+    var isCredit = !isConversion && (transaction.type === 'deposit' || transaction.type === 'loan_credit' || !(transaction.sender && transaction.sender._id && transaction.sender._id.toString() === req.user._id.toString()));
     var doc = new PDFDocument({ size: 'A4', margin: 48 });
     var filename = 'novbank-' + String(transaction.reference || transaction._id) + '-receipt.pdf';
     res.setHeader('Content-Type', 'application/pdf');
@@ -305,8 +306,8 @@ router.get('/transactions/:id/receipt', isAuth, isPinVerified, kycGate, function
     doc.fontSize(9).fillColor('#667085').text('TRANSACTION RECEIPT');
     doc.moveDown(1.2);
     doc.roundedRect(48, doc.y, 499, 105, 12).fill('#f8fafc');
-    doc.fillColor('#667085').fontSize(9).text(isCredit ? 'MONEY RECEIVED' : 'MONEY SENT', 68, doc.y + 20);
-    doc.fillColor(isCredit ? '#039855' : '#101828').fontSize(27).text((isCredit ? '+' : '-') + transaction.currency + ' ' + Number(transaction.amount || 0).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), 68, doc.y + 7);
+    doc.fillColor('#667085').fontSize(9).text(isConversion ? 'BALANCE CONVERTED' : (isCredit ? 'MONEY RECEIVED' : 'MONEY SENT'), 68, doc.y + 20);
+    doc.fillColor(isCredit ? '#039855' : '#101828').fontSize(27).text((isConversion ? '↔ ' : (isCredit ? '+' : '-')) + transaction.currency + ' ' + Number(transaction.amount || 0).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), 68, doc.y + 7);
     doc.fillColor('#667085').fontSize(9).text('Status: ' + transaction.status, 68, doc.y + 7);
     doc.y = 185;
     line('Reference', transaction.reference);
@@ -314,6 +315,12 @@ router.get('/transactions/:id/receipt', isAuth, isPinVerified, kycGate, function
     line('Type', transaction.type.replace(/_/g, ' '));
     line('Category', transaction.category || 'Account activity');
     line('Description', transaction.description || '—');
+    if (isConversion && transaction.currencyConversion) {
+      line('Converted from', transaction.currencyConversion.fromCurrency + ' ' + Number(transaction.currencyConversion.fromAmount || 0).toFixed(2));
+      line('Exchange rate', '1 ' + transaction.currencyConversion.fromCurrency + ' = ' + Number(transaction.currencyConversion.rate || 0).toFixed(8) + ' ' + transaction.currencyConversion.toCurrency);
+      line('Converted to', transaction.currencyConversion.toCurrency + ' ' + Number(transaction.currencyConversion.toAmount || 0).toFixed(2));
+      line('Rate updated', transaction.currencyConversion.rateUpdatedAt || 'Not provided');
+    }
     if (transaction.wireDetails) {
       line('Payout method', transaction.wireDetails.payoutMethod || 'bank');
       line('Recipient', transaction.wireDetails.recipientName || '—');
