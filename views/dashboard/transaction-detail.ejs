@@ -24,7 +24,7 @@
     <div class="nb-receipt">
       <div class="nb-receipt-total <%= isCredit ? 'credit' : '' %>">
         <small><%= isCredit ? 'Money received' : 'Money sent' %></small>
-        <strong><%= isCredit ? '+' : '-' %>€<%= Number(transaction.amount).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong>
+        <strong><%= isCredit ? '+' : '-' %><%= currencySymbol(transaction.currency || user.currency || 'EUR') %><%= Number(transaction.amount).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong>
         <span class="txn-status status-<%= transaction.status %>"><%= transaction.status %></span>
       </div>
 
