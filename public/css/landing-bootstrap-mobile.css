@@ -26,3 +26,29 @@
   background: #eef4ff !important;
   color: #2459a9 !important;
 }
+
+
+/* Apply the existing navy card colour only to the requested product/capability cards. */
+.nb-products-section .nb-product-grid > .nb-product:nth-child(3),
+.nb-capabilities .nb-capability-grid > article:nth-child(1),
+.nb-capabilities .nb-capability-grid > article:nth-child(3),
+.nb-capabilities .nb-capability-grid > article:nth-child(5) {
+  background: #101d32 !important;
+  border-color: #101d32 !important;
+  color: #ffffff !important;
+}
+.nb-products-section .nb-product-grid > .nb-product:nth-child(3) p,
+.nb-capabilities .nb-capability-grid > article:nth-child(1) p,
+.nb-capabilities .nb-capability-grid > article:nth-child(3) p,
+.nb-capabilities .nb-capability-grid > article:nth-child(5) p {
+  color: #c2ccda !important;
+}
+.nb-products-section .nb-product-grid > .nb-product:nth-child(3) .nb-product-icon {
+  background: #203c60 !important;
+  color: #a9ceff !important;
+}
+.nb-capabilities .nb-capability-grid > article:nth-child(1) > span,
+.nb-capabilities .nb-capability-grid > article:nth-child(3) > span,
+.nb-capabilities .nb-capability-grid > article:nth-child(5) > span {
+  color: #a9ceff !important;
+}
