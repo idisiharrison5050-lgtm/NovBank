@@ -373,3 +373,32 @@
   }
 }
 
+
+
+/* Stronger card contrast pass — colours should be obvious at a glance. */
+.nb-products-section { background: #e4eaf2 !important; }
+.nb-products-section .nb-product-grid .nb-product:not(.nb-product-featured) {
+  background: #ffffff !important;
+  border: 1px solid #c6d2e0 !important;
+  box-shadow: 0 12px 28px rgba(16,29,50,.09) !important;
+}
+.nb-products-section .nb-product-grid .nb-product-featured {
+  background: #101d32 !important;
+  border-color: #101d32 !important;
+}
+.nb-capabilities { background: #e1e7ee !important; }
+.nb-capability-grid article { background: #f5f7fa !important; border-color: #c7d1de !important; }
+.nb-capability-grid article:nth-child(3n + 2) { background: #d9e7fb !important; border-color: #a9c5ef !important; }
+.nb-capability-grid article:nth-child(3n) { background: #d7eee3 !important; border-color: #a7d7c0 !important; }
+.nb-feature-points span { background: #e7edf4 !important; border-color: #cbd5e1 !important; box-shadow: inset 4px 0 0 #167d61 !important; }
+#business .nb-products > .nb-product { background: #e5ebf2 !important; border-color: #c4d0df !important; }
+#business .nb-products > .nb-product:nth-child(1) { background: #101d32 !important; border-color: #101d32 !important; color: #fff !important; }
+#business .nb-products > .nb-product:nth-child(2) { background: #d9e7fb !important; border-color: #a9c5ef !important; }
+#business .nb-products > .nb-product:nth-child(3) { background: #d7eee3 !important; border-color: #a7d7c0 !important; }
+.nb-future-inner { background: #d9e7fb !important; border-color: #a9c5ef !important; }
+.nb-future-pills span:nth-child(3n) { background: #c7e7d7 !important; border-color: #9fd1b8 !important; }
+@media (max-width: 767.98px) {
+  .nb-products-section { background: #e4eaf2 !important; }
+  .nb-capability-grid article:nth-child(3n + 2) { background: #d9e7fb !important; }
+  .nb-capability-grid article:nth-child(3n) { background: #d7eee3 !important; }
+}
