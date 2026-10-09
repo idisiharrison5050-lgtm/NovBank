@@ -232,7 +232,7 @@ router.get('/transactions', isAuth, isPinVerified, kycGate, function (req, res) 
   var filter = req.query.filter || 'all';
   var search = String(req.query.q || '').trim();
   var query = { $or: [{ sender: userId }, { receiver: userId }] };
-  if (['internal_transfer', 'wire_transfer', 'deposit', 'withdrawal', 'airtime', 'loan_credit'].indexOf(filter) !== -1) query.type = filter;
+  if (['internal_transfer', 'wire_transfer', 'deposit', 'withdrawal', 'airtime', 'loan_credit', 'currency_conversion'].indexOf(filter) !== -1) query.type = filter;
   if (search) query.$and = [{ $or: [{ description: new RegExp(escapeRegex(search), 'i') }, { reference: new RegExp(escapeRegex(search), 'i') }, { category: new RegExp(escapeRegex(search), 'i') }] }];
   if (req.query.export === 'csv') {
     return Transaction.find(query).sort({ createdAt: -1 }).limit(1000).then(function (transactions) {
