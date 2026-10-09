@@ -10,7 +10,7 @@
 </div>
 <div class="nb-account-card nb-account-form" id="currency-settings">
 <h2>Account currency</h2>
-<p class="nb-account-muted">Choose the currency used for your account and future transactions. If you have a balance, use the secure conversion form below to convert your funds at a live exchange rate.</p>
+<p class="nb-account-muted">Choose the currency you want to use for your account and future transactions.</p>
 <form action="/account/update-currency" method="POST">
 <label for="accountCurrency">Preferred currency
 <select id="accountCurrency" name="currency" required>
@@ -22,32 +22,6 @@
 <label>Current password<input type="password" name="currentPassword" autocomplete="current-password" required/></label>
 <button class="nb-account-button" type="submit">Save currency</button>
 </form>
-</div>
-<div class="nb-account-card nb-account-form" id="currency-converter">
-  <span class="nb-account-label">EXCHANGE RATE CONVERTER</span>
-  <h2>Convert account balance</h2>
-  <p class="nb-account-muted">Convert your entire available balance into another currency. The latest available reference rate is used, the converted balance is rounded to two decimal places, and the rate is recorded in your transaction history. Rates are indicative and may differ from a bank or licensed FX provider’s settlement rate. Source: <a href="https://www.exchangerate-api.com/docs/free" target="_blank" rel="noopener noreferrer">ExchangeRate-API</a>.</p>
-  <div class="nb-account-details">
-    <div class="nb-account-detail"><span>Current balance</span><b id="conversionCurrentBalance"><%= (user.currency || 'EUR') %> <%= Number(accountBalance || 0).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></b></div>
-    <div class="nb-account-detail"><span>Exchange rate</span><b id="conversionRate">Choose a currency</b></div>
-    <div class="nb-account-detail"><span>Estimated new balance</span><b id="conversionResult">—</b></div>
-    <div class="nb-account-detail"><span>Rate timestamp</span><b id="conversionUpdatedAt">—</b></div>
-  </div>
-  <div id="conversionQuoteMessage" class="nb-account-muted" aria-live="polite"></div>
-  <form id="currency-conversion-form" action="/account/convert-currency" method="POST">
-    <label for="conversionCurrency">Convert to
-      <select id="conversionCurrency" name="currency" required>
-        <option value="">Select target currency</option>
-        <% currencies.forEach(function (currency) { if (currency.code !== (user.currency || 'EUR')) { %>
-        <option value="<%= currency.code %>"><%= currency.code %> — <%= currency.name %> (<%= currency.symbol %>)</option>
-        <% } }); %>
-      </select>
-    </label>
-    <label>Current password<input type="password" name="currentPassword" autocomplete="current-password" required/></label>
-    <label>Transaction PIN<input type="password" name="transactionPin" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" autocomplete="off" required/></label>
-    <label style="display:flex;align-items:flex-start;gap:10px;font-weight:500"><input type="checkbox" id="conversionConfirm" name="conversionConfirm" value="yes" required style="width:auto;margin-top:4px"/> I understand this converts my full balance using the quoted exchange rate and the final amount may be rounded to two decimal places.</label>
-    <button class="nb-account-button" type="submit" id="convertCurrencyButton" disabled>Convert balance</button>
-  </form>
 </div>
 <div class="nb-account-card nb-account-form"><h2>Contact information</h2><p class="nb-account-muted">For your protection, confirm your current password before changing contact or address details.</p><form action="/account/update-profile" method="POST"><label>Phone<input type="tel" name="phone" value="<%= user.phone %>"/></label><label>Street address<input type="text" name="street" value="<%= user.address ? user.address.street : '' %>"/></label><label>City<input type="text" name="city" value="<%= user.address ? user.address.city : '' %>"/></label><label>Zip code<input type="text" name="zip" value="<%= user.address ? user.address.zip : '' %>"/></label><label>Country<input type="text" name="country" value="<%= user.address ? user.address.country : '' %>"/></label><label>Current password<input type="password" name="currentPassword" autocomplete="current-password" required/></label><button class="nb-account-button" type="submit">Save changes</button></form></div>
 <div class="nb-account-security-grid"><div class="nb-account-card nb-account-form" id="pin"><span class="nb-account-label">TRANSACTION SECURITY</span><h2><%= user.pinSet ? 'Change transaction PIN' : 'Set transaction PIN' %></h2><p class="nb-account-muted">Your PIN is required before protected money movement actions.</p><form action="/change-pin" method="POST"><% if (user.pinSet) { %><label>Current PIN<input type="password" name="currentPin" inputmode="numeric" maxlength="4" autocomplete="off" required/></label><% } %><label>New PIN<input type="password" name="newPin" inputmode="numeric" maxlength="4" autocomplete="new-password" required/></label><label>Confirm PIN<input type="password" name="confirmPin" inputmode="numeric" maxlength="4" autocomplete="new-password" required/></label><button class="nb-account-button" type="submit"><%= user.pinSet ? 'Change PIN' : 'Set PIN' %></button></form></div><div class="nb-account-card nb-account-form"><span class="nb-account-label">ACCOUNT ACCESS</span><h2>Reset your PIN</h2><p class="nb-account-muted">If you no longer know your PIN, verify your account password to create a new one.</p><form action="/reset-pin" method="POST"><label>Account password<input type="password" name="password" autocomplete="current-password" required/></label><label>New PIN<input type="password" name="newPin" inputmode="numeric" maxlength="4" autocomplete="new-password" required/></label><label>Confirm PIN<input type="password" name="confirmPin" inputmode="numeric" maxlength="4" autocomplete="new-password" required/></label><button class="nb-account-button secondary" type="submit">Reset PIN</button></form></div></div><div class="nb-account-card nb-account-form">
@@ -82,84 +56,5 @@
   });
 }());
 </script>
-<script>
-(function () {
-  var select = document.getElementById('conversionCurrency');
-  var rate = document.getElementById('conversionRate');
-  var result = document.getElementById('conversionResult');
-  var updated = document.getElementById('conversionUpdatedAt');
-  var message = document.getElementById('conversionQuoteMessage');
-  var button = document.getElementById('convertCurrencyButton');
-  var confirmBox = document.getElementById('conversionConfirm');
-  var balance = <%- JSON.stringify(Number(accountBalance || 0)) %>;
-  var quoteReady = false;
-  var quoteRequestId = 0;
 
-  function money(code, amount) {
-    return code + ' ' + Number(amount).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  }
-
-  function resetQuote(text) {
-    quoteReady = false;
-    rate.textContent = '—';
-    result.textContent = '—';
-    updated.textContent = '—';
-    message.textContent = text || '';
-    button.disabled = true;
-  }
-
-  function loadQuote() {
-    var target = select.value;
-    var requestId = ++quoteRequestId;
-    resetQuote(target ? 'Getting the latest available exchange rate…' : 'Choose a target currency to preview conversion.');
-    if (!target) return;
-    if (balance <= 0) {
-      resetQuote('Your balance is zero. Use “Save currency” above to change your preferred currency.');
-      return;
-    }
-    fetch('/account/currency-rate?to=' + encodeURIComponent(target), {
-      headers: { 'Accept': 'application/json' },
-      credentials: 'same-origin'
-    }).then(function (response) {
-      return response.json().then(function (data) {
-        if (!response.ok) throw new Error(data.error || 'Unable to load exchange rate.');
-        return data;
-      });
-    }).then(function (data) {
-      if (requestId !== quoteRequestId || select.value !== target) return;
-      rate.textContent = '1 ' + data.fromCurrency + ' = ' + Number(data.rate).toLocaleString('en-GB', { maximumFractionDigits: 8 }) + ' ' + data.toCurrency;
-      result.textContent = money(data.toCurrency, data.toAmount);
-      updated.textContent = data.updatedAt || 'Provider timestamp unavailable';
-      message.textContent = data.stale
-        ? 'The provider is unavailable; this quote uses a cached rate. Conversion is disabled until a fresh rate is available.'
-        : 'Quote for your full balance: ' + money(data.fromCurrency, data.fromAmount) + ' → ' + money(data.toCurrency, data.toAmount) + '.';
-      quoteReady = !data.stale;
-      button.disabled = !quoteReady || !confirmBox.checked;
-    }).catch(function (err) {
-      if (requestId !== quoteRequestId || select.value !== target) return;
-      resetQuote(err.message || 'Exchange rates are temporarily unavailable.');
-    });
-  }
-
-  if (select) {
-    select.addEventListener('change', loadQuote);
-    confirmBox.addEventListener('change', function () {
-      button.disabled = !quoteReady || !confirmBox.checked;
-    });
-  }
-
-  var form = document.getElementById('currency-conversion-form');
-  if (form) {
-    form.addEventListener('submit', function (event) {
-      if (!quoteReady || !confirmBox.checked) {
-        event.preventDefault();
-        message.textContent = 'Load a fresh quote and confirm the conversion before continuing.';
-      } else {
-        button.disabled = true;
-        button.textContent = 'Converting…';
-      }
-    });
-  }
-}());
-</script>
 <%- include('../partials/footer') %>
