@@ -520,6 +520,9 @@
   transition:opacity .45s ease,visibility .45s ease;
 }
 .nb-page-loader.is-hidden{opacity:0;visibility:hidden;pointer-events:none}
+/* Safety net: never leave the loading overlay covering the page if JS fails. */
+.nb-page-loader{animation:nbLoaderFailsafe 0s 6s forwards}
+@keyframes nbLoaderFailsafe{to{opacity:0;visibility:hidden;pointer-events:none}}
 .nb-loader-mark{display:flex;align-items:center;gap:5px;height:42px}
 .nb-loader-mark span{
   width:7px;
