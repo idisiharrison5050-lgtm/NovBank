@@ -7,6 +7,7 @@ var Notification = require('../models/Notification');
 var mailer = require('../config/mailer');
 var https = require('https');
 var crypto = require("crypto");
+var currencies = require('../config/currencies');
 
 function verifyRecaptcha(token, callback) {
   var secret = process.env.RECAPTCHA_SECRET_KEY;
@@ -161,7 +162,7 @@ router.post('/register/step2', isGuest, function (req, res) {
 // Register Step 3
 router.get('/register/step3', isGuest, function (req, res) {
   if (!req.session.regStep1 || !req.session.regStep2) return res.redirect('/register');
-  res.render('auth/register-step3', { title: 'Create Account - Step 3' });
+  res.render('auth/register-step3', { title: 'Create Account - Step 3', currencies: currencies });
 });
 
 router.post('/register/step3', isGuest, function (req, res) {
@@ -180,6 +181,12 @@ router.post('/register/step3', isGuest, function (req, res) {
   var username        = req.body.username;
   var password        = req.body.password;
   var confirmPassword = req.body.confirmPassword;
+  var currency = String(req.body.currency || 'EUR').toUpperCase().trim();
+
+  if (!currencies.some(function (item) { return item.code === currency; })) {
+    req.flash('error_msg', 'Please choose a supported account currency.');
+    return res.redirect('/register/step3');
+  }
 
   if (!username || !password || !confirmPassword) {
     req.flash('error_msg', 'Please fill in all fields.');
@@ -214,6 +221,7 @@ router.post('/register/step3', isGuest, function (req, res) {
         dateOfBirth: step1.dateOfBirth,
         username:    username.toLowerCase(),
         password:    password,
+        currency:    currency,
         address: {
           street:  step2.street,
           city:    step2.city,
