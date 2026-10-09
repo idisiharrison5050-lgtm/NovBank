@@ -1130,3 +1130,14 @@ label {
     margin:5px 0 7px;
   }
 }
+
+
+/* Keep JivoChat clear of the fixed mobile dashboard navigation. */
+@media (max-width: 768px) {
+  #jivo-iframe-container,
+  .jivo-iframe-container,
+  #jivo-chat,
+  iframe[id*="jivo"] {
+    bottom: 88px !important;
+  }
+}
