@@ -1069,3 +1069,100 @@
     transition: none !important;
   }
 }
+
+
+/* One focused enhancement: make the homepage banking preview feel like a real product */
+.nb-landing .nb-window-activity {
+  position: relative;
+  margin-top: 22px;
+  padding-top: 17px;
+  border-top: 1px solid #26364d;
+}
+.nb-landing .nb-window-activity-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 7px;
+  color: #f2f4f7;
+  font-size: 12px;
+  font-weight: 750;
+}
+.nb-landing .nb-window-activity-head small {
+  color: #8db7ff;
+  font-size: 10px;
+  font-weight: 700;
+}
+.nb-landing .nb-window-activity-head small b {
+  margin-left: 3px;
+  font-size: 13px;
+}
+.nb-landing .nb-window-transaction {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+}
+.nb-landing .nb-window-transaction:last-child {
+  border-bottom: 0;
+  padding-bottom: 2px;
+}
+.nb-landing .nb-transaction-icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  border: 1px solid #2a3d58;
+  border-radius: 11px;
+  background: #17263b;
+  color: #c8d9f4;
+  font-size: 16px;
+  font-weight: 700;
+}
+.nb-landing .nb-transaction-icon.nb-transaction-in {
+  border-color: #24543f;
+  background: #102b22;
+  color: #75e0a7;
+}
+.nb-landing .nb-transaction-detail {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+  gap: 4px;
+}
+.nb-landing .nb-transaction-detail b {
+  overflow: hidden;
+  color: #f2f4f7;
+  font-size: 11px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.nb-landing .nb-transaction-detail small {
+  overflow: hidden;
+  color: #98a7ba;
+  font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.nb-landing .nb-window-transaction > strong {
+  flex: 0 0 auto;
+  color: #f2f4f7;
+  font-size: 10px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+.nb-landing .nb-window-transaction > strong.nb-transaction-positive {
+  color: #75e0a7;
+}
+@media (max-width: 480px) {
+  .nb-landing .nb-window-activity { margin-top: 17px; padding-top: 14px; }
+  .nb-landing .nb-window-transaction { gap: 8px; padding: 10px 0; }
+  .nb-landing .nb-transaction-icon { width: 30px; height: 30px; flex-basis: 30px; }
+  .nb-landing .nb-transaction-detail b { font-size: 10px; }
+  .nb-landing .nb-window-transaction > strong { font-size: 9px; }
+}
