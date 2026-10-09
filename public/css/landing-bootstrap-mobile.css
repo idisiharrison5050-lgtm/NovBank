@@ -383,3 +383,11 @@
   background: #203c60 !important;
   color: #a9ceff !important;
 }
+
+
+/* Mobile hero image visibility: reduce the dark overlay without changing layout. */
+@media (max-width: 768px) {
+  .nb-hero-backdrop:after {
+    background: rgba(7, 17, 31, 0.25) !important;
+  }
+}
