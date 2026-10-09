@@ -36,143 +36,88 @@ router.post('/update-profile', isAuth, function (req, res) {
   });
 });
 
-// Update the account's operating currency. Existing funds are never silently converted.
+// Update account currency. Any existing balance is converted securely in the background.
 router.post('/update-currency', isAuth, function (req, res) {
-  var currency = String(req.body.currency || '').toUpperCase().trim();
-  var currentPassword = req.body.currentPassword;
+  var target = String(req.body.currency || '').toUpperCase().trim();
+  var source = String(req.user.currency || 'EUR').toUpperCase();
 
-  if (!currencies.some(function (item) { return item.code === currency; })) {
+  if (!currencies.some(function (item) { return item.code === target; })) {
     req.flash('error_msg', 'Please choose a supported currency.');
     return res.redirect('/dashboard/profile');
   }
 
-  if (!currentPassword) {
+  if (target === source) {
+    req.flash('success_msg', 'Your account currency is already set to ' + target + '.');
+    return res.redirect('/dashboard/profile');
+  }
+
+  if (!req.body.currentPassword) {
     req.flash('error_msg', 'Enter your current password to change account currency.');
     return res.redirect('/dashboard/profile');
   }
 
-  bcrypt.compare(currentPassword, req.user.password, function (passwordErr, matches) {
+  bcrypt.compare(req.body.currentPassword, req.user.password, function (passwordErr, matches) {
     if (passwordErr || !matches) {
       req.flash('error_msg', 'Current password is incorrect. Currency was not changed.');
       return res.redirect('/dashboard/profile');
     }
 
-    LedgerAccount.findOne({ owner: req.user._id }).then(function (account) {
-      if (Number(req.user.balance || 0) > 0 || (account && Number(account.balance || 0) > 0)) {
-        req.flash('error_msg', 'Your account has a balance. Use the balance converter below to convert your funds before changing account currency.');
-        return res.redirect('/dashboard/profile');
-      }
-
-      if (account) {
-        return LedgerAccount.findOneAndUpdate(
-          { _id: account._id, balance: 0, status: 'active' },
-          { $set: { currency: currency } },
-          { new: true }
-        ).then(function (updatedAccount) {
-          if (!updatedAccount) {
-            req.flash('error_msg', 'Your account changed while we were saving. Please refresh and try again.');
-            return res.redirect('/dashboard/profile');
-          }
-          return User.findByIdAndUpdate(req.user._id, { $set: { currency: currency } })
-            .then(function () {
-              req.flash('success_msg', 'Account currency updated to ' + currency + '.');
-              res.redirect('/dashboard/profile');
+    function saveCurrencyWithoutBalance() {
+      return LedgerAccount.findOne({ owner: req.user._id }).then(function (account) {
+        if (account && Number(account.balance || 0) !== 0) {
+          throw new Error('Your account balance changed. Please refresh and try again.');
+        }
+        if (account) {
+          return LedgerAccount.findOneAndUpdate(
+            { _id: account._id, owner: req.user._id, balance: 0, status: 'active' },
+            { $set: { currency: target } },
+            { new: true }
+          ).then(function (updatedAccount) {
+            if (!updatedAccount) throw new Error('Your account changed while saving. Please try again.');
+            return User.findOneAndUpdate(
+              { _id: req.user._id, currency: source },
+              { $set: { currency: target, balance: 0 } },
+              { new: true }
+            ).then(function (updatedUser) {
+              if (!updatedUser) throw new Error('Your account currency changed. Please refresh and try again.');
             });
+          });
+        }
+        return User.findOneAndUpdate(
+          { _id: req.user._id, currency: source, balance: 0 },
+          { $set: { currency: target } },
+          { new: true }
+        ).then(function (updatedUser) {
+          if (!updatedUser) throw new Error('Your account balance changed. Please refresh and try again.');
         });
+      });
+    }
+
+    LedgerAccount.findOne({ owner: req.user._id }).then(function (account) {
+      var ledgerBalance = account ? Number(account.balance || 0) : Number(req.user.balance || 0);
+      var userBalance = Number(req.user.balance || 0);
+
+      if (!isFinite(ledgerBalance) || ledgerBalance < 0 || !isFinite(userBalance) || userBalance < 0) {
+        throw new Error('Your account balance could not be verified. Currency was not changed.');
       }
 
-      return User.findByIdAndUpdate(req.user._id, { $set: { currency: currency } }).then(function () {
-        req.flash('success_msg', 'Account currency updated to ' + currency + '.');
-        res.redirect('/dashboard/profile');
-      });
-    }).catch(function (err) {
-      console.error('Account currency update failed:', err);
-      req.flash('error_msg', 'Could not update account currency. Please try again.');
-      res.redirect('/dashboard/profile');
-    });
-  });
-});
-
-// Get a live exchange-rate quote for converting the account's entire current balance.
-router.get('/currency-rate', isAuth, function (req, res) {
-  var target = String(req.query.to || '').toUpperCase().trim();
-  var source = String(req.user.currency || 'EUR').toUpperCase();
-  if (!currencies.some(function (item) { return item.code === target; })) {
-    return res.status(400).json({ error: 'Choose a supported target currency.' });
-  }
-  if (source === target) return res.status(400).json({ error: 'Choose a different currency.' });
-
-  LedgerAccount.findOne({ owner: req.user._id }).then(function (account) {
-    var balance = Number(account ? account.balance : req.user.balance || 0);
-    if (!isFinite(balance) || balance <= 0) {
-      return res.status(400).json({ error: 'There is no available balance to convert.' });
-    }
-    return currencyExchange.getRate(source, target).then(function (quote) {
-      res.json({
-        fromCurrency: source,
-        toCurrency: target,
-        fromAmount: balance,
-        rate: quote.rate,
-        toAmount: Math.round(balance * quote.rate * 100) / 100,
-        updatedAt: quote.updatedAt,
-        stale: quote.stale || false
-      });
-    });
-  }).catch(function (err) {
-    console.error('Currency quote failed:', err);
-    res.status(503).json({ error: 'Live exchange rates are temporarily unavailable. Please try again later.' });
-  });
-});
-
-// Convert the full account balance and change the account currency in one database transaction.
-router.post('/convert-currency', isAuth, function (req, res) {
-  var target = String(req.body.currency || '').toUpperCase().trim();
-  var currentPassword = req.body.currentPassword;
-  var transactionPin = String(req.body.transactionPin || '').trim();
-  var conversionConfirm = req.body.conversionConfirm;
-  var source = String(req.user.currency || 'EUR').toUpperCase();
-
-  if (!currencies.some(function (item) { return item.code === target; })) {
-    req.flash('error_msg', 'Please choose a supported currency.');
-    return res.redirect('/dashboard/profile#currency-converter');
-  }
-  if (target === source) {
-    req.flash('error_msg', 'Choose a different currency to convert your balance.');
-    return res.redirect('/dashboard/profile#currency-converter');
-  }
-  if (conversionConfirm !== 'yes') {
-    req.flash('error_msg', 'Confirm that you understand the currency conversion before continuing.');
-    return res.redirect('/dashboard/profile#currency-converter');
-  }
-  if (!currentPassword || !req.user.pinSet || !req.user.pin || !/^\d{4}$/.test(transactionPin)) {
-    req.flash('error_msg', 'Enter your current password and 4-digit transaction PIN to convert your balance.');
-    return res.redirect('/dashboard/profile#currency-converter');
-  }
-
-  bcrypt.compare(currentPassword, req.user.password, function (passwordErr, passwordMatches) {
-    if (passwordErr || !passwordMatches) {
-      req.flash('error_msg', 'Current password is incorrect. Your balance was not changed.');
-      return res.redirect('/dashboard/profile#currency-converter');
-    }
-    bcrypt.compare(transactionPin, req.user.pin, function (pinErr, pinMatches) {
-      if (pinErr || !pinMatches) {
-        req.flash('error_msg', 'Transaction PIN is incorrect. Your balance was not changed.');
-        return res.redirect('/dashboard/profile#currency-converter');
+      if (account && Math.abs(ledgerBalance - userBalance) > 0.01) {
+        throw new Error('Your account balances need to be reconciled before changing currency. Your funds have not been changed.');
       }
 
-      currencyExchange.getRate(source, target).then(function (quote) {
-        if (quote.stale) throw new Error('A fresh exchange rate is unavailable. Please try again before converting your balance.');
+      if (ledgerBalance === 0) return saveCurrencyWithoutBalance();
+
+      return currencyExchange.getRate(source, target).then(function (quote) {
+        if (quote.stale) throw new Error('Exchange rates are temporarily unavailable. Please try again later.');
         var session;
         return mongoose.startSession().then(function (newSession) {
           session = newSession;
           return session.withTransaction(function () {
-            return User.findById(req.user._id).session(session).then(function (user) {
-              if (!user || user.accountStatus !== 'active') throw new Error('Your account is not active.');
-              if (String(user.currency || 'EUR').toUpperCase() !== source) throw new Error('Your account currency changed. Refresh the page and try again.');
-
-              return LedgerAccount.findOne({ owner: user._id }).session(session).then(function (account) {
-                var accountPromise = account
-                  ? Promise.resolve(account)
+            return User.findOne({ _id: req.user._id, currency: source }).session(session).then(function (user) {
+              if (!user || user.accountStatus !== 'active') throw new Error('Your account is not active or its currency changed.');
+              return LedgerAccount.findOne({ owner: user._id }).session(session).then(function (ledgerAccount) {
+                var accountPromise = ledgerAccount
+                  ? Promise.resolve(ledgerAccount)
                   : LedgerAccount.create([{
                     owner: user._id,
                     currency: source,
@@ -180,13 +125,14 @@ router.post('/convert-currency', isAuth, function (req, res) {
                     status: 'active'
                   }], { session: session }).then(function (created) { return created[0]; });
 
-                return accountPromise.then(function (ledgerAccount) {
-                  if (!ledgerAccount || ledgerAccount.status !== 'active') throw new Error('Your ledger account is not active.');
-                  if (String(ledgerAccount.currency || 'EUR').toUpperCase() !== source) throw new Error('Your ledger currency does not match your account currency.');
-                  var fromAmount = Math.round(Number(ledgerAccount.balance || 0) * 100) / 100;
-                  if (!isFinite(fromAmount) || fromAmount <= 0) throw new Error('There is no available balance to convert.');
+                return accountPromise.then(function (activeAccount) {
+                  if (!activeAccount || activeAccount.status !== 'active') throw new Error('Your account is not available for currency changes.');
+                  if (String(activeAccount.currency || 'EUR').toUpperCase() !== source) throw new Error('Your ledger currency does not match your account currency.');
+
+                  var fromAmount = Math.round(Number(activeAccount.balance || 0) * 100) / 100;
+                  if (!isFinite(fromAmount) || fromAmount <= 0) throw new Error('Your account balance changed. Please refresh and try again.');
                   var toAmount = Math.round(fromAmount * quote.rate * 100) / 100;
-                  if (!isFinite(toAmount) || toAmount <= 0) throw new Error('The converted amount is too small to credit.');
+                  if (!isFinite(toAmount) || toAmount <= 0) throw new Error('The converted balance is too small to credit.');
 
                   var reference = 'FX' + Date.now() + Math.floor(Math.random() * 1000000);
                   var idempotencyKey = 'currency-conversion:' + user._id.toString() + ':' + reference;
@@ -195,7 +141,7 @@ router.post('/convert-currency', isAuth, function (req, res) {
                     type: 'currency_conversion',
                     amount: toAmount,
                     currency: target,
-                    description: 'Balance conversion from ' + source + ' ' + fromAmount.toFixed(2) + ' to ' + target + ' ' + toAmount.toFixed(2),
+                    description: 'Account balance converted from ' + source + ' to ' + target,
                     category: 'Other',
                     status: 'completed',
                     idempotencyKey: idempotencyKey,
@@ -212,71 +158,69 @@ router.post('/convert-currency', isAuth, function (req, res) {
                   }], { session: session }).then(function (created) {
                     var txn = created[0];
                     return LedgerAccount.updateOne(
-                      { _id: ledgerAccount._id, owner: user._id, currency: source, balance: ledgerAccount.balance, status: 'active', version: ledgerAccount.version },
+                      { _id: activeAccount._id, owner: user._id, currency: source, balance: activeAccount.balance, status: 'active', version: activeAccount.version },
                       { $set: { balance: 0, currency: target }, $inc: { version: 1 } },
                       { session: session }
                     ).then(function (debitUpdate) {
-                      if (debitUpdate.nModified !== 1) throw new Error('Your balance changed during conversion. Please refresh and try again.');
+                      if (debitUpdate.nModified !== 1) throw new Error('Your balance changed during the currency update. Please try again.');
                       return LedgerEntry.create([{
-                        ledgerAccount: ledgerAccount._id,
+                        ledgerAccount: activeAccount._id,
                         transaction: txn._id,
                         direction: 'debit',
                         amount: fromAmount,
                         currency: source,
                         balanceAfter: 0,
                         idempotencyKey: idempotencyKey + ':debit',
-                        description: 'Currency conversion debit',
+                        description: 'Account currency conversion',
                         metadata: { fromCurrency: source, toCurrency: target, exchangeRate: quote.rate, convertedAmount: toAmount }
                       }], { session: session });
                     }).then(function () {
                       return LedgerAccount.updateOne(
-                        { _id: ledgerAccount._id, owner: user._id, currency: target, balance: 0, status: 'active' },
+                        { _id: activeAccount._id, owner: user._id, currency: target, balance: 0, status: 'active' },
                         { $set: { balance: toAmount }, $inc: { version: 1 } },
                         { session: session }
                       );
                     }).then(function (creditUpdate) {
-                      if (creditUpdate.nModified !== 1) throw new Error('Unable to credit the converted balance.');
+                      if (creditUpdate.nModified !== 1) throw new Error('Unable to update the converted balance.');
                       return LedgerEntry.create([{
-                        ledgerAccount: ledgerAccount._id,
+                        ledgerAccount: activeAccount._id,
                         transaction: txn._id,
                         direction: 'credit',
                         amount: toAmount,
                         currency: target,
                         balanceAfter: toAmount,
                         idempotencyKey: idempotencyKey + ':credit',
-                        description: 'Currency conversion credit',
+                        description: 'Converted account balance',
                         metadata: { fromCurrency: source, toCurrency: target, exchangeRate: quote.rate, sourceAmount: fromAmount }
                       }], { session: session });
                     }).then(function () {
                       return User.updateOne(
-                        { _id: user._id, currency: source },
+                        { _id: user._id, currency: source, balance: user.balance },
                         { $set: { currency: target, balance: toAmount } },
                         { session: session }
                       );
                     }).then(function (userUpdate) {
-                      if (userUpdate.nModified !== 1) throw new Error('Unable to update your account currency.');
-                      return { fromAmount: fromAmount, toAmount: toAmount, fromCurrency: source, toCurrency: target, rate: quote.rate };
+                      if (userUpdate.nModified !== 1) throw new Error('Unable to save the new account currency.');
                     });
                   });
                 });
               });
             });
           });
-        }).then(function (result) {
+        }).then(function () {
           if (session) session.endSession();
-          return result;
         }).catch(function (err) {
           if (session) session.endSession();
           throw err;
         });
-      }).then(function (result) {
-        req.flash('success_msg', 'Balance converted: ' + result.fromCurrency + ' ' + result.fromAmount.toFixed(2) + ' → ' + result.toCurrency + ' ' + result.toAmount.toFixed(2) + '.');
-        res.redirect('/dashboard/profile#currency-converter');
-      }).catch(function (err) {
-        console.error('Currency conversion failed:', err);
-        req.flash('error_msg', err.message || 'Currency conversion failed. No changes were saved.');
-        res.redirect('/dashboard/profile#currency-converter');
       });
+    }).then(function () {
+      req.flash('success_msg', 'Account currency updated to ' + target + '.');
+      res.redirect('/dashboard/profile');
+    }).catch(function (err) {
+      console.error('Account currency update failed:', err);
+      req.flash('error_msg', err.message || 'Could not update account currency. Please try again.');
+      res.redirect('/dashboard/profile');
     });
   });
 });
