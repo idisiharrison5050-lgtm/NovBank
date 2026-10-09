@@ -504,3 +504,182 @@ body.nb-modal-open{overflow:hidden}
  .nb-account-modal-header h2{font-size:21px}
 }
 @media(prefers-reduced-motion:reduce){.nb-account-modal-panel{scroll-behavior:auto}}
+
+
+/* ── Account Center modal polish pass ─────────────────────────────── */
+.nb-account-modal{
+  padding:24px;
+  animation:nb-modal-fade-in .18s ease-out both;
+}
+.nb-account-modal-backdrop{
+  background:rgba(8,15,30,.68);
+  backdrop-filter:blur(7px);
+  -webkit-backdrop-filter:blur(7px);
+}
+.nb-account-modal-panel{
+  width:min(100%,540px);
+  max-height:min(88vh,780px);
+  padding:0;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.8);
+  border-radius:22px;
+  background:#fff;
+  box-shadow:0 36px 100px rgba(3,10,25,.32),0 8px 24px rgba(3,10,25,.12);
+  animation:nb-modal-panel-in .22s cubic-bezier(.2,.75,.25,1) both;
+}
+.nb-account-modal-panel:before{
+  content:"";
+  display:block;
+  height:5px;
+  width:100%;
+  background:#155eef;
+}
+.nb-account-modal-header{
+  position:relative;
+  margin:0;
+  padding:25px 28px 21px;
+  border-bottom:1px solid #eaecf0;
+  background:#fcfcfd;
+}
+.nb-account-modal-header>div{min-width:0}
+.nb-account-modal-header .nb-account-label{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  color:#155eef;
+  font-size:9px;
+  font-weight:850;
+  letter-spacing:.16em;
+}
+.nb-account-modal-header .nb-account-label:before{
+  content:"";
+  width:7px;height:7px;border-radius:50%;background:#12b76a;
+  box-shadow:0 0 0 4px #ecfdf3;
+}
+.nb-account-modal-header h2{
+  margin:9px 0 7px;
+  color:#101828;
+  font-size:25px;
+  font-weight:850;
+  line-height:1.2;
+  letter-spacing:-.045em;
+}
+.nb-account-modal-header .nb-account-muted{
+  max-width:390px;
+  color:#667085;
+  font-size:12px;
+  line-height:1.65;
+}
+.nb-account-modal-close{
+  flex:0 0 38px;
+  width:38px;height:38px;
+  border:1px solid #e4e7ec;
+  border-radius:12px;
+  background:#fff;
+  color:#667085;
+  font-size:25px;
+  box-shadow:0 1px 2px rgba(16,24,40,.04);
+  transition:background .16s ease,border-color .16s ease,color .16s ease,transform .16s ease;
+}
+.nb-account-modal-close:hover{
+  transform:rotate(90deg);
+  border-color:#cfd4dc;
+  background:#f2f4f7;
+  color:#101828;
+}
+.nb-account-modal-panel form{
+  max-height:calc(min(88vh,780px) - 155px);
+  overflow-y:auto;
+  padding:25px 28px 28px;
+  gap:18px;
+  overscroll-behavior:contain;
+}
+.nb-account-modal-panel label{
+  gap:8px;
+  color:#344054;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.015em;
+}
+.nb-account-modal-panel input{
+  min-height:49px;
+  padding:12px 14px;
+  border:1px solid #d0d5dd;
+  border-radius:11px;
+  background:#fff;
+  color:#101828;
+  font-family:inherit;
+  font-size:15px;
+  font-weight:500;
+  line-height:1.4;
+  box-shadow:0 1px 2px rgba(16,24,40,.025);
+  transition:border-color .16s ease,box-shadow .16s ease,background .16s ease;
+}
+.nb-account-modal-panel input:hover{border-color:#98a2b3}
+.nb-account-modal-panel input:focus{
+  outline:0;
+  border-color:#84adff;
+  background:#fff;
+  box-shadow:0 0 0 4px rgba(21,94,239,.11);
+}
+.nb-account-modal-panel input[aria-invalid="true"]{border-color:#f04438;box-shadow:0 0 0 3px rgba(240,68,56,.09)}
+.nb-account-modal-panel .nb-account-button{
+  min-height:49px;
+  width:100%;
+  margin-top:5px;
+  border:1px solid #155eef;
+  border-radius:11px;
+  background:#155eef;
+  color:#fff;
+  font-size:12px;
+  font-weight:850;
+  letter-spacing:.01em;
+  box-shadow:0 5px 12px rgba(21,94,239,.18);
+  transition:background .16s ease,box-shadow .16s ease,transform .16s ease;
+}
+.nb-account-modal-panel .nb-account-button:hover{
+  background:#1849a9;
+  box-shadow:0 8px 18px rgba(21,94,239,.23);
+  transform:translateY(-1px);
+}
+.nb-account-modal-panel .nb-account-button:active{transform:translateY(0);box-shadow:0 2px 6px rgba(21,94,239,.14)}
+.nb-account-modal-panel input:focus-visible,
+.nb-account-modal-close:focus-visible,
+.nb-account-modal-panel button:focus-visible{
+  outline:3px solid rgba(21,94,239,.25);
+  outline-offset:3px;
+}
+@keyframes nb-modal-fade-in{from{opacity:0}to{opacity:1}}
+@keyframes nb-modal-panel-in{from{opacity:0;transform:translateY(12px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(max-width:600px){
+  .nb-account-modal{
+    align-items:flex-end;
+    padding:8px;
+  }
+  .nb-account-modal-backdrop{
+    background:rgba(8,15,30,.64);
+    backdrop-filter:blur(5px);
+    -webkit-backdrop-filter:blur(5px);
+  }
+  .nb-account-modal-panel{
+    width:100%;
+    max-height:91vh;
+    border-radius:22px 22px 16px 16px;
+    box-shadow:0 20px 65px rgba(3,10,25,.28);
+  }
+  .nb-account-modal-panel:before{height:4px}
+  .nb-account-modal-header{padding:21px 19px 18px}
+  .nb-account-modal-header h2{font-size:22px}
+  .nb-account-modal-close{width:35px;height:35px;flex-basis:35px;border-radius:10px}
+  .nb-account-modal-panel form{
+    max-height:calc(91vh - 145px);
+    padding:20px 19px calc(22px + env(safe-area-inset-bottom,0px));
+    gap:16px;
+  }
+  .nb-account-modal-panel input{min-height:49px;font-size:16px}
+  .nb-account-modal-panel .nb-account-button{min-height:49px}
+}
+@media(prefers-reduced-motion:reduce){
+  .nb-account-modal,.nb-account-modal-panel{animation:none}
+  .nb-account-modal-close,.nb-account-modal-panel input,.nb-account-modal-panel .nb-account-button{transition:none}
+}
