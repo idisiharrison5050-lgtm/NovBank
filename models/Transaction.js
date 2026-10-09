@@ -6,7 +6,7 @@ var TransactionSchema = new mongoose.Schema({
 
   type: {
     type: String,
-    enum: ['internal_transfer', 'wire_transfer', 'deposit', 'withdrawal', 'airtime', 'loan_credit', 'loan_repayment', 'admin_credit', 'admin_debit', 'grant_credit', 'refund_credit'],
+    enum: ['internal_transfer', 'wire_transfer', 'deposit', 'withdrawal', 'airtime', 'loan_credit', 'loan_repayment', 'admin_credit', 'admin_debit', 'grant_credit', 'refund_credit', 'currency_conversion'],
     required: true
   },
 
@@ -20,6 +20,16 @@ var TransactionSchema = new mongoose.Schema({
   },
 
   proofOfPayment: { type: String, default: null },
+
+  currencyConversion: {
+    fromCurrency: { type: String, uppercase: true, default: null },
+    toCurrency: { type: String, uppercase: true, default: null },
+    fromAmount: { type: Number, default: null },
+    toAmount: { type: Number, default: null },
+    rate: { type: Number, default: null },
+    rateUpdatedAt: { type: String, default: null },
+    rateProvider: { type: String, default: null }
+  },
 
   status: {
     type: String,
