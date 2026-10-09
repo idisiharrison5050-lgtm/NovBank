@@ -1,0 +1,189 @@
+/* Bootstrap 5 responsive layout integration for NovBank.
+   The original visual system remains intact; Bootstrap's grid handles the columns. */
+
+.nb-landing,
+.nb-landing * {
+  box-sizing: border-box;
+}
+
+.nb-feature-band.row,
+.nb-showcase-grid.row,
+.nb-product-grid.row,
+.nb-capability-grid.row,
+.nb-split-inner.row,
+.nb-products.row,
+.nb-stat-grid.row,
+.nb-future-inner.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.nb-feature-band.row {
+  width: 100%;
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 78px 24px;
+  align-items: center;
+}
+
+.nb-feature-band.row > *,
+.nb-showcase-grid.row > *,
+.nb-product-grid.row > *,
+.nb-capability-grid.row > *,
+.nb-split-inner.row > *,
+.nb-products.row > *,
+.nb-stat-grid.row > *,
+.nb-future-inner.row > * {
+  min-width: 0;
+}
+
+.nb-showcase-grid.row {
+  align-items: center;
+}
+
+.nb-product-grid.row,
+.nb-capability-grid.row,
+.nb-products.row,
+.nb-stat-grid.row {
+  align-items: stretch;
+}
+
+.nb-product-grid.row > .nb-product,
+.nb-products.row > .nb-product {
+  width: 100%;
+}
+
+.nb-capability-grid.row > article {
+  display: block;
+}
+
+.nb-split-inner.row {
+  align-items: center;
+}
+
+.nb-split-inner.row > .nb-security-card {
+  width: 100%;
+}
+
+.nb-stat-grid.row > div {
+  height: auto;
+  overflow-wrap: anywhere;
+}
+
+.nb-future-inner.row {
+  align-items: center;
+}
+
+.nb-future-inner.row > .nb-future-pills {
+  display: flex;
+  align-content: center;
+  align-items: center;
+}
+
+@media (max-width: 991.98px) {
+  .nb-feature-band.row {
+    padding: 64px 20px;
+  }
+
+  .nb-showcase-grid.row {
+    row-gap: 28px;
+  }
+
+  .nb-split-inner.row {
+    row-gap: 28px;
+  }
+
+  .nb-future-inner.row {
+    row-gap: 24px;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .nb-site-nav.container-fluid {
+    padding-left: 16px;
+    padding-right: 14px;
+  }
+
+  .nb-feature-band.row {
+    padding: 54px 16px;
+    row-gap: 26px;
+  }
+
+  .nb-feature-band.row > .nb-feature-copy {
+    order: 1;
+  }
+
+  .nb-feature-band.row > .nb-feature-image {
+    order: 2;
+    width: 100%;
+    margin: 0;
+  }
+
+  .nb-showcase-grid.row {
+    row-gap: 24px;
+  }
+
+  .nb-showcase-grid.row > .nb-showcase-copy,
+  .nb-showcase-grid.row > .nb-showcase-card {
+    width: 100%;
+  }
+
+  .nb-product-grid.row,
+  .nb-capability-grid.row,
+  .nb-products.row,
+  .nb-stat-grid.row {
+    row-gap: 12px;
+  }
+
+  .nb-product-grid.row > .nb-product,
+  .nb-capability-grid.row > article,
+  .nb-products.row > .nb-product {
+    width: 100%;
+  }
+
+  .nb-split-inner.row {
+    padding: 58px 16px;
+    row-gap: 24px;
+  }
+
+  .nb-split-inner.row > .col-12 {
+    width: 100%;
+  }
+
+  .nb-stat-grid.row > .col-6 {
+    width: 50%;
+  }
+
+  .nb-future-inner.row {
+    row-gap: 20px;
+  }
+
+  .nb-future-inner.row > .col-12 {
+    width: 100%;
+  }
+}
+
+@media (max-width: 420px) {
+  .nb-feature-band.row {
+    padding: 48px 14px;
+  }
+
+  .nb-stat-grid.row > .col-6 {
+    width: 50%;
+  }
+
+  .nb-site-nav.container-fluid {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nb-landing *,
+  .nb-landing *::before,
+  .nb-landing *::after {
+    scroll-behavior: auto !important;
+  }
+}
