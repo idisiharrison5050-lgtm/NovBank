@@ -314,6 +314,27 @@ if (pinModalEl) {
 }
 </script>
 <script src="//code.jivosite.com/widget/67Olrk9gNV" async></script>
+<script>
+(function () {
+  function liftJivoChat() {
+    if (!window.matchMedia || !window.matchMedia('(max-width: 768px)').matches) return;
+    var containers = document.querySelectorAll(
+      '#jivo-iframe-container, .jivo-iframe-container, #jivo-chat, #jivo-chat-widget, [id^="jivo"], [class*="jivo"]'
+    );
+    Array.prototype.forEach.call(containers, function (el) {
+      var position = window.getComputedStyle(el).position;
+      if (position === 'fixed' || el.id === 'jivo-iframe-container' || el.id === 'jivo-chat') {
+        el.style.setProperty('bottom', '88px', 'important');
+      }
+    });
+  }
+  liftJivoChat();
+  if (window.MutationObserver && document.body) {
+    new MutationObserver(liftJivoChat).observe(document.body, { childList: true, subtree: true });
+  }
+  window.addEventListener('resize', liftJivoChat);
+})();
+</script>
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
 <script>
