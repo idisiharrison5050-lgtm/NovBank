@@ -162,7 +162,9 @@ router.post('/register/step2', isGuest, function (req, res) {
 // Register Step 3
 router.get('/register/step3', isGuest, function (req, res) {
   if (!req.session.regStep1 || !req.session.regStep2) return res.redirect('/register');
-  res.render('auth/register-step3', { title: 'Create Account - Step 3', currencies: currencies });
+  currencies.refresh().then(function (availableCurrencies) {
+    res.render('auth/register-step3', { title: 'Create Account - Step 3', currencies: availableCurrencies });
+  });
 });
 
 router.post('/register/step3', isGuest, function (req, res) {
