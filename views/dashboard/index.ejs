@@ -18,7 +18,7 @@
     <div class="nb-command-status"><span class="nb-command-status-dot"></span><span>Secure banking session</span></div>
   </section>
   <% if (success_msg.length > 0) { %><div class="alert alert-success"><%= success_msg %></div><% } %><% if (error_msg.length > 0) { %><div class="alert alert-danger"><%= error_msg %></div><% } %>
-  <section class="nb-command-grid"><div class="nb-networth-card"><div class="nb-networth-top"><span>AVAILABLE BALANCE</span><a href="/dashboard/profile">Account details →</a></div><strong>€ <%= Number(user.balance || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong><div class="nb-networth-meta"><span><i></i><%= user.accountStatus.charAt(0).toUpperCase()+user.accountStatus.slice(1) %> account</span><span>•••• <%= String(user.accountNumber).slice(-4) %></span></div>
+  <section class="nb-command-grid"><div class="nb-networth-card"><div class="nb-networth-top"><span>AVAILABLE BALANCE</span><a href="/dashboard/profile">Account details →</a></div><strong><%= currencySymbol(user.currency || 'EUR') %> <%= Number(user.balance || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong><div class="nb-networth-meta"><span><i></i><%= user.accountStatus.charAt(0).toUpperCase()+user.accountStatus.slice(1) %> account</span><span>•••• <%= String(user.accountNumber).slice(-4) %></span></div>
       <div class="nb-balance-actions" aria-label="Quick banking actions">
         <button type="button" data-action-popup="send"><span class="nb-balance-action-icon"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></span><b>Send</b></button>
         <button type="button" data-action-popup="receive"><span class="nb-balance-action-icon"><svg viewBox="0 0 24 24"><path d="M19 12H5"></path><path d="m11 18-6-6 6-6"></path></svg></span><b>Receive</b></button>
@@ -67,28 +67,28 @@
     <article class="nb-fin-card nb-fin-card-balance">
       <div class="nb-fin-card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><path d="M8 12h8"></path><path d="M12 8v8"></path></svg></div>
       <span>MONTHLY TRANSFER LIMIT</span>
-      <strong>€ <%= Number((user.accountLimits && user.accountLimits.monthlyTransfer) || 0).toLocaleString('en-GB',{minimumFractionDigits:0,maximumFractionDigits:0}) %></strong>
+      <strong><%= currencySymbol(user.currency || 'EUR') %> <%= Number((user.accountLimits && user.accountLimits.monthlyTransfer) || 0).toLocaleString('en-GB',{minimumFractionDigits:0,maximumFractionDigits:0}) %></strong>
       <small>Maximum outgoing volume</small>
       <a href="/dashboard/profile">Manage limits <b>→</b></a>
     </article>
     <article class="nb-fin-card nb-fin-card-profit">
       <div class="nb-fin-card-icon"><svg viewBox="0 0 24 24"><path d="M4 19V5"></path><path d="M4 19h16"></path><path d="m7 15 4-4 3 2 5-7"></path><path d="M16 6h3v3"></path></svg></div>
       <span>MONTHLY RECEIVED</span>
-      <strong>€ <%= Number(monthIncoming || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong>
+      <strong><%= currencySymbol(user.currency || 'EUR') %> <%= Number(monthIncoming || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong>
       <small>Completed money in this month</small>
       <a href="/dashboard/transactions">View transactions <b>→</b></a>
     </article>
     <article class="nb-fin-card nb-fin-card-active">
       <div class="nb-fin-card-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M8 8h8"></path><path d="M8 12h5"></path><circle cx="17" cy="15" r="2"></circle></svg></div>
       <span>MONTHLY SENT</span>
-      <strong>€ <%= Number(monthOutgoing || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong>
+      <strong><%= currencySymbol(user.currency || 'EUR') %> <%= Number(monthOutgoing || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong>
       <small>Completed money out this month</small>
       <a href="/dashboard/transactions">View transactions <b>→</b></a>
     </article>
     <article class="nb-fin-card nb-fin-card-limit">
       <div class="nb-fin-card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v5l3 2"></path><path d="M8 3h8"></path></svg></div>
       <span>TRANSFER LIMIT</span>
-      <strong>€ <%= Number((user.accountLimits && user.accountLimits.dailyTransfer) || 0).toLocaleString('en-GB',{minimumFractionDigits:0,maximumFractionDigits:0}) %></strong>
+      <strong><%= currencySymbol(user.currency || 'EUR') %> <%= Number((user.accountLimits && user.accountLimits.dailyTransfer) || 0).toLocaleString('en-GB',{minimumFractionDigits:0,maximumFractionDigits:0}) %></strong>
       <small>Daily outgoing limit</small>
       <a href="/dashboard/profile">Manage limits <b>→</b></a>
     </article>
@@ -96,9 +96,9 @@
 
   <section class="nb-financial-pulse">
     <div class="nb-pulse-intro"><span>FINANCIAL PULSE</span><h2>Your money at a glance.</h2><p>Based on completed account activity over the current month.</p></div>
-    <div class="nb-pulse-stat"><span>RECEIVED</span><strong>€ <%= Number(monthIncoming || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong><small>Money in</small></div>
-    <div class="nb-pulse-stat"><span>SENT</span><strong>€ <%= Number(monthOutgoing || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong><small>Money out</small></div>
-    <div class="nb-pulse-stat <%= Number(monthIncoming || 0) - Number(monthOutgoing || 0) >= 0 ? 'positive' : 'negative' %>"><span>NET MOVEMENT</span><strong><%= Number(monthIncoming || 0) - Number(monthOutgoing || 0) >= 0 ? '+' : '−' %>€ <%= Math.abs(Number(monthIncoming || 0) - Number(monthOutgoing || 0)).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong><small><%= Number(monthIncoming || 0) - Number(monthOutgoing || 0) >= 0 ? 'More received than sent' : 'More sent than received' %></small></div>
+    <div class="nb-pulse-stat"><span>RECEIVED</span><strong><%= currencySymbol(user.currency || 'EUR') %> <%= Number(monthIncoming || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong><small>Money in</small></div>
+    <div class="nb-pulse-stat"><span>SENT</span><strong><%= currencySymbol(user.currency || 'EUR') %> <%= Number(monthOutgoing || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong><small>Money out</small></div>
+    <div class="nb-pulse-stat <%= Number(monthIncoming || 0) - Number(monthOutgoing || 0) >= 0 ? 'positive' : 'negative' %>"><span>NET MOVEMENT</span><strong><%= Number(monthIncoming || 0) - Number(monthOutgoing || 0) >= 0 ? '+' : '−' %><%= currencySymbol(user.currency || 'EUR') %> <%= Math.abs(Number(monthIncoming || 0) - Number(monthOutgoing || 0)).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong><small><%= Number(monthIncoming || 0) - Number(monthOutgoing || 0) >= 0 ? 'More received than sent' : 'More sent than received' %></small></div>
   </section>
 
   <div class="nb-action-modal" id="nbActionModal" aria-hidden="true">
@@ -140,7 +140,7 @@
             <small><%= txn.category || txn.type.replace(/_/g,' ') %> · <%= new Date(txn.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) %></small>
           </div>
           <div class="nb-activity-amount">
-            <strong class="<%= credit ? 'credit' : '' %>"><%= credit ? '+' : '-' %>€<%= Number(txn.amount).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong>
+            <strong class="<%= credit ? 'credit' : '' %>"><%= credit ? '+' : '-' %><%= currencySymbol(txn.currency || user.currency || 'EUR') %><%= Number(txn.amount).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong>
             <small><%= txn.status || 'completed' %></small>
           </div>
         </a>
@@ -155,15 +155,15 @@
       <% if (spending.length === 0) { %>
         <div class="nb-empty-state"><b>No spending data yet</b><span>Completed spending will be grouped here.</span></div>
       <% } else { var spendTotal = spending.reduce(function(sum,item){return sum + Number(item.total || 0);},0); spending.forEach(function(item){ var pct = spendTotal ? Math.round((Number(item.total)/spendTotal)*100) : 0; %>
-        <div class="nb-spend-row"><div><b><%= item._id || 'Other' %></b><span>€ <%= Number(item.total).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></span></div><div class="nb-spend-track"><i style="width:<%= pct %>%"></i></div><small><%= pct %>% of spending</small></div>
+        <div class="nb-spend-row"><div><b><%= item._id || 'Other' %></b><span><%= currencySymbol(user.currency || 'EUR') %> <%= Number(item.total).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></span></div><div class="nb-spend-track"><i style="width:<%= pct %>%"></i></div><small><%= pct %>% of spending</small></div>
       <% }); } %>
-      <% if (spending.length > 0) { %><div class="nb-spending-total"><span>Total spending</span><b>€ <%= Number(spendTotal).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></b></div><% } %>
+      <% if (spending.length > 0) { %><div class="nb-spending-total"><span>Total spending</span><b><%= currencySymbol(user.currency || 'EUR') %> <%= Number(spendTotal).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></b></div><% } %>
     </div>
   </section>
   <section class="nb-command-panel nb-cashflow-overview">
     <div class="nb-panel-heading">
       <div><span>CASH FLOW</span><h2>Money movement this month.</h2></div>
-      <div class="nb-cashflow-summary"><b>+€ <%= Number(monthIncoming || 0).toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2}) %></b><span>received</span><strong>−€ <%= Number(monthOutgoing || 0).toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong><span>sent</span></div>
+      <div class="nb-cashflow-summary"><b>+<%= currencySymbol(user.currency || 'EUR') %> <%= Number(monthIncoming || 0).toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2}) %></b><span>received</span><strong>−<%= currencySymbol(user.currency || 'EUR') %> <%= Number(monthOutgoing || 0).toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong><span>sent</span></div>
     </div>
     <div class="nb-cashflow-chart">
       <% var maxFlow = 1; (cashflow || []).forEach(function(day){ maxFlow = Math.max(maxFlow, Number(day.incoming || 0), Number(day.outgoing || 0)); }); %>
