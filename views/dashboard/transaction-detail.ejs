@@ -23,8 +23,8 @@
 
     <div class="nb-receipt">
       <div class="nb-receipt-total <%= isCredit ? 'credit' : '' %>">
-        <small><%= isCredit ? 'Money received' : 'Money sent' %></small>
-        <strong><%= isCredit ? '+' : '-' %><%= currencySymbol(transaction.currency || user.currency || 'EUR') %><%= Number(transaction.amount).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong>
+        <small><%= transaction.type === 'currency_conversion' ? 'Balance converted' : (isCredit ? 'Money received' : 'Money sent') %></small>
+        <strong><%= transaction.type === 'currency_conversion' ? '↔ ' : (isCredit ? '+' : '-') %><%= currencySymbol(transaction.currency || user.currency || 'EUR') %><%= Number(transaction.amount).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong>
         <span class="txn-status status-<%= transaction.status %>"><%= transaction.status %></span>
       </div>
 
@@ -37,6 +37,12 @@
         <div><span>TYPE</span><b><%= transaction.type.replace(/_/g,' ') %></b></div>
         <% if (transaction.wireDetails && transaction.wireDetails.payoutMethod) { %><div><span>PAYOUT METHOD</span><b><%= transaction.wireDetails.payoutMethod %></b></div><% } %>
         <div><span>CATEGORY</span><b><%= transaction.category || 'Account activity' %></b></div>
+        <% if (transaction.type === 'currency_conversion' && transaction.currencyConversion) { %>
+        <div><span>CONVERTED FROM</span><b><%= transaction.currencyConversion.fromCurrency %> <%= Number(transaction.currencyConversion.fromAmount || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></b></div>
+        <div><span>EXCHANGE RATE</span><b>1 <%= transaction.currencyConversion.fromCurrency %> = <%= Number(transaction.currencyConversion.rate || 0).toLocaleString('en-GB',{maximumFractionDigits:8}) %> <%= transaction.currencyConversion.toCurrency %></b></div>
+        <div><span>CONVERTED TO</span><b><%= transaction.currencyConversion.toCurrency %> <%= Number(transaction.currencyConversion.toAmount || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></b></div>
+        <div><span>RATE UPDATED</span><b><%= transaction.currencyConversion.rateUpdatedAt || 'Not provided' %></b></div>
+        <% } %>
         <div><span>DATE</span><b><%= new Date(transaction.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}) %></b></div>
         <div>
           <span>FROM</span>
