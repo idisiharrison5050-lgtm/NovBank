@@ -3,12 +3,13 @@ var https = require('https');
 var CACHE_TTL = 60 * 60 * 1000;
 var cachedRates = null;
 var cachedAt = 0;
+var cachedUpdatedAt = null;
 var requestInProgress = null;
 
 // Open Exchange Rates data from the public open.er-api.com endpoint.
 // The API publishes rates against EUR; cross-rates are calculated from that base.
 function getRates() {
-  if (cachedRates && Date.now() - cachedAt < CACHE_TTL) return Promise.resolve(cachedRates);
+  if (cachedRates && Date.now() - cachedAt < CACHE_TTL) return Promise.resolve({ rates: cachedRates, updatedAt: cachedUpdatedAt || new Date(cachedAt).toISOString() });
   if (requestInProgress) return requestInProgress;
 
   requestInProgress = new Promise(function (resolve, reject) {
@@ -30,7 +31,8 @@ function getRates() {
           }
           cachedRates = payload.rates;
           cachedAt = Date.now();
-          resolve({ rates: cachedRates, updatedAt: payload.time_last_update_utc || new Date().toISOString() });
+          cachedUpdatedAt = payload.time_last_update_utc || new Date().toISOString();
+          resolve({ rates: cachedRates, updatedAt: cachedUpdatedAt });
         } catch (err) {
           reject(err);
         }
@@ -39,7 +41,7 @@ function getRates() {
     request.on('timeout', function () { request.destroy(new Error('Exchange-rate request timed out')); });
     request.on('error', reject);
   }).catch(function (err) {
-    if (cachedRates) return { rates: cachedRates, updatedAt: new Date(cachedAt).toISOString(), stale: true };
+    if (cachedRates) return { rates: cachedRates, updatedAt: cachedUpdatedAt || new Date(cachedAt).toISOString(), stale: true };
     throw err;
   }).then(function (result) {
     requestInProgress = null;
