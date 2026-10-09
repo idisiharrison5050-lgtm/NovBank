@@ -22,8 +22,10 @@
 <button class="nb-account-button" type="submit">Save currency</button>
 </form>
 </div>
-<div class="nb-account-card nb-account-form"><h2>Contact information</h2><p class="nb-account-muted">For your protection, confirm your current password before changing contact or address details.</p><form action="/account/update-profile" method="POST"><label>Phone<input type="tel" name="phone" value="<%= user.phone %>"/></label><label>Street address<input type="text" name="street" value="<%= user.address ? user.address.street : '' %>"/></label><label>City<input type="text" name="city" value="<%= user.address ? user.address.city : '' %>"/></label><label>Zip code<input type="text" name="zip" value="<%= user.address ? user.address.zip : '' %>"/></label><label>Country<input type="text" name="country" value="<%= user.address ? user.address.country : '' %>"/></label><label>Current password<input type="password" name="currentPassword" autocomplete="current-password" required/></label><button class="nb-account-button" type="submit">Save changes</button></form></div>
-<div class="nb-account-security-grid"><div class="nb-account-card nb-account-form" id="pin"><span class="nb-account-label">TRANSACTION SECURITY</span><h2><%= user.pinSet ? 'Change transaction PIN' : 'Set transaction PIN' %></h2><p class="nb-account-muted">Your PIN is required before protected money movement actions.</p><form action="/change-pin" method="POST"><% if (user.pinSet) { %><label>Current PIN<input type="password" name="currentPin" inputmode="numeric" maxlength="4" autocomplete="off" required/></label><% } %><label>New PIN<input type="password" name="newPin" inputmode="numeric" maxlength="4" autocomplete="new-password" required/></label><label>Confirm PIN<input type="password" name="confirmPin" inputmode="numeric" maxlength="4" autocomplete="new-password" required/></label><button class="nb-account-button" type="submit"><%= user.pinSet ? 'Change PIN' : 'Set PIN' %></button></form></div><div class="nb-account-card nb-account-form"><span class="nb-account-label">ACCOUNT ACCESS</span><h2>Reset your PIN</h2><p class="nb-account-muted">If you no longer know your PIN, verify your account password to create a new one.</p><form action="/reset-pin" method="POST"><label>Account password<input type="password" name="password" autocomplete="current-password" required/></label><label>New PIN<input type="password" name="newPin" inputmode="numeric" maxlength="4" autocomplete="new-password" required/></label><label>Confirm PIN<input type="password" name="confirmPin" inputmode="numeric" maxlength="4" autocomplete="new-password" required/></label><button class="nb-account-button secondary" type="submit">Reset PIN</button></form></div></div><div class="nb-account-card nb-account-form">
+<section class="nb-account-card nb-account-form nb-action-card" aria-labelledby="contact-info-title"><div class="nb-action-card-icon" aria-hidden="true">✉</div><div class="nb-action-card-copy"><h2 id="contact-info-title">Contact information</h2><p class="nb-account-muted">View or update your phone number and address details in a secure panel.</p></div><button class="nb-account-button" type="button" data-modal-open="contactInfoModal">View contact information</button></section>
+<div class="nb-account-modal" id="contactInfoModal" hidden><div class="nb-account-modal-backdrop" data-modal-close></div><section class="nb-account-modal-panel" role="dialog" aria-modal="true" aria-labelledby="contact-modal-title" tabindex="-1"><div class="nb-account-modal-header"><div><span class="nb-account-label">PERSONAL DETAILS</span><h2 id="contact-modal-title">Contact information</h2><p class="nb-account-muted">Confirm your current password to save changes.</p></div><button class="nb-account-modal-close" type="button" aria-label="Close dialog" data-modal-close>×</button></div><form action="/account/update-profile" method="POST"><label>Phone<input type="tel" name="phone" value="<%= user.phone || '' %>"/></label><label>Street address<input type="text" name="street" value="<%= user.address ? user.address.street : '' %>"/></label><label>City<input type="text" name="city" value="<%= user.address ? user.address.city : '' %>"/></label><label>Zip code<input type="text" name="zip" value="<%= user.address ? user.address.zip : '' %>"/></label><label>Country<input type="text" name="country" value="<%= user.address ? user.address.country : '' %>"/></label><label>Current password<input type="password" name="currentPassword" autocomplete="current-password" required/></label><button class="nb-account-button" type="submit">Save changes</button></form></section></div>
+<div class="nb-account-security-grid"><section class="nb-account-card nb-account-form nb-action-card" id="pin" aria-labelledby="pin-action-title"><div class="nb-action-card-icon nb-action-card-icon-security" aria-hidden="true">⌑</div><div class="nb-action-card-copy"><span class="nb-account-label">TRANSACTION SECURITY</span><h2 id="pin-action-title"><%= user.pinSet ? 'Change transaction PIN' : 'Set transaction PIN' %></h2><p class="nb-account-muted">Update your 4-digit transaction PIN in a secure pop-up. Your current PIN is required when one is already set.</p></div><button class="nb-account-button" type="button" data-modal-open="changePinModal"><%= user.pinSet ? 'Change PIN' : 'Set PIN' %></button></section>
+<div class="nb-account-modal" id="changePinModal" hidden><div class="nb-account-modal-backdrop" data-modal-close></div><section class="nb-account-modal-panel" role="dialog" aria-modal="true" aria-labelledby="pin-modal-title" tabindex="-1"><div class="nb-account-modal-header"><div><span class="nb-account-label">TRANSACTION SECURITY</span><h2 id="pin-modal-title"><%= user.pinSet ? 'Change transaction PIN' : 'Set transaction PIN' %></h2><p class="nb-account-muted">Enter and confirm your new 4-digit PIN.</p></div><button class="nb-account-modal-close" type="button" aria-label="Close dialog" data-modal-close>×</button></div><form action="/change-pin" method="POST"><% if (user.pinSet) { %><label>Current PIN<input type="password" name="currentPin" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" minlength="4" autocomplete="off" required/></label><% } %><label>New PIN<input type="password" name="newPin" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" minlength="4" autocomplete="new-password" required/></label><label>Confirm PIN<input type="password" name="confirmPin" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" minlength="4" autocomplete="new-password" required/></label><button class="nb-account-button" type="submit"><%= user.pinSet ? 'Save new PIN' : 'Set PIN' %></button></form></section></div><div class="nb-account-card nb-account-form"><span class="nb-account-label">ACCOUNT ACCESS</span><h2>Reset your PIN</h2><p class="nb-account-muted">If you no longer know your PIN, verify your account password to create a new one.</p><form action="/reset-pin" method="POST"><label>Account password<input type="password" name="password" autocomplete="current-password" required/></label><label>New PIN<input type="password" name="newPin" inputmode="numeric" maxlength="4" autocomplete="new-password" required/></label><label>Confirm PIN<input type="password" name="confirmPin" inputmode="numeric" maxlength="4" autocomplete="new-password" required/></label><button class="nb-account-button secondary" type="submit">Reset PIN</button></form></div></div><div class="nb-account-card nb-account-form">
   <span class="nb-account-label">USAGE LIMITS</span>
   <h2>Your account limits</h2>
   <p class="nb-account-muted">These limits are set by NovBank operations and apply to protected money movement.</p>
@@ -37,7 +39,41 @@
 </main></div>
 <script>
 (function () {
-  var buttons = document.querySelectorAll('.nb-copy-control');
+  var modalOpeners = document.querySelectorAll('[data-modal-open]');
+  var activeModal = null;
+  var lastFocused = null;
+  modalOpeners.forEach(function (opener) {
+    opener.addEventListener('click', function () {
+      var modal = document.getElementById(opener.getAttribute('data-modal-open'));
+      if (!modal) return;
+      lastFocused = opener;
+      activeModal = modal;
+      modal.hidden = false;
+      document.body.classList.add('nb-modal-open');
+      var panel = modal.querySelector('.nb-account-modal-panel');
+      if (panel) panel.focus();
+      var firstField = modal.querySelector('input');
+      if (firstField) firstField.focus();
+    });
+  });
+  document.querySelectorAll('.nb-account-modal [data-modal-close]').forEach(function (closer) {
+    closer.addEventListener('click', function () {
+      if (!activeModal) return;
+      activeModal.hidden = true;
+      activeModal = null;
+      document.body.classList.remove('nb-modal-open');
+      if (lastFocused) lastFocused.focus();
+    });
+  });
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && activeModal) {
+      activeModal.hidden = true;
+      activeModal = null;
+      document.body.classList.remove('nb-modal-open');
+      if (lastFocused) lastFocused.focus();
+    }
+  });
+    var buttons = document.querySelectorAll('.nb-copy-control');
   buttons.forEach(function (button) {
     button.addEventListener('click', function () {
       var value = button.getAttribute('data-copy');
