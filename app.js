@@ -7,6 +7,7 @@ var flash      = require('connect-flash');
 var path       = require('path');
 var Notification = require('./models/Notification');
 var currencies = require('./config/currencies');
+currencies.refresh();
 require('dotenv').config();
 
 var environment = require('./config/environment');
