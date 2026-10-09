@@ -402,3 +402,22 @@
   .nb-capability-grid article:nth-child(3n + 2) { background: #d9e7fb !important; }
   .nb-capability-grid article:nth-child(3n) { background: #d7eee3 !important; }
 }
+
+
+/* Business cards: keep Manage operations navy; keep the next card white. */
+#business .nb-products > .nb-product:nth-child(1) {
+  background: #101d32 !important;
+  border-color: #101d32 !important;
+  color: #fff !important;
+}
+#business .nb-products > .nb-product:nth-child(2) {
+  background: #ffffff !important;
+  border-color: #dce4ed !important;
+  color: #0b1220 !important;
+  box-shadow: 0 10px 26px rgba(16,29,50,.06) !important;
+}
+#business .nb-products > .nb-product:nth-child(2) p { color: #667085 !important; }
+#business .nb-products > .nb-product:nth-child(2) .nb-product-icon {
+  background: #eef4ff !important;
+  color: #2459a9 !important;
+}
