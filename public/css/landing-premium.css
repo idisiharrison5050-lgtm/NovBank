@@ -1245,3 +1245,68 @@
     transition: none !important;
   }
 }
+
+/* Focused polish: existing business cards only — no new content or features */
+#business .nb-section-head{max-width:760px}
+#business .nb-products{gap:18px;align-items:stretch}
+#business .nb-product{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  min-height:258px;
+  padding:30px;
+  border-color:#e2e8f0;
+  border-radius:20px;
+  box-shadow:0 8px 24px rgba(16,24,40,.035);
+  transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease;
+}
+#business .nb-product:before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:30px;
+  right:30px;
+  height:3px;
+  border-radius:0 0 4px 4px;
+  background:#155eef;
+  opacity:0;
+  transition:opacity .22s ease;
+}
+#business .nb-product:hover{
+  transform:translateY(-5px);
+  border-color:#c9d8f5;
+  box-shadow:0 20px 42px rgba(16,24,40,.09);
+}
+#business .nb-product:hover:before{opacity:1}
+#business .nb-product-icon{
+  width:48px;
+  height:48px;
+  border:1px solid #dbe7ff;
+  border-radius:14px;
+  background:#f0f5ff;
+  font-size:22px;
+  box-shadow:0 5px 12px rgba(21,94,239,.06);
+}
+#business .nb-product h3{
+  margin:25px 0 11px;
+  font-size:19px;
+  line-height:1.3;
+  letter-spacing:-.025em;
+}
+#business .nb-product p{font-size:14px;line-height:1.75;max-width:34ch}
+@media(max-width:800px){
+  #business .nb-products{gap:12px}
+  #business .nb-product{min-height:0;padding:23px;border-radius:17px}
+  #business .nb-product:before{left:23px;right:23px}
+  #business .nb-product h3{margin:19px 0 8px}
+  #business .nb-product p{max-width:none;font-size:14px}
+}
+@media(hover:none){
+  #business .nb-product:hover{transform:none;box-shadow:0 8px 24px rgba(16,24,40,.035)}
+  #business .nb-product:hover:before{opacity:0}
+}
+@media(prefers-reduced-motion:reduce){
+  #business .nb-product,#business .nb-product:before{transition:none}
+}
+
