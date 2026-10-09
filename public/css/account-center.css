@@ -683,20 +683,3 @@ body.nb-modal-open{overflow:hidden}
   .nb-account-modal,.nb-account-modal-panel{animation:none}
   .nb-account-modal-close,.nb-account-modal-panel input,.nb-account-modal-panel .nb-account-button{transition:none}
 }
-
-
-/* Account upgrade card */
-.nb-upgrade-card{display:flex;align-items:center;gap:18px;position:relative;overflow:hidden;border-color:#d9e3f5;background:#fff}
-.nb-upgrade-mark{width:54px;height:54px;flex:0 0 54px;border-radius:16px;background:#eef4ff;color:#155eef;display:grid;place-items:center;font-size:27px;font-weight:800}
-.nb-upgrade-content{flex:1;min-width:0}
-.nb-upgrade-content h2{margin:6px 0 8px;font-size:20px;letter-spacing:-.035em}
-.nb-upgrade-content p{max-width:650px;margin:0;line-height:1.65}
-.nb-upgrade-status{display:flex;align-items:center;gap:8px;margin-top:13px;color:#475467;font-size:11px;font-weight:750}
-.nb-upgrade-status-dot{width:8px;height:8px;flex:0 0 8px;border-radius:50%;background:#f79009;box-shadow:0 0 0 4px #fffaeb}
-.nb-upgrade-status-dot.is-approved{background:#12b76a;box-shadow:0 0 0 4px #ecfdf3}
-.nb-upgrade-status-dot.is-pending{background:#155eef;box-shadow:0 0 0 4px #eef4ff}
-.nb-upgrade-status-dot.is-declined{background:#d92d20;box-shadow:0 0 0 4px #fef3f2}
-.nb-upgrade-action{flex:0 0 auto;display:flex;align-items:center}
-.nb-upgrade-action a{white-space:nowrap;text-decoration:none}
-.nb-upgrade-complete{display:inline-flex;align-items:center;justify-content:center;padding:11px 15px;border-radius:10px;background:#ecfdf3;color:#067647;font-size:12px;font-weight:850;white-space:nowrap}
-@media(max-width:650px){.nb-upgrade-card{align-items:flex-start;flex-wrap:wrap;gap:14px}.nb-upgrade-mark{width:46px;height:46px;flex-basis:46px;border-radius:14px;font-size:23px}.nb-upgrade-content{flex:1 1 calc(100% - 65px)}.nb-upgrade-content h2{font-size:18px}.nb-upgrade-action{width:100%;padding-left:60px}.nb-upgrade-action a,.nb-upgrade-complete{width:100%;box-sizing:border-box}}
