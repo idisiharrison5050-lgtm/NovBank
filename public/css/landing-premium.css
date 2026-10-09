@@ -746,3 +746,326 @@
     animation: none !important;
   }
 }
+
+
+/* Below-the-hero visual refinement — preserve the existing hero and navigation */
+.nb-landing .nb-feature-band,
+.nb-landing .nb-showcase-section,
+.nb-landing .nb-products-section,
+.nb-landing .nb-capabilities,
+.nb-landing .nb-stats-section,
+.nb-landing .nb-future {
+  position: relative;
+}
+.nb-landing .nb-feature-copy .nb-kicker,
+.nb-landing .nb-section-head .nb-kicker,
+.nb-landing .nb-showcase-copy .nb-kicker,
+.nb-landing .nb-split .nb-kicker,
+.nb-landing .nb-future .nb-kicker {
+  border-color: #dbe5f7;
+  background: #f4f7ff;
+  color: #1749a9;
+}
+.nb-landing .nb-feature-points span {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-height: 60px;
+  padding: 15px 18px 15px 16px;
+  border-color: #e5eaf2;
+  border-radius: 15px;
+  background: #fff;
+  box-shadow: 0 5px 16px rgba(16,24,40,.035);
+  font-size: 13px;
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+.nb-landing .nb-feature-points span:before {
+  content: "✓";
+  display: grid;
+  place-items: center;
+  width: 29px;
+  height: 29px;
+  flex: 0 0 29px;
+  border-radius: 9px;
+  background: #eaf2ff;
+  color: #155eef;
+  font-size: 14px;
+  font-weight: 900;
+}
+.nb-landing .nb-feature-points span:hover {
+  transform: translateX(3px);
+  border-color: #c8d8f7;
+  box-shadow: 0 10px 22px rgba(16,24,40,.06);
+}
+.nb-landing .nb-showcase-list div {
+  position: relative;
+  gap: 14px;
+  padding: 16px 17px;
+  border: 1px solid #e8ebf0;
+  border-radius: 14px;
+  background: #fff;
+}
+.nb-landing .nb-showcase-list b {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  border-radius: 10px;
+  background: #eef4ff;
+  color: #155eef;
+  font-size: 10px;
+}
+.nb-landing .nb-showcase-list span {
+  font-size: 13px;
+  line-height: 1.45;
+}
+.nb-landing .nb-showcase-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #1c2c43;
+  box-shadow: 0 22px 55px rgba(11,18,32,.16);
+}
+.nb-landing .nb-showcase-card:before,
+.nb-landing .nb-showcase-card:after {
+  content: "";
+  position: absolute;
+  width: 190px;
+  height: 190px;
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.nb-landing .nb-showcase-card:before {
+  top: -105px;
+  right: -50px;
+  box-shadow: 0 0 0 22px rgba(255,255,255,.025), 0 0 0 44px rgba(255,255,255,.018);
+}
+.nb-landing .nb-showcase-card:after {
+  bottom: -145px;
+  left: -70px;
+  width: 230px;
+  height: 230px;
+}
+.nb-landing .nb-showcase-window {
+  position: relative;
+  z-index: 1;
+  border: 1px solid #26364d;
+  box-shadow: 0 24px 55px rgba(0,0,0,.25);
+}
+.nb-landing .nb-window-balance {
+  position: relative;
+  margin-top: 20px;
+  padding: 24px 18px 22px;
+  border: 1px solid #26364d;
+  border-radius: 15px;
+  background: #101c2e;
+}
+.nb-landing .nb-window-balance strong {
+  font-size: clamp(25px, 3vw, 34px);
+}
+.nb-landing .nb-window-row {
+  margin-top: 18px;
+}
+.nb-landing .nb-product-grid .nb-product {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.nb-landing .nb-product-grid .nb-product:after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -38px;
+  right: -38px;
+  width: 125px;
+  height: 125px;
+  border: 1px solid #edf1f7;
+  border-radius: 50%;
+  box-shadow: 0 0 0 16px rgba(238,244,255,.32), 0 0 0 32px rgba(238,244,255,.2);
+  transition: transform .22s ease;
+}
+.nb-landing .nb-product-grid .nb-product:hover:after {
+  transform: scale(1.12);
+}
+.nb-landing .nb-product-grid .nb-product-icon {
+  position: relative;
+  z-index: 1;
+  border: 1px solid #dce8ff;
+  box-shadow: 0 7px 15px rgba(21,94,239,.08);
+}
+.nb-landing .nb-product-grid .nb-product-featured:after {
+  border-color: #2a3d58;
+  box-shadow: 0 0 0 16px rgba(42,61,88,.16), 0 0 0 32px rgba(42,61,88,.1);
+}
+.nb-landing .nb-product-grid .nb-product-featured .nb-product-icon {
+  border-color: #28476f;
+}
+.nb-landing .nb-product-meta {
+  border-top: 1px solid #eef1f5;
+  line-height: 1.6;
+}
+.nb-landing .nb-product-featured .nb-product-meta {
+  border-color: #2a3d58;
+}
+.nb-landing .nb-capabilities {
+  border-top: 1px solid #edf0f5;
+  border-bottom: 1px solid #edf0f5;
+}
+.nb-landing .nb-capability-grid article {
+  position: relative;
+  overflow: hidden;
+  min-height: 205px;
+  border-radius: 20px;
+  box-shadow: 0 6px 20px rgba(16,24,40,.025);
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.nb-landing .nb-capability-grid article:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 26px;
+  width: 36px;
+  height: 3px;
+  border-radius: 0 0 4px 4px;
+  background: #155eef;
+}
+.nb-landing .nb-capability-grid article>span {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid #dbe5f7;
+  border-radius: 10px;
+  background: #f4f7ff;
+  font-size: 10px;
+}
+.nb-landing .nb-capability-grid h3 {
+  margin-top: 22px;
+  letter-spacing: -.025em;
+}
+.nb-landing .nb-capability-grid article:hover {
+  transform: translateY(-4px);
+  border-color: #cbd8ed;
+  box-shadow: 0 18px 36px rgba(16,24,40,.07);
+}
+.nb-landing .nb-split .nb-kicker {
+  background: #14243a;
+  border-color: #2a3d58;
+  color: #b7d0ff;
+}
+.nb-landing .nb-security-card {
+  box-shadow: 0 22px 55px rgba(0,0,0,.16);
+}
+.nb-landing .nb-security-item {
+  gap: 18px;
+  align-items: center;
+}
+.nb-landing .nb-security-item span {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #e4e7ec;
+  font-size: 13px;
+}
+.nb-landing .nb-security-item span:before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  flex: 0 0 8px;
+  border-radius: 50%;
+  background: #32d583;
+  box-shadow: 0 0 0 4px rgba(50,213,131,.1);
+}
+.nb-landing .nb-security-item strong {
+  padding: 7px 10px;
+  border: 1px solid #28533f;
+  border-radius: 999px;
+  background: #102b22;
+  color: #75e0a7;
+  font-size: 10px;
+  white-space: nowrap;
+}
+.nb-landing .nb-stat-grid div {
+  position: relative;
+  overflow: hidden;
+  min-height: 150px;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(16,24,40,.035);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.nb-landing .nb-stat-grid div:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: #155eef;
+}
+.nb-landing .nb-stat-grid strong {
+  color: #101828;
+  font-weight: 850;
+}
+.nb-landing .nb-stat-grid div:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 38px rgba(16,24,40,.08);
+}
+.nb-landing .nb-future-inner {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #dbe5f7;
+  box-shadow: 0 16px 42px rgba(21,94,239,.07);
+}
+.nb-landing .nb-future-inner:after {
+  content: "";
+  position: absolute;
+  top: -95px;
+  right: -70px;
+  width: 240px;
+  height: 240px;
+  border: 1px solid #d4e1f8;
+  border-radius: 50%;
+  box-shadow: 0 0 0 22px rgba(255,255,255,.32), 0 0 0 44px rgba(255,255,255,.24);
+  pointer-events: none;
+}
+.nb-landing .nb-future-inner>div {
+  position: relative;
+  z-index: 1;
+}
+.nb-landing .nb-future-pills span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(16,24,40,.035);
+}
+.nb-landing .nb-future-pills span:before {
+  content: "✓";
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  background: #eaf2ff;
+  color: #155eef;
+  font-size: 11px;
+  font-weight: 900;
+}
+@media (max-width: 768px) {
+  .nb-landing .nb-feature-points span { min-height: 54px; padding: 13px 14px; }
+  .nb-landing .nb-showcase-list div { padding: 13px 12px; }
+  .nb-landing .nb-capability-grid article { min-height: 0; padding: 24px 22px; }
+  .nb-landing .nb-capability-grid article:before { left: 22px; }
+  .nb-landing .nb-security-item { align-items: flex-start; }
+  .nb-landing .nb-stat-grid div { min-height: 125px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nb-landing .nb-feature-points span,
+  .nb-landing .nb-capability-grid article,
+  .nb-landing .nb-stat-grid div,
+  .nb-landing .nb-product-grid .nb-product:after {
+    transition: none !important;
+  }
+}
