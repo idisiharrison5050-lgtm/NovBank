@@ -24,9 +24,9 @@
 </form>
 </div>
 <div class="nb-account-card nb-account-form" id="currency-converter">
-  <span class="nb-account-label">LIVE EXCHANGE RATES</span>
+  <span class="nb-account-label">EXCHANGE RATE CONVERTER</span>
   <h2>Convert account balance</h2>
-  <p class="nb-account-muted">Convert your entire available balance into another currency. The exchange rate is retrieved from a rate provider, rounded to two decimal places, and recorded in your transaction history. Review the quote before submitting.</p>
+  <p class="nb-account-muted">Convert your entire available balance into another currency. The latest available reference rate is used, the converted balance is rounded to two decimal places, and the rate is recorded in your transaction history. Rates are indicative and may differ from a bank or licensed FX provider’s settlement rate. Source: <a href="https://www.exchangerate-api.com/docs/free" target="_blank" rel="noopener noreferrer">ExchangeRate-API</a>.</p>
   <div class="nb-account-details">
     <div class="nb-account-detail"><span>Current balance</span><b id="conversionCurrentBalance"><%= (user.currency || 'EUR') %> <%= Number(accountBalance || 0).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></b></div>
     <div class="nb-account-detail"><span>Exchange rate</span><b id="conversionRate">Choose a currency</b></div>
@@ -45,7 +45,7 @@
     </label>
     <label>Current password<input type="password" name="currentPassword" autocomplete="current-password" required/></label>
     <label>Transaction PIN<input type="password" name="transactionPin" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" autocomplete="off" required/></label>
-    <label style="display:flex;align-items:flex-start;gap:10px;font-weight:500"><input type="checkbox" id="conversionConfirm" required style="width:auto;margin-top:4px"/> I understand this converts my full balance using the quoted exchange rate and the final amount may be rounded to two decimal places.</label>
+    <label style="display:flex;align-items:flex-start;gap:10px;font-weight:500"><input type="checkbox" id="conversionConfirm" name="conversionConfirm" value="yes" required style="width:auto;margin-top:4px"/> I understand this converts my full balance using the quoted exchange rate and the final amount may be rounded to two decimal places.</label>
     <button class="nb-account-button" type="submit" id="convertCurrencyButton" disabled>Convert balance</button>
   </form>
 </div>
@@ -92,8 +92,8 @@
   var button = document.getElementById('convertCurrencyButton');
   var confirmBox = document.getElementById('conversionConfirm');
   var balance = <%- JSON.stringify(Number(accountBalance || 0)) %>;
-  var sourceCurrency = <%- JSON.stringify(user.currency || 'EUR') %>;
   var quoteReady = false;
+  var quoteRequestId = 0;
 
   function money(code, amount) {
     return code + ' ' + Number(amount).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -110,6 +110,7 @@
 
   function loadQuote() {
     var target = select.value;
+    var requestId = ++quoteRequestId;
     resetQuote(target ? 'Getting the latest available exchange rate…' : 'Choose a target currency to preview conversion.');
     if (!target) return;
     if (balance <= 0) {
@@ -125,6 +126,7 @@
         return data;
       });
     }).then(function (data) {
+      if (requestId !== quoteRequestId || select.value !== target) return;
       rate.textContent = '1 ' + data.fromCurrency + ' = ' + Number(data.rate).toLocaleString('en-GB', { maximumFractionDigits: 8 }) + ' ' + data.toCurrency;
       result.textContent = money(data.toCurrency, data.toAmount);
       updated.textContent = data.updatedAt || 'Provider timestamp unavailable';
@@ -134,6 +136,7 @@
       quoteReady = !data.stale;
       button.disabled = !quoteReady || !confirmBox.checked;
     }).catch(function (err) {
+      if (requestId !== quoteRequestId || select.value !== target) return;
       resetQuote(err.message || 'Exchange rates are temporarily unavailable.');
     });
   }
