@@ -178,3 +178,198 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* Premium card palette — intentional contrast, not a sea of white boxes */
+:root {
+  --nb-card-navy: #101d32;
+  --nb-card-slate: #edf2f7;
+  --nb-card-blue: #eaf2ff;
+  --nb-card-mint: #e8f5ef;
+  --nb-card-border: #dce4ed;
+  --nb-card-green: #167d61;
+}
+
+/* Give the main product grid its own soft canvas so the white cards have contrast. */
+.nb-products-section {
+  max-width: none;
+  padding-left: max(24px, calc((100vw - 1160px) / 2));
+  padding-right: max(24px, calc((100vw - 1160px) / 2));
+  background: #f2f5f8;
+}
+.nb-products-section .nb-product-grid .nb-product {
+  background: #fff;
+  border-color: #e0e6ed;
+  box-shadow: 0 10px 28px rgba(16, 29, 50, .045);
+}
+.nb-products-section .nb-product-grid .nb-product-featured {
+  background: var(--nb-card-navy) !important;
+  border-color: var(--nb-card-navy) !important;
+  box-shadow: 0 18px 38px rgba(16, 29, 50, .18);
+}
+.nb-products-section .nb-product-grid .nb-product:not(.nb-product-featured):hover {
+  background: #fbfdff;
+  border-color: #b8cbe3;
+}
+.nb-products-section .nb-product-grid .nb-product-icon {
+  background: var(--nb-card-blue);
+  color: #2459a9;
+}
+.nb-products-section .nb-product-grid .nb-product-featured .nb-product-icon {
+  background: #203c60;
+  color: #a9ceff;
+}
+
+/* Feature points become compact, softly tinted UI elements. */
+.nb-feature-points span {
+  background: #f2f5f8;
+  border-color: #e2e8f0;
+  box-shadow: inset 3px 0 0 #167d61;
+}
+
+/* Capability cards: cool slate surfaces with green details instead of plain white. */
+.nb-capabilities {
+  background: #edf2f6;
+}
+.nb-capability-grid article {
+  background: #f9fbfd;
+  border-color: #dce4ed;
+  box-shadow: 0 8px 22px rgba(16, 29, 50, .04);
+}
+.nb-capability-grid article:nth-child(3n + 2) {
+  background: #eaf2ff;
+  border-color: #d9e6fa;
+}
+.nb-capability-grid article:nth-child(3n) {
+  background: #e8f5ef;
+  border-color: #d5eade;
+}
+.nb-capability-grid article > span {
+  color: var(--nb-card-green);
+}
+.nb-capability-grid article:nth-child(3n + 2) > span {
+  color: #2459a9;
+}
+.nb-capability-grid article:hover {
+  box-shadow: 0 16px 34px rgba(16, 29, 50, .09);
+}
+
+/* Business cards use a deliberate three-surface rhythm. */
+#business .nb-products > .nb-product {
+  background: #f1f5f9;
+  border-color: #dce4ed;
+  box-shadow: 0 10px 26px rgba(16, 29, 50, .045);
+}
+#business .nb-products > .nb-product:nth-child(1) {
+  background: var(--nb-card-navy);
+  border-color: var(--nb-card-navy);
+  color: #fff;
+}
+#business .nb-products > .nb-product:nth-child(1) p {
+  color: #c2ccda;
+}
+#business .nb-products > .nb-product:nth-child(1) .nb-product-icon {
+  background: #203c60;
+  color: #a9ceff;
+}
+#business .nb-products > .nb-product:nth-child(2) {
+  background: #eaf2ff;
+  border-color: #d9e6fa;
+}
+#business .nb-products > .nb-product:nth-child(3) {
+  background: #e8f5ef;
+  border-color: #d5eade;
+}
+#business .nb-products > .nb-product .nb-product-icon {
+  background: rgba(255,255,255,.76);
+  color: #167d61;
+}
+
+/* Stats become one confident navy panel, with dividers instead of four white boxes. */
+.nb-stats-section {
+  max-width: none;
+  padding-left: max(24px, calc((100vw - 1160px) / 2));
+  padding-right: max(24px, calc((100vw - 1160px) / 2));
+  background: var(--nb-card-navy);
+  color: #fff;
+}
+.nb-stats-section .nb-section-head .nb-kicker {
+  background: rgba(255,255,255,.08);
+  border-color: rgba(255,255,255,.18);
+  color: #d8e5f5;
+}
+.nb-stats-section .nb-section-head h2 {
+  color: #fff;
+}
+.nb-stats-section .nb-section-head p {
+  color: #b9c5d5;
+}
+.nb-stat-grid.row {
+  gap: 0;
+}
+.nb-stat-grid.row > div {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 24px 26px;
+  border-left: 1px solid rgba(255,255,255,.16);
+}
+.nb-stat-grid.row > div:first-child {
+  border-left: 0;
+}
+.nb-stat-grid strong {
+  color: #fff;
+}
+.nb-stat-grid span {
+  color: #bdc9d9;
+}
+.nb-stat-grid.row > div:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* The future-feature chips get a softer, more cohesive finish. */
+.nb-future-inner {
+  background: #eaf2ff;
+  border: 1px solid #d9e6fa;
+  box-shadow: 0 16px 40px rgba(16, 29, 50, .055);
+}
+.nb-future-pills span {
+  background: rgba(255,255,255,.72);
+  border-color: #d5e1f0;
+}
+.nb-future-pills span:nth-child(3n) {
+  background: #dff1e8;
+  border-color: #c9e5d7;
+}
+
+@media (max-width: 767.98px) {
+  .nb-products-section,
+  .nb-stats-section {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .nb-capability-grid article,
+  .nb-products-section .nb-product-grid .nb-product,
+  #business .nb-products > .nb-product {
+    border-radius: 18px;
+  }
+  .nb-stat-grid.row {
+    row-gap: 0;
+  }
+  .nb-stat-grid.row > div {
+    padding: 20px 14px;
+    border-left: 0;
+    border-top: 1px solid rgba(255,255,255,.16);
+  }
+  .nb-stat-grid.row > div:nth-child(-n + 2) {
+    border-top: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nb-products-section .nb-product-grid .nb-product,
+  .nb-capability-grid article {
+    transition: none !important;
+  }
+}
+
