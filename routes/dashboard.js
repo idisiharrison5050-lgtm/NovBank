@@ -33,7 +33,7 @@ router.get('/', isAuth, isPinVerified, kycGate, function (req, res) {
       var thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
       return Promise.all([
         Transaction.aggregate([{ $match: { sender: userId, status: 'completed', type: { $in: ['internal_transfer', 'wire_transfer', 'airtime'] }, createdAt: { $gte: thirtyDaysAgo } } }, { $group: { _id: '$category', total: { $sum: '$amount' } } }]),
-        Transaction.find({ $or: [{ sender: userId }, { receiver: userId }], status: 'completed', createdAt: { $gte: thirtyDaysAgo } }).sort({ createdAt: 1 }).select('sender receiver amount createdAt type'),
+        Transaction.find({ $or: [{ sender: userId }, { receiver: userId }], status: 'completed', type: { $ne: 'currency_conversion' }, createdAt: { $gte: thirtyDaysAgo } }).sort({ createdAt: 1 }).select('sender receiver amount createdAt type'),
         Transaction.countDocuments({ $or: [{ sender: userId }, { receiver: userId }], status: { $in: ['pending', 'processing'] }, createdAt: { $gte: thirtyDaysAgo } })
       ]).then(function (results) {
         var spending = results[0];
@@ -264,6 +264,7 @@ router.get('/transactions', isAuth, isPinVerified, kycGate, function (req, res) 
       var monthOutgoing = 0;
       var pendingCount = 0;
       allActivity.forEach(function (txn) {
+        if (txn.type === 'currency_conversion') return;
         if (txn.status === 'pending' || txn.status === 'processing') pendingCount += 1;
         if (new Date(txn.createdAt) < monthStart || txn.status === 'failed' || txn.status === 'cancelled' || txn.status === 'reversed') return;
         var outgoing = txn.sender && String(txn.sender) === String(userId) && txn.type !== 'deposit';
