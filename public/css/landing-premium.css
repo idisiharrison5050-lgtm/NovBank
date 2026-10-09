@@ -1378,3 +1378,85 @@
   .nb-capability-grid article,.nb-capability-grid article:before{transition:none}
 }
 
+
+
+/* Focused polish: existing future-features panel only — CSS refinement */
+.nb-future .nb-future-inner{
+  gap:clamp(32px,5vw,64px);
+  padding:clamp(28px,4.2vw,52px);
+  border:1px solid #e2e8f0;
+  border-radius:26px;
+  background:#f7f9fc;
+  box-shadow:0 18px 44px rgba(16,24,40,.055);
+}
+.nb-future .nb-future-inner>div:first-child{
+  max-width:520px;
+}
+.nb-future .nb-future h2,
+.nb-future h2{
+  max-width:15ch;
+  font-size:clamp(30px,3.4vw,42px);
+  line-height:1.08;
+  letter-spacing:-.045em;
+  text-wrap:balance;
+}
+.nb-future p{
+  max-width:52ch;
+  margin-bottom:0;
+  font-size:15px;
+  line-height:1.8;
+}
+.nb-future .nb-future-pills{
+  align-content:center;
+  gap:11px;
+}
+.nb-future .nb-future-pills span{
+  position:relative;
+  z-index:1;
+  min-height:46px;
+  padding:12px 15px;
+  border:1px solid #e1e7f0;
+  border-radius:13px;
+  background:#fff;
+  color:#344054;
+  font-size:12px;
+  line-height:1.35;
+  box-shadow:0 5px 14px rgba(16,24,40,.035);
+  transition:border-color .18s ease,transform .18s ease,box-shadow .18s ease;
+}
+.nb-future .nb-future-pills span:before{
+  width:21px;
+  height:21px;
+  flex:0 0 21px;
+  border-radius:7px;
+}
+@media(hover:hover) and (min-width:801px){
+  .nb-future .nb-future-pills span:hover{
+    transform:translateY(-2px);
+    border-color:#cbd8ed;
+    box-shadow:0 10px 20px rgba(16,24,40,.065);
+  }
+}
+@media(max-width:800px){
+  .nb-future .nb-future-inner{
+    gap:24px;
+    padding:28px 24px;
+    border-radius:22px;
+  }
+  .nb-future h2{font-size:clamp(29px,6.5vw,35px)}
+  .nb-future p{font-size:14px;line-height:1.7}
+  .nb-future .nb-future-pills{gap:8px}
+  .nb-future .nb-future-pills span{
+    min-height:42px;
+    padding:10px 12px;
+    font-size:11px;
+  }
+}
+@media(max-width:420px){
+  .nb-future .nb-future-inner{padding:24px 18px}
+  .nb-future .nb-future-pills{gap:7px}
+  .nb-future .nb-future-pills span{padding:9px 10px;font-size:10px}
+}
+@media(prefers-reduced-motion:reduce){
+  .nb-future .nb-future-pills span{transition:none}
+}
