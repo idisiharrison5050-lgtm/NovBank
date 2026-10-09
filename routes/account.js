@@ -134,11 +134,11 @@ router.post('/convert-currency', isAuth, function (req, res) {
 
   if (!currencies.some(function (item) { return item.code === target; })) {
     req.flash('error_msg', 'Please choose a supported currency.');
-    return res.redirect('/dashboard/profile#currency-settings');
+    return res.redirect('/dashboard/profile#currency-converter');
   }
   if (target === source) {
     req.flash('error_msg', 'Choose a different currency to convert your balance.');
-    return res.redirect('/dashboard/profile#currency-settings');
+    return res.redirect('/dashboard/profile#currency-converter');
   }
   if (conversionConfirm !== 'yes') {
     req.flash('error_msg', 'Confirm that you understand the currency conversion before continuing.');
@@ -146,18 +146,18 @@ router.post('/convert-currency', isAuth, function (req, res) {
   }
   if (!currentPassword || !req.user.pinSet || !req.user.pin || !/^\\d{4}$/.test(transactionPin)) {
     req.flash('error_msg', 'Enter your current password and 4-digit transaction PIN to convert your balance.');
-    return res.redirect('/dashboard/profile#currency-settings');
+    return res.redirect('/dashboard/profile#currency-converter');
   }
 
   bcrypt.compare(currentPassword, req.user.password, function (passwordErr, passwordMatches) {
     if (passwordErr || !passwordMatches) {
       req.flash('error_msg', 'Current password is incorrect. Your balance was not changed.');
-      return res.redirect('/dashboard/profile#currency-settings');
+      return res.redirect('/dashboard/profile#currency-converter');
     }
     bcrypt.compare(transactionPin, req.user.pin, function (pinErr, pinMatches) {
       if (pinErr || !pinMatches) {
         req.flash('error_msg', 'Transaction PIN is incorrect. Your balance was not changed.');
-        return res.redirect('/dashboard/profile#currency-settings');
+        return res.redirect('/dashboard/profile#currency-converter');
       }
 
       currencyExchange.getRate(source, target).then(function (quote) {
@@ -271,11 +271,11 @@ router.post('/convert-currency', isAuth, function (req, res) {
         });
       }).then(function (result) {
         req.flash('success_msg', 'Balance converted: ' + result.fromCurrency + ' ' + result.fromAmount.toFixed(2) + ' → ' + result.toCurrency + ' ' + result.toAmount.toFixed(2) + '.');
-        res.redirect('/dashboard/profile#currency-settings');
+        res.redirect('/dashboard/profile#currency-converter');
       }).catch(function (err) {
         console.error('Currency conversion failed:', err);
         req.flash('error_msg', err.message || 'Currency conversion failed. No changes were saved.');
-        res.redirect('/dashboard/profile#currency-settings');
+        res.redirect('/dashboard/profile#currency-converter');
       });
     });
   });
