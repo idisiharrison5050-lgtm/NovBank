@@ -50,21 +50,12 @@
   align-items: stretch;
 }
 
-.nb-product-grid.row > .nb-product,
-.nb-products.row > .nb-product {
-  width: 100%;
-}
-
 .nb-capability-grid.row > article {
   display: block;
 }
 
 .nb-split-inner.row {
   align-items: center;
-}
-
-.nb-split-inner.row > .nb-security-card {
-  width: 100%;
 }
 
 .nb-stat-grid.row > div {
