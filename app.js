@@ -6,6 +6,7 @@ var passport   = require('passport');
 var flash      = require('connect-flash');
 var path       = require('path');
 var Notification = require('./models/Notification');
+var currencies = require('./config/currencies');
 require('dotenv').config();
 
 var environment = require('./config/environment');
@@ -74,6 +75,11 @@ app.use(function (req, res, next) {
   res.locals.error = req.flash('error');
   res.locals.recaptchaSiteKey = process.env.RECAPTCHA_SITE_KEY || '';
   res.locals.adminEmail = process.env.ADMIN_EMAIL || '';
+  res.locals.currencySymbol = function (code) {
+    var normalized = String(code || 'EUR').toUpperCase();
+    var currency = currencies.find(function (item) { return item.code === normalized; });
+    return currency ? currency.symbol : normalized;
+  };
   res.locals.unreadCount = 0;
   if (!req.user) return next();
   Notification.countDocuments({ user: req.user._id, isRead: false }).then(function (count) {
