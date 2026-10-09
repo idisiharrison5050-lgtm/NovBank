@@ -129,6 +129,7 @@ router.post('/convert-currency', isAuth, function (req, res) {
   var target = String(req.body.currency || '').toUpperCase().trim();
   var currentPassword = req.body.currentPassword;
   var transactionPin = String(req.body.transactionPin || '').trim();
+  var conversionConfirm = req.body.conversionConfirm;
   var source = String(req.user.currency || 'EUR').toUpperCase();
 
   if (!currencies.some(function (item) { return item.code === target; })) {
@@ -138,6 +139,10 @@ router.post('/convert-currency', isAuth, function (req, res) {
   if (target === source) {
     req.flash('error_msg', 'Choose a different currency to convert your balance.');
     return res.redirect('/dashboard/profile#currency-settings');
+  }
+  if (conversionConfirm !== 'yes') {
+    req.flash('error_msg', 'Confirm that you understand the currency conversion before continuing.');
+    return res.redirect('/dashboard/profile#currency-converter');
   }
   if (!currentPassword || !req.user.pinSet || !req.user.pin || !/^\\d{4}$/.test(transactionPin)) {
     req.flash('error_msg', 'Enter your current password and 4-digit transaction PIN to convert your balance.');
