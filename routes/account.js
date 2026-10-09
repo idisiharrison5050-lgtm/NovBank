@@ -59,7 +59,7 @@ router.post('/update-currency', isAuth, function (req, res) {
 
     LedgerAccount.findOne({ owner: req.user._id }).then(function (account) {
       if (Number(req.user.balance || 0) > 0 || (account && Number(account.balance || 0) > 0)) {
-        req.flash('error_msg', 'Your account has a balance. To protect your money, currency cannot be changed until the balance is zero. Currency conversion is not enabled yet.');
+        req.flash('error_msg', 'Your account has a balance. Use the balance converter below to convert your funds before changing account currency.');
         return res.redirect('/dashboard/profile');
       }
 
