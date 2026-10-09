@@ -359,7 +359,20 @@ router.get('/notifications', isAuth, isPinVerified, kycGate, function (req, res)
 
 router.get('/profile', isAuth, isPinVerified, kycGate, function (req, res) {
   currencies.refresh().then(function (availableCurrencies) {
-    res.render('dashboard/profile', { title: 'Account Center', currencies: availableCurrencies });
+    return LedgerAccount.findOne({ owner: req.user._id }).then(function (account) {
+      res.render('dashboard/profile', {
+        title: 'Account Center',
+        currencies: availableCurrencies,
+        accountBalance: Number(account ? account.balance : req.user.balance || 0)
+      });
+    });
+  }).catch(function (err) {
+    console.error('Account center load failed:', err);
+    res.render('dashboard/profile', {
+      title: 'Account Center',
+      currencies: currencies,
+      accountBalance: Number(req.user.balance || 0)
+    });
   });
 });
 module.exports = router;
