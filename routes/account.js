@@ -144,7 +144,7 @@ router.post('/convert-currency', isAuth, function (req, res) {
     req.flash('error_msg', 'Confirm that you understand the currency conversion before continuing.');
     return res.redirect('/dashboard/profile#currency-converter');
   }
-  if (!currentPassword || !req.user.pinSet || !req.user.pin || !/^\\d{4}$/.test(transactionPin)) {
+  if (!currentPassword || !req.user.pinSet || !req.user.pin || !/^\d{4}$/.test(transactionPin)) {
     req.flash('error_msg', 'Enter your current password and 4-digit transaction PIN to convert your balance.');
     return res.redirect('/dashboard/profile#currency-converter');
   }
