@@ -357,5 +357,9 @@ router.get('/notifications', isAuth, isPinVerified, kycGate, function (req, res)
   Notification.find({ user: req.user._id }).sort({ createdAt: -1 }).then(function (notifications) { return Notification.updateMany({ user: req.user._id, isRead: false }, { isRead: true }).then(function () { res.render('dashboard/notifications', { title: 'Notifications', notifications: notifications, unreadCount: 0 }); }); }).catch(function (err) { console.error(err); res.redirect('/dashboard'); });
 });
 
-router.get('/profile', isAuth, isPinVerified, kycGate, function (req, res) { res.render('dashboard/profile', { title: 'Account Center', currencies: currencies }); });
+router.get('/profile', isAuth, isPinVerified, kycGate, function (req, res) {
+  currencies.refresh().then(function (availableCurrencies) {
+    res.render('dashboard/profile', { title: 'Account Center', currencies: availableCurrencies });
+  });
+});
 module.exports = router;
