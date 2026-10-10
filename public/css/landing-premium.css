@@ -2106,3 +2106,33 @@
     font-size:12px;
   }
 }
+
+/* Focused polish: existing mobile account bar — align actions with the site accent */
+@media(max-width:768px){
+  .nb-landing .nb-mobile-auth-link{
+    color:#fff;
+    text-decoration:none;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .nb-landing .nb-mobile-auth-primary{
+    background:#155eef;
+    box-shadow:inset 1px 0 0 rgba(255,255,255,.12);
+  }
+  .nb-landing .nb-mobile-auth-link:focus-visible{
+    position:relative;
+    z-index:1;
+    outline:3px solid #fff;
+    outline-offset:-5px;
+  }
+}
+@media(hover:hover) and (min-width:521px) and (max-width:768px){
+  .nb-landing .nb-mobile-auth-link:hover{
+    background:#182b45;
+  }
+  .nb-landing .nb-mobile-auth-primary:hover{
+    background:#0f4fd4;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .nb-landing .nb-mobile-auth-link{transition:none}
+}
