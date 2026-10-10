@@ -64,3 +64,59 @@
 }
 @media(prefers-reduced-motion:reduce){.nb-command-dashboard .nb-fin-card,.nb-command-dashboard .nb-command-txn{transition:none}}
 
+/* Focused design pass: Transfer Limit card only. */
+.nb-command-dashboard .nb-fin-card.nb-fin-card-limit{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  background:#fff4e5;
+  border:1px solid #f0d6b3;
+  border-radius:20px;
+  box-shadow:0 10px 24px rgba(145,86,25,.08),inset 0 1px 0 rgba(255,255,255,.9);
+}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-limit:after{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  top:0;
+  right:0;
+  width:5px;
+  height:100%;
+  background:#d97706;
+  opacity:.8;
+}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-limit:before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  top:-34px;
+  right:-22px;
+  width:118px;
+  height:118px;
+  border:1px solid rgba(180,100,20,.16);
+  border-radius:50%;
+  box-shadow:0 0 0 14px rgba(180,100,20,.045),0 0 0 29px rgba(180,100,20,.03);
+  background:transparent;
+  pointer-events:none;
+}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-limit .nb-fin-card-icon{
+  color:#a6530a;
+  background:#ffe6c2;
+  border:1px solid #f5d2a0;
+  box-shadow:0 4px 10px rgba(145,86,25,.08);
+}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-limit>span{color:#92551d}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-limit>strong{color:#572f12}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-limit>small{color:#946b48}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-limit>a{
+  color:#9a4e0a;
+  border-top-color:rgba(154,78,10,.16);
+}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-limit:hover{
+  border-color:#e9c18d;
+  box-shadow:0 14px 28px rgba(145,86,25,.12),inset 0 1px 0 rgba(255,255,255,.9);
+}
+@media(max-width:650px){
+  .nb-command-dashboard .nb-fin-card.nb-fin-card-limit{border-radius:16px}
+}
+
