@@ -2218,3 +2218,48 @@
   }
 }
 
+/* Focused refinement: prevent horizontal overflow in existing landing sections */
+/* Keep full-bleed sections inside the viewport without changing hero styling. */
+.nb-landing .nb-section,
+.nb-landing .nb-feature-band,
+.nb-landing .nb-showcase-section,
+.nb-landing .nb-capabilities,
+.nb-landing .nb-cta{
+  min-width:0;
+  box-sizing:border-box;
+}
+.nb-landing .nb-section *,
+.nb-landing .nb-feature-band *,
+.nb-landing .nb-showcase-section *,
+.nb-landing .nb-capabilities *,
+.nb-landing .nb-cta *{
+  box-sizing:border-box;
+}
+.nb-landing .nb-products-heading,
+.nb-landing .nb-product-grid,
+.nb-landing .nb-feature-band,
+.nb-landing .nb-showcase-grid,
+.nb-landing .nb-capability-grid{
+  min-width:0;
+}
+.nb-landing .nb-products-heading > *,
+.nb-landing .nb-product-grid > *,
+.nb-landing .nb-feature-band > *,
+.nb-landing .nb-showcase-grid > *,
+.nb-landing .nb-capability-grid > *{
+  min-width:0;
+}
+@media(max-width:480px){
+  .nb-landing .nb-section,
+  .nb-landing .nb-cta{
+    padding-left:16px;
+    padding-right:16px;
+  }
+  .nb-landing .nb-products-heading{
+    gap:16px;
+  }
+  .nb-landing .nb-product-grid .nb-product{
+    overflow-wrap:anywhere;
+  }
+}
+
