@@ -2190,3 +2190,31 @@
   }
 }
 
+/* Focused polish: landing section anchor and keyboard navigation — CSS only */
+.nb-landing section[id]{
+  scroll-margin-top:88px;
+}
+.nb-landing a:focus-visible,
+.nb-landing button:focus-visible{
+  outline:3px solid #155eef;
+  outline-offset:4px;
+}
+.nb-landing .nb-site-nav a:focus-visible,
+.nb-landing .nb-site-nav button:focus-visible{
+  outline-color:#8bb5ff;
+  outline-offset:3px;
+}
+@media(max-width:768px){
+  .nb-landing section[id]{
+    scroll-margin-top:78px;
+  }
+  .nb-landing .nb-mobile-auth-bar a:focus-visible{
+    outline-offset:-5px;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .nb-landing{
+    scroll-behavior:auto;
+  }
+}
+
