@@ -2814,3 +2814,90 @@
   .nb-landing .nb-stats-section .nb-stat-grid>div{transition:none}
 }
 
+
+
+/* Stats section refinement: richer card surfaces and stronger visual identity */
+.nb-landing .nb-stats-section{
+  background:#f7f9fc;
+  border-top:1px solid #edf1f6;
+  border-bottom:1px solid #edf1f6;
+}
+.nb-landing .nb-stats-section .nb-section-head .nb-kicker{
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  padding:8px 12px;
+  border:1px solid #dce7ff;
+  border-radius:999px;
+  background:#fff;
+  box-shadow:0 3px 10px rgba(16,24,40,.035);
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.13em;
+}
+.nb-landing .nb-stats-section .nb-section-head .nb-kicker:before{
+  content:"";
+  width:7px;
+  height:7px;
+  flex:0 0 7px;
+  border-radius:50%;
+  background:#155eef;
+  box-shadow:0 0 0 3px #edf3ff;
+}
+.nb-landing .nb-stats-section .nb-stat-grid>div{
+  --stat-accent:#155eef;
+  --stat-tint:#f5f8ff;
+  border-color:#e1e7f0;
+  background:var(--stat-tint);
+  box-shadow:0 8px 22px rgba(16,24,40,.045),inset 0 1px 0 rgba(255,255,255,.9);
+}
+.nb-landing .nb-stats-section .nb-stat-grid>div:nth-child(2){
+  --stat-accent:#087e8b;
+  --stat-tint:#f2fbfb;
+}
+.nb-landing .nb-stats-section .nb-stat-grid>div:nth-child(3){
+  --stat-accent:#6941c6;
+  --stat-tint:#f8f6ff;
+}
+.nb-landing .nb-stats-section .nb-stat-grid>div:nth-child(4){
+  --stat-accent:#16794b;
+  --stat-tint:#f2faf5;
+}
+.nb-landing .nb-stats-section .nb-stat-grid>div:before{
+  left:0;
+  right:0;
+  height:4px;
+  background:var(--stat-accent);
+}
+.nb-landing .nb-stats-section .nb-stat-grid>div:after{
+  background:var(--stat-accent);
+  box-shadow:0 0 0 4px rgba(255,255,255,.9);
+}
+.nb-landing .nb-stats-section .nb-stat-grid strong{
+  color:var(--stat-accent);
+  font-variant-numeric:tabular-nums;
+}
+.nb-landing .nb-stats-section .nb-stat-grid span{
+  max-width:none;
+  padding-top:12px;
+  border-top:1px solid rgba(102,112,133,.17);
+  color:#475467;
+  font-size:13px;
+  font-weight:650;
+}
+@media(hover:hover) and (min-width:801px){
+  .nb-landing .nb-stats-section .nb-stat-grid>div:hover{
+    transform:translateY(-5px);
+    border-color:var(--stat-accent);
+    box-shadow:0 20px 40px rgba(16,24,40,.085),inset 0 1px 0 rgba(255,255,255,.95);
+  }
+}
+@media(max-width:800px){
+  .nb-landing .nb-stats-section .nb-stat-grid>div{
+    box-shadow:0 6px 16px rgba(16,24,40,.04),inset 0 1px 0 rgba(255,255,255,.9);
+  }
+  .nb-landing .nb-stats-section .nb-stat-grid span{
+    padding-top:10px;
+    font-size:12px;
+  }
+}
