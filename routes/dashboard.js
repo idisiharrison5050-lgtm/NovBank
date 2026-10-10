@@ -23,7 +23,7 @@ function isPinVerified(req, res, next) {
 
 router.get('/', isAuth, isPinVerified, kycGate, function (req, res) {
   var userId = req.user._id;
-  Transaction.find({ $or: [{ sender: userId }, { receiver: userId }] }).sort({ createdAt: -1 }).limit(6).populate('sender receiver', 'firstName lastName accountNumber').then(function (transactions) {
+  Transaction.find({ $or: [{ sender: userId }, { receiver: userId }], type: { $ne: 'currency_conversion' } }).sort({ createdAt: -1 }).limit(6).populate('sender receiver', 'firstName lastName accountNumber').then(function (transactions) {
     return Promise.all([
         Notification.countDocuments({ user: userId, isRead: false }),
         Card.find({ user: userId }).sort({ createdAt: -1 }).limit(3).select('cardType status frozenAt spendingLimit createdAt')
@@ -93,7 +93,7 @@ router.get('/statement/pdf', isAuth, isPinVerified, kycGate, function (req, res)
   from.setHours(0, 0, 0, 0);
   to.setHours(23, 59, 59, 999);
   Promise.all([
-    Transaction.find({ $or: [{ sender: userId }, { receiver: userId }], createdAt: { $gte: from, $lte: to } }).sort({ createdAt: 1 }),
+    Transaction.find({ $or: [{ sender: userId }, { receiver: userId }], type: { $ne: 'currency_conversion' }, createdAt: { $gte: from, $lte: to } }).sort({ createdAt: 1 }),
     LedgerAccount.findOne({ owner: userId })
   ]).then(function (results) {
     var transactions = results[0] || [];
@@ -183,6 +183,7 @@ router.get('/statement', isAuth, isPinVerified, kycGate, function (req, res) {
     return Promise.all([
       Transaction.find({
         $or: [{ sender: userId }, { receiver: userId }],
+        type: { $ne: 'currency_conversion' },
         createdAt: { $gte: from, $lte: to }
       }).sort({ createdAt: 1 }),
       LedgerEntry.find({
@@ -232,8 +233,8 @@ router.get('/transactions', isAuth, isPinVerified, kycGate, function (req, res) 
   var skip = (page - 1) * limit;
   var filter = req.query.filter || 'all';
   var search = String(req.query.q || '').trim();
-  var query = { $or: [{ sender: userId }, { receiver: userId }] };
-  if (['internal_transfer', 'wire_transfer', 'deposit', 'withdrawal', 'airtime', 'loan_credit', 'currency_conversion'].indexOf(filter) !== -1) query.type = filter;
+  var query = { $or: [{ sender: userId }, { receiver: userId }], type: { $ne: 'currency_conversion' } };
+  if (['internal_transfer', 'wire_transfer', 'deposit', 'withdrawal', 'airtime', 'loan_credit'].indexOf(filter) !== -1) query.type = filter;
   if (search) query.$and = [{ $or: [{ description: new RegExp(escapeRegex(search), 'i') }, { reference: new RegExp(escapeRegex(search), 'i') }, { category: new RegExp(escapeRegex(search), 'i') }] }];
   if (req.query.export === 'csv') {
     return Transaction.find(query).sort({ createdAt: -1 }).limit(1000).then(function (transactions) {
