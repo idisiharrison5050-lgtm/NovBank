@@ -42,3 +42,34 @@
 .nb-empty-icon{width:52px;height:52px;margin:0 auto;display:grid;place-items:center;border-radius:16px;background:#eef4ff;color:#155eef}
 .nb-empty-icon svg{width:24px;height:24px}
 .nb-benefit-icon{font-style:normal!important}
+
+
+/* Desktop sidebar: keep Sign out clear of the last navigation item. */
+@media(min-width:769px){
+  .nb-sidebar{
+    display:flex;
+    flex-direction:column;
+    height:100vh;
+    max-height:100vh;
+    overflow:hidden;
+    box-sizing:border-box;
+  }
+  .nb-sidebar .sidebar-nav{
+    flex:1 1 auto;
+    min-height:0;
+    overflow-y:auto;
+    overflow-x:hidden;
+    scrollbar-width:thin;
+    scrollbar-color:rgba(255,255,255,.2) transparent;
+    padding-bottom:12px;
+  }
+  .nb-sidebar .sidebar-nav::-webkit-scrollbar{width:4px}
+  .nb-sidebar .sidebar-nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,.2);border-radius:10px}
+  .nb-sidebar-logout{
+    position:relative;
+    z-index:2;
+    flex:0 0 auto;
+    margin:10px 2px 0!important;
+    background:#0b1220;
+  }
+}
