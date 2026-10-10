@@ -1,7 +1,7 @@
 <%- include('../partials/header') %>
 <link rel="stylesheet" href="/css/dashboard.css"/>
 <link rel="stylesheet" href="/css/funding-premium.css"/>
-<link rel="stylesheet" href="/css/banking-flows.css?v=wire3"/>
+<link rel="stylesheet" href="/css/banking-flows.css?v=wire4"/>
 
 <style>
 .nb-wire-beneficiaries{margin:0 0 22px;padding:18px;border:1px solid #e4eaf2;border-radius:18px;background:#fff}
@@ -37,8 +37,11 @@
   <main class="dashboard-main nb-wire-page nb-flow-screen">
 
     <div class="nb-transfer-switcher" aria-label="Transfer type navigation">
-      <a href="/transfer"><span>Send money</span><small>NovBank</small></a>
-      <a href="/transfer/wire" class="active"><span>International transfer</span><small>IBAN / BIC</small></a>
+      <a href="/transfer"><span>NovBank account</span><small>Internal</small></a>
+      <a href="/transfer/wire" class="active"><span>Bank account</span><small>International</small></a>
+      <a href="/transfer/withdraw?payout=paypal"><span>PayPal</span><small>Payout</small></a>
+      <a href="/transfer/withdraw?payout=revolut"><span>Revolut</span><small>Payout</small></a>
+      <a href="/transfer/withdraw?payout=payoneer"><span>Payoneer</span><small>Payout</small></a>
     </div>
 
     <section class="nb-flow-hero">
