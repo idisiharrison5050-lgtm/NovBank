@@ -118,74 +118,49 @@ router.post('/update-currency', isAuth, function (req, res) {
                 var toAmount = Math.round(fromAmount * quote.rate * 100) / 100;
                 if (!isFinite(toAmount) || toAmount <= 0) throw new Error('The converted balance is too small to credit.');
 
-                var reference = 'FX' + Date.now() + Math.floor(Math.random() * 1000000);
-                var idempotencyKey = 'currency-conversion:' + user._id.toString() + ':' + reference;
-                return Transaction.create([{
-                  sender: user._id,
-                  type: 'currency_conversion',
-                  amount: toAmount,
-                  currency: target,
-                  description: 'Account balance converted from ' + source + ' to ' + target,
-                  category: 'Other',
-                  status: 'completed',
-                  idempotencyKey: idempotencyKey,
-                  reference: reference,
-                  currencyConversion: {
-                    fromCurrency: source,
-                    toCurrency: target,
-                    fromAmount: fromAmount,
-                    toAmount: toAmount,
-                    rate: quote.rate,
-                    rateUpdatedAt: quote.updatedAt,
-                    rateProvider: quote.provider
-                  }
-                }], { session: session }).then(function (created) {
-                  var txn = created[0];
+                var conversionId = 'currency-conversion:' + user._id.toString() + ':' + Date.now() + ':' + Math.floor(Math.random() * 1000000);
+                return LedgerAccount.updateOne(
+                  { _id: activeAccount._id, owner: user._id, currency: source, balance: activeAccount.balance, status: 'active', version: activeAccount.version },
+                  { $set: { balance: 0, currency: target }, $inc: { version: 1 } },
+                  { session: session }
+                ).then(function (debitUpdate) {
+                  if (debitUpdate.nModified !== 1) throw new Error('Your balance changed during the currency update. Please try again.');
+                  return LedgerEntry.create([{
+                    ledgerAccount: activeAccount._id,
+                    direction: 'debit',
+                    amount: fromAmount,
+                    currency: source,
+                    balanceAfter: 0,
+                    idempotencyKey: conversionId + ':debit',
+                    description: 'Internal currency conversion',
+                    metadata: { fromCurrency: source, toCurrency: target, exchangeRate: quote.rate, convertedAmount: toAmount, internalConversion: true }
+                  }], { session: session });
+                }).then(function () {
                   return LedgerAccount.updateOne(
-                    { _id: activeAccount._id, owner: user._id, currency: source, balance: activeAccount.balance, status: 'active', version: activeAccount.version },
-                    { $set: { balance: 0, currency: target }, $inc: { version: 1 } },
+                    { _id: activeAccount._id, owner: user._id, currency: target, balance: 0, status: 'active' },
+                    { $set: { balance: toAmount }, $inc: { version: 1 } },
                     { session: session }
-                  ).then(function (debitUpdate) {
-                    if (debitUpdate.nModified !== 1) throw new Error('Your balance changed during the currency update. Please try again.');
-                    return LedgerEntry.create([{
-                      ledgerAccount: activeAccount._id,
-                      transaction: txn._id,
-                      direction: 'debit',
-                      amount: fromAmount,
-                      currency: source,
-                      balanceAfter: 0,
-                      idempotencyKey: idempotencyKey + ':debit',
-                      description: 'Account currency conversion',
-                      metadata: { fromCurrency: source, toCurrency: target, exchangeRate: quote.rate, convertedAmount: toAmount }
-                    }], { session: session });
-                  }).then(function () {
-                    return LedgerAccount.updateOne(
-                      { _id: activeAccount._id, owner: user._id, currency: target, balance: 0, status: 'active' },
-                      { $set: { balance: toAmount }, $inc: { version: 1 } },
-                      { session: session }
-                    );
-                  }).then(function (creditUpdate) {
-                    if (creditUpdate.nModified !== 1) throw new Error('Unable to update the converted balance.');
-                    return LedgerEntry.create([{
-                      ledgerAccount: activeAccount._id,
-                      transaction: txn._id,
-                      direction: 'credit',
-                      amount: toAmount,
-                      currency: target,
-                      balanceAfter: toAmount,
-                      idempotencyKey: idempotencyKey + ':credit',
-                      description: 'Converted account balance',
-                      metadata: { fromCurrency: source, toCurrency: target, exchangeRate: quote.rate, sourceAmount: fromAmount }
-                    }], { session: session });
-                  }).then(function () {
-                    return User.updateOne(
-                      { _id: user._id, currency: source, balance: user.balance },
-                      { $set: { currency: target, balance: toAmount } },
-                      { session: session }
-                    );
-                  }).then(function (userUpdate) {
-                    if (userUpdate.nModified !== 1) throw new Error('Unable to save the new account currency.');
-                  });
+                  );
+                }).then(function (creditUpdate) {
+                  if (creditUpdate.nModified !== 1) throw new Error('Unable to update the converted balance.');
+                  return LedgerEntry.create([{
+                    ledgerAccount: activeAccount._id,
+                    direction: 'credit',
+                    amount: toAmount,
+                    currency: target,
+                    balanceAfter: toAmount,
+                    idempotencyKey: conversionId + ':credit',
+                    description: 'Internal currency conversion',
+                    metadata: { fromCurrency: source, toCurrency: target, exchangeRate: quote.rate, sourceAmount: fromAmount, internalConversion: true }
+                  }], { session: session });
+                }).then(function () {
+                  return User.updateOne(
+                    { _id: user._id, currency: source, balance: user.balance },
+                    { $set: { currency: target, balance: toAmount } },
+                    { session: session }
+                  );
+                }).then(function (userUpdate) {
+                  if (userUpdate.nModified !== 1) throw new Error('Unable to save the new account currency.');
                 });
               });
             });
