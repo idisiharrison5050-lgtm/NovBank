@@ -1,0 +1,73 @@
+/* Mobile stats card proportion correction — existing stats content only */
+@media(max-width:600px){
+  .nb-landing .nb-stats-section{
+    padding:56px 16px 64px;
+  }
+  .nb-landing .nb-stats-section .nb-section-head{
+    margin-bottom:28px;
+  }
+  .nb-landing .nb-stats-section .nb-section-head h2{
+    max-width:none;
+    font-size:clamp(30px,8vw,36px);
+    line-height:1.08;
+  }
+  .nb-landing .nb-stats-section .nb-section-head p{
+    max-width:42ch;
+    font-size:14px;
+    line-height:1.7;
+  }
+  .nb-landing .nb-stats-section .nb-stat-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:12px;
+    width:100%;
+  }
+  .nb-landing .nb-stats-section .nb-stat-grid>div{
+    min-height:0;
+    height:150px;
+    padding:20px 16px 17px;
+    border-radius:18px;
+    justify-content:flex-start;
+  }
+  .nb-landing .nb-stats-section .nb-stat-grid>div:before{
+    left:0;
+    right:0;
+    height:3px;
+  }
+  .nb-landing .nb-stats-section .nb-stat-grid>div:after{
+    top:18px;
+    right:17px;
+    width:6px;
+    height:6px;
+  }
+  .nb-landing .nb-stats-section .nb-stat-grid strong{
+    margin:17px 0 0;
+    font-size:clamp(29px,8vw,36px);
+    line-height:1;
+  }
+  .nb-landing .nb-stats-section .nb-stat-grid span{
+    margin-top:auto;
+    padding-top:9px;
+    font-size:11px;
+    line-height:1.45;
+  }
+}
+@media(max-width:380px){
+  .nb-landing .nb-stats-section{
+    padding-left:14px;
+    padding-right:14px;
+  }
+  .nb-landing .nb-stats-section .nb-stat-grid{
+    gap:9px;
+  }
+  .nb-landing .nb-stats-section .nb-stat-grid>div{
+    height:142px;
+    padding:19px 13px 15px;
+    border-radius:16px;
+  }
+  .nb-landing .nb-stats-section .nb-stat-grid strong{
+    font-size:clamp(27px,8.5vw,32px);
+  }
+  .nb-landing .nb-stats-section .nb-stat-grid span{
+    font-size:10px;
+  }
+}
