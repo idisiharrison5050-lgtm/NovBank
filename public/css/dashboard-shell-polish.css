@@ -33,6 +33,9 @@
 .nb-command-dashboard>.nb-financial-pulse{order:6}
 .nb-command-dashboard>.nb-action-modal{order:99}
 
+/* Remove the Cards & account activity section from the dashboard view. */
+.nb-command-dashboard>.nb-bank-product-strip{display:none!important}
+
 @media(max-width:1100px){.nb-sidebar{width:228px}.dashboard-main{margin-left:228px;padding:30px 28px 38px}.dashboard-main>*{max-width:1180px}}
 @media(max-width:768px){.nb-sidebar{display:none}.dashboard-main{margin-left:0;padding:20px 15px 34px}.dashboard-main>*{max-width:none}.dashboard-main>.nb-action-modal{max-width:none}.nb-sidebar-section{padding-left:18px}.nb-sidebar-logout{margin-left:12px;margin-right:12px}}
 @media(prefers-reduced-motion:reduce){.nb-sidebar .sidebar-link,.nb-sidebar-logout{transition:none}.nb-sidebar .sidebar-link:hover,.nb-sidebar .sidebar-link:active{transform:none}}
