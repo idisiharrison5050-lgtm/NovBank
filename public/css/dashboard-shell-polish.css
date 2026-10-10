@@ -110,3 +110,79 @@
   .nb-command-dashboard .nb-fin-card.nb-fin-card-limit{border-radius:16px}
 }
 
+/* Coordinated design pass: the other three financial overview cards. */
+.nb-command-dashboard .nb-fin-card.nb-fin-card-balance,
+.nb-command-dashboard .nb-fin-card.nb-fin-card-profit,
+.nb-command-dashboard .nb-fin-card.nb-fin-card-active{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  border-radius:20px;
+  box-shadow:0 10px 24px rgba(28,48,84,.075),inset 0 1px 0 rgba(255,255,255,.92);
+}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-balance{
+  background:#edf4ff;
+  border:1px solid #d4e2fa;
+}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-balance:before{
+  top:-34px;right:-22px;width:118px;height:118px;
+  border:1px solid rgba(37,99,190,.16);
+  border-radius:50%;
+  box-shadow:0 0 0 14px rgba(37,99,190,.045),0 0 0 29px rgba(37,99,190,.025);
+  background:transparent;pointer-events:none;
+}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-balance .nb-fin-card-icon{
+  color:#2459a8;background:#dceaff;border:1px solid #c6dafb;
+  box-shadow:0 4px 10px rgba(37,99,190,.09);
+}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-balance>span{color:#42649a}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-balance>strong{color:#173b70}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-balance>small{color:#627da5}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-balance>a{color:#2459a8;border-top-color:rgba(36,89,168,.16)}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-profit{
+  background:#eaf8f0;
+  border:1px solid #ccebd9;
+}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-profit:before{
+  top:-34px;right:-22px;width:118px;height:118px;
+  border:1px solid rgba(20,126,78,.16);
+  border-radius:50%;
+  box-shadow:0 0 0 14px rgba(20,126,78,.045),0 0 0 29px rgba(20,126,78,.025);
+  background:transparent;pointer-events:none;
+}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-profit .nb-fin-card-icon{
+  color:#167447;background:#d5f0e1;border:1px solid #bce5ce;
+  box-shadow:0 4px 10px rgba(20,126,78,.09);
+}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-profit>span{color:#347653}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-profit>strong{color:#145c38}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-profit>small{color:#5d8a70}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-profit>a{color:#167447;border-top-color:rgba(22,116,71,.16)}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-active{
+  background:#f2efff;
+  border:1px solid #ded6fb;
+}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-active:before{
+  top:-34px;right:-22px;width:118px;height:118px;
+  border:1px solid rgba(103,75,190,.16);
+  border-radius:50%;
+  box-shadow:0 0 0 14px rgba(103,75,190,.045),0 0 0 29px rgba(103,75,190,.025);
+  background:transparent;pointer-events:none;
+}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-active .nb-fin-card-icon{
+  color:#6346b5;background:#e5deff;border:1px solid #d3c7fb;
+  box-shadow:0 4px 10px rgba(103,75,190,.09);
+}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-active>span{color:#69569d}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-active>strong{color:#392776}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-active>small{color:#8273ae}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-active>a{color:#6346b5;border-top-color:rgba(99,70,181,.16)}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-balance:hover{border-color:#b9cff3;box-shadow:0 14px 28px rgba(37,99,190,.11),inset 0 1px 0 rgba(255,255,255,.92)}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-profit:hover{border-color:#aee0c3;box-shadow:0 14px 28px rgba(20,126,78,.11),inset 0 1px 0 rgba(255,255,255,.92)}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-active:hover{border-color:#c8bbf5;box-shadow:0 14px 28px rgba(103,75,190,.11),inset 0 1px 0 rgba(255,255,255,.92)}
+@media(max-width:650px){
+  .nb-command-dashboard .nb-fin-card.nb-fin-card-balance,
+  .nb-command-dashboard .nb-fin-card.nb-fin-card-profit,
+  .nb-command-dashboard .nb-fin-card.nb-fin-card-active{border-radius:16px}
+}
+
