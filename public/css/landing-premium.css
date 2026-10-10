@@ -2297,3 +2297,47 @@
   }
 }
 
+/* Focused refinement: improve existing landing-page form controls and button consistency */
+/* Keep existing form controls and buttons visually consistent and easy to use. */
+.nb-landing input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]),
+.nb-landing select,
+.nb-landing textarea{
+  max-width:100%;
+  border-radius:10px;
+}
+.nb-landing input:not([type="checkbox"]):not([type="radio"]):focus-visible,
+.nb-landing select:focus-visible,
+.nb-landing textarea:focus-visible{
+  outline:3px solid rgba(21,94,239,.24);
+  outline-offset:1px;
+  border-color:#155eef;
+}
+.nb-landing button,
+.nb-landing input[type="submit"],
+.nb-landing input[type="button"],
+.nb-landing .nb-btn{
+  -webkit-tap-highlight-color:transparent;
+}
+.nb-landing button:disabled,
+.nb-landing input[type="submit"]:disabled,
+.nb-landing input[type="button"]:disabled{
+  cursor:not-allowed;
+  opacity:.65;
+}
+@media(max-width:480px){
+  .nb-landing button,
+  .nb-landing input[type="submit"],
+  .nb-landing input[type="button"],
+  .nb-landing .nb-btn{
+    max-width:100%;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .nb-landing button,
+  .nb-landing input[type="submit"],
+  .nb-landing input[type="button"],
+  .nb-landing .nb-btn{
+    scroll-behavior:auto;
+  }
+}
+
