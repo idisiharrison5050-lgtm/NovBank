@@ -17,6 +17,8 @@
 .nb-sidebar-logout:hover{background:#fff1f2;border-color:#f3c7ca;color:#b42318}
 .dashboard-main{margin-left:244px;padding:34px 38px 42px;background:#f6f8fb}
 .dashboard-main:before{opacity:.7}
+.nb-sidebar .sidebar-link:focus-visible,.nb-sidebar-logout:focus-visible,.nb-sidebar-brand:focus-visible{outline:3px solid rgba(21,94,239,.20);outline-offset:2px}
+.nb-sidebar .sidebar-link:active{transform:translateX(1px)}
 @media(max-width:1100px){.nb-sidebar{width:228px}.dashboard-main{margin-left:228px;padding:30px 28px 38px}}
 @media(max-width:768px){.nb-sidebar{display:none}.dashboard-main{margin-left:0;padding:20px 15px 34px}.nb-sidebar-section{padding-left:18px}.nb-sidebar-logout{margin-left:12px;margin-right:12px}}
-@media(prefers-reduced-motion:reduce){.nb-sidebar .sidebar-link,.nb-sidebar-logout{transition:none}}
+@media(prefers-reduced-motion:reduce){.nb-sidebar .sidebar-link,.nb-sidebar-logout{transition:none}.nb-sidebar .sidebar-link:hover,.nb-sidebar .sidebar-link:active{transform:none}}
