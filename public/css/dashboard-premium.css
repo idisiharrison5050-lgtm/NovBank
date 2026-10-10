@@ -1,0 +1,139 @@
+.nb-premium-dashboard{font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.nb-premium-hero{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;margin-bottom:24px}.nb-premium-kicker{font-size:11px;text-transform:uppercase;letter-spacing:.09em;font-weight:800;color:#667085}.nb-premium-hero h1{font-size:36px;line-height:1.05;letter-spacing:-.045em;margin:7px 0}.nb-premium-hero p{color:#667085;margin:0}.nb-premium-actions{display:flex;gap:9px;flex-wrap:wrap}.nb-premium-action{display:inline-flex;align-items:center;gap:7px;padding:11px 14px;border:1px solid #e4e7ec;border-radius:11px;background:#fff;color:#101828;font-size:13px;font-weight:750}.nb-premium-action.primary{background:#155eef;border-color:#155eef;color:#fff}.nb-balance-grid{display:grid;grid-template-columns:1.35fr .65fr;gap:16px;margin-bottom:18px}.nb-balance-panel{border-radius:22px;padding:28px;background:#0b1220;color:#fff;min-height:220px;position:relative;overflow:hidden}.nb-balance-panel:after{content:"";position:absolute;width:250px;height:250px;border:1px solid rgba(255,255,255,.09);border-radius:50%;right:-100px;top:-90px}.nb-balance-panel .label{font-size:12px;color:#98a2b3}.nb-balance-panel .amount{font-size:42px;font-weight:800;letter-spacing:-.05em;margin:28px 0 12px}.nb-balance-panel .account{font-size:13px;color:#98a2b3}.nb-mini-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.nb-mini-stat{border:1px solid #e4e7ec;border-radius:18px;padding:22px;background:#fff}.nb-mini-stat span{display:block;color:#667085;font-size:11px;text-transform:uppercase;letter-spacing:.05em;font-weight:750}.nb-mini-stat b{display:block;font-size:20px;margin-top:10px}.nb-dashboard-section{background:#fff;border:1px solid #e4e7ec;border-radius:20px;padding:24px;margin-top:16px}.nb-section-head-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.nb-section-head-row h2{font-size:18px;margin:0;letter-spacing:-.025em}.nb-section-link{font-size:13px;font-weight:750;color:#155eef}.nb-transaction-row{display:grid;grid-template-columns:44px 1fr auto;gap:13px;align-items:center;padding:14px 0;border-bottom:1px solid #f0f2f5}.nb-transaction-row:last-child{border-bottom:0}.nb-txn-icon{width:40px;height:40px;border-radius:12px;background:#eef4ff;color:#155eef;display:grid;place-items:center;font-weight:800}.nb-transaction-row strong{display:block;font-size:13px}.nb-transaction-row small{display:block;color:#667085;margin-top:4px}.nb-txn-amount{text-align:right;font-weight:800}.nb-txn-amount.credit{color:#039855}.nb-txn-amount.debit{color:#101828}.nb-txn-status{display:block;font-size:10px;color:#667085;text-align:right;margin-top:4px;text-transform:capitalize}@media(max-width:800px){.nb-premium-hero{flex-direction:column}.nb-balance-grid{grid-template-columns:1fr}.nb-premium-hero h1{font-size:30px}.nb-balance-panel .amount{font-size:35px}}@media(max-width:520px){.nb-mini-stat-grid{grid-template-columns:1fr 1fr}.nb-dashboard-section{padding:18px}.nb-transaction-row{grid-template-columns:38px 1fr auto}.nb-txn-icon{width:36px;height:36px}.nb-txn-amount{font-size:12px}}
+/* Customer dashboard palette */
+.nb-premium-dashboard .nb-balance-panel{background:#1a56db;box-shadow:0 22px 50px rgba(26,86,219,.20)}
+.nb-premium-dashboard .nb-balance-panel:after{border-color:rgba(255,255,255,.18)}
+
+/* Keyboard focus refinement */
+.nb-command-dashboard a:focus-visible,.nb-command-dashboard button:focus-visible{outline:3px solid rgba(21,94,239,.22);outline-offset:3px}
+
+/* Remaining dashboard insight cards — premium treatment without gradients. */
+.nb-command-two-col{display:grid;grid-template-columns:1fr;margin:18px 0;gap:14px}
+.nb-spending-panel{position:relative;overflow:hidden;background:#f8fafc;border:1px solid #dfe5ee;border-radius:22px;padding:23px;box-shadow:0 14px 34px rgba(16,24,40,.055)}
+.nb-spending-panel:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:#155eef}
+.nb-spending-panel .nb-panel-heading{padding-bottom:17px;border-bottom:1px solid #e5eaf1}
+.nb-spending-panel .nb-panel-heading h2{font-size:20px;letter-spacing:-.035em}
+.nb-spending-panel .nb-panel-heading span:first-child{color:#155eef;font-weight:850}
+.nb-spending-period{padding:6px 9px;border:1px solid #dce5f3;border-radius:999px;background:#fff;color:#667085!important;font-weight:800}
+.nb-spend-row{padding:15px 0 16px;border-bottom:1px solid #e5eaf1}
+.nb-spend-row:last-of-type{border-bottom:0}
+.nb-spend-row>div:first-child{align-items:center;gap:12px}
+.nb-spend-row>div:first-child b{font-size:12px;font-weight:750;color:#172033;text-transform:capitalize}
+.nb-spend-row>div:first-child span{font-size:12px;font-weight:800;color:#101828}
+.nb-spend-track{height:9px;margin-top:10px;background:#e8edf4;border-radius:999px;box-shadow:inset 0 1px 2px rgba(16,24,40,.05)}
+.nb-spend-track i{background:#155eef;border-radius:999px;min-width:4px;box-shadow:0 2px 6px rgba(21,94,239,.2)}
+.nb-spend-row>small{margin-top:6px;color:#98a2b3;font-size:9px}
+.nb-spending-total{margin-top:3px;padding:15px 0 0;border-top:1px solid #dce3ec;font-size:11px}
+.nb-spending-total b{font-size:14px;color:#101828}
+
+.nb-cashflow-overview{position:relative;overflow:hidden;margin:0 0 18px;padding:23px;background:#0b1220;border:1px solid #18243a;border-radius:22px;box-shadow:0 18px 42px rgba(11,18,32,.14);color:#fff}
+.nb-cashflow-overview:before{content:"";position:absolute;left:0;top:0;width:4px;height:100%;background:#155eef}
+.nb-cashflow-overview .nb-panel-heading{position:relative;z-index:1;padding-bottom:17px;border-bottom:1px solid rgba(255,255,255,.09)}
+.nb-cashflow-overview .nb-panel-heading span{color:#98a2b3}
+.nb-cashflow-overview .nb-panel-heading h2{color:#fff;font-size:20px;letter-spacing:-.035em}
+.nb-cashflow-summary{color:#98a2b3}
+.nb-cashflow-summary b{color:#4ade80}
+.nb-cashflow-summary strong{color:#fb7185}
+.nb-cashflow-chart{position:relative;border-bottom-color:rgba(255,255,255,.1);padding-top:21px}
+.nb-cashflow-day small{color:#98a2b3}
+.nb-cashflow-columns i{background:#155eef;box-shadow:0 3px 10px rgba(21,94,239,.24)}
+.nb-cashflow-columns b{background:#667085}
+.nb-cashflow-legend{color:#98a2b3}
+.nb-cashflow-legend i{background:#155eef}
+.nb-cashflow-legend b{background:#667085}
+.nb-cashflow-legend a{color:#d0d5dd}
+.nb-cashflow-legend a:hover{color:#fff;text-decoration:none}
+
+.nb-dashboard-command-row{display:grid;grid-template-columns:1.25fr .75fr;gap:14px;margin:0 0 18px}
+.nb-attention-panel,.nb-account-snapshot{margin:0;border-radius:22px;box-shadow:0 14px 34px rgba(16,24,40,.055)}
+.nb-attention-panel{position:relative;overflow:hidden;border-color:#dfe5ee;background:#fff;padding:23px}
+.nb-attention-panel:before{content:"";position:absolute;left:0;top:0;width:4px;height:100%;background:#f59e0b}
+.nb-attention-panel .nb-panel-heading{padding-bottom:16px;border-bottom:1px solid #e5eaf1}
+.nb-attention-panel .nb-panel-heading h2{font-size:20px;letter-spacing:-.035em}
+.nb-attention-item{padding:14px 0;border-bottom:1px solid #e9edf2}
+.nb-attention-item:last-child{border-bottom:0}
+.nb-attention-icon{width:40px;height:40px;border-radius:13px;background:#eef4ff;border:1px solid #dce7fb;box-shadow:none}
+.nb-attention-icon.shield{background:#ecfdf3;border-color:#d1fadf;color:#039855}
+.nb-attention-icon.inbox{background:#fff7ed;border-color:#fed7aa;color:#c2410c}
+.nb-attention-item b{font-size:12px;font-weight:800}
+.nb-attention-item small{font-size:10px;line-height:1.5;color:#667085}
+.nb-attention-item em{padding:5px 8px;border:1px solid #dbe4f0;border-radius:999px;background:#f8fafc;color:#155eef;font-size:9px}
+
+.nb-account-snapshot{position:relative;overflow:hidden;background:#111827;border:1px solid #202c3e;padding:23px;color:#fff;box-shadow:0 18px 42px rgba(11,18,32,.14)}
+.nb-account-snapshot:before{content:"";position:absolute;right:-46px;top:-46px;width:140px;height:140px;border:1px solid rgba(255,255,255,.08);border-radius:50%}
+.nb-account-snapshot .nb-panel-heading{position:relative;z-index:1;padding-bottom:15px;border-bottom:1px solid rgba(255,255,255,.09)}
+.nb-account-snapshot .nb-panel-heading span{color:#98a2b3}
+.nb-account-snapshot .nb-panel-heading h2{color:#fff;font-size:20px;letter-spacing:-.035em}
+.nb-snapshot-row{position:relative;z-index:1;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.09);color:#fff}
+.nb-snapshot-row>span{color:#98a2b3}
+.nb-snapshot-row>b{color:#f8fafc;font-weight:750}
+.nb-snapshot-row b i{background:#12b76a;box-shadow:0 0 0 3px rgba(18,183,106,.12)}
+.nb-snapshot-link{position:relative;z-index:1;display:inline-flex;margin-top:17px;padding:9px 11px;border:1px solid rgba(255,255,255,.12);border-radius:10px;background:#182235;color:#fff;font-size:10px;font-weight:800;text-decoration:none}
+.nb-snapshot-link:hover{background:#202d42;border-color:rgba(255,255,255,.2);color:#fff;text-decoration:none}
+
+@media(max-width:850px){.nb-dashboard-command-row{grid-template-columns:1fr}}
+@media(max-width:600px){.nb-command-two-col{margin:12px 0;gap:10px}.nb-spending-panel,.nb-cashflow-overview,.nb-attention-panel,.nb-account-snapshot{padding:18px 15px;border-radius:19px}.nb-spending-panel .nb-panel-heading h2,.nb-cashflow-overview .nb-panel-heading h2,.nb-attention-panel .nb-panel-heading h2,.nb-account-snapshot .nb-panel-heading h2{font-size:17px}.nb-spend-row{padding:13px 0}.nb-spend-row>div:first-child b,.nb-spend-row>div:first-child span{font-size:11px}.nb-cashflow-summary{margin-top:9px;justify-content:flex-start}.nb-cashflow-chart{height:160px;gap:5px;padding:16px 0 0}.nb-cashflow-columns{height:115px}.nb-dashboard-command-row{gap:10px}.nb-attention-item{grid-template-columns:34px minmax(0,1fr) auto;gap:9px;padding:12px 0}.nb-attention-icon{width:34px;height:34px;border-radius:11px}}
+@media(prefers-reduced-motion:reduce){.nb-spending-panel,.nb-cashflow-overview,.nb-attention-panel,.nb-account-snapshot{scroll-behavior:auto}}
+
+/* Banking control center */
+.nb-command-dashboard .nb-bank-control{position:relative;margin:18px 0;padding:24px;border:1px solid #dfe5ee;border-radius:22px;background:#f8fafc;box-shadow:0 14px 34px rgba(16,24,40,.055)}
+.nb-bank-control-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-end;padding-bottom:18px;border-bottom:1px solid #e5eaf1}
+.nb-bank-control-head h2{margin:7px 0 5px;font-size:21px;letter-spacing:-.035em;color:#101828}
+.nb-bank-control-head p{margin:0;color:#667085;font-size:11px;line-height:1.55;max-width:680px}
+.nb-bank-control-head>a{padding:9px 11px;border:1px solid #dce4ef;border-radius:10px;background:#fff;color:#155eef;font-size:10px;font-weight:800;text-decoration:none;white-space:nowrap}
+.nb-bank-control-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+.nb-bank-control-grid>a{position:relative;display:flex;align-items:center;gap:11px;min-width:0;padding:15px;border:1px solid #e1e7ef;border-radius:15px;background:#fff;color:#101828;text-decoration:none;box-shadow:0 5px 14px rgba(16,24,40,.035);transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}
+.nb-bank-control-grid>a:hover{transform:translateY(-2px);border-color:#bfd0ea;box-shadow:0 10px 22px rgba(16,24,40,.07)}
+.nb-bank-control-icon{flex:0 0 38px;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:#eef4ff;border:1px solid #dce7fb;color:#155eef}
+.nb-bank-control-icon svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.nb-bank-control-grid>a:nth-child(2) .nb-bank-control-icon{background:#f5f3ff;border-color:#e9e2ff;color:#6941c6}
+.nb-bank-control-grid>a:nth-child(3) .nb-bank-control-icon{background:#fff7ed;border-color:#fed7aa;color:#c2410c}
+.nb-bank-control-grid>a:nth-child(4) .nb-bank-control-icon{background:#ecfdf3;border-color:#d1fadf;color:#039855}
+.nb-bank-control-grid>a>span:nth-child(2){min-width:0}
+.nb-bank-control-grid b{display:block;font-size:11px;font-weight:850}
+.nb-bank-control-grid small{display:block;margin-top:4px;color:#667085;font-size:9px;line-height:1.45}
+.nb-bank-control-grid em{margin-left:auto;color:#98a2b3;font-size:14px;font-style:normal}
+
+/* Banking products */
+.nb-command-dashboard .nb-bank-product-strip{margin:0 0 18px;padding:22px;border:1px solid #dfe5ee;border-radius:22px;background:#fff;box-shadow:0 14px 34px rgba(16,24,40,.05)}
+.nb-bank-product-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:13px}
+.nb-bank-product-head h2{margin:6px 0 0;font-size:20px;letter-spacing:-.035em;color:#101828}
+.nb-bank-product-head>a{color:#155eef;font-size:10px;font-weight:850;text-decoration:none}
+.nb-bank-product-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.nb-bank-product-card{display:grid;grid-template-columns:42px minmax(0,1fr) auto;align-items:center;gap:11px;padding:15px;border:1px solid #e1e7ef;border-radius:16px;background:#f8fafc;color:#101828;text-decoration:none;min-width:0;transition:transform .16s ease,border-color .16s ease,background .16s ease}
+.nb-bank-product-card:hover{transform:translateY(-2px);border-color:#bfd0ea;background:#fff;text-decoration:none}
+.nb-bank-product-icon{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:#0b1220;color:#fff;font-size:17px;font-weight:800}
+.nb-bank-product-card:nth-child(2) .nb-bank-product-icon{background:#155eef}
+.nb-bank-product-card:nth-child(3) .nb-bank-product-icon{background:#344054}
+.nb-bank-product-card b{display:block;font-size:11px;font-weight:850}
+.nb-bank-product-card small{display:block;margin-top:4px;color:#667085;font-size:9px;line-height:1.4}
+.nb-bank-product-card>strong{padding:5px 7px;border:1px solid #dbe4f0;border-radius:8px;background:#fff;color:#155eef;font-size:9px;white-space:nowrap}
+
+/* Financial overview cards */
+.nb-financial-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:0 0 18px}
+.nb-fin-card{position:relative;overflow:hidden;min-height:185px;padding:19px;border:1px solid #dfe5ee;border-radius:20px;background:#fff;box-shadow:0 12px 28px rgba(16,24,40,.045);display:flex;flex-direction:column}
+.nb-fin-card:before{content:"";position:absolute;left:0;top:0;width:4px;height:100%;background:#155eef}
+.nb-fin-card-profit:before{background:#12b76a}.nb-fin-card-active:before{background:#6941c6}.nb-fin-card-limit:before{background:#f59e0b}
+.nb-fin-card-icon{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:#eef4ff;color:#155eef;margin-bottom:15px}
+.nb-fin-card-profit .nb-fin-card-icon{background:#ecfdf3;color:#039855}.nb-fin-card-active .nb-fin-card-icon{background:#f5f3ff;color:#6941c6}.nb-fin-card-limit .nb-fin-card-icon{background:#fff7ed;color:#c2410c}
+.nb-fin-card-icon svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.nb-fin-card>span{font-size:9px;letter-spacing:.08em;font-weight:850;color:#667085}
+.nb-fin-card>strong{margin-top:7px;font-size:20px;letter-spacing:-.035em;color:#101828}
+.nb-fin-card>small{margin-top:5px;color:#98a2b3;font-size:9px;line-height:1.4}
+.nb-fin-card>a{margin-top:auto;padding-top:13px;color:#155eef;font-size:9px;font-weight:850;text-decoration:none}
+.nb-fin-card>a b{margin-left:3px}
+
+/* Financial pulse */
+.nb-financial-pulse{display:grid;grid-template-columns:1.35fr repeat(2,.825fr);gap:10px;margin:0 0 18px;padding:20px;border:1px solid #dfe5ee;border-radius:22px;background:#0b1220;color:#fff;box-shadow:0 18px 42px rgba(11,18,32,.13)}
+.nb-pulse-intro{padding:3px 8px}
+.nb-pulse-intro>span{font-size:9px;letter-spacing:.12em;font-weight:850;color:#98a2b3}
+.nb-pulse-intro h2{margin:7px 0 5px;font-size:20px;letter-spacing:-.035em;color:#fff}
+.nb-pulse-intro p{margin:0;color:#98a2b3;font-size:10px;line-height:1.5}
+.nb-pulse-stat{padding:15px;border:1px solid #1f2b40;border-radius:15px;background:#111827;display:flex;flex-direction:column;justify-content:center}
+.nb-pulse-stat span{font-size:9px;letter-spacing:.08em;font-weight:850;color:#98a2b3}
+.nb-pulse-stat strong{margin:7px 0 3px;font-size:19px;letter-spacing:-.035em;color:#f8fafc}
+.nb-pulse-stat small{color:#667085;font-size:9px}
+.nb-pulse-stat:nth-child(2) strong{color:#4ade80}.nb-pulse-stat:nth-child(3) strong{color:#fb7185}
+
+@media(max-width:1050px){.nb-bank-control-grid{grid-template-columns:repeat(2,1fr)}.nb-financial-cards{grid-template-columns:repeat(2,1fr)}.nb-financial-pulse{grid-template-columns:1fr 1fr}.nb-pulse-intro{grid-column:1/-1}}
+@media(max-width:700px){.nb-bank-control,.nb-bank-product-strip{padding:18px 15px;border-radius:19px}.nb-bank-control-head{display:block}.nb-bank-control-head>a{display:inline-flex;margin-top:12px}.nb-bank-control-grid{grid-template-columns:1fr;gap:8px}.nb-bank-control-grid>a{padding:13px}.nb-bank-product-grid{grid-template-columns:1fr}.nb-bank-product-head{align-items:flex-start}.nb-financial-cards{grid-template-columns:1fr 1fr;gap:8px}.nb-fin-card{min-height:170px;padding:16px}.nb-fin-card>strong{font-size:17px}.nb-financial-pulse{grid-template-columns:1fr;padding:15px}.nb-pulse-intro{grid-column:auto}.nb-pulse-stat{min-height:92px}}
+@media(max-width:430px){.nb-financial-cards{grid-template-columns:1fr}.nb-fin-card{min-height:145px}.nb-fin-card>a{padding-top:10px}.nb-bank-product-card{grid-template-columns:38px minmax(0,1fr) auto}.nb-bank-product-icon{width:38px;height:38px}.nb-bank-control-grid small{font-size:8.5px}}

@@ -1,87 +1,22 @@
 <%- include('../partials/header') %>
 <link rel="stylesheet" href="/css/dashboard.css"/>
-<!-- Mobile topbar -->
-<div class="mobile-topbar">
-  <span class="mobile-logo">NovBank</span>
-  <button class="hamburger-btn" id="hamburgerBtn">
-    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <line x1="3" y1="6" x2="21" y2="6"/>
-      <line x1="3" y1="12" x2="21" y2="12"/>
-      <line x1="3" y1="18" x2="21" y2="18"/>
-    </svg>
-  </button>
-</div>
-
-<!-- Overlay -->
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-
-<div class="dashboard-layout">
-  <%- include('../partials/sidebar') %>
-
-  <main class="dashboard-main">
-    <div class="dash-topbar">
-      <h1 class="dash-greeting">Transaction History</h1>
-    </div>
-
-    <!-- Filter Bar -->
-    <div class="filter-bar">
-      <a href="?filter=all" class="filter-btn <%= filter === 'all' ? 'active' : '' %>">All</a>
-      <a href="?filter=internal_transfer" class="filter-btn <%= filter === 'internal_transfer' ? 'active' : '' %>">Internal</a>
-      <a href="?filter=wire_transfer" class="filter-btn <%= filter === 'wire_transfer' ? 'active' : '' %>">Wire</a>
-      <a href="?filter=deposit" class="filter-btn <%= filter === 'deposit' ? 'active' : '' %>">Deposits</a>
-    </div>
-
-    <% if (transactions.length === 0) { %>
-      <div class="empty-state">
-        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-        <p>No transactions found.</p>
-      </div>
-    <% } else { %>
-      <div class="txn-table-wrap">
-        <table class="txn-table">
-          <thead>
-            <tr>
-              <th>Reference</th>
-              <th>Date</th>
-              <th>Type</th>
-              <th>Description</th>
-              <th>Category</th>
-              <th>Amount</th>
-              <th>Status</th>
-              
-            </tr>
-          </thead>
-          <tbody>
-            <% transactions.forEach(function(txn) { %>
-              <tr>
-                <td class="mono" style="font-size:0.78rem;"><%= txn.reference %></td>
-                <td><%= new Date(txn.createdAt).toLocaleDateString('en-GB') %></td>
-                <td><%= txn.type.replace('_', ' ') %></td>
-                <td><%= txn.description || '-' %></td>
-                <td><%= txn.category %></td>
-                <td class="<%= txn.type === 'deposit' || txn.type === 'loan_credit' ? 'credit' : (txn.sender && txn.sender._id && txn.sender._id.toString() === user._id.toString() ? 'debit' : 'credit') %>">
-                  <%= txn.type === 'deposit' || txn.type === 'loan_credit' ? '+' : (txn.sender && txn.sender._id && txn.sender._id.toString() === user._id.toString() ? '-' : '+') %>€<%= Number(txn.amount).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %>
-                </td>
-                <td><span class="txn-status status-<%= txn.status %>"><%= txn.status %></span></td>
-              </tr>
-            <% }); %>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Pagination -->
-      <div class="pagination-wrap">
-        <% if (currentPage > 1) { %>
-          <a href="?page=<%= currentPage - 1 %>&filter=<%= filter %>" class="page-btn">Previous</a>
-        <% } %>
-        <span class="page-info">Page <%= currentPage %> of <%= totalPages %></span>
-        <% if (currentPage < totalPages) { %>
-          <a href="?page=<%= currentPage + 1 %>&filter=<%= filter %>" class="page-btn">Next</a>
-        <% } %>
-      </div>
-    <% } %>
-  </main>
-</div>
-
-<%- include('../partials/footer') %>
+<link rel="stylesheet" href="/css/transactions-premium.css"/><link rel="stylesheet" href="/css/banking-flows.css?v=transactions2"/>
+<div class="mobile-topbar"><span class="mobile-logo">NovBank</span><button class="hamburger-btn" id="hamburgerBtn" aria-label="Open navigation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18"></path><path d="M3 12h18"></path><path d="M3 18h18"></path></svg></button></div><div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="dashboard-layout"><%- include('../partials/sidebar') %><main class="dashboard-main nb-transactions-page">
+  <div class="nb-transactions-head"><div><span>ACCOUNT ACTIVITY</span><h1>Transactions</h1><p>A clear record of money moving in and out of your account.</p></div><a class="nb-export-btn" href="?filter=<%= filter %>&q=<%= encodeURIComponent(search || "") %>&export=csv">Export</a></div>
+  <section class="nb-transaction-pulse">
+    <div><span>THIS MONTH</span><strong><%= currencySymbol(user.currency || 'EUR') %><%= Number(monthIncoming || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong><small>Money received</small></div>
+    <div><span>THIS MONTH</span><strong><%= currencySymbol(user.currency || 'EUR') %><%= Number(monthOutgoing || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong><small>Money sent</small></div>
+    <div><span>ATTENTION</span><strong><%= pendingCount || 0 %></strong><small>Pending items</small></div>
+  </section>
+  <form class="nb-transaction-search" method="GET" action="/dashboard/transactions"><label class="sr-only" for="transactionSearch">Search transactions</label><input id="transactionSearch" type="search" name="q" value="<%= search || '' %>" placeholder="Search reference, description or category"><input type="hidden" name="filter" value="<%= filter %>"><button type="submit">Search</button></form><div class="nb-activity-summary"><div><span>VISIBLE ACTIVITY</span><b><%= transactions.length %></b></div><div><span>VIEW</span><b><%= filter === "all" ? "All activity" : filter.replace(/_/g," ") %></b></div><div><span>PAGE</span><b><%= currentPage %> / <%= totalPages %></b></div></div><div class="nb-filter-label">FILTER ACTIVITY</div><div class="nb-filter-bar"><a href="?filter=all&q=<%= encodeURIComponent(search || "") %>" class="<%= filter === 'all' ? 'active' : '' %>">All</a><a href="?filter=airtime&q=<%= encodeURIComponent(search || "") %>" class="<%= filter === 'airtime' ? 'active' : '' %>">Airtime</a><a href="?filter=internal_transfer&q=<%= encodeURIComponent(search || "") %>" class="<%= filter === 'internal_transfer' ? 'active' : '' %>">Internal</a><a href="?filter=wire_transfer&q=<%= encodeURIComponent(search || "") %>" class="<%= filter === 'wire_transfer' ? 'active' : '' %>">Wire</a><a href="?filter=deposit&q=<%= encodeURIComponent(search || "") %>" class="<%= filter === 'deposit' ? 'active' : '' %>">Deposits</a><a href="?filter=withdrawal&q=<%= encodeURIComponent(search || "") %>" class="<%= filter === 'withdrawal' ? 'active' : '' %>">Withdrawals</a></div>
+  <% if (transactions.length === 0) { %><div class="nb-no-transactions"><strong>No transactions found.</strong><span>When activity occurs on your account, it will appear here.</span></div><% } else { %>
+  <div class="nb-transactions-list"><% transactions.forEach(function(txn) { var conversion = txn.type === 'currency_conversion'; var outgoing = txn.sender && txn.sender._id && txn.sender._id.toString() === user._id.toString() && txn.type !== 'deposit' && !conversion; var credit = !conversion && (txn.type === 'deposit' || txn.type === 'loan_credit' || !outgoing); %><a class="nb-transaction-card" href="/dashboard/transactions/<%= txn._id %>"><div class="nb-txn-symbol <%= credit ? 'credit-bg' : '' %>">
+<% if (txn.type === 'airtime') { %><svg viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2"></rect><path d="M10 6h4"></path><circle cx="12" cy="17" r="1"></circle></svg>
+<% } else if (txn.type === 'wire_transfer' || txn.type === 'internal_transfer') { %><svg viewBox="0 0 24 24"><path d="M5 7h14"></path><path d="m15 4 4 3-4 3"></path><path d="M19 17H5"></path><path d="m9 14-4 3 4 3"></path></svg>
+<% } else if (txn.type === 'deposit' || txn.type === 'grant_credit' || txn.type === 'refund_credit' || txn.type === 'loan_credit') { %><svg viewBox="0 0 24 24"><path d="M12 5v14"></path><path d="m6 13 6 6 6-6"></path></svg>
+<% } else if (txn.type === 'withdrawal') { %><svg viewBox="0 0 24 24"><path d="M12 19V5"></path><path d="m6 11 6-6 6 6"></path></svg>
+<% } else { %><span><%= conversion ? '↔' : (credit ? '+' : '−') %></span><% } %>
+</div><div class="nb-txn-main"><strong><%= txn.type === 'wire_transfer' && (!txn.description || txn.description.trim().toLowerCase() === 'wire transfer') ? 'Wire Transfer' : (txn.description || (txn.type === 'withdrawal' && txn.wireDetails && txn.wireDetails.payoutMethod ? 'Withdrawal · ' + txn.wireDetails.payoutMethod.charAt(0).toUpperCase() + txn.wireDetails.payoutMethod.slice(1) : txn.type.replace(/_/g,' '))) %></strong><span><%= txn.category || 'Account activity' %> · <%= new Date(txn.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) %></span><small>Ref <%= txn.reference %></small></div><div class="nb-txn-value"><b class="<%= conversion ? 'conversion' : (credit ? 'credit' : 'debit') %>"><%= conversion ? '↔ ' : (credit ? '+' : '-') %><%= currencySymbol(txn.currency || user.currency || 'EUR') %><%= Number(txn.amount).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></b><span class="txn-status status-<%= txn.status %>"><%= txn.status %></span></div></a><% }); %></div>
+  <div class="nb-pagination"><% if (currentPage > 1) { %><a href="?page=<%= currentPage - 1 %>&filter=<%= filter %>&q=<%= encodeURIComponent(search || '') %>">Previous</a><% } %><span>Page <%= currentPage %> of <%= totalPages %></span><% if (currentPage < totalPages) { %><a href="?page=<%= currentPage + 1 %>&filter=<%= filter %>&q=<%= encodeURIComponent(search || '') %>">Next</a><% } %></div><% } %>
+</main></div><%- include('../partials/footer') %>

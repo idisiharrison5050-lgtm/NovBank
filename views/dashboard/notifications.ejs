@@ -1,48 +1,25 @@
 <%- include('../partials/header') %>
-<link rel="stylesheet" href="/css/dashboard.css"/>
-<!-- Mobile topbar -->
-<div class="mobile-topbar">
-  <span class="mobile-logo">NovBank</span>
-  <button class="hamburger-btn" id="hamburgerBtn">
-    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <line x1="3" y1="6" x2="21" y2="6"/>
-      <line x1="3" y1="12" x2="21" y2="12"/>
-      <line x1="3" y1="18" x2="21" y2="18"/>
-    </svg>
-  </button>
+<link rel="stylesheet" href="/css/dashboard.css"/><link rel="stylesheet" href="/css/account-center.css"/><link rel="stylesheet" href="/css/notification-center.css"/>
+<style>
+.nb-notification-toolbar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:0 0 18px;padding:14px 16px;background:#fff;border:1px solid #e4e9f0;border-radius:16px}
+.nb-notification-toolbar p{margin:0;color:#718096;font-size:12px}.nb-notification-toolbar b{color:#172033}
+.nb-notification-readall{border:1px solid #d6deea;background:#0b1220;color:#fff;border-radius:10px;padding:9px 13px;font-size:11px;font-weight:800;cursor:pointer}
+.nb-notification{position:relative;display:flex;gap:13px;align-items:flex-start}.nb-notification.unread{background:#fbfdff}.nb-notification-action{border:0;background:transparent;color:#155eef;font-size:10px;font-weight:800;padding:5px 0;cursor:pointer}
+.nb-notification-severity{display:inline-flex;padding:3px 7px;border-radius:999px;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-left:6px;background:#eef2f6;color:#667085}.nb-notification-severity.success{background:#ecfdf3;color:#027a48}.nb-notification-severity.warning{background:#fffaeb;color:#b54708}.nb-notification-severity.critical{background:#fef3f2;color:#b42318}
+@media(max-width:600px){.nb-notification-toolbar{align-items:flex-start;flex-direction:column}.nb-notification-readall{width:100%}}
+</style>
+<div class="mobile-topbar"><span class="mobile-logo">NovBank</span><a class="nb-mobile-alert" href="/dashboard/notifications" aria-label="Notifications"><svg viewBox="0 0 24 24"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path><path d="M10 21h4"></path></svg></a><button class="hamburger-btn" id="hamburgerBtn" aria-label="Open navigation"><span></span><span></span><span></span></button></div><div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="dashboard-layout"><%- include('../partials/sidebar') %><main class="dashboard-main nb-account-center">
+<div class="nb-account-hero"><div><span class="nb-account-label">SECURE INBOX</span><h1>Notifications</h1><p>Important updates, security events and account activity in one place.</p></div></div>
+
+<% var unreadNotifications = notifications.filter(function(item){ return !item.isRead; }).length; %>
+<div class="nb-notification-toolbar">
+  <p><b><%= unreadNotifications %></b> unread notification<%= unreadNotifications === 1 ? '' : 's' %> · Your newest account updates appear first.</p>
+  <% if (unreadNotifications > 0) { %><form method="POST" action="/dashboard/notifications/read-all"><button class="nb-notification-readall" type="submit">Mark all as read</button></form><% } %>
 </div>
 
-<!-- Overlay -->
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-
-<div class="dashboard-layout">
-  <%- include('../partials/sidebar') %>
-
-  <main class="dashboard-main">
-    <div class="dash-topbar">
-      <h1 class="dash-greeting">Notifications</h1>
-    </div>
-
-    <% if (notifications.length === 0) { %>
-      <div class="empty-state">
-        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-        <p>No notifications yet.</p>
-      </div>
-    <% } else { %>
-      <div class="notif-list">
-        <% notifications.forEach(function(notif) { %>
-          <div class="notif-item notif-<%= notif.type %> <%= notif.isRead ? '' : 'unread' %>">
-            <div class="notif-item-header">
-              <strong><%= notif.title %></strong>
-              <span class="notif-time"><%= new Date(notif.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) %></span>
-            </div>
-            <p class="notif-message"><%= notif.message %></p>
-          </div>
-        <% }); %>
-      </div>
-    <% } %>
-  </main>
-</div>
-
-<%- include('../partials/footer') %>
+<% if (notifications.length === 0) { %><div class="nb-empty-account"><div class="nb-empty-inbox-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z"></path><path d="m4 7 8 6 8-6"></path></svg></div><strong>No notifications yet.</strong><div>Important account updates will appear here.</div></div><% } else { %><div class="nb-notification-center"><% notifications.forEach(function(notif) { %><article class="nb-notification <%= notif.isRead ? '' : 'unread' %>">
+  <div class="nb-notification-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path><path d="M10 21h4"></path></svg></div>
+  <div class="nb-notification-body"><div class="nb-notification-top"><b><%= notif.title %></b><span><%= new Date(notif.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) %></span></div><p><%= notif.message %></p><small class="nb-notification-severity <%= notif.severity || 'info' %>"><%= notif.severity || 'info' %></small><% if (!notif.isRead) { %><form method="POST" action="/dashboard/notifications/<%= notif._id %>/read"><button class="nb-notification-action" type="submit">Mark as read</button></form><% } %></div>
+</article><% }); %></div><% } %>
+</main></div><%- include('../partials/footer') %>

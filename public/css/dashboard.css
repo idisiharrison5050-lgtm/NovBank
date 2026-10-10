@@ -137,7 +137,7 @@
 }
 
 .balance-card {
-  background: linear-gradient(135deg, #1a56db, #0ea5e9);
+  background:#1a56db;
   border-radius: 16px;
   padding: 30px 28px;
   color: #fff;
@@ -1062,4 +1062,82 @@ label {
 .proof-warning svg {
   flex-shrink: 0;
   margin-top: 1px;
+}
+
+/* ── Visual banking shell ───────────────────────── */
+.dashboard-main{background:#f5f7fa;min-height:100vh}
+.dashboard-main:before{content:"";position:absolute;top:0;right:0;width:180px;height:180px;border:1px solid rgba(21,94,239,.07);border-radius:50%;pointer-events:none}
+.dashboard-main{position:relative}
+.dashboard-main>*{position:relative;z-index:1}
+.dashboard-main .alert{border-radius:14px;border:1px solid #e4e7ec;box-shadow:0 8px 24px rgba(16,24,40,.05)}
+@media(max-width:768px){.dashboard-main{background:#f5f7fa}.dashboard-main:before{width:110px;height:110px;top:4px;right:-38px}}
+
+
+/* ── Refined page headers ───────────────────────── */
+.nb-cards-heading h1,
+.nb-transfer-head h1,
+.nb-funding-head h1,
+.nb-account-hero h1,
+.nb-loan-hero h1,
+.nb-airtime-head h1,
+.nb-transactions-head h1,
+.nb-security-hero h1,
+.nb-flow-hero h1,
+.nb-command-hero h1{
+  font-size:32px;
+  line-height:1.08;
+  letter-spacing:-.045em;
+  margin:6px 0 8px;
+}
+.nb-cards-heading,
+.nb-transfer-head,
+.nb-funding-head,
+.nb-account-hero,
+.nb-loan-hero,
+.nb-airtime-head,
+.nb-transactions-head,
+.nb-security-hero,
+.nb-flow-hero,
+.nb-command-hero{
+  margin-bottom:20px;
+}
+.nb-cards-heading>div>span,
+.nb-transfer-head>div:first-child>span,
+.nb-funding-kicker,
+.nb-account-label,
+.nb-loan-kicker,
+.nb-airtime-kicker,
+.nb-transactions-head>div>span,
+.nb-security-kicker,
+.nb-flow-eyebrow,
+.nb-command-kicker{
+  font-size:9px;
+  letter-spacing:.11em;
+}
+@media(max-width:768px){
+  .nb-cards-heading h1,
+  .nb-transfer-head h1,
+  .nb-funding-head h1,
+  .nb-account-hero h1,
+  .nb-loan-hero h1,
+  .nb-airtime-head h1,
+  .nb-transactions-head h1,
+  .nb-security-hero h1,
+  .nb-flow-hero h1,
+  .nb-command-hero h1{
+    font-size:28px;
+    line-height:1.08;
+    margin:5px 0 7px;
+  }
+}
+
+
+/* Keep JivoChat clear of the fixed mobile dashboard navigation. */
+@media (max-width: 768px) {
+  #jivo-iframe-container,
+  .jivo-iframe-container,
+  #jivo-chat,
+  iframe[id*="jivo"] {
+    bottom: 88px !important;
+  }
 }

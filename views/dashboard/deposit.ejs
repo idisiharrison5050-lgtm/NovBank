@@ -1,5 +1,6 @@
 <%- include('../partials/header') %>
-<link rel="stylesheet" href="/css/dashboard.css"/>
+<link rel="stylesheet" href="/css/dashboard.css"/><link rel="stylesheet" href="/css/funding-premium.css"/>
+<link rel="stylesheet" href="/css/banking-flows.css?v=deposit1"/>
 <!-- Mobile topbar -->
 <div class="mobile-topbar">
   <span class="mobile-logo">NovBank</span>
@@ -18,10 +19,8 @@
 <div class="dashboard-layout">
   <%- include('../partials/sidebar') %>
 
-  <main class="dashboard-main">
-    <div class="dash-topbar">
-      <h1 class="dash-greeting">Deposit Funds</h1>
-    </div>
+  <main class="dashboard-main nb-funding-page">
+    <div class="nb-funding-head"><div><span class="nb-funding-kicker">FUND YOUR ACCOUNT</span><h1>Add money</h1><p>Use your NovBank account details to receive a bank transfer, then submit the payment confirmation.</p></div><div class="nb-funding-balance"><span>AVAILABLE BALANCE</span><b>€ <%= Number(user.balance || 0).toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2}) %></b></div></div>
 
     <% if (success_msg.length > 0) { %>
       <div class="alert alert-success"><%= success_msg %></div>
@@ -30,7 +29,11 @@
       <div class="alert alert-danger"><%= error_msg %></div>
     <% } %>
 
-    <div class="deposit-intro">
+    <section class="nb-funding-panel nb-flow-panel">
+  <div class="nb-flow-card-head"><div><span>FUNDING</span><h2>Add money to NovBank</h2><p>Choose the bank-transfer method that matches how you are funding your account.</p></div><div class="nb-flow-secure">Secure funding</div></div>
+  <div class="nb-wire-steps"><div class="active"><b>1</b><span>Choose method</span></div><i></i><div><b>2</b><span>Send funds</span></div><i></i><div><b>3</b><span>Confirm</span></div></div>
+</section>
+    <div class="nb-funding-panel deposit-intro">
       <p>Transfer funds from your local or international bank to your NovBank account using the details below. Once you have completed the transfer, fill in the form at the bottom so we can verify and credit your account.</p>
     </div>
 
@@ -42,7 +45,7 @@
 
     <!-- Local Transfer Details -->
     <div class="deposit-panel" id="panel-local">
-      <div class="form-card">
+      <div class="nb-funding-panel">
         <h5 class="form-section-heading">Local Bank Transfer Details</h5>
         <div class="deposit-detail-grid">
           <div class="deposit-detail-item">
@@ -113,16 +116,16 @@
     </div>
 
     <!-- Confirmation Form -->
-    <div class="form-card">
+    <div class="nb-funding-panel nb-funding-form">
   <h5 class="form-section-heading">Confirm Your Transfer</h5>
   <p class="form-card-sub">After completing your bank transfer, fill in the details below.</p>
 
   <form action="/transfer/deposit" method="POST" enctype="multipart/form-data" id="depositForm">
-    <input type="hidden" name="transactionPin" id="depositPinInput"/>
+    <input type="hidden" name="transactionPin" id="depositPinInput"/><input type="hidden" name="requestKey" value="<%= requestKey %>"/>
 
     <div class="form-group">
       <label>Amount Transferred (€)</label>
-      <input type="number" name="amount" class="form-control" placeholder="0.00" min="0.01" step="0.01" required/>
+      <input type="number" name="amount" class="form-control" placeholder="100.00" min="100" step="0.01" required/>
     </div>
 
     <div class="form-group">
@@ -150,8 +153,26 @@
       <input type="text" name="description" class="form-control" placeholder="e.g. Salary deposit, savings transfer"/>
     </div>
 
-    <button type="button" class="btn btn-primary btn-block" onclick="openPinModal('depositForm')">Submit Deposit Request</button>
+    <button type="button" class="btn btn-primary btn-block nb-flow-submit" onclick="openDepositReview()">Review deposit request <span>→</span></button>
   </form>
+</div>
+<div class="nb-wire-review-modal" id="depositReviewModal" aria-hidden="true">
+  <div class="nb-wire-review-backdrop" data-close-deposit-review></div>
+  <section class="nb-wire-review-dialog" role="dialog" aria-modal="true" aria-labelledby="depositReviewTitle">
+    <button type="button" class="nb-wire-review-close" aria-label="Close review" data-close-deposit-review>×</button>
+    <span class="nb-wire-review-kicker">FINAL REVIEW</span>
+    <h2 id="depositReviewTitle">Review your deposit request</h2>
+    <p class="nb-wire-review-intro">Confirm the amount and supporting information before securely submitting your deposit request.</p>
+    <div class="nb-wire-review-amount"><small>DEPOSIT AMOUNT</small><strong id="depositReviewAmount">€0.00</strong></div>
+    <div class="nb-wire-review-summary">
+      <div><span>Amount</span><b id="depositReviewAmountSmall">—</b></div>
+      <div><span>Proof</span><b id="depositReviewProof">Not attached</b></div>
+      <div><span>Description</span><b id="depositReviewDescription">Not provided</b></div>
+      <div><span>Status</span><b>Pending verification</b></div>
+    </div>
+    <div class="nb-wire-review-security"><span>✓</span><div><b>Ready to authorize</b><small>Your transaction PIN is the final authorization step. Your deposit will remain pending until verified.</small></div></div>
+    <div class="nb-wire-review-actions"><button type="button" class="nb-wire-edit" data-close-deposit-review>Go back and edit</button><button type="button" class="nb-wire-authorize" onclick="authorizeDeposit()">Authorize with PIN <span>→</span></button></div>
+  </section>
 </div>
 
 <script>
@@ -161,6 +182,24 @@
     if (this.files[0]) {
       document.getElementById('proofUploadBox').classList.add('has-file');
     }
+  });
+</script>
+
+<script>
+  document.querySelectorAll('.nb-copy-detail').forEach(function (button) {
+    button.addEventListener('click', function () {
+      var value = button.getAttribute('data-copy') || '';
+      if (!navigator.clipboard) return;
+      navigator.clipboard.writeText(value).then(function () {
+        var original = button.textContent;
+        button.textContent = 'Copied';
+        button.classList.add('copied');
+        window.setTimeout(function () {
+          button.textContent = original;
+          button.classList.remove('copied');
+        }, 1400);
+      });
+    });
   });
 </script>
 
@@ -177,4 +216,47 @@
   }
 </script>
 
+<script>
+(function(){
+  var modal=document.getElementById('depositReviewModal');
+  var form=document.getElementById('depositForm');
+  function openReview(){
+    if(!form.checkValidity()){form.reportValidity();return;}
+    var amount=Number(form.querySelector('[name="amount"]').value||0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});
+    var file=document.getElementById('proofFile');
+    document.getElementById('depositReviewAmount').textContent='€ '+amount;
+    document.getElementById('depositReviewAmountSmall').textContent='€ '+amount;
+    document.getElementById('depositReviewProof').textContent=file&&file.files[0]?file.files[0].name:'Not attached';
+    document.getElementById('depositReviewDescription').textContent=(form.querySelector('[name="description"]').value||'Not provided').trim()||'Not provided';
+    modal.classList.add('is-open');modal.setAttribute('aria-hidden','false');document.body.classList.add('wire-review-open');
+  }
+  window.openDepositReview=openReview;
+  window.closeDepositReview=function(){modal.classList.remove('is-open');modal.setAttribute('aria-hidden','true');document.body.classList.remove('wire-review-open');};
+  window.authorizeDeposit=function(){closeDepositReview();openPinModal('depositForm');};
+  modal.querySelectorAll('[data-close-deposit-review]').forEach(function(el){el.addEventListener('click',closeDepositReview);});
+  modal.addEventListener('click',function(e){if(e.target===modal)closeDepositReview();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&modal.classList.contains('is-open'))closeDepositReview();});
+})();
+</script>
 <%- include('../partials/footer') %>
+<script>
+(function(){
+  var modal=document.getElementById('depositReviewModal');
+  var form=document.getElementById('depositForm');
+  function openReview(){
+    if(!form.checkValidity()){form.reportValidity();return;}
+    var amount=Number(form.querySelector('[name="amount"]').value||0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});
+    var file=document.getElementById('proofFile');
+    document.getElementById('depositReviewAmount').textContent='€ '+amount;
+    document.getElementById('depositReviewAmountSmall').textContent='€ '+amount;
+    document.getElementById('depositReviewProof').textContent=file&&file.files[0]?file.files[0].name:'Not attached';
+    document.getElementById('depositReviewDescription').textContent=(form.querySelector('[name="description"]').value||'Not provided').trim()||'Not provided';
+    modal.classList.add('is-open');modal.setAttribute('aria-hidden','false');document.body.classList.add('wire-review-open');
+  }
+  window.openDepositReview=openReview;
+  window.closeDepositReview=function(){modal.classList.remove('is-open');modal.setAttribute('aria-hidden','true');document.body.classList.remove('wire-review-open');};
+  window.authorizeDeposit=function(){closeDepositReview();openPinModal('depositForm');};
+  modal.querySelectorAll('[data-close-deposit-review]').forEach(function(el){el.addEventListener('click',closeDepositReview);});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&modal.classList.contains('is-open'))closeDepositReview();});
+})();
+</script>

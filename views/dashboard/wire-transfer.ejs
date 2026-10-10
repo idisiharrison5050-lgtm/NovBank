@@ -1,100 +1,239 @@
 <%- include('../partials/header') %>
 <link rel="stylesheet" href="/css/dashboard.css"/>
-<!-- Mobile topbar -->
+<link rel="stylesheet" href="/css/transfer-premium.css?v=nav5"/>
+<link rel="stylesheet" href="/css/funding-premium.css"/>
+<link rel="stylesheet" href="/css/banking-flows.css?v=wire4"/>
+
+<style>
+.nb-wire-beneficiaries{margin:0 0 22px;padding:18px;border:1px solid #e4eaf2;border-radius:18px;background:#fff}
+.nb-wire-beneficiary-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:14px}
+.nb-wire-beneficiary-head span{display:block;font-size:10px;letter-spacing:.14em;font-weight:800;color:#6d7b8f;margin-bottom:5px}
+.nb-wire-beneficiary-head h3{margin:0;font-size:17px;color:#0b1220;font-weight:800}
+.nb-wire-beneficiary-head small{color:#7a8798}
+.nb-wire-beneficiary-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.nb-wire-beneficiary{display:flex;align-items:center;gap:11px;padding:12px;border:1px solid #e6ebf2;border-radius:14px;background:#f8fafc;transition:border-color .18s ease,transform .18s ease,background .18s ease}
+.nb-wire-beneficiary:hover{border-color:#b8c7da;background:#fff;transform:translateY(-1px)}
+.nb-wire-beneficiary-main{min-width:0;flex:1;cursor:pointer}
+.nb-wire-beneficiary-avatar{width:38px;height:38px;flex:0 0 38px;border-radius:12px;background:#0b1220;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800}
+.nb-wire-beneficiary-name{display:block;font-weight:800;color:#111b2b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nb-wire-beneficiary-meta{display:block;margin-top:2px;font-size:11px;color:#718096;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nb-wire-beneficiary-bank{display:block;margin-top:2px;font-size:10px;color:#8a96a7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nb-wire-beneficiary-delete{border:0;background:transparent;color:#8b97a7;padding:7px;border-radius:9px;cursor:pointer}
+.nb-wire-beneficiary-delete:hover{background:#eef2f7;color:#d04b4b}
+.nb-wire-beneficiary-empty{padding:14px;border:1px dashed #d8e0ea;border-radius:13px;color:#7b8798;font-size:13px;background:#fbfcfe}
+.nb-wire-beneficiary-loading{color:#7b8798;font-size:13px}
+@media(max-width:767px){.nb-wire-beneficiaries{padding:14px;border-radius:16px}.nb-wire-beneficiary-list{grid-template-columns:1fr}.nb-wire-beneficiary-head{align-items:flex-start;flex-direction:column;gap:3px}.nb-wire-beneficiary{padding:11px}}
+</style>
+
 <div class="mobile-topbar">
   <span class="mobile-logo">NovBank</span>
-  <button class="hamburger-btn" id="hamburgerBtn">
-    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <line x1="3" y1="6" x2="21" y2="6"/>
-      <line x1="3" y1="12" x2="21" y2="12"/>
-      <line x1="3" y1="18" x2="21" y2="18"/>
-    </svg>
+  <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open navigation">
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
   </button>
 </div>
-
-<!-- Overlay -->
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 <div class="dashboard-layout">
   <%- include('../partials/sidebar') %>
+  <main class="dashboard-main nb-wire-page nb-flow-screen">
 
-  <main class="dashboard-main">
-    <div class="dash-topbar">
-      <h1 class="dash-greeting">Wire Transfer</h1>
+    <div class="nb-transfer-switcher" aria-label="Transfer type navigation">
+      <a href="/transfer"><span>NovBank account</span><small>Internal</small></a>
+      <a href="/transfer/wire" class="active"><span>Bank account</span><small>International</small></a>
+      <a href="/transfer/withdraw?payout=paypal"><span>PayPal</span><small>Payout</small></a>
+      <a href="/transfer/withdraw?payout=revolut"><span>Revolut</span><small>Payout</small></a>
+      <a href="/transfer/withdraw?payout=payoneer"><span>Payoneer</span><small>Payout</small></a>
     </div>
 
-    <div class="form-card">
-      <p class="form-card-sub">Available Balance: <strong>€ <%= user.balance.toFixed(2) %></strong></p>
-      <div class="wire-notice">
-        Wire transfers are processed within 1-3 business days.
+    <section class="nb-flow-hero">
+      <div>
+        <span class="nb-flow-eyebrow">PAYMENTS · INTERNATIONAL TRANSFER</span>
+        <h1>Send an international transfer.</h1>
+        <p>Enter the recipient's bank information, review the transfer details, then securely authorize the payment.</p>
       </div>
+      <div class="nb-flow-balance">
+        <span>AVAILABLE BALANCE</span>
+        <strong>€ <%= Number(user.balance || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong>
+        <small>Available to send</small>
+      </div>
+    </section>
 
-      <% if (success_msg.length > 0) { %>
-        <div class="alert alert-success"><%= success_msg %></div>
-      <% } %>
-      <% if (error_msg.length > 0) { %>
-        <div class="alert alert-danger"><%= error_msg %></div>
-      <% } %>
+    <% if (success_msg.length > 0) { %><div class="alert alert-success"><%= success_msg %></div><% } %>
+    <% if (error_msg.length > 0) { %><div class="alert alert-danger"><%= error_msg %></div><% } %>
 
-      <form id="wireForm" class="wireForm" action="/transfer/wire" method="POST">
-        <h5 class="form-section-heading">Recipient Details</h5>
-        <div class="form-group">
-          <label>Recipient Full Name</label>
-          <input type="text" name="recipientName" class="form-control" placeholder="John Doe" required/>
+    <div class="nb-wire-layout nb-flow-layout">
+      <section class="nb-wire-card nb-flow-form-card">
+        <div class="nb-flow-card-head">
+          <div><span>NEW WIRE</span><h2>Recipient & transfer details</h2><p>Make sure the banking information matches the recipient's account.</p></div>
+          <div class="nb-flow-secure">Secure payment</div>
         </div>
-        <div class="form-group">
-          <label>IBAN</label>
-          <input type="text" name="iban" class="form-control" placeholder="DE89370400440532013000" required/>
+
+        <div class="nb-wire-steps">
+          <div class="active"><b>1</b><span>Recipient</span></div><i></i><div><b>2</b><span>Transfer</span></div><i></i><div><b>3</b><span>Review</span></div>
         </div>
-        <div class="row">
-          <div class="col-md-6">
-            <div class="form-group">
-              <label>BIC / SWIFT Code</label>
-              <input type="text" name="bic" class="form-control" placeholder="COBADEFFXXX" required/>
-            </div>
+
+        <div class="nb-wire-beneficiaries" id="wireBeneficiaries" aria-live="polite">
+          <div class="nb-wire-beneficiary-head">
+            <div><span>SAVED BENEFICIARIES</span><h3>Recent international recipients</h3></div>
+            <small>Tap a recipient to reuse their bank details.</small>
           </div>
-          <div class="col-md-6">
-            <div class="form-group">
-              <label>Bank Name</label>
-              <input type="text" name="bankName" class="form-control" placeholder="Commerzbank" required/>
-            </div>
+          <div class="nb-wire-beneficiary-list" id="wireBeneficiaryList">
+            <div class="nb-wire-beneficiary-loading">Loading saved recipients…</div>
           </div>
         </div>
-        <div class="form-group">
-          <label>Bank Country</label>
-          <input type="text" name="bankCountry" class="form-control" placeholder="Germany" required/>
+
+        <div class="nb-flow-notice">
+          <span>i</span>
+          <div><b>Receiving time varies</b><small>International and bank wires may take longer depending on the receiving bank.</small></div>
         </div>
 
-        <h5 class="form-section-heading">Transfer Details</h5>
-        <div class="form-group">
-          <label>Amount (€)</label>
-          <input type="number" name="amount" class="form-control" placeholder="0.00" min="0.01" step="0.01" required/>
-        </div>
-        <div class="form-group">
-          <label>Category</label>
-          <select name="category" class="form-control">
-            <option value="Transfer">Transfer</option>
-            <option value="Rent">Rent</option>
-            <option value="Utilities">Utilities</option>
-            <option value="Shopping">Shopping</option>
-            <option value="Healthcare">Healthcare</option>
-            <option value="Entertainment">Entertainment</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Reference (optional)</label>
-          <input type="text" name="reference" class="form-control" placeholder="e.g. Invoice #1234"/>
-        </div>
-        <div class="form-group">
-          <label>Description (optional)</label>
-          <input type="text" name="description" class="form-control" placeholder="Short note about this transfer"/>
-        </div>
-          <input type="hidden" name="transactionPin" id="wirePinInput"/>
+        <form id="wireForm" class="wireForm nb-premium-form" action="/transfer/wire" method="POST">
+          <div class="nb-form-section"><span>01</span><div><b>Recipient details</b><small>Who should receive the funds?</small></div></div>
 
-        <button type="button" class="btn btn-primary btn-block" onclick="openPinModal('wireForm')">Submit Wire Transfer</button>
-      </form>
+          <div class="form-group"><label>Recipient full name</label><input type="text" name="recipientName" class="form-control" placeholder="John Doe" autocomplete="name" required/></div>
+          <div class="form-group"><label>IBAN</label><input type="text" name="iban" class="form-control" placeholder="DE89370400440532013000" autocomplete="off" required/></div>
+
+          <div class="row">
+            <div class="col-md-6"><div class="form-group"><label>BIC / SWIFT code</label><input type="text" name="bic" class="form-control" placeholder="COBADEFFXXX" autocomplete="off" required/></div></div>
+            <div class="col-md-6"><div class="form-group"><label>Bank name</label><input type="text" name="bankName" class="form-control" placeholder="Commerzbank" required/></div></div>
+          </div>
+          <div class="form-group"><label>Bank country</label><input type="text" name="bankCountry" class="form-control" placeholder="Germany" required/></div>
+
+          <div class="nb-form-section nb-form-section-spaced"><span>02</span><div><b>Payment details</b><small>How much are you sending and why?</small></div></div>
+
+          <div class="form-group"><label>Amount (€)</label><div class="nb-amount-input"><span>€</span><input type="number" name="amount" class="form-control" placeholder="0.00" min="0.01" step="0.01" required/></div></div>
+
+          <div class="form-group"><label>Category</label><select name="category" class="form-control"><option value="Transfer">Transfer</option><option value="Rent">Rent</option><option value="Utilities">Utilities</option><option value="Shopping">Shopping</option><option value="Healthcare">Healthcare</option><option value="Entertainment">Entertainment</option><option value="Other">Other</option></select></div>
+          <div class="form-group"><label>Reference <small class="nb-optional">Optional</small></label><input type="text" name="reference" class="form-control" placeholder="Invoice #1234"/></div>
+          <div class="form-group"><label>Description <small class="nb-optional">Optional</small></label><input type="text" name="description" class="form-control" placeholder="What is this transfer for?"/></div>
+
+          <input type="hidden" name="transactionPin" id="wirePinInput"/><input type="hidden" name="requestKey" value="<%= requestKey %>"/>
+          <div class="nb-wire-review-note"><span>✓</span><p>Your international recipients are saved after a successful wire so you can reuse verified banking details next time.</p></div>
+          <button type="button" class="nb-flow-submit" onclick="openWireReview()">Review transfer <span>→</span></button>
+        </form>
+
+      <div class="nb-wire-review-modal" id="wireReviewModal" aria-hidden="true">
+        <div class="nb-wire-review-backdrop" data-close-wire-review></div>
+        <section class="nb-wire-review-dialog" role="dialog" aria-modal="true" aria-labelledby="wireReviewTitle">
+          <button type="button" class="nb-wire-review-close" aria-label="Close review" data-close-wire-review>×</button>
+          <span class="nb-wire-review-kicker">FINAL REVIEW</span>
+          <h2 id="wireReviewTitle">Review your wire transfer</h2>
+          <p class="nb-wire-review-intro">Check the recipient and amount carefully. Your transfer will not be submitted until you enter your transaction PIN.</p>
+
+          <div class="nb-wire-review-amount">
+            <small>YOU ARE SENDING</small>
+            <strong id="wireReviewAmount">€0.00</strong>
+          </div>
+
+          <div class="nb-wire-review-summary">
+            <div><span>Recipient</span><b id="wireReviewRecipient">—</b></div>
+            <div><span>Bank</span><b id="wireReviewBank">—</b></div>
+            <div><span>IBAN</span><b id="wireReviewIban">—</b></div>
+            <div><span>BIC / SWIFT</span><b id="wireReviewBic">—</b></div>
+            <div><span>Country</span><b id="wireReviewCountry">—</b></div>
+            <div><span>Reference</span><b id="wireReviewReference">—</b></div>
+          </div>
+
+          <div class="nb-wire-review-security">
+            <span>✓</span>
+            <div><b>Ready to authorize</b><small>Your PIN is the final authorization step. Review these details before continuing.</small></div>
+          </div>
+
+          <div class="nb-wire-review-actions">
+            <button type="button" class="nb-wire-edit" data-close-wire-review>Go back and edit</button>
+            <button type="button" class="nb-wire-authorize" onclick="authorizeWireTransfer()">Authorize with PIN <span>→</span></button>
+          </div>
+        </section>
+      </div>
+      </section>
+
+      <aside class="nb-wire-aside nb-flow-aside">
+        <span>WIRE TRANSFER</span>
+        <h2>Built for important payments.</h2>
+        <p>Keep recipient information, transfer details and authorization in one controlled flow.</p>
+        <div class="nb-aside-stat"><span>Available now</span><strong>€ <%= Number(user.balance || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong></div>
+        <div class="nb-aside-list">
+          <div><b>01</b><span>Verify recipient banking details</span></div>
+          <div><b>02</b><span>Review amount and payment reference</span></div>
+          <div><b>03</b><span>Authorize securely with your PIN</span></div>
+        </div>
+        <div class="nb-aside-foot"><span>SECURITY</span><b>Your PIN is requested only at authorization.</b></div>
+      </aside>
     </div>
-  </main>
+  <script>
+(function(){
+  var modal=document.getElementById('wireReviewModal');
+  var form=document.getElementById('wireForm');
+  var beneficiaryList=document.getElementById('wireBeneficiaryList');
+  function value(name){var el=form.querySelector('[name="'+name+'"]');return el ? el.value.trim() : '';}
+  function money(){var n=parseFloat(value('amount')||'0');return '€ '+n.toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});}
+  function set(id,text){var el=document.getElementById(id);if(el)el.textContent=text||'—';}
+  function escapeHtml(text){return String(text||'').replace(/[&<>'"]/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch];});}
+  function firstLetter(name){var clean=String(name||'?').trim();return escapeHtml(clean ? clean.charAt(0).toUpperCase() : '?');}
+  function fillBeneficiary(item){
+    var fields={recipientName:item.name||'',iban:item.iban||item.identifier||'',bic:item.bic||'',bankName:item.bankName||'',bankCountry:item.bankCountry||''};
+    Object.keys(fields).forEach(function(key){var el=form.querySelector('[name="'+key+'"]');if(el)el.value=fields[key];});
+    var target=form.querySelector('[name="recipientName"]');
+    if(target)target.focus();
+    var notice=document.querySelector('.nb-wire-beneficiary-head small');
+    if(notice)notice.textContent='Recipient loaded. Confirm the details before continuing.';
+  }
+  function loadBeneficiaries(){
+    fetch('/transfer/wire/beneficiaries',{headers:{'Accept':'application/json'}}).then(function(response){return response.json();}).then(function(data){
+      if(!data || data.status!=='ok' || !data.beneficiaries || !data.beneficiaries.length){
+        beneficiaryList.innerHTML='<div class="nb-wire-beneficiary-empty">No saved international recipients yet. Your successful wire recipients will appear here.</div>';
+        return;
+      }
+      beneficiaryList.innerHTML=data.beneficiaries.map(function(item){
+        var bankLine=(item.bankName || 'International bank') + (item.bankCountry ? ' · '+item.bankCountry : '') + (item.bic ? ' · '+item.bic : '');
+        return '<div class="nb-wire-beneficiary">' +
+          '<div class="nb-wire-beneficiary-avatar">'+firstLetter(item.name)+'</div>' +
+          '<div class="nb-wire-beneficiary-main" data-beneficiary="'+escapeHtml(item.id)+'" role="button" tabindex="0">' +
+            '<span class="nb-wire-beneficiary-name">'+escapeHtml(item.name)+'</span>' +
+            '<span class="nb-wire-beneficiary-meta">'+escapeHtml(item.iban || item.identifier)+'</span>' +
+            '<span class="nb-wire-beneficiary-bank">'+escapeHtml(bankLine)+'</span>' +
+          '</div>' +
+          '<form method="POST" action="/transfer/wire/beneficiaries/'+escapeHtml(item.id)+'/delete" onsubmit="return confirm(\'Remove this saved beneficiary?\');">' +
+            '<button class="nb-wire-beneficiary-delete" type="submit" aria-label="Remove saved beneficiary">×</button>' +
+          '</form>' +
+        '</div>';
+      }).join('');
+      beneficiaryList.querySelectorAll('[data-beneficiary]').forEach(function(el){
+        function select(){var id=el.getAttribute('data-beneficiary');var item=data.beneficiaries.find(function(entry){return entry.id===id;});if(item)fillBeneficiary(item);}
+        el.addEventListener('click',select);
+        el.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();select();}});
+      });
+    }).catch(function(){
+      beneficiaryList.innerHTML='<div class="nb-wire-beneficiary-empty">Saved recipients are temporarily unavailable. You can still enter the banking details manually.</div>';
+    });
+  }
+  window.openWireReview=function(){
+    if(!form.checkValidity()){form.reportValidity();return;}
+    set('wireReviewAmount',money());
+    set('wireReviewRecipient',value('recipientName'));
+    set('wireReviewBank',value('bankName'));
+    set('wireReviewIban',value('iban'));
+    set('wireReviewBic',value('bic'));
+    set('wireReviewCountry',value('bankCountry'));
+    set('wireReviewReference',value('reference')||'Not provided');
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden','false');
+    document.body.classList.add('wire-review-open');
+  };
+  window.closeWireReview=function(){
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden','true');
+    document.body.classList.remove('wire-review-open');
+  };
+  window.authorizeWireTransfer=function(){
+    closeWireReview();
+    openPinModal('wireForm');
+  };
+  modal.querySelectorAll('[data-close-wire-review]').forEach(function(el){el.addEventListener('click',closeWireReview);});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&modal.classList.contains('is-open'))closeWireReview();});
+  loadBeneficiaries();
+})();
+</script>
+</main>
 </div>
-
 <%- include('../partials/footer') %>

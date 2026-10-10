@@ -32,6 +32,15 @@
         <label>Confirm Password</label>
         <input type="password" name="confirmPassword" class="form-control" placeholder="Repeat password" required/>
       </div>
+      <div class="form-group">
+        <label for="accountCurrency">Preferred account currency</label>
+        <select id="accountCurrency" name="currency" class="form-control" required>
+          <% currencies.forEach(function (currency) { %>
+            <option value="<%= currency.code %>" <%= currency.code === 'EUR' ? 'selected' : '' %>><%= currency.code %> — <%= currency.name %> (<%= currency.symbol %>)</option>
+          <% }); %>
+        </select>
+        <small class="form-text text-muted">Choose the currency you want your NovBank account to use.</small>
+      </div>
       <div class="g-recaptcha mb-3" data-sitekey="<%= recaptchaSiteKey %>"></div>
       <button type="submit" class="btn btn-primary btn-block btn-auth">Create Account</button>
     </form>

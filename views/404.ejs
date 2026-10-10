@@ -1,17 +1,7 @@
 <%- include('partials/header') %>
-<link rel="stylesheet" href="/css/error.css"/>
-<div class="error-container">
-  <div class="error-content">
-    <h1 class="error-code">404</h1>
-    <h2 class="error-title">Page Not Found</h2>
-    <p class="error-message">
-      Oops! The page you are looking for doesn't exist or has been moved. 
-      Let's get you back on track to managing your finances.
-    </p>
-    <a href="/dashboard" class="btn-back-home">
-      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px; vertical-align: middle;"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-      Back to Dashboard
-    </a>
-  </div>
-</div>
+<link rel="stylesheet" href="/css/landing.css"/>
+<style>
+.nb-404{min-height:70vh;display:grid;place-items:center;padding:80px 20px;background:#f7f9fc;font-family:Inter,system-ui,sans-serif}.nb-404-card{max-width:620px;text-align:center;background:#fff;border:1px solid #e4e7ec;border-radius:28px;padding:55px 35px;box-shadow:0 20px 60px rgba(16,24,40,.06)}.nb-404-code{font-size:76px;font-weight:900;letter-spacing:-.08em;color:#101828;line-height:1}.nb-404-kicker{font-size:10px;letter-spacing:.14em;font-weight:850;color:#155eef;margin:15px 0 8px}.nb-404 h1{font-size:28px;letter-spacing:-.045em;margin:0 0 10px}.nb-404 p{max-width:450px;margin:0 auto 25px;color:#667085;font-size:13px;line-height:1.7}.nb-404-actions{display:flex;justify-content:center;gap:9px}.nb-404-actions a{padding:12px 17px;border-radius:11px;text-decoration:none;font-size:12px;font-weight:800}.nb-404-primary{background:#155eef;color:#fff}.nb-404-secondary{border:1px solid #e4e7ec;color:#101828;background:#fff}@media(max-width:500px){.nb-404-card{padding:42px 22px}.nb-404-code{font-size:62px}.nb-404-actions{flex-direction:column}.nb-404-actions a{display:block}}
+</style>
+<div class="nb-404"><div class="nb-404-card"><div class="nb-404-code">404</div><div class="nb-404-kicker">PAGE NOT FOUND</div><h1>This page isn't available</h1><p>The address may be incorrect, or the page may have moved. Return to your banking workspace or continue from the NovBank home page.</p><div class="nb-404-actions"><a class="nb-404-primary" href="/dashboard">Go to dashboard</a><a class="nb-404-secondary" href="/">Back to home</a></div></div></div>
 <%- include('partials/footer') %>

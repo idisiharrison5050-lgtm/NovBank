@@ -1,18 +1,37 @@
 <%- include('partials/header') %>
+<link rel="stylesheet" href="/css/auth.css"/>
 
-<h2>Create Your Private Banking Profile</h2>
+<div class="auth-wrapper">
+  <div class="auth-box auth-box-wide">
+    <div class="auth-logo">NovBank</div>
+    <h2 class="auth-title">Create your account</h2>
+    <p class="auth-subtitle">Set up your NovBank profile to access your banking workspace.</p>
+
+    <% if (typeof success_msg !== 'undefined' && success_msg.length > 0) { %>
+      <div class="alert alert-success"><%= success_msg %></div>
+    <% } %>
+    <% if (typeof error_msg !== 'undefined' && error_msg.length > 0) { %>
+      <div class="alert alert-danger"><%= error_msg %></div>
+    <% } %>
+
     <form action="/signup" method="POST">
-        <label>Full Name:</label>
-        <input type="text" name="name" required><br><br>
-        
-        <label>Email Address:</label>
-        <input type="email" name="email" required><br><br>
-        
-        <label>Secure Password:</label>
-        <input type="password" name="password" required><br><br>
-        
-        <button type="submit">Register Account</button>
+      <div class="form-group">
+        <label>Full name</label>
+        <input type="text" name="name" class="form-control" placeholder="Your full name" autocomplete="name" required>
+      </div>
+      <div class="form-group">
+        <label>Email address</label>
+        <input type="email" name="email" class="form-control" placeholder="you@example.com" autocomplete="email" required>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" name="password" class="form-control" placeholder="Create a secure password" autocomplete="new-password" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block btn-auth">Create account</button>
     </form>
-    <p>Already have an account? <a href="/login">Login here</a></p>
+
+    <p class="auth-footer-text">Already have an account? <a href="/login">Sign in</a></p>
+  </div>
+</div>
 
 <%- include('partials/footer') %>

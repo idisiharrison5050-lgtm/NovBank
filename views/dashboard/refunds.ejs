@@ -1,0 +1,39 @@
+<%- include('../partials/header') %>
+<link rel="stylesheet" href="/css/dashboard.css"/>
+<link rel="stylesheet" href="/css/customer-services.css"/>
+<div class="mobile-topbar"><span class="mobile-logo">NovBank</span><button class="hamburger-btn" id="hamburgerBtn" aria-label="Open navigation"><span></span><span></span><span></span></button></div><div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="dashboard-layout"><%- include('../partials/sidebar') %><main class="dashboard-main nb-service-page">
+  <div class="nb-service-hero"><div><span>TRANSACTION SUPPORT</span><h1>Refunds</h1><p>Request a review when a completed transaction needs to be refunded.</p></div><span class="nb-service-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 8a8 8 0 1 0 1 5"></path><path d="M20 4v6h-6"></path></svg></span></div>
+  <% if (success_msg && success_msg.length) { %><div class="alert alert-success"><%= success_msg %></div><% } %>
+  <% if (error_msg && error_msg.length) { %><div class="alert alert-danger"><%= error_msg %></div><% } %>
+  <div class="nb-service-grid">
+    <section class="nb-service-card">
+      <span class="nb-service-label">NEW REQUEST</span><h2>Request a refund</h2>
+      <p>Choose an eligible completed transaction and explain why you are requesting a refund.</p>
+      <% if (eligibleTransactions.length) { %>
+      <form action="/refunds/request" method="POST" class="nb-service-form"><input type="hidden" name="requestKey" value="<%= require('crypto').randomBytes(24).toString('hex') %>">
+        <label>Transaction<select name="transactionId" id="refundTransaction" required><option value="">Select transaction</option><% eligibleTransactions.forEach(function(txn){ %><option value="<%= txn._id %>" data-amount="<%= txn.amount %>"><%= txn.reference %> · €<%= Number(txn.amount).toFixed(2) %> · <%= txn.description || txn.type.replace(/_/g,' ') %></option><% }); %></select></label>
+        <label>Amount (€)<input id="refundAmount" type="number" name="amount" min="0.01" step="0.01" required></label>
+        <label>Reason<textarea name="reason" rows="5" maxlength="500" required placeholder="Explain the reason for your refund request..."></textarea></label>
+        <label>Transaction PIN<input type="password" name="transactionPin" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="off" placeholder="••••" required></label>
+        <button type="submit">Submit refund request</button>
+      </form>
+      <script>
+        var refundTransaction=document.getElementById('refundTransaction');
+        var refundAmount=document.getElementById('refundAmount');
+        refundTransaction.addEventListener('change',function(){
+          var option=refundTransaction.options[refundTransaction.selectedIndex];
+          refundAmount.max=option.getAttribute('data-amount') || '';
+          if(option.getAttribute('data-amount')) refundAmount.value=option.getAttribute('data-amount');
+        });
+      </script>
+      <% } else { %><div class="nb-service-empty">No completed transactions are currently eligible for a refund.</div><% } %>
+    </section>
+    <section class="nb-service-card">
+      <span class="nb-service-label">REQUEST HISTORY</span><h2>Your refunds</h2>
+      <% if (!refunds.length) { %><div class="nb-service-empty">No refund requests yet.</div><% } else { %>
+        <div class="nb-service-list"><% refunds.forEach(function(refund){ %><article><div><strong>€<%= Number(refund.amount).toLocaleString('en-GB',{minimumFractionDigits:2}) %></strong><span><%= refund.reason %></span><small><%= refund.transaction ? refund.transaction.reference : 'Refund request' %> · <%= new Date(refund.createdAt).toLocaleDateString('en-GB') %></small></div><b class="service-status <%= refund.status %>"><%= refund.status %></b></article><% }); %></div>
+      <% } %>
+    </section>
+  </div>
+</main></div><%- include('../partials/footer') %>

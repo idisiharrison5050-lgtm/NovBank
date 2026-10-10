@@ -5,6 +5,9 @@ var Transaction  = require('../models/Transaction');
 var Airtime      = require('../models/Airtime');
 var Notification = require('../models/Notification');
 var mailer = require('../config/mailer');
+var ledger = require('../services/ledger');
+var bcrypt = require('bcryptjs');
+var kycGate = require('./kyc').kycGate;
 
 function isAuth(req, res, next) {
   if (req.isAuthenticated()) return next();
@@ -20,7 +23,7 @@ function checkAccountActive(req, res, redirectOnFail, callback) {
   callback();
 }
 
-router.get('/', isAuth, function (req, res) {
+router.get('/', isAuth, kycGate, function (req, res) {
   Airtime.find({ user: req.user._id }).sort({ createdAt: -1 }).limit(10)
     .then(function (history) {
       res.render('dashboard/airtime', {
@@ -34,20 +37,30 @@ router.get('/', isAuth, function (req, res) {
     });
 });
 
-router.post('/recharge', isAuth, checkAccountActive, function (req, res) {
-  var phone   = req.body.phone;
+router.post('/recharge', isAuth, kycGate, checkAccountActive, function (req, res) {
+  if (!req.session.pinVerified) {
+    req.flash('error_msg', 'Please verify your transaction PIN before making an airtime recharge.');
+    return res.redirect('/pin');
+  }
+
+  if (!req.user.pinSet || !req.user.pin) {
+    req.flash('error_msg', 'Please set up your transaction PIN in your profile before making an airtime recharge.');
+    return res.redirect('/account/profile');
+  }
+
+  bcrypt.compare(req.body.transactionPin || '', req.user.pin, function (pinErr, pinMatch) {
+    if (pinErr || !pinMatch) {
+      req.flash('error_msg', 'Incorrect transaction PIN. Recharge cancelled.');
+      return res.redirect('/airtime');
+    }
+
+    processRecharge();
+  });
+
+  function processRecharge() {
+  var phone   = String(req.body.phone || '').trim();
   var network = req.body.network;
   var amount  = parseFloat(req.body.amount);
-
-  if (req.user.accountStatus !== 'active') {
-  req.flash('error_msg', 'Your account is suspended or closed. You cannot buy airtime.');
-  return res.redirect('/airtime');
-}
-
-  if (req.user.accountStatus !== 'active') {
-  req.flash('error_msg', 'Your account is suspended or closed. You cannot make transactions.');
-  return res.redirect('/airtime');
-}
 
   if (!phone || !network || !amount) {
     req.flash('error_msg', 'Please fill in all fields.');
@@ -69,46 +82,25 @@ router.post('/recharge', isAuth, checkAccountActive, function (req, res) {
     return res.redirect('/airtime');
   }
 
-  User.findByIdAndUpdate(req.user._id, { $inc: { balance: -amount } })
+  new Promise(function(resolve,reject){
+    ledger.createDebit({userId:req.user._id,type:'airtime',amount:amount,description:network+' airtime recharge to '+phone,category:'Airtime',status:'completed',idempotencyKey:req.body.requestKey || ('airtime:'+req.user._id+':'+Date.now()+':'+Math.floor(Math.random()*1000000))},function(err,txn){if(err)reject(err);else resolve(txn);});
+  })
     .then(function () {
-      var airtime = new Airtime({
-        user:    req.user._id,
-        phone:   phone,
-        network: network,
-        amount:  amount,
-        status:  'success'
-      });
-      return airtime.save();
+      return new Airtime({user:req.user._id,phone:phone,network:network,amount:amount,status:'success'}).save();
     })
     .then(function () {
-      var txn = new Transaction({
-        sender:      req.user._id,
-        type:        'airtime',
-        amount:      amount,
-        description: network + ' airtime recharge to ' + phone,
-        category:    'Airtime',
-        status:      'completed'
-      });
-      return txn.save();
+      return new Notification({user:req.user._id,title:'Airtime Recharge Successful',message:'€'+amount.toFixed(2)+' airtime sent to '+phone+' ('+network+').',type:'transaction',severity:'success'}).save();
     })
     .then(function () {
-      var notif = new Notification({
-        user:    req.user._id,
-        title:   'Airtime Recharge Successful',
-        message: '€' + amount.toFixed(2) + ' airtime sent to ' + phone + ' (' + network + ').',
-        type:    'success'
-      });
-      return notif.save();
-    })
-    .then(function () {
-      req.flash('success_msg', 'Airtime recharge of €' + amount.toFixed(2) + ' to ' + phone + ' was successful.');
+      req.flash('success_msg','Airtime recharge of €'+amount.toFixed(2)+' to '+phone+' was successful.');
       res.redirect('/airtime');
     })
     .catch(function (err) {
       console.error(err);
-      req.flash('error_msg', 'Recharge failed. Please try again.');
+      req.flash('error_msg',err.message==='Insufficient funds'?'Insufficient balance.':'Recharge failed. Please try again.');
       res.redirect('/airtime');
     });
+  }
 });
 
 module.exports = router;

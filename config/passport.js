@@ -46,7 +46,7 @@ module.exports = function (passport) {
   ));
 
   passport.serializeUser(function (entity, done) {
-    done(null, { id: entity.id, type: entity.role === 'superadmin' ? 'admin' : 'user' });
+    done(null, { id: entity.id, type: (entity.role === 'superadmin' || entity.role === 'manager') ? 'admin' : 'user' });
   });
 
   passport.deserializeUser(function (obj, done) {

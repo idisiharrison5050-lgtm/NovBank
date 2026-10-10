@@ -1,0 +1,93 @@
+<link rel="stylesheet" href="/css/premium-dashboard.css">
+
+<div class="nb-shell">
+  <main class="nb-container">
+    <header class="nb-header">
+      <div>
+        <div class="nb-eyebrow">PERSONAL BANKING</div>
+        <h1 class="nb-title">Good morning, <%= user && user.firstName ? user.firstName : 'there' %></h1>
+      </div>
+      <div class="nb-muted"><%= new Date().toLocaleDateString() %></div>
+    </header>
+
+    <section class="nb-grid">
+      <article class="nb-card nb-balance">
+        <div class="nb-balance-label">Total available balance</div>
+        <div class="nb-balance-value"><%= typeof user !== 'undefined' && user.balance != null ? user.balance.toLocaleString(undefined, {minimumFractionDigits: 2}) : '0.00' %></div>
+        <div class="nb-balance-label">Primary account</div>
+      </article>
+
+      <div class="nb-stat">
+        <div class="nb-stat-box"><span class="nb-stat-label">Monthly received</span><span class="nb-stat-value">€ <%= Number(monthIncoming || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></span></div>
+        <div class="nb-stat-box"><span class="nb-stat-label">Monthly sent</span><span class="nb-stat-value">€ <%= Number(monthOutgoing || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></span></div>
+        <div class="nb-stat-box"><span class="nb-stat-label">Available balance</span><span class="nb-stat-value">€ <%= Number(user.balance || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></span></div>
+      </div>
+
+      <section class="nb-quick-actions" aria-label="Quick banking actions">
+        <div class="nb-quick-actions-head">
+          <div><span class="nb-section-eyebrow">QUICK BANKING</span><h2>Move money your way</h2></div>
+          <a href="/dashboard/transactions">View activity</a>
+        </div>
+        <div class="nb-action-rail">
+          <a class="nb-action nb-action-send" href="/transfer">
+            <span class="nb-action-circle"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13"></path><path d="m13 6 6 6-6 6"></path></svg></span>
+            <span><b>Send</b><small>Transfer money</small></span>
+          </a>
+          <a class="nb-action nb-action-receive" href="/receive">
+            <span class="nb-action-circle"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H6"></path><path d="m11 18-6-6 6-6"></path></svg></span>
+            <span><b>Receive</b><small>Get paid</small></span>
+          </a>
+          <a class="nb-action" href="/transfer/deposit">
+            <span class="nb-action-circle"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"></path><path d="m6 13 6 6 6-6"></path></svg></span>
+            <span><b>Add funds</b><small>Fund account</small></span>
+          </a>
+          <a class="nb-action" href="/transfer/withdraw">
+            <span class="nb-action-circle"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5"></path><path d="m6 11 6-6 6 6"></path></svg></span>
+            <span><b>Withdraw</b><small>Move out</small></span>
+          </a>
+          <a class="nb-action" href="/cards">
+            <span class="nb-action-circle"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 10h18"></path></svg></span>
+            <span><b>Cards</b><small>Manage cards</small></span>
+          </a>
+          <a class="nb-action" href="/airtime">
+            <span class="nb-action-circle"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"></path><path d="M9 7h6"></path><circle cx="12" cy="17" r="1"></circle></svg></span>
+            <span><b>Airtime</b><small>Top up</small></span>
+          </a>
+        </div>
+      </section>
+
+      <article class="nb-card nb-wide">
+        <div class="nb-card-head"><h2>Recent activity</h2><a href="/dashboard/transactions">View all</a></div>
+        <% if (typeof transactions !== 'undefined' && transactions.length) { %>
+          <% transactions.slice(0, 6).forEach(function (tx) { %>
+            <div class="nb-transaction">
+              <div class="nb-tx-left"><div class="nb-tx-icon">$</div><div><div class="nb-tx-name"><%= tx.description || tx.type || 'Transaction' %></div><div class="nb-tx-meta"><%= tx.createdAt ? new Date(tx.createdAt).toLocaleString() : '' %></div></div></div>
+              <div class="<%= tx.type === 'deposit' || tx.type === 'credit' ? 'nb-positive' : 'nb-negative' %>"><%= tx.amount != null ? tx.amount.toLocaleString(undefined, {minimumFractionDigits: 2}) : '0.00' %></div>
+            </div>
+          <% }); %>
+        <% } else { %>
+          <div class="nb-muted">Your latest account activity will appear here.</div>
+        <% } %>
+      </article>
+
+      <aside class="nb-card nb-side">
+        <div class="nb-card-head"><h2>Account security</h2></div>
+        <div class="nb-security-row"><span>Identity verification</span><strong>Protected</strong></div>
+        <div class="nb-security-row"><span>Transaction PIN</span><strong>Enabled</strong></div>
+        <div class="nb-security-row"><span>Active sessions</span><strong>Manage</strong></div>
+      </aside>
+
+      <article class="nb-card nb-wide">
+        <div class="nb-card-head"><h2>Spending overview</h2><span class="nb-muted">This month</span></div>
+        <div class="nb-muted">Your spending insights will become more detailed as account activity grows.</div>
+        <div class="nb-progress"><span></span></div>
+      </article>
+
+      <article class="nb-card nb-side">
+        <div class="nb-card-head"><h2>Primary card</h2><a href="/cards">Manage</a></div>
+        <div class="nb-card-number">•••• •••• •••• 0000</div>
+        <div class="nb-muted">NovBank</div>
+      </article>
+    </section>
+  </main>
+</div>

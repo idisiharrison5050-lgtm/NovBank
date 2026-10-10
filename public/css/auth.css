@@ -189,3 +189,26 @@ label {
   color: #94a3b8;
   margin-top: 8px;
 }
+
+/* Premium authentication shell */
+.auth-wrapper{position:relative;min-height:calc(100vh - 1px);background:#f8fafc;overflow:hidden}
+.auth-wrapper:before{content:"";position:absolute;width:520px;height:520px;border-radius:50%;background:rgba(21,94,239,.05);right:-180px;top:-220px}
+.auth-box{position:relative;border:1px solid rgba(16,24,40,.08);border-radius:22px;box-shadow:0 28px 80px rgba(16,24,40,.10);padding:42px 38px;max-width:450px}
+.auth-logo{color:#101828;font-size:1.35rem;letter-spacing:-.04em}
+.auth-logo:after{content:" / PRIVATE BANKING";display:block;color:#98a2b3;font-size:9px;letter-spacing:.13em;margin-top:5px}
+.auth-title{font-size:1.8rem;letter-spacing:-.045em;margin-top:24px}
+.auth-subtitle{line-height:1.55}
+.auth-box .form-group{margin-bottom:18px}
+.auth-box .form-control{height:48px;border-radius:12px;border-color:#d0d5dd}
+.btn-auth{height:48px;border-radius:12px!important;background:#101828;border-color:#101828!important;font-weight:800}
+.btn-auth:hover{background:#1d2939;border-color:#1d2939!important}
+.auth-footer-text{font-size:.82rem}
+
+/* Premium auth refinement */
+.nb-auth-premium{font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.auth-brand-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:34px}.auth-brand-row>span{font-size:8px;font-weight:850;letter-spacing:.14em;color:#98a2b3}.auth-kicker{font-size:9px;letter-spacing:.12em;font-weight:850;color:#155eef;margin-bottom:8px}.auth-label-row{display:flex;justify-content:space-between;align-items:center}.auth-label-row a{font-size:10px;font-weight:800;color:#155eef}.auth-security-strip{display:flex;gap:10px;align-items:flex-start;margin-top:18px;padding:12px 13px;border:1px solid #e4e7ec;background:#f8fafc;border-radius:12px}.auth-security-strip>span{width:20px;height:20px;border-radius:50%;background:#ecfdf3;color:#039855;display:grid;place-items:center;font-size:10px;font-weight:900;flex:0 0 20px}.auth-security-strip strong,.auth-security-strip small{display:block}.auth-security-strip strong{font-size:10px;color:#344054}.auth-security-strip small{font-size:9px;color:#98a2b3;line-height:1.5;margin-top:2px}.auth-home-link{text-align:center;margin:16px 0 0}.auth-home-link a{font-size:10px;color:#667085;font-weight:700}@media(max-width:500px){.auth-brand-row{margin-bottom:25px}.auth-box{padding:30px 22px}}
+
+/* Authentication depth and state polish */
+.nb-auth-premium .auth-box{box-shadow:0 28px 70px rgba(16,24,40,.10);border:1px solid #e4e7ec}
+.nb-auth-premium input{transition:border-color .16s ease,box-shadow .16s ease,transform .16s ease}
+.nb-auth-premium input:focus{transform:translateY(-1px)}
+.nb-auth-premium button,.nb-auth-premium .btn{box-shadow:0 10px 24px rgba(16,24,40,.08)}

@@ -1,0 +1,451 @@
+/* Dashboard shell polish — presentation only. No new features. */
+.nb-sidebar{width:244px;padding:22px 0 16px;background:#fff;border-right:1px solid #e8ecf2;box-shadow:8px 0 28px rgba(16,24,40,.025)}
+.nb-sidebar-brand{display:flex;align-items:center;gap:10px;height:48px;padding:0 20px 18px;margin:0 16px 12px;border-bottom:1px solid #eef1f5;font-size:18px;letter-spacing:-.035em;color:#101828}
+.nb-sidebar-brand img{width:30px;height:30px;border-radius:8px;box-shadow:0 3px 10px rgba(16,24,40,.10)}
+.nb-sidebar-section{padding:0 22px;margin:13px 0 7px;color:#98a2b3;font-size:9px;font-weight:800;letter-spacing:.12em}
+.nb-sidebar-section-spaced{margin-top:20px}
+.nb-sidebar .sidebar-nav{padding:0 12px}
+.nb-sidebar .sidebar-link{position:relative;gap:11px;min-height:42px;margin:2px 0;padding:9px 11px;border:1px solid transparent;border-radius:11px;color:#667085;font-size:12px;font-weight:650;transition:background .18s ease,border-color .18s ease,color .18s ease,transform .18s ease}
+.nb-sidebar .sidebar-link:hover{background:#f7f9fc;border-color:#edf0f5;color:#155eef;transform:translateX(1px)}
+.nb-sidebar .sidebar-link.active{background:#eef4ff;border-color:#dbe7ff;color:#155eef;font-weight:750}
+.nb-sidebar .sidebar-link.active:before{content:"";position:absolute;left:-12px;top:9px;bottom:9px;width:3px;border-radius:0 3px 3px 0;background:#155eef}
+.nb-nav-icon{display:grid;flex:0 0 28px;width:28px;height:28px;place-items:center;border-radius:8px;color:currentColor;background:transparent}
+.nb-nav-icon svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.nb-sidebar .sidebar-link.active .nb-nav-icon{background:#fff;box-shadow:0 2px 6px rgba(21,94,239,.08)}
+.nb-nav-count{display:grid;min-width:20px;height:20px;place-items:center;margin-left:auto;padding:0 5px;border-radius:999px;background:#155eef;color:#fff;font-size:9px;font-style:normal;font-weight:800}
+.nb-sidebar-logout{margin:10px 12px 0;padding:11px;border:1px solid #f0dfe1;border-radius:11px;color:#b42318;background:#fff8f8;transition:background .18s ease,border-color .18s ease,color .18s ease}
+.nb-sidebar-logout:hover{background:#fff1f2;border-color:#f3c7ca;color:#b42318}
+.dashboard-main{margin-left:244px;padding:34px 38px 42px;background:#f6f8fb}
+.dashboard-main:before{opacity:.7}
+.dashboard-main>*{width:100%;max-width:1280px;margin-left:auto;margin-right:auto}
+.dashboard-main>.nb-action-modal{width:auto;max-width:none;margin:0}
+.nb-sidebar .sidebar-link:focus-visible,.nb-sidebar-logout:focus-visible,.nb-sidebar-brand:focus-visible{outline:3px solid rgba(21,94,239,.20);outline-offset:2px}
+.nb-sidebar .sidebar-link:active{transform:translateX(1px)}
+
+/* Remove the Cards & account activity section from the dashboard view. */
+.nb-command-dashboard>.nb-bank-product-strip{display:none!important}
+
+/* Remove the Everything important, in one place control-center card. */
+.nb-command-dashboard>.nb-bank-control{display:none!important}
+
+@media(max-width:1100px){.nb-sidebar{width:228px}.dashboard-main{margin-left:228px;padding:30px 28px 38px}.dashboard-main>*{max-width:1180px}}
+@media(max-width:768px){.nb-sidebar{display:none}.dashboard-main{margin-left:0;padding:20px 15px 34px}.dashboard-main>*{max-width:none}.dashboard-main>.nb-action-modal{max-width:none}.nb-sidebar-section{padding-left:18px}.nb-sidebar-logout{margin-left:12px;margin-right:12px}}
+@media(prefers-reduced-motion:reduce){.nb-sidebar .sidebar-link,.nb-sidebar-logout{transition:none}.nb-sidebar .sidebar-link:hover,.nb-sidebar .sidebar-link:active{transform:none}}
+
+/* Premium card surfaces: solid tonal backgrounds, layered depth, and restrained accents. */
+.nb-command-dashboard .nb-fin-card{
+  border-color:#e0e7f2;
+  box-shadow:0 7px 18px rgba(16,36,72,.045),inset 0 1px 0 rgba(255,255,255,.9);
+}
+.nb-command-dashboard .nb-fin-card-balance{background:#f0f5ff;border-color:#dce7fb}
+.nb-command-dashboard .nb-fin-card-profit{background:#effaf5;border-color:#d8f0e4}
+.nb-command-dashboard .nb-fin-card-active{background:#f5f2ff;border-color:#e6defb}
+.nb-command-dashboard .nb-fin-card-limit{background:#fff6ec;border-color:#f5e4d1}
+.nb-command-dashboard .nb-fin-card:before{right:-22px;top:-39px;width:112px;height:112px;border:1px solid rgba(36,95,203,.10);background:rgba(36,95,203,.055)}
+.nb-command-dashboard .nb-fin-card-profit:before{border-color:rgba(19,128,91,.13);background:rgba(19,128,91,.06)}
+.nb-command-dashboard .nb-fin-card-active:before{border-color:rgba(105,65,198,.13);background:rgba(105,65,198,.06)}
+.nb-command-dashboard .nb-fin-card-limit:before{border-color:rgba(194,101,24,.14);background:rgba(194,101,24,.06)}
+.nb-command-dashboard .nb-fin-card-icon{box-shadow:0 3px 8px rgba(16,36,72,.055)}
+.nb-command-dashboard .nb-fin-card>a{border-top-color:rgba(100,116,139,.15)}
+.nb-command-dashboard .nb-financial-pulse{background:#fff;border-color:#dfe6f0;box-shadow:0 10px 26px rgba(16,36,72,.05),inset 0 1px 0 #fff}
+.nb-command-dashboard .nb-pulse-stat{border-left-color:#dfe7f2}
+.nb-command-dashboard .nb-pulse-stat:nth-of-type(2){border-radius:13px;background:#f0f5ff}
+.nb-command-dashboard .nb-pulse-stat:nth-of-type(3){border-radius:13px;background:#effaf5}
+.nb-command-dashboard .nb-pulse-stat:nth-of-type(4){border-radius:13px;background:#f5f2ff}
+.nb-command-dashboard .nb-command-two-col>.nb-command-panel{background:#fff;border-color:#dfe6f0;box-shadow:0 9px 25px rgba(16,36,72,.045),inset 0 1px 0 #fff}
+.nb-command-dashboard .nb-command-two-col>.nb-command-panel:first-child{border-top:3px solid #b8cdf7}
+.nb-command-dashboard .nb-command-two-col>.nb-command-panel:last-child{border-top:3px solid #c8d9f8}
+.nb-command-dashboard .nb-command-txn-icon{box-shadow:inset 0 0 0 1px rgba(16,36,72,.035)}
+.nb-command-dashboard .nb-command-txn:hover{background:#f8faff;border-radius:10px}
+@media(max-width:650px){
+  .nb-command-dashboard .nb-fin-card{box-shadow:0 4px 12px rgba(16,36,72,.045),inset 0 1px 0 rgba(255,255,255,.9)}
+  .nb-command-dashboard .nb-financial-pulse{padding:12px;background:#fff}
+  .nb-command-dashboard .nb-pulse-stat,.nb-command-dashboard .nb-pulse-stat:first-of-type{border-radius:10px;padding:12px 10px;margin:2px 0}
+}
+@media(prefers-reduced-motion:reduce){.nb-command-dashboard .nb-fin-card,.nb-command-dashboard .nb-command-txn{transition:none}}
+
+/* Focused design pass: Transfer Limit card only. */
+.nb-command-dashboard .nb-fin-card.nb-fin-card-limit{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  background:#fff4e5;
+  border:1px solid #f0d6b3;
+  border-radius:20px;
+  box-shadow:0 10px 24px rgba(145,86,25,.08),inset 0 1px 0 rgba(255,255,255,.9);
+}
+/* Removed the vertical accent line from the Transfer Limit card. */
+.nb-command-dashboard .nb-fin-card.nb-fin-card-limit:before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  top:-34px;
+  right:-22px;
+  width:118px;
+  height:118px;
+  border:1px solid rgba(180,100,20,.16);
+  border-radius:50%;
+  box-shadow:0 0 0 14px rgba(180,100,20,.045),0 0 0 29px rgba(180,100,20,.03);
+  background:transparent;
+  pointer-events:none;
+}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-limit .nb-fin-card-icon{
+  color:#a6530a;
+  background:#ffe6c2;
+  border:1px solid #f5d2a0;
+  box-shadow:0 4px 10px rgba(145,86,25,.08);
+}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-limit>span{color:#92551d}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-limit>strong{color:#572f12}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-limit>small{color:#946b48}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-limit>a{
+  color:#9a4e0a;
+  border-top-color:rgba(154,78,10,.16);
+}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-limit:hover{
+  border-color:#e9c18d;
+  box-shadow:0 14px 28px rgba(145,86,25,.12),inset 0 1px 0 rgba(255,255,255,.9);
+}
+@media(max-width:650px){
+  .nb-command-dashboard .nb-fin-card.nb-fin-card-limit{border-radius:16px}
+}
+
+/* Coordinated design pass: the other three financial overview cards. */
+.nb-command-dashboard .nb-fin-card.nb-fin-card-balance,
+.nb-command-dashboard .nb-fin-card.nb-fin-card-profit,
+.nb-command-dashboard .nb-fin-card.nb-fin-card-active{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  border-radius:20px;
+  box-shadow:0 10px 24px rgba(28,48,84,.075),inset 0 1px 0 rgba(255,255,255,.92);
+}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-balance{
+  background:#edf4ff;
+  border:1px solid #d4e2fa;
+}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-balance:before{
+  top:-34px;right:-22px;width:118px;height:118px;
+  border:1px solid rgba(37,99,190,.16);
+  border-radius:50%;
+  box-shadow:0 0 0 14px rgba(37,99,190,.045),0 0 0 29px rgba(37,99,190,.025);
+  background:transparent;pointer-events:none;
+}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-balance .nb-fin-card-icon{
+  color:#2459a8;background:#dceaff;border:1px solid #c6dafb;
+  box-shadow:0 4px 10px rgba(37,99,190,.09);
+}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-balance>span{color:#42649a}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-balance>strong{color:#173b70}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-balance>small{color:#627da5}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-balance>a{color:#2459a8;border-top-color:rgba(36,89,168,.16)}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-profit{
+  background:#eaf8f0;
+  border:1px solid #ccebd9;
+}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-profit:before{
+  top:-34px;right:-22px;width:118px;height:118px;
+  border:1px solid rgba(20,126,78,.16);
+  border-radius:50%;
+  box-shadow:0 0 0 14px rgba(20,126,78,.045),0 0 0 29px rgba(20,126,78,.025);
+  background:transparent;pointer-events:none;
+}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-profit .nb-fin-card-icon{
+  color:#167447;background:#d5f0e1;border:1px solid #bce5ce;
+  box-shadow:0 4px 10px rgba(20,126,78,.09);
+}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-profit>span{color:#347653}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-profit>strong{color:#145c38}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-profit>small{color:#5d8a70}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-profit>a{color:#167447;border-top-color:rgba(22,116,71,.16)}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-active{
+  background:#f2efff;
+  border:1px solid #ded6fb;
+}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-active:before{
+  top:-34px;right:-22px;width:118px;height:118px;
+  border:1px solid rgba(103,75,190,.16);
+  border-radius:50%;
+  box-shadow:0 0 0 14px rgba(103,75,190,.045),0 0 0 29px rgba(103,75,190,.025);
+  background:transparent;pointer-events:none;
+}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-active .nb-fin-card-icon{
+  color:#6346b5;background:#e5deff;border:1px solid #d3c7fb;
+  box-shadow:0 4px 10px rgba(103,75,190,.09);
+}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-active>span{color:#69569d}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-active>strong{color:#392776}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-active>small{color:#8273ae}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-active>a{color:#6346b5;border-top-color:rgba(99,70,181,.16)}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-balance:hover{border-color:#b9cff3;box-shadow:0 14px 28px rgba(37,99,190,.11),inset 0 1px 0 rgba(255,255,255,.92)}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-profit:hover{border-color:#aee0c3;box-shadow:0 14px 28px rgba(20,126,78,.11),inset 0 1px 0 rgba(255,255,255,.92)}
+.nb-command-dashboard .nb-fin-card.nb-fin-card-active:hover{border-color:#c8bbf5;box-shadow:0 14px 28px rgba(103,75,190,.11),inset 0 1px 0 rgba(255,255,255,.92)}
+@media(max-width:650px){
+  .nb-command-dashboard .nb-fin-card.nb-fin-card-balance,
+  .nb-command-dashboard .nb-fin-card.nb-fin-card-profit,
+  .nb-command-dashboard .nb-fin-card.nb-fin-card-active{border-radius:16px}
+}
+
+
+/* Keep Money movement beside Available Balance on desktop. */
+.nb-command-dashboard .nb-command-grid{grid-template-columns:minmax(0,1.12fr) minmax(320px,.88fr);gap:14px;align-items:stretch}
+.nb-command-dashboard .nb-command-grid>.nb-activity-panel{min-width:0;min-height:100%;padding:20px}
+.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-item{display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:8px;padding:11px 0}
+.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-copy b{font-size:11px;overflow-wrap:anywhere}
+.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-amount strong{font-size:11px}
+@media(max-width:950px){.nb-command-dashboard .nb-command-grid{display:grid;grid-template-columns:1fr;gap:12px}.nb-command-dashboard .nb-command-grid>.nb-activity-panel{margin-top:0}}
+
+
+
+/* Make transaction boundaries easier to scan without making the feed feel heavy. */
+.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-item{
+  border-bottom:1px solid #d9e2ef;
+}
+.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-item:last-child{
+  border-bottom:0;
+}
+@media(max-width:650px){
+  .nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-item{
+    border-bottom-color:#d3deec;
+  }
+}
+
+/* Money Movement: premium transaction feed card. */
+.nb-command-dashboard .nb-command-grid > .nb-activity-panel{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  padding:22px;
+  border:1px solid #dce6f2;
+  border-radius:22px;
+  background:#ffffff;
+  box-shadow:0 12px 30px rgba(25,48,84,.07),inset 0 1px 0 #fff;
+}
+.nb-command-dashboard .nb-command-grid > .nb-activity-panel:before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  top:0;left:0;right:0;height:4px;
+  background:#2c68c8;
+}
+.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-panel-heading{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:0 0 17px;
+  margin:0 0 4px;
+  border-bottom:1px solid #e9eef5;
+}
+.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-panel-heading>div>span{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  margin-bottom:7px;
+  color:#6b7f9d;
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:1.15px;
+}
+.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-panel-heading>div>span:before{
+  content:"";
+  width:6px;height:6px;border-radius:50%;
+  background:#2c68c8;
+  box-shadow:0 0 0 3px #e8f0ff;
+}
+.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-panel-heading h2{
+  margin:0;
+  color:#172b49;
+  font-size:20px;
+  font-weight:800;
+  letter-spacing:-.55px;
+  line-height:1.2;
+}
+.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-panel-heading>a{
+  flex-shrink:0;
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:9px 11px;
+  border:1px solid #e0e9f5;
+  border-radius:10px;
+  background:#f7faff;
+  color:#2459a8;
+  font-size:11px;
+  font-weight:750;
+  text-decoration:none;
+  transition:background .18s ease,border-color .18s ease,transform .18s ease;
+}
+.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-panel-heading>a:hover{
+  background:#edf4ff;
+  border-color:#c9daf5;
+  transform:translateY(-1px);
+}
+.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-list{
+  display:flex;
+  flex-direction:column;
+}
+.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-item{
+  position:relative;
+  display:grid;
+  grid-template-columns:38px minmax(0,1fr) auto;
+  align-items:center;
+  gap:11px;
+  min-width:0;
+  padding:14px 2px;
+  border-bottom:1px solid #edf1f6;
+  border-radius:0;
+  background:transparent;
+  color:inherit;
+  text-decoration:none;
+  transition:background .18s ease,padding .18s ease;
+}
+.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-item:last-child{border-bottom:0}
+.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-item:hover{
+  padding-left:7px;padding-right:7px;
+  border-radius:12px;
+  background:#f6f9ff;
+}
+.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-icon{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:38px;height:38px;
+  flex-shrink:0;
+  border:1px solid #f3d9d7;
+  border-radius:13px;
+  background:#fff1ef;
+  color:#c34c46;
+}
+.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-icon.credit{
+  border-color:#cdebdc;
+  background:#eaf8f0;
+  color:#168052;
+}
+.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-icon svg{
+  display:block;
+  width:18px;height:18px;
+  fill:none;stroke:currentColor;stroke-width:1.8;
+  stroke-linecap:round;stroke-linejoin:round;
+}
+.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-copy{
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+  min-width:0;
+}
+.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-copy b{
+  overflow:hidden;
+  color:#233650;
+  font-size:12px;
+  font-weight:750;
+  line-height:1.35;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-copy small{
+  overflow:hidden;
+  color:#8795a9;
+  font-size:10px;
+  font-weight:550;
+  line-height:1.35;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-amount{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:5px;
+  min-width:0;
+  text-align:right;
+}
+.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-amount strong{
+  color:#b74440;
+  font-size:11px;
+  font-weight:800;
+  white-space:nowrap;
+}
+.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-amount strong.credit{color:#168052}
+.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-amount small{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:3px 7px;
+  border:1px solid #dcefe4;
+  border-radius:20px;
+  background:#f0faf4;
+  color:#268256;
+  font-size:9px;
+  font-weight:750;
+  line-height:1.2;
+  text-transform:capitalize;
+}
+.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-empty-state{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:7px;
+  padding:34px 14px;
+  border:1px dashed #dbe5f1;
+  border-radius:15px;
+  background:#f8faff;
+  text-align:center;
+}
+.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-empty-state b{color:#233650;font-size:13px}
+.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-empty-state span{color:#7d8da5;font-size:11px;line-height:1.5}
+@media(max-width:950px){
+  .nb-command-dashboard .nb-command-grid > .nb-activity-panel{padding:18px;border-radius:18px}
+  .nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-panel-heading h2{font-size:19px}
+}
+@media(max-width:420px){
+  .nb-command-dashboard .nb-command-grid > .nb-activity-panel{padding:15px}
+  .nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-item{grid-template-columns:34px minmax(0,1fr) auto;gap:8px;padding:12px 0}
+  .nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-icon{width:34px;height:34px;border-radius:11px}
+  .nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-copy b{font-size:11px}
+  .nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-copy small{font-size:9px}
+  .nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-amount strong{font-size:10px}
+  .nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-panel-heading>a{padding:8px 9px;font-size:10px}
+}
+@media(prefers-reduced-motion:reduce){
+  .nb-command-dashboard .nb-command-grid > .nb-activity-panel *{transition:none!important}
+}
+
+
+/* Decorative background for the standalone Money Movement card. */
+.nb-command-dashboard .nb-command-grid > .nb-activity-panel{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  background:
+    radial-gradient(ellipse at 100% 0%,rgba(112,158,238,.18) 0,rgba(112,158,238,0) 43%),
+    radial-gradient(ellipse at 0% 100%,rgba(178,203,246,.16) 0,rgba(178,203,246,0) 42%),
+    linear-gradient(145deg,#fbfdff 0%,#f4f8ff 52%,#ffffff 100%);
+  border:1px solid #d6e3f5;
+  box-shadow:0 12px 30px rgba(25,48,84,.075),inset 0 1px 0 rgba(255,255,255,.96);
+}
+.nb-command-dashboard .nb-command-grid > .nb-activity-panel:before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  top:-72px;right:-50px;
+  width:190px;height:190px;
+  border:1px solid rgba(44,104,200,.13);
+  border-radius:50%;
+  background:rgba(255,255,255,.18);
+  box-shadow:0 0 0 16px rgba(44,104,200,.035),0 0 0 34px rgba(44,104,200,.025),0 0 0 54px rgba(44,104,200,.018);
+  pointer-events:none;
+}
+.nb-command-dashboard .nb-command-grid > .nb-activity-panel:after{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  left:0;top:0;bottom:0;width:4px;
+  background:linear-gradient(180deg,#4c82d7 0%,#b7cdf3 55%,#e6eefb 100%);
+  pointer-events:none;
+}
+.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-panel-heading,
+.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-list{position:relative;z-index:1}
+@media(max-width:950px){
+  .nb-command-dashboard .nb-command-grid > .nb-activity-panel{margin-top:0}
+}

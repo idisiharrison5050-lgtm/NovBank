@@ -1,0 +1,46 @@
+.nb-cards-page{font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.nb-cards-heading{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:28px}.nb-cards-heading>div>span,.nb-card-controls>div>span{font-size:11px;font-weight:800;letter-spacing:.09em;color:#667085}.nb-cards-heading h1{font-size:38px;letter-spacing:-.045em;margin:7px 0}.nb-cards-heading p{color:#667085;margin:0}.nb-card-action{display:inline-flex;align-items:center;justify-content:center;padding:12px 17px;border-radius:11px;background:#fff;border:1px solid #e4e7ec;color:#101828;font-weight:750;font-size:13px;text-decoration:none}.nb-card-action.primary{background:#155eef;color:#fff;border-color:#155eef}.nb-card-grid{display:grid;grid-template-columns:repeat(2,minmax(280px,430px));gap:18px;margin-bottom:24px}.nb-physical-card{min-height:250px;border-radius:24px;padding:27px;color:#fff;position:relative;overflow:hidden;box-shadow:0 18px 45px rgba(16,24,40,.18);background:#172033}.nb-physical-card.card-mastercard{background:#242424}.nb-card-brand{display:flex;justify-content:space-between;font-weight:800;font-size:15px}.nb-card-brand span{font-size:10px;letter-spacing:.08em;opacity:.7}.nb-card-chip{width:45px;height:34px;border-radius:8px;background:#d8c58a;margin-top:38px;position:relative;overflow:hidden}.nb-card-chip i{position:absolute;background:rgba(0,0,0,.2)}.nb-card-chip i:nth-child(1){width:100%;height:1px;top:11px}.nb-card-chip i:nth-child(2){width:100%;height:1px;top:22px}.nb-card-chip i:nth-child(3){height:100%;width:1px;left:22px}.nb-card-number{font-size:20px;letter-spacing:.14em;margin-top:27px}.nb-card-bottom{display:flex;gap:38px;margin-top:25px}.nb-card-bottom small{display:block;font-size:7px;letter-spacing:.12em;opacity:.65}.nb-card-bottom b{display:block;font-size:10px;margin-top:4px;letter-spacing:.04em}.nb-card-status{position:absolute;right:24px;bottom:23px;font-size:10px;text-transform:uppercase;letter-spacing:.08em;opacity:.65}.nb-empty-card{padding:55px 30px;background:#fff;border:1px dashed #d0d5dd;border-radius:22px;text-align:center;margin-bottom:24px}.nb-empty-icon{font-size:30px}.nb-empty-card h2{margin:15px 0 8px}.nb-empty-card p,.nb-card-controls p,.nb-request-card>p{color:#667085;line-height:1.6}.nb-empty-card .nb-card-action{margin-top:15px}.nb-card-controls{display:grid;grid-template-columns:1fr 1fr;gap:50px;background:#0b1220;color:#fff;border-radius:24px;padding:35px;margin:24px 0}.nb-card-controls h2{font-size:30px;line-height:1.08;letter-spacing:-.04em;margin:10px 0}.nb-card-controls p{color:#98a2b3}.nb-control-list{display:grid;gap:9px}.nb-control-list div{padding:18px;border:1px solid #24334a;border-radius:14px;background:#111c2e}.nb-control-list b{display:block}.nb-control-list span{display:block;color:#98a2b3;font-size:12px;margin-top:5px}.nb-request-card{max-width:650px;padding:27px;margin-top:20px}.nb-request-card h2{margin:0;font-size:22px}.nb-card-options{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0}.nb-card-options label{cursor:pointer}.nb-card-options input{position:absolute;opacity:0}.nb-card-options span{display:block;border:1px solid #e4e7ec;border-radius:14px;padding:20px}.nb-card-options input:checked+span{border-color:#155eef;box-shadow:0 0 0 2px rgba(21,94,239,.12)}.nb-card-options strong{display:block;font-size:12px;margin-bottom:8px}@media(max-width:800px){.nb-cards-heading{align-items:flex-start;flex-direction:column}.nb-card-grid,.nb-card-controls{grid-template-columns:1fr}.nb-card-controls{gap:25px}.nb-card-number{font-size:17px}}@media(max-width:520px){.nb-card-options{grid-template-columns:1fr}.nb-physical-card{min-height:225px}.nb-cards-heading h1{font-size:32px}}
+
+/* Mobile banking screens */
+@media (max-width: 768px) {
+  .nb-cards-page,.nb-transfer-page,.nb-funding-page,.nb-wire-page,.nb-account-center,.nb-loan-page,.nb-airtime-page {width:100%;max-width:100%;min-width:0;box-sizing:border-box}
+  .nb-cards-heading,.nb-transfer-head,.nb-funding-head,.nb-account-hero,.nb-loan-hero,.nb-airtime-head {margin-bottom:18px}
+  .nb-cards-heading h1,.nb-transfer-head h1,.nb-funding-head h1,.nb-account-hero h1,.nb-loan-hero h1,.nb-airtime-head h1 {font-size:30px;line-height:1.05}
+  .nb-card-action { width:100%; box-sizing:border-box; }
+  .nb-card-grid,.nb-card-controls,.nb-transfer-layout,.nb-wire-layout,.nb-loan-grid,.nb-airtime-grid,.nb-account-grid { grid-template-columns:1fr !important; }
+  .nb-physical-card {min-height:210px;padding:20px;border-radius:20px}
+  .nb-card-chip { margin-top:27px; width:40px; height:30px; }
+  .nb-card-number { font-size:15px; letter-spacing:.11em; margin-top:22px; }
+  .nb-card-bottom { gap:22px; margin-top:19px; }
+  .nb-card-controls { padding:20px; border-radius:20px; }
+  .nb-card-controls h2 { font-size:24px; }
+  .nb-card-options { grid-template-columns:1fr !important; }
+  .nb-request-card { padding:20px; }
+  .nb-transfer-head,.nb-funding-head,.nb-account-hero,.nb-loan-hero,.nb-airtime-head { align-items:flex-start; flex-direction:column; }
+  .nb-transfer-balance,.nb-funding-balance,.nb-airtime-balance { width:100%; min-width:0; box-sizing:border-box; }
+  .nb-transfer-card,.nb-wire-card,.nb-funding-panel,.nb-account-card,.nb-loan-card,.nb-airtime-card { padding:19px; border-radius:18px; }
+  .nb-transfer-card input,.nb-transfer-card select,.nb-wire-card input,.nb-wire-card select,.nb-account-form input,.nb-loan-form input,.nb-loan-form select { min-height:46px; font-size:16px; box-sizing:border-box; }
+  .nb-send-button,.nb-funding-submit,.nb-loan-form button,.nb-airtime-submit { width:100%; min-height:46px; }
+  .nb-funding-tabs { overflow-x:auto; flex-wrap:nowrap; padding-bottom:3px; }
+  .nb-funding-tabs button { flex:0 0 auto; white-space:nowrap; min-height:42px; }
+  .nb-funding-grid { grid-template-columns:1fr !important; }
+  .nb-wire-aside { min-height:0; padding:20px; border-radius:18px; }
+  .nb-account-detail { align-items:flex-start; flex-direction:column; gap:5px; }
+  .nb-account-detail b { text-align:left; overflow-wrap:anywhere; }
+  .nb-account-security-grid { grid-template-columns:1fr !important; }
+  .nb-loan-form form { grid-template-columns:1fr !important; }
+  .nb-loan-form .full { grid-column:auto; }
+  .nb-loan-details { grid-template-columns:1fr !important; }
+  .nb-airtime-item { min-width:0; }
+  .nb-airtime-info strong,.nb-airtime-info span { overflow-wrap:anywhere; }
+}
+@media (max-width: 420px) {
+  .nb-physical-card { min-height:200px; }
+  .nb-card-number { font-size:13px; }
+  .nb-card-bottom b { font-size:9px; }
+  .nb-transfer-card,.nb-wire-card,.nb-funding-panel,.nb-account-card,.nb-loan-card,.nb-airtime-card { padding:16px; }
+}
+
+.nb-card-management{margin-top:12px;padding:16px 18px;border:1px solid #e4e7ec;border-radius:18px;background:#fff;display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}.nb-card-management strong{display:block;margin-top:5px;font-size:14px}.nb-card-management small{display:block;margin-top:5px;color:#667085;line-height:1.5;font-size:11px;max-width:480px}.nb-card-management form{margin:0}.nb-card-control{border:0;border-radius:10px;padding:11px 15px;background:#155eef;color:#fff;font-weight:800;font-size:12px;white-space:nowrap;cursor:pointer}.nb-card-control.danger{background:#b42318}@media(max-width:768px){.nb-card-management{align-items:flex-start;flex-direction:column;padding:16px}.nb-card-management form,.nb-card-control{width:100%}.nb-card-control{min-height:46px}}
+
+.nb-card-limit-control{width:100%;padding:13px 0 2px;border-top:1px solid #edf0f4;margin-top:2px}.nb-card-limit-control>span{display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;font-weight:800;color:#667085;margin-bottom:8px}.nb-card-limit-form{display:flex!important;align-items:center;gap:7px;flex-wrap:wrap}.nb-card-limit-form input[type="number"]{width:105px;border:1px solid #d9e0e8;border-radius:9px;padding:9px 10px;font-size:13px;outline:none}.nb-card-limit-form input[type="password"]{width:76px;border:1px solid #d9e0e8;border-radius:9px;padding:9px 10px;font-size:13px;outline:none}.nb-card-limit-form input:focus{border-color:#155eef;box-shadow:0 0 0 3px rgba(21,94,239,.08)}.nb-card-limit-form>span{font-size:11px;color:#667085}.nb-card-limit-form .nb-card-control{padding:9px 12px}.nb-card-limit-control>small{font-size:10px;color:#98a2b3!important;margin-top:7px!important}.nb-card-management{box-shadow:0 14px 34px rgba(16,24,40,.055)}.nb-cards-page{position:relative}.nb-cards-page:before{content:"";position:absolute;right:-25px;top:-35px;width:160px;height:160px;border:1px solid rgba(21,94,239,.08);border-radius:50%;pointer-events:none}.nb-physical-card{box-shadow:0 24px 55px rgba(16,24,40,.2);transition:transform .2s ease,box-shadow .2s ease}.nb-physical-card:hover{transform:translateY(-4px) rotate(.3deg);box-shadow:0 28px 65px rgba(16,24,40,.24)}.nb-card-controls,.nb-request-card,.nb-empty-card,.nb-card-management{box-shadow:0 14px 34px rgba(16,24,40,.055)}
+@media(max-width:768px){.nb-card-limit-form{display:grid!important;grid-template-columns:1fr 1fr;gap:8px}.nb-card-limit-form input[type="number"],.nb-card-limit-form input[type="password"],.nb-card-limit-form .nb-card-control{width:100%;box-sizing:border-box}.nb-card-limit-form>span{display:none}}

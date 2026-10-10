@@ -13,20 +13,58 @@ function sendMail(to, subject, html) {
   });
 }
 
-// Minimal layout wrapper for emails. Keeps styling simple and adds a disclaimer.
-function layout(content) {
-  return '<div style="font-family:Segoe UI,Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e9ecef;">' +
-    '<div style="background:#1a56db;padding:32px 40px;">' +
-      '<h1 style="color:#fff;margin:0;font-size:1.5rem;">NovBank</h1>' +
-    '</div>' +
-    '<div style="padding:32px 40px;color:#0f172a;">' + content + '</div>' +
-    '<div style="background:#f8fafc;padding:20px 40px;border-top:1px solid #e9ecef;">' +
-      '<p style="color:#94a3b8;font-size:0.78rem;margin:0;">Disclaimer: This email was sent by NovBank. Do not share sensitive account information via email.</p>' +
-      '<p style="color:#94a3b8;font-size:0.78rem;margin-top:8px;">© ' + new Date().getFullYear() + ' NovBank. All rights reserved.</p>' +
-    '</div>' +
-  '</div>';
+// Shared transactional email layout. Designed to stay readable across Gmail, Outlook and mobile clients.
+function escapeHtml(value) {
+  return String(value == null ? '' : value)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
 }
 
+function money(amount, sign) {
+  return (sign || '') + '€' + Number(amount || 0).toLocaleString('en-GB', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+}
+
+function layout(content, preheader) {
+  var year = new Date().getFullYear();
+  return '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
+    '<title>NovBank</title></head><body style="margin:0;padding:0;background:#eef2f7;font-family:Arial,Helvetica,sans-serif;color:#172033;">' +
+    '<div style="display:none;max-height:0;overflow:hidden;opacity:0;">' + escapeHtml(preheader || 'Account notification from NovBank') + '</div>' +
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eef2f7;"><tr><td align="center" style="padding:28px 12px;">' +
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:620px;background:#ffffff;border:1px solid #dfe5ec;">' +
+    '<tr><td style="padding:24px 30px;border-bottom:1px solid #e8edf3;"><table role="presentation" width="100%"><tr>' +
+    '<td><span style="font-size:21px;font-weight:800;letter-spacing:-.4px;color:#14213d;">NovBank</span></td>' +
+    '<td align="right"><span style="font-size:11px;font-weight:700;letter-spacing:1.2px;color:#728096;">ACCOUNT NOTIFICATION</span></td>' +
+    '</tr></table></td></tr>' +
+    '<tr><td style="padding:34px 30px 30px;">' + content + '</td></tr>' +
+    '<tr><td style="padding:22px 30px;background:#f7f9fb;border-top:1px solid #e8edf3;">' +
+    '<p style="margin:0 0 8px;font-size:12px;line-height:18px;color:#69778b;">This is an automated NovBank account notification. We will never ask you to send us your password, transaction PIN or one-time verification code by email.</p>' +
+    '<p style="margin:0;font-size:12px;color:#8a96a7;">© ' + year + ' NovBank. All rights reserved.</p>' +
+    '</td></tr></table></td></tr></table></body></html>';
+}
+
+function transactionEmail(user, subject, title, intro, amount, direction, rows, status, preheader) {
+  var rowHtml = (rows || []).map(function(row) {
+    return '<tr><td style="padding:12px 0;border-bottom:1px solid #edf1f5;font-size:13px;color:#778398;">' + escapeHtml(row[0]) +
+      '</td><td align="right" style="padding:12px 0;border-bottom:1px solid #edf1f5;font-size:13px;font-weight:700;color:#172033;">' + escapeHtml(row[1]) + '</td></tr>';
+  }).join('');
+  var statusHtml = status ? '<div style="display:inline-block;padding:7px 10px;background:#f1f5f9;color:#334155;font-size:11px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;">' + escapeHtml(status) + '</div>' : '';
+  var amountHtml = amount != null ? '<div style="margin:22px 0 20px;padding:22px;background:#f7f9fb;border:1px solid #e4e9ef;"><div style="font-size:11px;font-weight:800;letter-spacing:1px;color:#7a8799;">TRANSACTION AMOUNT</div><div style="margin-top:7px;font-size:30px;line-height:36px;font-weight:800;letter-spacing:-.7px;color:#14213d;">' + escapeHtml(direction || '') + escapeHtml(money(amount)) + '</div></div>' : '';
+  return sendMail(
+    user.email,
+    subject,
+    layout(
+      '<h1 style="margin:0 0 9px;font-size:25px;line-height:32px;color:#14213d;">' + escapeHtml(title) + '</h1>' +
+      '<p style="margin:0;font-size:15px;line-height:24px;color:#59677a;">Hi ' + escapeHtml(user.firstName) + ', ' + escapeHtml(intro) + '</p>' +
+      amountHtml + statusHtml +
+      (rowHtml ? '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:16px;">' + rowHtml + '</table>' : '') +
+      '<p style="margin:24px 0 0;font-size:13px;line-height:21px;color:#69778b;">If you do not recognize this activity, sign in to your account and contact NovBank support immediately.</p>',
+      preheader
+    )
+  );
+}
 
 // ── Email Templates ───────────────────────────────
 
@@ -67,43 +105,28 @@ function kycDeclinedEmail(user, reason) {
 }
 
 function transferSentEmail(user, amount, recipient) {
-  return sendMail(
-    user.email,
-    'Transfer Sent — NovBank',
-    layout('\
-      <h2>Transfer Sent</h2>\
-      <p>Hi ' + user.firstName + ', your transfer completed successfully.</p>\
-      <p><strong>Amount:</strong> -€' + Number(amount).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</p>\
-      <p><strong>To:</strong> ' + recipient + '</p>\
-      <p>If you did not authorize this, contact support.</p>' )
-  );
+  return transactionEmail(user, 'Transfer sent · ' + money(amount, '-'), 'Transfer sent', 'your transfer has been completed.', amount, '-', [
+    ['Recipient', recipient],
+    ['Date', new Date().toLocaleString('en-GB')],
+    ['Status', 'Completed']
+  ], 'Completed', 'Transfer completed · ' + money(amount, '-'));
 }
 
 function transferReceivedEmail(user, amount, sender) {
-  return sendMail(
-    user.email,
-    'Money Received — NovBank',
-    layout('\
-      <h2>Money Received</h2>\
-      <p>Hi ' + user.firstName + ', you have received a payment.</p>\
-      <p><strong>Amount:</strong> +€' + Number(amount).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</p>\
-      <p><strong>From:</strong> ' + sender + '</p>\
-      <p><strong>Date:</strong> ' + new Date().toLocaleString('en-GB') + '</p>' )
-  );
+  return transactionEmail(user, 'Money received · ' + money(amount, '+'), 'Money received', 'a payment has been credited to your account.', amount, '+', [
+    ['From', sender],
+    ['Date', new Date().toLocaleString('en-GB')],
+    ['Status', 'Completed']
+  ], 'Completed', 'Money received · ' + money(amount, '+'));
 }
 
 function wireTransferEmail(user, amount, recipientName, iban, bankName) {
-  return sendMail(
-    user.email,
-    'Wire Transfer Initiated — NovBank',
-    layout('\
-      <h2>Wire Transfer Initiated</h2>\
-      <p>Hi ' + user.firstName + ', your wire transfer has been submitted and is pending.</p>\
-      <p><strong>Amount:</strong> -€' + Number(amount).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</p>\
-      <p><strong>Recipient:</strong> ' + recipientName + '</p>\
-      <p><strong>IBAN:</strong> ' + iban + '</p>\
-      <p><strong>Bank:</strong> ' + bankName + '</p>' )
-  );
+  return transactionEmail(user, 'Transfer pending · ' + money(amount, '-'), 'International transfer submitted', 'your transfer request has been received and is pending processing.', amount, '-', [
+    ['Recipient', recipientName],
+    ['IBAN', iban],
+    ['Bank', bankName],
+    ['Submitted', new Date().toLocaleString('en-GB')]
+  ], 'Pending', 'International transfer submitted · awaiting processing');
 }
 
 function wireTransferSuccessEmail(user, amount, recipientName, iban, bankName) {
@@ -121,15 +144,10 @@ function wireTransferSuccessEmail(user, amount, recipientName, iban, bankName) {
 }
 
 function depositRequestEmail(user, amount) {
-  return sendMail(
-    user.email,
-    'Deposit Request Received — NovBank',
-    layout('\
-      <h2>Deposit Request Received</h2>\
-      <p>Hi ' + user.firstName + ', we have received your deposit request.</p>\
-      <p><strong>Amount:</strong> €' + Number(amount).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '.</p>\
-      <p>Status: Pending Verification.</p>' )
-  );
+  return transactionEmail(user, 'Deposit pending · ' + money(amount), 'Deposit request received', 'we have received your deposit request and it is awaiting verification.', amount, '+', [
+    ['Submitted', new Date().toLocaleString('en-GB')],
+    ['Status', 'Pending verification']
+  ], 'Pending', 'Deposit request received · awaiting verification');
 }
 
 function depositApprovedEmail(user, amount) {
