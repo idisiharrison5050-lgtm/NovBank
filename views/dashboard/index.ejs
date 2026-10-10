@@ -1,6 +1,6 @@
 <%- include('../partials/header') %>
 <link rel="stylesheet" href="/css/dashboard.css"/>
-<link rel="stylesheet" href="/css/dashboard-premium.css?v=3"/>
+<link rel="stylesheet" href="/css/dashboard-premium.css?v=4"/>
 <link rel="stylesheet" href="/css/dashboard-command.css?v=command8"/>
 <link rel="stylesheet" href="/css/dashboard-top-polish.css?v=2"/>
 <div class="mobile-topbar">
@@ -135,72 +135,4 @@
     <div class="nb-pulse-intro"><span>FINANCIAL PULSE</span><h2>Your money at a glance.</h2><p>Based on completed account activity over the current month.</p></div>
     <div class="nb-pulse-stat"><span>RECEIVED</span><strong><%= currencySymbol(user.currency || 'EUR') %> <%= Number(monthIncoming || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong><small>Money in</small></div>
     <div class="nb-pulse-stat"><span>SENT</span><strong><%= currencySymbol(user.currency || 'EUR') %> <%= Number(monthOutgoing || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong><small>Money out</small></div>
-    <div class="nb-pulse-stat <%= Number(monthIncoming || 0) - Number(monthOutgoing || 0) >= 0 ? 'positive' : 'negative' %>"><span>NET MOVEMENT</span><strong><%= Number(monthIncoming || 0) - Number(monthOutgoing || 0) >= 0 ? '+' : '−' %><%= currencySymbol(user.currency || 'EUR') %> <%= Math.abs(Number(monthIncoming || 0) - Number(monthOutgoing || 0)).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong><small><%= Number(monthIncoming || 0) - Number(monthOutgoing || 0) >= 0 ? 'More received than sent' : 'More sent than received' %></small></div>
   </section>
-
-  <div class="nb-action-modal" id="nbActionModal" aria-hidden="true">
-    <div class="nb-action-backdrop" data-action-close></div>
-    <div class="nb-action-dialog" role="dialog" aria-modal="true">
-      <button class="nb-action-close" type="button" data-action-close aria-label="Close">×</button>
-      <span class="nb-modal-icon" id="nbActionIcon"></span><span class="nb-modal-kicker">NOVBANK</span>
-      <h2 id="nbActionTitle">Banking action</h2><p id="nbActionText"></p>
-      <div class="nb-modal-options" id="nbActionOptions"></div>
-    </div>
-  </div>
-
-  <section class="nb-command-two-col">
-    <div class="nb-command-panel nb-spending-panel">
-      <div class="nb-panel-heading">
-        <div><span>SPENDING PROFILE</span><h2>Where your money goes</h2></div>
-        <span class="nb-spending-period">30 DAYS</span>
-      </div>
-      <% if (spending.length === 0) { %>
-        <div class="nb-empty-state"><b>No spending data yet</b><span>Completed spending will be grouped here.</span></div>
-      <% } else { var spendTotal = spending.reduce(function(sum,item){return sum + Number(item.total || 0);},0); spending.forEach(function(item){ var pct = spendTotal ? Math.round((Number(item.total)/spendTotal)*100) : 0; %>
-        <div class="nb-spend-row"><div><b><%= item._id || 'Other' %></b><span><%= currencySymbol(user.currency || 'EUR') %> <%= Number(item.total).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></span></div><div class="nb-spend-track"><i style="width:<%= pct %>%"></i></div><small><%= pct %>% of spending</small></div>
-      <% }); } %>
-      <% if (spending.length > 0) { %><div class="nb-spending-total"><span>Total spending</span><b><%= currencySymbol(user.currency || 'EUR') %> <%= Number(spendTotal).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></b></div><% } %>
-    </div>
-  </section>
-  <section class="nb-command-panel nb-cashflow-overview">
-    <div class="nb-panel-heading">
-      <div><span>CASH FLOW</span><h2>Money movement this month.</h2></div>
-      <div class="nb-cashflow-summary"><b>+<%= currencySymbol(user.currency || 'EUR') %> <%= Number(monthIncoming || 0).toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2}) %></b><span>received</span><strong>−<%= currencySymbol(user.currency || 'EUR') %> <%= Number(monthOutgoing || 0).toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong><span>sent</span></div>
-    </div>
-    <div class="nb-cashflow-chart">
-      <% var maxFlow = 1; (cashflow || []).forEach(function(day){ maxFlow = Math.max(maxFlow, Number(day.incoming || 0), Number(day.outgoing || 0)); }); %>
-      <% (cashflow || []).forEach(function(day){ var inHeight = Math.max(4, Math.round((Number(day.incoming || 0) / maxFlow) * 100)); var outHeight = Math.max(4, Math.round((Number(day.outgoing || 0) / maxFlow) * 100)); %>
-        <div class="nb-cashflow-day"><div class="nb-cashflow-columns"><i style="height:<%= inHeight %>%"></i><b style="height:<%= outHeight %>%"></b></div><small><%= day.label %></small></div>
-      <% }); %>
-    </div>
-    <div class="nb-cashflow-legend"><span><i></i>Money in</span><span><b></b>Money out</span><a href="/dashboard/transactions">View transactions →</a></div>
-  </section>
-  <section class="nb-dashboard-command-row">
-    <div class="nb-command-panel nb-attention-panel">
-      <div class="nb-panel-heading"><div><span>ATTENTION CENTER</span><h2>Things to keep an eye on.</h2></div><a href="/dashboard/notifications">Secure inbox →</a></div>
-      <div class="nb-attention-list">
-        <a href="/kyc" class="nb-attention-item"><span class="nb-attention-icon"><i></i></span><div><b>Identity & account</b><small><%= user.kycStatus === 'approved' ? 'Verification complete. Your account is fully set up.' : 'Complete the remaining verification steps.' %></small></div><em><%= user.kycStatus === 'approved' ? 'Complete' : 'Review' %></em></a>
-        <a href="/dashboard/security" class="nb-attention-item"><span class="nb-attention-icon shield">✓</span><div><b>Account security</b><small>Review your security settings and recent account activity.</small></div><em>Review</em></a>
-        <a href="/dashboard/notifications" class="nb-attention-item"><span class="nb-attention-icon inbox">●</span><div><b>Secure inbox</b><small><%= unreadCount || 0 %> unread notification<%= (unreadCount || 0) === 1 ? '' : 's' %>.</small></div><em><%= unreadCount > 0 ? 'Open' : 'Clear' %></em></a>
-      </div>
-    </div>
-    <div class="nb-command-panel nb-account-snapshot">
-      <div class="nb-panel-heading"><div><span>ACCOUNT SNAPSHOT</span><h2>Your NovBank status.</h2></div></div>
-      <div class="nb-snapshot-row"><span>Account status</span><b><i></i><%= user.accountStatus.charAt(0).toUpperCase()+user.accountStatus.slice(1) %></b></div>
-      <div class="nb-snapshot-row"><span>Verification</span><b><%= user.kycStatus === 'approved' ? 'Verified' : user.kycStatus === 'pending' ? 'In review' : 'Incomplete' %></b></div>
-      <div class="nb-snapshot-row"><span>Account number</span><b>•••• <%= String(user.accountNumber).slice(-4) %></b></div>
-      <a class="nb-snapshot-link" href="/dashboard/profile">Manage account →</a>
-    </div>
-  </section>
-<script>
-(function(){
-var modal=document.getElementById('nbActionModal');if(!modal)return;
-var title=document.getElementById('nbActionTitle'),desc=document.getElementById('nbActionText'),icon=document.getElementById('nbActionIcon'),options=document.getElementById('nbActionOptions');
-var data={send:['Send money','Choose how you want to send money.','send',[['Send money','Send money to another NovBank customer.','/transfer'],['International wire','Send money to an external bank account.','/transfer/wire'],['PayPal','Send a withdrawal request to your PayPal destination.','/transfer/withdraw?payout=paypal'],['Revolut','Send a withdrawal request to your Revolut destination.','/transfer/withdraw?payout=revolut'],['Payoneer','Send a withdrawal request to your Payoneer destination.','/transfer/withdraw?payout=payoneer']]],receive:['Receive money','Choose how you want to receive money into your account.','receive',[['Bank transfer details','Get your account number, IBAN and SWIFT details for a bank transfer.','/receive'],['Bitcoin / Crypto deposit','View your Bitcoin deposit address and crypto receiving instructions.','/receive']]],add:['Add funds','Choose a funding method for your account.','add',[['Deposit','Add money to your balance.','/transfer/deposit']]],withdraw:['Withdraw','Move available funds out securely.','withdraw',[['Withdraw funds','Start a secure withdrawal.','/transfer/withdraw']]],cards:['Cards','Manage your NovBank cards.','card',[['Manage cards','View cards and controls.','/cards']]],airtime:['Airtime','Recharge a mobile line from your account.','phone',[['Buy airtime','Recharge a mobile line.','/airtime']]],more:['More banking','Everything else is grouped here so the dashboard stays clean.','more',[['Airtime','Recharge a mobile line.','/airtime'],['Loans','View loan services.','/loans'],['Transactions','Review account activity.','/dashboard/transactions'],['Security','Review account security.','/dashboard/security']]]};
-var actionIcons={send:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h14"></path><path d="m13 5 7 7-7 7"></path></svg>',wire:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"></circle><path d="M4 12h16"></path><path d="M12 4c2 2.2 3 4.9 3 8s-1 5.8-3 8c-2-2.2-3-4.9-3-8s1-5.8 3-8Z"></path></svg>',paypal:'<img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-mark-color.svg" alt="PayPal" class="nb-brand-logo">',revolut:'<img src="https://cdn.revolut.com/website/images/revolut-logo.svg" alt="Revolut" class="nb-brand-logo">',payoneer:'<img src="https://www.payoneer.com/wp-content/uploads/payoneer-dark-logo.svg" alt="Payoneer" class="nb-brand-logo">',receive:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v15"></path><path d="m6 13 6 6 6-6"></path></svg>',crypto:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4v16"></path><path d="M13 4v16"></path><path d="M7 7h7a3 3 0 0 1 0 6H7h7a3 3 0 0 1 0 6H7"></path></svg>',deposit:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v15"></path><path d="m6 13 6 6 6-6"></path></svg>',withdraw:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20V5"></path><path d="m6 11 6-6 6 6"></path></svg>',card:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 10h18"></path></svg>',phone:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2"></rect><path d="M10 6h4"></path><circle cx="12" cy="17" r="1"></circle></svg>',loan:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="6" width="16" height="13" rx="2"></rect><path d="M8 6V4h8v2"></path><path d="M8 13h8"></path></svg>',activity:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h10"></path></svg>',security:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 19 6v5c0 4.5-2.8 8-7 10-4.2-2-7-5.5-7-10V6l7-3Z"></path><path d="m9 12 2 2 4-4"></path></svg>',more:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.5"></circle><circle cx="12" cy="12" r="1.5"></circle><circle cx="19" cy="12" r="1.5"></circle></svg>'};
-function open(key){var d=data[key];if(!d)return;title.textContent=d[0];desc.textContent=d[1];icon.innerHTML=actionIcons[d[2]]||actionIcons.more;options.innerHTML='';d[3].forEach(function(x){var a=document.createElement('a');a.href=x[2];a.className='nb-action-option';var iconMap={'Send money':'send','International wire':'wire','PayPal':'paypal','Revolut':'revolut','Payoneer':'payoneer','Bank transfer details':'receive','Bitcoin / Crypto deposit':'crypto','Deposit':'deposit','Withdraw funds':'withdraw','Manage cards':'card','Buy airtime':'phone','Airtime':'phone','Loans':'loan','Transactions':'activity','Security':'security'};var k=iconMap[x[0]]||'more';a.setAttribute('aria-label',x[0]);a.innerHTML='<span class="nb-option-icon nb-option-'+k+'" aria-hidden="true">'+(actionIcons[k]||actionIcons.more)+'</span><span class="nb-option-copy"><b>'+x[0]+'</b><small>'+x[1]+'</small></span><span class="nb-option-arrow" aria-hidden="true">→</span>';options.appendChild(a);});modal.classList.add('is-open');modal.setAttribute('aria-hidden','false');document.body.classList.add('nb-modal-open');}
-function close(){modal.classList.remove('is-open');modal.setAttribute('aria-hidden','true');document.body.classList.remove('nb-modal-open');}
-document.querySelectorAll('[data-action-popup]').forEach(function(b){b.addEventListener('click',function(){open(b.getAttribute('data-action-popup'));});});
-modal.addEventListener('click',function(e){if(e.target.hasAttribute('data-action-close'))close();});document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
-})();
-</script></main></div><%- include('../partials/footer') %>
