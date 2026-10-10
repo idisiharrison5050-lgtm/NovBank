@@ -293,3 +293,70 @@
  .nb-account-snapshot .nb-snapshot-row{gap:7px}
 }
 @media(prefers-reduced-motion:reduce){.nb-attention-item,.nb-snapshot-link,.nb-snapshot-link:after{transition:none}}
+
+
+/* Final consistency pass: prevent compressed content and small-screen overflow. */
+.nb-command-dashboard,
+.nb-command-dashboard *{box-sizing:border-box}
+.nb-command-dashboard{min-width:0;max-width:100%}
+.nb-command-dashboard .nb-command-hero,
+.nb-command-dashboard .nb-command-grid,
+.nb-command-dashboard .nb-bank-control,
+.nb-command-dashboard .nb-bank-product-strip,
+.nb-command-dashboard .nb-financial-cards,
+.nb-command-dashboard .nb-financial-pulse,
+.nb-command-dashboard .nb-command-two-col,
+.nb-command-dashboard .nb-cashflow-overview,
+.nb-command-dashboard .nb-dashboard-command-row{min-width:0;max-width:100%}
+.nb-command-dashboard .nb-command-panel,
+.nb-command-dashboard .nb-fin-card,
+.nb-command-dashboard .nb-bank-control-grid>a,
+.nb-command-dashboard .nb-bank-product-card{overflow-wrap:anywhere}
+.nb-command-dashboard a,
+.nb-command-dashboard button{-webkit-tap-highlight-color:transparent}
+.nb-command-dashboard a:focus-visible,
+.nb-command-dashboard button:focus-visible{outline:3px solid rgba(21,94,239,.24);outline-offset:3px}
+.nb-command-dashboard .nb-panel-heading{min-width:0}
+.nb-command-dashboard .nb-panel-heading>div{min-width:0}
+.nb-command-dashboard .nb-panel-heading h2{overflow-wrap:anywhere}
+.nb-command-dashboard .nb-cashflow-summary{min-width:0}
+.nb-command-dashboard .nb-cashflow-summary b,
+.nb-command-dashboard .nb-cashflow-summary strong{overflow-wrap:anywhere}
+.nb-command-dashboard .nb-cashflow-chart{min-width:0}
+.nb-command-dashboard .nb-cashflow-day{overflow:hidden}
+.nb-command-dashboard .nb-cashflow-day>small{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nb-command-dashboard .nb-snapshot-row>span{min-width:0}
+.nb-command-dashboard .nb-snapshot-row>b{max-width:60%}
+@media(max-width:900px){
+ .nb-command-dashboard .nb-dashboard-command-row{grid-template-columns:minmax(0,1fr)}
+ .nb-command-dashboard .nb-command-two-col{grid-template-columns:minmax(0,1fr)}
+ .nb-command-dashboard .nb-bank-control-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .nb-command-dashboard .nb-bank-product-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .nb-command-dashboard .nb-bank-product-card:last-child{grid-column:1/-1}
+}
+@media(max-width:650px){
+ .nb-command-dashboard .nb-command-hero h1{max-width:100%;overflow-wrap:anywhere}
+ .nb-command-dashboard .nb-bank-control-grid{grid-template-columns:minmax(0,1fr)}
+ .nb-command-dashboard .nb-bank-product-grid{grid-template-columns:minmax(0,1fr)}
+ .nb-command-dashboard .nb-bank-product-card:last-child{grid-column:auto}
+ .nb-command-dashboard .nb-financial-cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .nb-command-dashboard .nb-dashboard-command-row .nb-panel-heading{flex-wrap:wrap}
+ .nb-command-dashboard .nb-dashboard-command-row .nb-panel-heading>a{white-space:nowrap}
+ .nb-command-dashboard .nb-attention-item>div{overflow-wrap:anywhere}
+ .nb-command-dashboard .nb-account-snapshot .nb-snapshot-row{align-items:flex-start}
+ .nb-command-dashboard .nb-account-snapshot .nb-snapshot-row>b{max-width:58%;text-align:right}
+ .nb-command-dashboard .nb-cashflow-chart{grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}
+ .nb-command-dashboard .nb-cashflow-columns{gap:2px}
+ .nb-command-dashboard .nb-cashflow-columns i,
+ .nb-command-dashboard .nb-cashflow-columns b{width:38%;max-width:12px}
+}
+@media(max-width:360px){
+ .nb-command-dashboard .nb-financial-cards{gap:7px}
+ .nb-command-dashboard .nb-fin-card{padding:12px 9px}
+ .nb-command-dashboard .nb-fin-card>strong{font-size:12px;letter-spacing:-.025em}
+ .nb-command-dashboard .nb-cashflow-legend{column-gap:8px}
+ .nb-command-dashboard .nb-cashflow-legend>a{margin-left:0}
+}
+@media(prefers-reduced-motion:reduce){
+ .nb-command-dashboard *{scroll-behavior:auto!important}
+}
