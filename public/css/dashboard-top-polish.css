@@ -1,0 +1,39 @@
+/* Dashboard top-section polish — presentation only, no new features. */
+.nb-command-dashboard{color:#101828}
+.nb-command-hero{align-items:center;gap:20px;margin:0 0 25px;padding:4px 2px}
+.nb-command-kicker{display:inline-flex;align-items:center;gap:8px;color:#155eef;font-size:10px;letter-spacing:.13em}
+.nb-command-kicker:before{content:"";width:18px;height:2px;border-radius:2px;background:#155eef}
+.nb-command-hero h1{font-size:clamp(30px,3vw,42px);font-weight:760;letter-spacing:-.055em;line-height:1.08;margin:11px 0 8px;color:#101828}
+.nb-command-hero p{font-size:13px;color:#667085;line-height:1.6}
+.nb-command-status{display:inline-flex;align-items:center;gap:8px;flex-shrink:0;padding:10px 13px;border:1px solid #e4e7ec;border-radius:999px;background:#fff;color:#475467;font-size:11px;font-weight:700;box-shadow:0 2px 5px rgba(16,24,40,.025)}
+.nb-command-status-dot{width:7px;height:7px;border-radius:50%;background:#12b76a;box-shadow:0 0 0 3px #ecfdf3}
+.nb-command-grid{grid-template-columns:minmax(0,1.55fr) minmax(245px,.75fr);gap:16px;align-items:stretch}
+.nb-networth-card{position:relative;isolation:isolate;overflow:hidden;min-width:0;min-height:0;padding:26px 27px 23px;border:1px solid #17243a;border-radius:23px;background:#0b1220;box-shadow:0 10px 26px rgba(16,24,40,.09)}
+.nb-networth-card:before{content:"";position:absolute;z-index:-1;right:-64px;top:-105px;width:245px;height:245px;border:1px solid rgba(255,255,255,.075);border-radius:50%;box-shadow:0 0 0 24px rgba(255,255,255,.025),0 0 0 49px rgba(255,255,255,.018);pointer-events:none}
+.nb-networth-top{position:relative;z-index:1;align-items:center;gap:12px}
+.nb-networth-top span{font-size:10px;letter-spacing:.12em;color:#aab5c6}
+.nb-networth-top a{color:#d0d8e5;font-size:11px;font-weight:650;text-underline-offset:4px}
+.nb-networth-top a:hover,.nb-networth-top a:focus{color:#fff}
+.nb-networth-card>strong{position:relative;z-index:1;font-size:clamp(30px,3.4vw,43px);font-weight:760;line-height:1.15;letter-spacing:-.055em;margin:20px 0 15px;overflow-wrap:anywhere}
+.nb-networth-meta{position:relative;z-index:1;gap:12px;flex-wrap:wrap;font-size:11px;color:#bdc7d6}
+.nb-networth-meta span{display:inline-flex;align-items:center}
+.nb-networth-meta i{flex-shrink:0}
+.nb-balance-actions{position:relative;z-index:1;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin:23px 0 0;padding-top:18px;border-top:1px solid rgba(255,255,255,.12)}
+.nb-balance-actions button{display:flex;min-width:0;min-height:76px;flex-direction:column;align-items:center;justify-content:center;gap:9px;padding:10px 5px;border:1px solid rgba(255,255,255,.09);border-radius:13px;background:rgba(255,255,255,.055);color:#e8edf5;cursor:pointer;transition:background .18s ease,border-color .18s ease,transform .18s ease}
+.nb-balance-actions button:hover,.nb-balance-actions button:focus-visible{background:rgba(255,255,255,.11);border-color:rgba(255,255,255,.24);outline:none;transform:translateY(-2px)}
+.nb-balance-action-icon{display:grid;width:31px;height:31px;place-items:center;border-radius:10px;background:rgba(255,255,255,.09);color:#fff}
+.nb-balance-action-icon svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.nb-balance-actions button b{font-size:10px;font-weight:700;line-height:1.2;text-align:center;overflow-wrap:anywhere}
+.nb-health-card{display:flex;flex-direction:column;align-items:flex-start;min-width:0;border:1px solid #e7ebf1;border-radius:23px;padding:24px;background:#fff;box-shadow:0 7px 22px rgba(16,24,40,.035)}
+.nb-health-card>span{color:#667085;font-size:10px;letter-spacing:.12em}
+.nb-health-ring{width:62px;height:62px;flex-shrink:0;border:6px solid #eaf1ff;border-top-color:#155eef;border-right-color:#155eef;margin:22px 0 15px}
+.nb-health-ring b{font-size:12px;color:#155eef}
+.nb-health-card>strong{font-size:15px;letter-spacing:-.02em;line-height:1.4;color:#101828}
+.nb-health-card p{font-size:12px;line-height:1.65;color:#667085;margin:8px 0 16px}
+.nb-health-card>a{display:inline-flex;align-items:center;gap:7px;margin-top:auto;font-size:12px}
+.nb-health-card>a:hover,.nb-health-card>a:focus{text-decoration:underline;text-underline-offset:4px}
+@media(max-width:1100px){.nb-command-grid{grid-template-columns:minmax(0,1.35fr) minmax(220px,.8fr)}.nb-networth-card{padding:23px}.nb-balance-actions{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.nb-balance-actions button{min-height:70px}}
+@media(max-width:950px){.nb-command-grid{grid-template-columns:minmax(0,1fr);gap:13px}.nb-health-card{min-height:0}.nb-health-ring{margin:15px 0 12px}.nb-health-card p{max-width:560px}}
+@media(max-width:650px){.nb-command-hero{align-items:flex-start;flex-direction:column;gap:13px;margin-bottom:20px;padding:0}.nb-command-hero h1{font-size:31px;line-height:1.12;margin:9px 0 7px}.nb-command-hero p{font-size:12px}.nb-command-status{padding:8px 11px;font-size:10px}.nb-networth-card{padding:21px 17px 17px;border-radius:20px}.nb-networth-top{align-items:flex-start;flex-direction:column;gap:8px}.nb-networth-card>strong{font-size:clamp(27px,7.5vw,36px);margin:18px 0 14px;letter-spacing:-.045em}.nb-networth-meta{font-size:10px;gap:9px}.nb-balance-actions{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:19px;padding-top:15px}.nb-balance-actions button{min-height:70px;padding:9px 3px;border-radius:12px;gap:7px}.nb-balance-action-icon{width:29px;height:29px}.nb-balance-actions button b{font-size:10px}.nb-health-card{padding:20px;border-radius:20px}.nb-health-card>strong{font-size:14px}}
+@media(max-width:360px){.nb-networth-card{padding:18px 13px}.nb-networth-card>strong{font-size:26px}.nb-networth-meta{font-size:9px}.nb-balance-actions{gap:5px}.nb-balance-actions button{min-height:65px}.nb-balance-actions button b{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.nb-balance-actions button{transition:none}}
