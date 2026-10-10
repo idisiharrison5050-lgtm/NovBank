@@ -290,7 +290,7 @@ router.get('/transactions', isAuth, isPinVerified, kycGate, function (req, res) 
 });
 
 router.get('/transactions/:id/receipt', isAuth, isPinVerified, kycGate, function (req, res) {
-  Transaction.findOne({ _id: req.params.id, $or: [{ sender: req.user._id }, { receiver: req.user._id }] }).populate('sender receiver', 'firstName lastName accountNumber').then(function (transaction) {
+  Transaction.findOne({ _id: req.params.id, type: { $ne: 'currency_conversion' }, $or: [{ sender: req.user._id }, { receiver: req.user._id }] }).populate('sender receiver', 'firstName lastName accountNumber').then(function (transaction) {
     if (!transaction) return res.status(404).send('Transaction not found');
     var isConversion = transaction.type === 'currency_conversion';
     var isCredit = !isConversion && (transaction.type === 'deposit' || transaction.type === 'loan_credit' || !(transaction.sender && transaction.sender._id && transaction.sender._id.toString() === req.user._id.toString()));
@@ -343,7 +343,7 @@ router.get('/transactions/:id/receipt', isAuth, isPinVerified, kycGate, function
 });
 
 router.get('/transactions/:id', isAuth, isPinVerified, kycGate, function (req, res) {
-  Transaction.findOne({ _id: req.params.id, $or: [{ sender: req.user._id }, { receiver: req.user._id }] }).populate('sender receiver', 'firstName lastName accountNumber').then(function (transaction) {
+  Transaction.findOne({ _id: req.params.id, type: { $ne: 'currency_conversion' }, $or: [{ sender: req.user._id }, { receiver: req.user._id }] }).populate('sender receiver', 'firstName lastName accountNumber').then(function (transaction) {
     if (!transaction) return res.status(404).render('404', { title: 'Transaction Not Found' });
     var isCredit = transaction.type === 'deposit' || transaction.type === 'loan_credit' || !(transaction.sender && transaction.sender._id && transaction.sender._id.toString() === req.user._id.toString());
     res.render('dashboard/transaction-detail', { title: 'Transaction Details', transaction: transaction, isCredit: isCredit });
