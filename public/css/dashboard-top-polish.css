@@ -360,3 +360,20 @@
 @media(prefers-reduced-motion:reduce){
  .nb-command-dashboard *{scroll-behavior:auto!important}
 }
+
+
+/* Final finishing pass: dashboard notices and compact viewport rhythm. */
+.nb-command-dashboard>.alert{position:relative;margin:0 0 18px;padding:13px 16px;border-radius:13px;font-size:12px;line-height:1.55;overflow-wrap:anywhere}
+.nb-command-dashboard>.alert-success{border-color:#b7e7d0;background:#f0fbf5;color:#176448}
+.nb-command-dashboard>.alert-danger{border-color:#f5c4c7;background:#fff5f5;color:#a12c36}
+.nb-command-dashboard>.nb-command-hero+.alert{margin-top:-3px}
+.nb-command-dashboard .nb-bank-control-head>a:focus-visible,
+.nb-command-dashboard .nb-bank-product-head>a:focus-visible,
+.nb-command-dashboard .nb-fin-card>a:focus-visible,
+.nb-command-dashboard .nb-snapshot-link:focus-visible{outline:3px solid rgba(21,94,239,.24);outline-offset:3px}
+@media(max-width:650px){
+ .nb-command-dashboard>.alert{margin-bottom:13px;padding:11px 12px;font-size:11px;border-radius:11px}
+ .nb-command-dashboard>.nb-command-hero+.alert{margin-top:0}
+ .nb-command-dashboard .nb-command-status{max-width:100%;white-space:normal}
+ .nb-command-dashboard .nb-cashflow-legend{align-items:center}
+}
