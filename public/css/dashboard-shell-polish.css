@@ -190,14 +190,14 @@
 /* Keep Money movement beside Available Balance on desktop. */
 .nb-command-dashboard .nb-command-grid{grid-template-columns:minmax(0,1.12fr) minmax(320px,.88fr);gap:14px;align-items:stretch}
 .nb-command-dashboard .nb-command-grid>.nb-activity-panel{min-width:0;min-height:100%;padding:20px}
-.nb-command-dashboard .nb-command-grid .nb-activity-item{display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:8px;padding:11px 0}
-.nb-command-dashboard .nb-command-grid .nb-activity-copy b{font-size:11px;overflow-wrap:anywhere}
-.nb-command-dashboard .nb-command-grid .nb-activity-amount strong{font-size:11px}
+.nb-command-dashboard > .nb-activity-panel .nb-activity-item{display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:8px;padding:11px 0}
+.nb-command-dashboard > .nb-activity-panel .nb-activity-copy b{font-size:11px;overflow-wrap:anywhere}
+.nb-command-dashboard > .nb-activity-panel .nb-activity-amount strong{font-size:11px}
 @media(max-width:950px){.nb-command-dashboard .nb-command-grid{display:grid;grid-template-columns:1fr;gap:12px}.nb-command-dashboard .nb-command-grid>.nb-activity-panel{margin-top:0}}
 
 
 /* Money Movement: premium transaction feed card. */
-.nb-command-dashboard .nb-command-grid > .nb-activity-panel{
+.nb-command-dashboard > .nb-activity-panel{
   position:relative;
   isolation:isolate;
   overflow:hidden;
@@ -207,14 +207,14 @@
   background:#ffffff;
   box-shadow:0 12px 30px rgba(25,48,84,.07),inset 0 1px 0 #fff;
 }
-.nb-command-dashboard .nb-command-grid > .nb-activity-panel:before{
+.nb-command-dashboard > .nb-activity-panel:before{
   content:"";
   position:absolute;
   z-index:-1;
   top:0;left:0;right:0;height:4px;
   background:#2c68c8;
 }
-.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-panel-heading{
+.nb-command-dashboard > .nb-activity-panel .nb-panel-heading{
   display:flex;
   align-items:center;
   justify-content:space-between;
@@ -223,7 +223,7 @@
   margin:0 0 4px;
   border-bottom:1px solid #e9eef5;
 }
-.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-panel-heading>div>span{
+.nb-command-dashboard > .nb-activity-panel .nb-panel-heading>div>span{
   display:inline-flex;
   align-items:center;
   gap:7px;
@@ -233,13 +233,13 @@
   font-weight:800;
   letter-spacing:1.15px;
 }
-.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-panel-heading>div>span:before{
+.nb-command-dashboard > .nb-activity-panel .nb-panel-heading>div>span:before{
   content:"";
   width:6px;height:6px;border-radius:50%;
   background:#2c68c8;
   box-shadow:0 0 0 3px #e8f0ff;
 }
-.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-panel-heading h2{
+.nb-command-dashboard > .nb-activity-panel .nb-panel-heading h2{
   margin:0;
   color:#172b49;
   font-size:20px;
@@ -247,7 +247,7 @@
   letter-spacing:-.55px;
   line-height:1.2;
 }
-.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-panel-heading>a{
+.nb-command-dashboard > .nb-activity-panel .nb-panel-heading>a{
   flex-shrink:0;
   display:inline-flex;
   align-items:center;
@@ -262,16 +262,16 @@
   text-decoration:none;
   transition:background .18s ease,border-color .18s ease,transform .18s ease;
 }
-.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-panel-heading>a:hover{
+.nb-command-dashboard > .nb-activity-panel .nb-panel-heading>a:hover{
   background:#edf4ff;
   border-color:#c9daf5;
   transform:translateY(-1px);
 }
-.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-list{
+.nb-command-dashboard > .nb-activity-panel .nb-activity-list{
   display:flex;
   flex-direction:column;
 }
-.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-item{
+.nb-command-dashboard > .nb-activity-panel .nb-activity-item{
   position:relative;
   display:grid;
   grid-template-columns:38px minmax(0,1fr) auto;
@@ -286,13 +286,13 @@
   text-decoration:none;
   transition:background .18s ease,padding .18s ease;
 }
-.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-item:last-child{border-bottom:0}
-.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-item:hover{
+.nb-command-dashboard > .nb-activity-panel .nb-activity-item:last-child{border-bottom:0}
+.nb-command-dashboard > .nb-activity-panel .nb-activity-item:hover{
   padding-left:7px;padding-right:7px;
   border-radius:12px;
   background:#f6f9ff;
 }
-.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-icon{
+.nb-command-dashboard > .nb-activity-panel .nb-activity-icon{
   display:flex;
   align-items:center;
   justify-content:center;
@@ -303,24 +303,24 @@
   background:#fff1ef;
   color:#c34c46;
 }
-.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-icon.credit{
+.nb-command-dashboard > .nb-activity-panel .nb-activity-icon.credit{
   border-color:#cdebdc;
   background:#eaf8f0;
   color:#168052;
 }
-.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-icon svg{
+.nb-command-dashboard > .nb-activity-panel .nb-activity-icon svg{
   display:block;
   width:18px;height:18px;
   fill:none;stroke:currentColor;stroke-width:1.8;
   stroke-linecap:round;stroke-linejoin:round;
 }
-.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-copy{
+.nb-command-dashboard > .nb-activity-panel .nb-activity-copy{
   display:flex;
   flex-direction:column;
   gap:5px;
   min-width:0;
 }
-.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-copy b{
+.nb-command-dashboard > .nb-activity-panel .nb-activity-copy b{
   overflow:hidden;
   color:#233650;
   font-size:12px;
@@ -329,7 +329,7 @@
   text-overflow:ellipsis;
   white-space:nowrap;
 }
-.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-copy small{
+.nb-command-dashboard > .nb-activity-panel .nb-activity-copy small{
   overflow:hidden;
   color:#8795a9;
   font-size:10px;
@@ -338,7 +338,7 @@
   text-overflow:ellipsis;
   white-space:nowrap;
 }
-.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-amount{
+.nb-command-dashboard > .nb-activity-panel .nb-activity-amount{
   display:flex;
   flex-direction:column;
   align-items:flex-end;
@@ -346,14 +346,14 @@
   min-width:0;
   text-align:right;
 }
-.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-amount strong{
+.nb-command-dashboard > .nb-activity-panel .nb-activity-amount strong{
   color:#b74440;
   font-size:11px;
   font-weight:800;
   white-space:nowrap;
 }
-.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-amount strong.credit{color:#168052}
-.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-amount small{
+.nb-command-dashboard > .nb-activity-panel .nb-activity-amount strong.credit{color:#168052}
+.nb-command-dashboard > .nb-activity-panel .nb-activity-amount small{
   display:inline-flex;
   align-items:center;
   justify-content:center;
@@ -367,7 +367,7 @@
   line-height:1.2;
   text-transform:capitalize;
 }
-.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-empty-state{
+.nb-command-dashboard > .nb-activity-panel .nb-empty-state{
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -378,23 +378,23 @@
   background:#f8faff;
   text-align:center;
 }
-.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-empty-state b{color:#233650;font-size:13px}
-.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-empty-state span{color:#7d8da5;font-size:11px;line-height:1.5}
+.nb-command-dashboard > .nb-activity-panel .nb-empty-state b{color:#233650;font-size:13px}
+.nb-command-dashboard > .nb-activity-panel .nb-empty-state span{color:#7d8da5;font-size:11px;line-height:1.5}
 @media(max-width:950px){
-  .nb-command-dashboard .nb-command-grid > .nb-activity-panel{padding:18px;border-radius:18px}
-  .nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-panel-heading h2{font-size:19px}
+  .nb-command-dashboard > .nb-activity-panel{padding:18px;border-radius:18px}
+  .nb-command-dashboard > .nb-activity-panel .nb-panel-heading h2{font-size:19px}
 }
 @media(max-width:420px){
-  .nb-command-dashboard .nb-command-grid > .nb-activity-panel{padding:15px}
-  .nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-item{grid-template-columns:34px minmax(0,1fr) auto;gap:8px;padding:12px 0}
-  .nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-icon{width:34px;height:34px;border-radius:11px}
-  .nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-copy b{font-size:11px}
-  .nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-copy small{font-size:9px}
-  .nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-amount strong{font-size:10px}
-  .nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-panel-heading>a{padding:8px 9px;font-size:10px}
+  .nb-command-dashboard > .nb-activity-panel{padding:15px}
+  .nb-command-dashboard > .nb-activity-panel .nb-activity-item{grid-template-columns:34px minmax(0,1fr) auto;gap:8px;padding:12px 0}
+  .nb-command-dashboard > .nb-activity-panel .nb-activity-icon{width:34px;height:34px;border-radius:11px}
+  .nb-command-dashboard > .nb-activity-panel .nb-activity-copy b{font-size:11px}
+  .nb-command-dashboard > .nb-activity-panel .nb-activity-copy small{font-size:9px}
+  .nb-command-dashboard > .nb-activity-panel .nb-activity-amount strong{font-size:10px}
+  .nb-command-dashboard > .nb-activity-panel .nb-panel-heading>a{padding:8px 9px;font-size:10px}
 }
 @media(prefers-reduced-motion:reduce){
-  .nb-command-dashboard .nb-command-grid > .nb-activity-panel *{transition:none!important}
+  .nb-command-dashboard > .nb-activity-panel *{transition:none!important}
 }
 
 
