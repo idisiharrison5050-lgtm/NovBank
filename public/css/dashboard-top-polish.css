@@ -37,3 +37,8 @@
 @media(max-width:650px){.nb-command-hero{align-items:flex-start;flex-direction:column;gap:13px;margin-bottom:20px;padding:0}.nb-command-hero h1{font-size:31px;line-height:1.12;margin:9px 0 7px}.nb-command-hero p{font-size:12px}.nb-command-status{padding:8px 11px;font-size:10px}.nb-networth-card{padding:21px 17px 17px;border-radius:20px}.nb-networth-top{align-items:flex-start;flex-direction:column;gap:8px}.nb-networth-card>strong{font-size:clamp(27px,7.5vw,36px);margin:18px 0 14px;letter-spacing:-.045em}.nb-networth-meta{font-size:10px;gap:9px}.nb-balance-actions{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:19px;padding-top:15px}.nb-balance-actions button{min-height:70px;padding:9px 3px;border-radius:12px;gap:7px}.nb-balance-action-icon{width:29px;height:29px}.nb-balance-actions button b{font-size:10px}.nb-health-card{padding:20px;border-radius:20px}.nb-health-card>strong{font-size:14px}}
 @media(max-width:360px){.nb-networth-card{padding:18px 13px}.nb-networth-card>strong{font-size:26px}.nb-networth-meta{font-size:9px}.nb-balance-actions{gap:5px}.nb-balance-actions button{min-height:65px}.nb-balance-actions button b{font-size:9px}}
 @media(prefers-reduced-motion:reduce){.nb-balance-actions button{transition:none}}
+
+/* Balance card now uses the full row after removing account health. */
+.nb-command-grid{grid-template-columns:minmax(0,1fr)}
+.nb-networth-card{width:100%}
+@media(max-width:1100px){.nb-command-grid{grid-template-columns:minmax(0,1fr)}}
