@@ -1,12 +1,19 @@
 <%- include('../partials/header') %>
-<link rel="stylesheet" href="/css/dashboard.css"/><link rel="stylesheet" href="/css/funding-premium.css"/>
+<link rel="stylesheet" href="/css/dashboard.css"/><link rel="stylesheet" href="/css/funding-premium.css"/><link rel="stylesheet" href="/css/banking-flows.css?v=withdraw4"/>
 <div class="mobile-topbar"><span class="mobile-logo">NovBank</span><button class="hamburger-btn" id="hamburgerBtn" aria-label="Open navigation"><span></span><span></span><span></span></button></div><div class="sidebar-overlay" id="sidebarOverlay"></div>
-<div class="dashboard-layout"><%- include('../partials/sidebar') %><main class="dashboard-main nb-withdraw-page">
-  <div class="nb-funding-head"><div><span class="nb-funding-kicker">MOVE MONEY OUT</span><h1>Withdraw funds</h1><p>Request a withdrawal to your bank account. Your available balance is debited immediately and the request remains pending until operations completes it.</p></div><div class="nb-funding-balance"><span>AVAILABLE BALANCE</span><b>€ <%= Number(user.balance || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></b></div></div>
+<div class="dashboard-layout"><%- include('../partials/sidebar') %><main class="dashboard-main nb-withdraw-page nb-flow-screen">
+  <div class="nb-transfer-switcher" aria-label="Send money methods">
+    <a href="/transfer"><span>NovBank account</span><small>Internal</small></a>
+    <a href="/transfer/wire"><span>Bank account</span><small>International</small></a>
+    <a href="/transfer/withdraw?payout=paypal" class="<%= payoutMethod === 'paypal' ? 'active' : '' %>"><span>PayPal</span><small>Payout</small></a>
+    <a href="/transfer/withdraw?payout=revolut" class="<%= payoutMethod === 'revolut' ? 'active' : '' %>"><span>Revolut</span><small>Payout</small></a>
+    <a href="/transfer/withdraw?payout=payoneer" class="<%= payoutMethod === 'payoneer' ? 'active' : '' %>"><span>Payoneer</span><small>Payout</small></a>
+  </div>
+  <div class="nb-funding-head"><div><span class="nb-funding-kicker">MOVE MONEY OUT</span><h1>Withdraw funds</h1><p>Request a withdrawal to your selected destination. Your available balance is debited immediately and the request remains pending until operations completes it.</p></div><div class="nb-funding-balance"><span>AVAILABLE BALANCE</span><b>€ <%= Number(user.balance || 0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2}) %></b></div></div>
   <% if (success_msg.length > 0) { %><div class="alert alert-success"><%= success_msg %></div><% } %><% if (error_msg.length > 0) { %><div class="alert alert-danger"><%= error_msg %></div><% } %>
   <div class="nb-withdraw-grid">
     <section class="nb-funding-panel nb-withdraw-form">
-      <div class="nb-withdraw-section"><span>01</span><div><h2>Destination account</h2><p>Enter the bank account that should receive your funds.</p></div></div>
+      <div class="nb-withdraw-section"><span>01</span><div><h2>Destination account</h2><p>Enter the account or payout destination that should receive your funds.</p></div></div>
       <form action="/transfer/withdraw" method="POST" id="withdrawForm">
         <div class="form-group"><label>Where should the money go?</label><div class="nb-payout-methods" role="radiogroup" aria-label="Payout method">
           <button type="button" class="nb-payout-method <%= payoutMethod === 'bank' ? 'active' : '' %>" data-payout="bank"><span class="nb-payout-mark bank">↗</span><span><b>Bank account</b><small>Account / IBAN</small></span></button>
@@ -33,13 +40,7 @@
     <div class="nb-withdraw-review-head"><div><span>FINAL REVIEW</span><h2 id="withdrawReviewTitle">Review withdrawal</h2></div><button type="button" onclick="closeWithdrawReview()" aria-label="Close">×</button></div>
     <div class="nb-withdraw-review-amount" id="withdrawReviewAmount">€0.00</div>
     <div class="nb-withdraw-review-grid">
-      <div><span>PAYOUT METHOD</span><b id="withdrawReviewMethod">—</b></div>
-      <div><span>ACCOUNT HOLDER</span><b id="withdrawReviewName">—</b></div>
-      <div><span>BANK</span><b id="withdrawReviewBank">—</b></div>
-      <div><span>ACCOUNT / IBAN</span><b id="withdrawReviewAccount">—</b></div>
-      <div><span>COUNTRY</span><b id="withdrawReviewCountry">—</b></div>
-      <div><span>REFERENCE</span><b id="withdrawReviewReference">—</b></div>
-      <div><span>NOTE</span><b id="withdrawReviewNote">—</b></div>
+      <div><span>PAYOUT METHOD</span><b id="withdrawReviewMethod">—</b></div><div><span>ACCOUNT HOLDER</span><b id="withdrawReviewName">—</b></div><div><span>BANK</span><b id="withdrawReviewBank">—</b></div><div><span>ACCOUNT / IBAN</span><b id="withdrawReviewAccount">—</b></div><div><span>COUNTRY</span><b id="withdrawReviewCountry">—</b></div><div><span>REFERENCE</span><b id="withdrawReviewReference">—</b></div><div><span>NOTE</span><b id="withdrawReviewNote">—</b></div>
     </div>
     <div class="nb-withdraw-review-notice"><strong>Protected transaction</strong><span>Your PIN will be required to authorize this withdrawal. Review the destination and amount before continuing.</span></div>
     <div class="nb-withdraw-review-actions"><button type="button" class="nb-withdraw-review-cancel" onclick="closeWithdrawReview()">Go back</button><button type="button" class="nb-withdraw-review-confirm" onclick="authorizeWithdraw()">Authorize with PIN</button></div>
@@ -47,28 +48,12 @@
 </div>
 <script>
 function withdrawField(name){var f=document.getElementById('withdrawForm');var el=f&&f.querySelector('[name="'+name+'"]');return el?el.value.trim():'';}
-function openWithdrawReview(){
- var form=document.getElementById('withdrawForm');
- if(form && !form.checkValidity()){form.reportValidity();return;}
- var amount=Number(withdrawField('amount')||0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});
- document.getElementById('withdrawReviewAmount').textContent='€ '+amount;
- var method=withdrawField('payoutMethod')||'bank'; document.getElementById('withdrawReviewMethod').textContent=method.charAt(0).toUpperCase()+method.slice(1); document.getElementById('withdrawReviewName').textContent=withdrawField('recipientName')||'—';
- document.getElementById('withdrawReviewBank').textContent=withdrawField('bankName')||'—';
- document.getElementById('withdrawReviewAccount').textContent=withdrawField('accountNumber')||'—';
- document.getElementById('withdrawReviewCountry').textContent=withdrawField('bankCountry')||'—';
- document.getElementById('withdrawReviewReference').textContent=withdrawField('reference')||'—';
- document.getElementById('withdrawReviewNote').textContent=withdrawField('description')||'—';
- var modal=document.getElementById('withdrawReview');modal.classList.add('open');modal.setAttribute('aria-hidden','false');document.body.classList.add('wire-review-open');
-}
+function openWithdrawReview(){var form=document.getElementById('withdrawForm');if(form&&!form.checkValidity()){form.reportValidity();return;}var amount=Number(withdrawField('amount')||0).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});document.getElementById('withdrawReviewAmount').textContent='€ '+amount;var method=withdrawField('payoutMethod')||'bank';document.getElementById('withdrawReviewMethod').textContent=method.charAt(0).toUpperCase()+method.slice(1);document.getElementById('withdrawReviewName').textContent=withdrawField('recipientName')||'—';document.getElementById('withdrawReviewBank').textContent=withdrawField('bankName')||'—';document.getElementById('withdrawReviewAccount').textContent=withdrawField('accountNumber')||'—';document.getElementById('withdrawReviewCountry').textContent=withdrawField('bankCountry')||'—';document.getElementById('withdrawReviewReference').textContent=withdrawField('reference')||'—';document.getElementById('withdrawReviewNote').textContent=withdrawField('description')||'—';var modal=document.getElementById('withdrawReview');modal.classList.add('open');modal.setAttribute('aria-hidden','false');document.body.classList.add('wire-review-open');}
 function closeWithdrawReview(){var modal=document.getElementById('withdrawReview');if(modal){modal.classList.remove('open');modal.setAttribute('aria-hidden','true');document.body.classList.remove('wire-review-open');}}
 function authorizeWithdraw(){closeWithdrawReview();openPinModal('withdrawForm');}
-var withdrawReview=document.getElementById('withdrawReview');
-if(withdrawReview){withdrawReview.addEventListener('click',function(e){if(e.target===withdrawReview)closeWithdrawReview();});}
-document.addEventListener('keydown',function(e){if(e.key==='Escape')closeWithdrawReview();});
-var payoutMethod=document.getElementById('payoutMethod');
-var payoutButtons=document.querySelectorAll('.nb-payout-method');
+var withdrawReview=document.getElementById('withdrawReview');if(withdrawReview){withdrawReview.addEventListener('click',function(e){if(e.target===withdrawReview)closeWithdrawReview();});}document.addEventListener('keydown',function(e){if(e.key==='Escape')closeWithdrawReview();});
+var payoutMethod=document.getElementById('payoutMethod');var payoutButtons=document.querySelectorAll('.nb-payout-method');
 function syncPayoutFields(){var method=payoutMethod?payoutMethod.value:'bank';var bankOnly=document.querySelectorAll('.payout-bank-only');bankOnly.forEach(function(el){el.style.display=method==='bank'?'':'none';});var label=document.getElementById('destinationLabel');var input=document.getElementById('destinationAccount');if(method==='paypal'){label.textContent='PayPal email';input.placeholder='name@example.com';}else if(method==='revolut'){label.textContent='Revolut username / phone';input.placeholder='@username or phone';}else if(method==='payoneer'){label.textContent='Payoneer email';input.placeholder='name@example.com';}else{label.textContent='Account number / IBAN';input.placeholder='Account number or IBAN';}}
-if(payoutMethod){payoutMethod.addEventListener('change',syncPayoutFields);syncPayoutFields();}
-payoutButtons.forEach(function(button){button.addEventListener('click',function(){if(!payoutMethod)return;payoutMethod.value=button.getAttribute('data-payout');payoutButtons.forEach(function(item){item.classList.remove('active');});button.classList.add('active');syncPayoutFields();});});
+if(payoutMethod){payoutMethod.addEventListener('change',syncPayoutFields);syncPayoutFields();}payoutButtons.forEach(function(button){button.addEventListener('click',function(){if(!payoutMethod)return;payoutMethod.value=button.getAttribute('data-payout');payoutButtons.forEach(function(item){item.classList.remove('active');});button.classList.add('active');syncPayoutFields();});});
 </script>
 </main></div><%- include('../partials/footer') %>
