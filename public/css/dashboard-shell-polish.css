@@ -396,3 +396,42 @@
 @media(prefers-reduced-motion:reduce){
   .nb-command-dashboard .nb-command-grid > .nb-activity-panel *{transition:none!important}
 }
+
+
+/* Decorative background for the standalone Money Movement card. */
+.nb-command-dashboard > .nb-activity-panel{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  background:
+    radial-gradient(ellipse at 100% 0%,rgba(112,158,238,.18) 0,rgba(112,158,238,0) 43%),
+    radial-gradient(ellipse at 0% 100%,rgba(178,203,246,.16) 0,rgba(178,203,246,0) 42%),
+    linear-gradient(145deg,#fbfdff 0%,#f4f8ff 52%,#ffffff 100%);
+  border:1px solid #d6e3f5;
+  box-shadow:0 12px 30px rgba(25,48,84,.075),inset 0 1px 0 rgba(255,255,255,.96);
+}
+.nb-command-dashboard > .nb-activity-panel:before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  top:-72px;right:-50px;
+  width:190px;height:190px;
+  border:1px solid rgba(44,104,200,.13);
+  border-radius:50%;
+  background:rgba(255,255,255,.18);
+  box-shadow:0 0 0 16px rgba(44,104,200,.035),0 0 0 34px rgba(44,104,200,.025),0 0 0 54px rgba(44,104,200,.018);
+  pointer-events:none;
+}
+.nb-command-dashboard > .nb-activity-panel:after{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  left:0;top:0;bottom:0;width:4px;
+  background:linear-gradient(180deg,#4c82d7 0%,#b7cdf3 55%,#e6eefb 100%);
+  pointer-events:none;
+}
+.nb-command-dashboard > .nb-activity-panel .nb-panel-heading,
+.nb-command-dashboard > .nb-activity-panel .nb-activity-list{position:relative;z-index:1}
+@media(max-width:950px){
+  .nb-command-dashboard > .nb-activity-panel{margin-top:0}
+}
