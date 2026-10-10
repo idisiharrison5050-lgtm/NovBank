@@ -22,17 +22,6 @@
 .nb-sidebar .sidebar-link:focus-visible,.nb-sidebar-logout:focus-visible,.nb-sidebar-brand:focus-visible{outline:3px solid rgba(21,94,239,.20);outline-offset:2px}
 .nb-sidebar .sidebar-link:active{transform:translateX(1px)}
 
-/* Keep the balance area first, then surface transactions immediately after it. */
-.nb-command-dashboard{display:flex;flex-direction:column}
-.nb-command-dashboard>.nb-command-hero{order:0}
-.nb-command-dashboard>.alert{order:1}
-.nb-command-dashboard>.nb-command-grid{order:2}
-.nb-command-dashboard>.nb-command-two-col{order:3}
-.nb-command-dashboard>.nb-bank-control{order:4}
-.nb-command-dashboard>.nb-financial-cards{order:5}
-.nb-command-dashboard>.nb-financial-pulse{order:6}
-.nb-command-dashboard>.nb-action-modal{order:99}
-
 /* Remove the Cards & account activity section from the dashboard view. */
 .nb-command-dashboard>.nb-bank-product-strip{display:none!important}
 
