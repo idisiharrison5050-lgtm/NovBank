@@ -2263,3 +2263,37 @@
   }
 }
 
+/* Focused refinement: improve existing landing form-control usability */
+.nb-landing input:not([type="checkbox]):not([type="radio]):not([type="submit]):not([type="button]),
+.nb-landing select,
+.nb-landing textarea{
+  max-width:100%;
+  min-width:0;
+}
+.nb-landing input:not([type="checkbox]):not([type="radio]):not([type="submit]):not([type="button]):focus-visible,
+.nb-landing select:focus-visible,
+.nb-landing textarea:focus-visible{
+  outline:3px solid rgba(21,94,239,.28);
+  outline-offset:1px;
+  border-color:#155eef;
+}
+.nb-landing input::placeholder,
+.nb-landing textarea::placeholder{
+  color:#98a2b3;
+  opacity:1;
+}
+@media(max-width:480px){
+  .nb-landing input:not([type="checkbox]):not([type="radio]):not([type="submit]):not([type="button]),
+  .nb-landing select,
+  .nb-landing textarea{
+    font-size:16px;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .nb-landing input,
+  .nb-landing select,
+  .nb-landing textarea{
+    transition:none!important;
+  }
+}
+
