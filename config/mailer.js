@@ -1,2 +1,2 @@
-// Central mailer entry point. The premium template set lives in mailerPremium.js.
-module.exports = require('./mailerPremium');
+// Central mailer entry point. Premium templates and secure reset actions live in dedicated modules.
+module.exports = require('./mailerOverrides');
