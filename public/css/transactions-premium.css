@@ -54,3 +54,6 @@
 .nb-statement-filters{display:flex;align-items:flex-end;gap:10px;margin:0 0 14px;padding:14px;border:1px solid #e4e7ec;border-radius:16px;background:#fff;box-shadow:0 8px 24px rgba(16,24,40,.04)}
 .nb-statement-filters label{display:flex;flex-direction:column;gap:5px;min-width:170px}.nb-statement-filters label span{font-size:8px;letter-spacing:.1em;font-weight:850;color:#667085}.nb-statement-filters input{height:38px;border:1px solid #d0d5dd;border-radius:9px;padding:0 10px;color:#101828;background:#fff}.nb-statement-filters button{height:38px;border:0;border-radius:9px;padding:0 14px;background:#101828;color:#fff;font-size:11px;font-weight:800;cursor:pointer}.nb-statement-filters button:hover{background:#155eef}
 @media(max-width:600px){.nb-statement-filters{display:grid;grid-template-columns:1fr 1fr}.nb-statement-filters label{min-width:0}.nb-statement-filters button{grid-column:1/-1}}
+
+/* Customer-facing transaction labels */
+.nb-txn-main strong{text-transform:capitalize}
