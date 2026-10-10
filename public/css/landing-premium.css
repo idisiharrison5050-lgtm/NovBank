@@ -2366,3 +2366,11 @@
   }
 }
 
+
+
+/* Capability card 01: personal banking icon layout */
+.nb-capability-grid article:nth-child(1) .nb-capability-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.nb-capability-grid article:nth-child(1) .nb-capability-icon{width:48px;height:48px;display:grid;place-items:center;border:1px solid #dbe7ff;border-radius:15px;background:#f0f5ff;color:#155eef}
+.nb-capability-grid article:nth-child(1) .nb-capability-icon svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.nb-capability-grid article:nth-child(1) .nb-capability-arrow{width:34px;height:34px;display:grid;place-items:center;border:1px solid #e4e7ec;border-radius:50%;color:#667085}
+.nb-capability-grid article:nth-child(1) .nb-capability-number{display:inline-block;margin-bottom:8px;color:#155eef;font-size:10px;font-weight:800;letter-spacing:.1em}
