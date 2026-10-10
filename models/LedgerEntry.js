@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 
 var LedgerEntrySchema = new mongoose.Schema({
   ledgerAccount: { type: mongoose.Schema.Types.ObjectId, ref: 'LedgerAccount', required: true, index: true },
-  transaction: { type: mongoose.Schema.Types.ObjectId, ref: 'Transaction', required: true, index: true },
+  transaction: { type: mongoose.Schema.Types.ObjectId, ref: 'Transaction', default: null, index: true },
   direction: { type: String, enum: ['debit', 'credit'], required: true },
   amount: { type: Number, required: true, min: 0.01 },
   currency: { type: String, required: true, uppercase: true },
