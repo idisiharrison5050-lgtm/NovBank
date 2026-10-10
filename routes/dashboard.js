@@ -138,7 +138,7 @@ router.get('/statement/pdf', isAuth, isPinVerified, kycGate, function (req, res)
       var outgoing = txn.sender && txn.sender.toString() === userId.toString() && txn.type !== 'deposit' && !isConversion;
       doc.moveTo(42, doc.y).lineTo(553, doc.y).strokeColor('#eaecf0').stroke();
       doc.moveDown(0.45);
-      doc.fontSize(9).fillColor('#101828').text(new Date(txn.createdAt).toLocaleDateString('en-GB') + '  ' + (txn.description || txn.type.replace(/_/g, ' ')), 42, doc.y, { width: 330 });
+      doc.fontSize(9).fillColor('#101828').text(new Date(txn.createdAt).toLocaleDateString('en-GB') + '  ' + (txn.type === 'wire_transfer' && (!txn.description || String(txn.description).trim().toLowerCase() === 'wire transfer') ? 'Wire Transfer' : (txn.description || txn.type.replace(/_/g, ' '))), 42, doc.y, { width: 330 });
       doc.fontSize(9).fillColor(outgoing ? '#101828' : '#039855').text((isConversion ? '↔ ' : (outgoing ? '-' : '+')) + (txn.currency || 'EUR') + ' ' + Number(txn.amount || 0).toLocaleString('en-GB', { minimumFractionDigits: 2 }), 390, doc.y, { width: 160, align: 'right' });
       doc.moveDown(0.25).fontSize(7).fillColor('#667085').text((txn.reference || '') + ' · ' + txn.status, 42, doc.y);
       doc.moveDown(0.65);
