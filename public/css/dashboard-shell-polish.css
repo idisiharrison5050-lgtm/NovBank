@@ -196,6 +196,20 @@
 @media(max-width:950px){.nb-command-dashboard .nb-command-grid{display:grid;grid-template-columns:1fr;gap:12px}.nb-command-dashboard .nb-command-grid>.nb-activity-panel{margin-top:0}}
 
 
+
+/* Make transaction boundaries easier to scan without making the feed feel heavy. */
+.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-item{
+  border-bottom:1px solid #d9e2ef;
+}
+.nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-item:last-child{
+  border-bottom:0;
+}
+@media(max-width:650px){
+  .nb-command-dashboard .nb-command-grid > .nb-activity-panel .nb-activity-item{
+    border-bottom-color:#d3deec;
+  }
+}
+
 /* Money Movement: premium transaction feed card. */
 .nb-command-dashboard .nb-command-grid > .nb-activity-panel{
   position:relative;
