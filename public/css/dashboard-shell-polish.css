@@ -31,3 +31,36 @@
 @media(max-width:1100px){.nb-sidebar{width:228px}.dashboard-main{margin-left:228px;padding:30px 28px 38px}.dashboard-main>*{max-width:1180px}}
 @media(max-width:768px){.nb-sidebar{display:none}.dashboard-main{margin-left:0;padding:20px 15px 34px}.dashboard-main>*{max-width:none}.dashboard-main>.nb-action-modal{max-width:none}.nb-sidebar-section{padding-left:18px}.nb-sidebar-logout{margin-left:12px;margin-right:12px}}
 @media(prefers-reduced-motion:reduce){.nb-sidebar .sidebar-link,.nb-sidebar-logout{transition:none}.nb-sidebar .sidebar-link:hover,.nb-sidebar .sidebar-link:active{transform:none}}
+
+/* Premium card surfaces: solid tonal backgrounds, layered depth, and restrained accents. */
+.nb-command-dashboard .nb-fin-card{
+  border-color:#e0e7f2;
+  box-shadow:0 7px 18px rgba(16,36,72,.045),inset 0 1px 0 rgba(255,255,255,.9);
+}
+.nb-command-dashboard .nb-fin-card-balance{background:#f0f5ff;border-color:#dce7fb}
+.nb-command-dashboard .nb-fin-card-profit{background:#effaf5;border-color:#d8f0e4}
+.nb-command-dashboard .nb-fin-card-active{background:#f5f2ff;border-color:#e6defb}
+.nb-command-dashboard .nb-fin-card-limit{background:#fff6ec;border-color:#f5e4d1}
+.nb-command-dashboard .nb-fin-card:before{right:-22px;top:-39px;width:112px;height:112px;border:1px solid rgba(36,95,203,.10);background:rgba(36,95,203,.055)}
+.nb-command-dashboard .nb-fin-card-profit:before{border-color:rgba(19,128,91,.13);background:rgba(19,128,91,.06)}
+.nb-command-dashboard .nb-fin-card-active:before{border-color:rgba(105,65,198,.13);background:rgba(105,65,198,.06)}
+.nb-command-dashboard .nb-fin-card-limit:before{border-color:rgba(194,101,24,.14);background:rgba(194,101,24,.06)}
+.nb-command-dashboard .nb-fin-card-icon{box-shadow:0 3px 8px rgba(16,36,72,.055)}
+.nb-command-dashboard .nb-fin-card>a{border-top-color:rgba(100,116,139,.15)}
+.nb-command-dashboard .nb-financial-pulse{background:#fff;border-color:#dfe6f0;box-shadow:0 10px 26px rgba(16,36,72,.05),inset 0 1px 0 #fff}
+.nb-command-dashboard .nb-pulse-stat{border-left-color:#dfe7f2}
+.nb-command-dashboard .nb-pulse-stat:nth-of-type(2){border-radius:13px;background:#f0f5ff}
+.nb-command-dashboard .nb-pulse-stat:nth-of-type(3){border-radius:13px;background:#effaf5}
+.nb-command-dashboard .nb-pulse-stat:nth-of-type(4){border-radius:13px;background:#f5f2ff}
+.nb-command-dashboard .nb-command-two-col>.nb-command-panel{background:#fff;border-color:#dfe6f0;box-shadow:0 9px 25px rgba(16,36,72,.045),inset 0 1px 0 #fff}
+.nb-command-dashboard .nb-command-two-col>.nb-command-panel:first-child{border-top:3px solid #b8cdf7}
+.nb-command-dashboard .nb-command-two-col>.nb-command-panel:last-child{border-top:3px solid #c8d9f8}
+.nb-command-dashboard .nb-command-txn-icon{box-shadow:inset 0 0 0 1px rgba(16,36,72,.035)}
+.nb-command-dashboard .nb-command-txn:hover{background:#f8faff;border-radius:10px}
+@media(max-width:650px){
+  .nb-command-dashboard .nb-fin-card{box-shadow:0 4px 12px rgba(16,36,72,.045),inset 0 1px 0 rgba(255,255,255,.9)}
+  .nb-command-dashboard .nb-financial-pulse{padding:12px;background:#fff}
+  .nb-command-dashboard .nb-pulse-stat,.nb-command-dashboard .nb-pulse-stat:first-of-type{border-radius:10px;padding:12px 10px;margin:2px 0}
+}
+@media(prefers-reduced-motion:reduce){.nb-command-dashboard .nb-fin-card,.nb-command-dashboard .nb-command-txn{transition:none}}
+
