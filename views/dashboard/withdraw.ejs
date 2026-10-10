@@ -15,12 +15,14 @@
     <section class="nb-funding-panel nb-withdraw-form">
       <div class="nb-withdraw-section"><span>01</span><div><h2>Destination account</h2><p>Enter the account or payout destination that should receive your funds.</p></div></div>
       <form action="/transfer/withdraw" method="POST" id="withdrawForm">
+        <% if (payoutMethod === 'bank') { %>
         <div class="form-group"><label>Where should the money go?</label><div class="nb-payout-methods" role="radiogroup" aria-label="Payout method">
-          <button type="button" class="nb-payout-method <%= payoutMethod === 'bank' ? 'active' : '' %>" data-payout="bank"><span class="nb-payout-mark bank">↗</span><span><b>Bank account</b><small>Account / IBAN</small></span></button>
-          <button type="button" class="nb-payout-method <%= payoutMethod === 'paypal' ? 'active' : '' %>" data-payout="paypal"><span class="nb-payout-mark paypal">P</span><span><b>PayPal</b><small>Email destination</small></span></button>
-          <button type="button" class="nb-payout-method <%= payoutMethod === 'revolut' ? 'active' : '' %>" data-payout="revolut"><span class="nb-payout-mark revolut">R</span><span><b>Revolut</b><small>Username / phone</small></span></button>
-          <button type="button" class="nb-payout-method <%= payoutMethod === 'payoneer' ? 'active' : '' %>" data-payout="payoneer"><span class="nb-payout-mark payoneer">✓</span><span><b>Payoneer</b><small>Email destination</small></span></button>
-        </div><select class="nb-payout-hidden" name="payoutMethod" id="payoutMethod" required aria-hidden="true" tabindex="-1"><option value="bank">Bank account</option><option value="paypal">PayPal</option><option value="revolut">Revolut</option><option value="payoneer">Payoneer</option></select></div>
+          <button type="button" class="nb-payout-method active" data-payout="bank"><span class="nb-payout-mark bank">↗</span><span><b>Bank account</b><small>Account / IBAN</small></span></button>
+          <button type="button" class="nb-payout-method" data-payout="paypal"><span class="nb-payout-mark paypal">P</span><span><b>PayPal</b><small>Email destination</small></span></button>
+          <button type="button" class="nb-payout-method" data-payout="revolut"><span class="nb-payout-mark revolut">R</span><span><b>Revolut</b><small>Username / phone</small></span></button>
+          <button type="button" class="nb-payout-method" data-payout="payoneer"><span class="nb-payout-mark payoneer">✓</span><span><b>Payoneer</b><small>Email destination</small></span></button>
+        </div><select class="nb-payout-hidden" name="payoutMethod" id="payoutMethod" required aria-hidden="true" tabindex="-1"><option value="bank" selected>Bank account</option><option value="paypal">PayPal</option><option value="revolut">Revolut</option><option value="payoneer">Payoneer</option></select></div>
+        <% } else { %><input type="hidden" name="payoutMethod" id="payoutMethod" value="<%= payoutMethod %>"><% } %>
         <div class="form-group"><label>Recipient name</label><input class="form-control" name="recipientName" placeholder="Full name" required></div>
         <div class="form-group payout-bank-only"><label>Bank name</label><input class="form-control" name="bankName" placeholder="Bank name"></div>
         <div class="form-group"><label id="destinationLabel">Account number / IBAN</label><input class="form-control" name="accountNumber" id="destinationAccount" placeholder="Account number or IBAN" required></div>
