@@ -2095,3 +2095,14 @@
   opacity:1;
   pointer-events:none;
 }
+
+/* Focused responsive correction: keep desktop links visible until the mobile menu activates */
+@media (min-width:769px) and (max-width:800px){
+  .nb-landing .nb-nav-links{
+    display:flex;
+    gap:clamp(12px,1.7vw,18px);
+  }
+  .nb-landing .nb-nav-links a{
+    font-size:12px;
+  }
+}
