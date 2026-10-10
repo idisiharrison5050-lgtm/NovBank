@@ -1935,3 +1935,145 @@
   .nb-landing .nb-mobile-menu-btn,
   .nb-landing .nb-mobile-menu a{transition:none}
 }
+
+
+/* Focused polish: landing-page section rhythm and responsive layout — CSS only */
+.nb-landing .nb-feature-band,
+.nb-landing .nb-section,
+.nb-landing .nb-split-inner,
+.nb-landing .nb-cta{
+  min-width:0;
+}
+.nb-landing .nb-feature-band,
+.nb-landing .nb-showcase-grid,
+.nb-landing .nb-products,
+.nb-landing .nb-capability-grid,
+.nb-landing .nb-future-inner,
+.nb-landing .nb-stat-grid{
+  min-width:0;
+}
+.nb-landing .nb-feature-copy,
+.nb-landing .nb-showcase-copy,
+.nb-landing .nb-products-heading,
+.nb-landing .nb-product,
+.nb-landing .nb-capability-grid article,
+.nb-landing .nb-future-inner>div,
+.nb-landing .nb-section-head{
+  min-width:0;
+}
+.nb-landing .nb-feature-copy h2,
+.nb-landing .nb-showcase-copy h2,
+.nb-landing .nb-section-head h2,
+.nb-landing .nb-split h2,
+.nb-landing .nb-cta-box h2{
+  text-wrap:balance;
+}
+@media(min-width:801px){
+  .nb-landing .nb-feature-band{padding-top:clamp(76px,8vw,100px);padding-bottom:clamp(76px,8vw,100px)}
+  .nb-landing .nb-showcase-section{padding-top:clamp(48px,5vw,64px);padding-bottom:clamp(76px,8vw,96px)}
+  .nb-landing .nb-products-section{padding-top:clamp(72px,7vw,88px);padding-bottom:clamp(76px,8vw,96px)}
+  .nb-landing .nb-image-story{margin-top:10px;margin-bottom:10px}
+  .nb-landing .nb-capabilities{padding-top:clamp(76px,8vw,96px);padding-bottom:clamp(76px,8vw,96px)}
+}
+@media(max-width:800px){
+  .nb-landing .nb-feature-band{
+    padding:64px 20px;
+    gap:28px;
+  }
+  .nb-landing .nb-section{
+    padding:64px 20px;
+  }
+  .nb-landing .nb-showcase-section{
+    padding-top:28px;
+    padding-bottom:64px;
+  }
+  .nb-landing .nb-products-section{
+    padding-top:60px;
+    padding-bottom:64px;
+  }
+  .nb-landing .nb-section-head{
+    margin-bottom:26px;
+  }
+  .nb-landing .nb-section-head h2{
+    max-width:19ch;
+    font-size:clamp(30px,6.2vw,38px);
+    line-height:1.08;
+  }
+  .nb-landing .nb-section-head p{
+    max-width:58ch;
+    font-size:14px;
+    line-height:1.75;
+  }
+  .nb-landing .nb-feature-copy h2,
+  .nb-landing .nb-showcase-copy h2{
+    font-size:clamp(32px,6.5vw,39px);
+    line-height:1.07;
+  }
+  .nb-landing .nb-products{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:12px;
+  }
+  .nb-landing .nb-product{
+    padding:22px;
+    border-radius:18px;
+  }
+  .nb-landing .nb-product h3{
+    margin-top:20px;
+    font-size:18px;
+  }
+  .nb-landing .nb-capabilities{
+    padding:64px 20px;
+  }
+  .nb-landing .nb-capability-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:12px;
+  }
+  .nb-landing .nb-image-story{
+    margin-top:8px;
+    margin-bottom:8px;
+  }
+  .nb-landing .nb-split-inner{
+    padding:64px 20px;
+  }
+  .nb-landing .nb-cta{
+    padding:56px 20px 64px;
+  }
+}
+@media(max-width:520px){
+  .nb-landing .nb-feature-band,
+  .nb-landing .nb-section,
+  .nb-landing .nb-capabilities,
+  .nb-landing .nb-split-inner{
+    padding-left:18px;
+    padding-right:18px;
+  }
+  .nb-landing .nb-feature-band{padding-top:56px;padding-bottom:56px}
+  .nb-landing .nb-section{padding-top:56px;padding-bottom:56px}
+  .nb-landing .nb-showcase-section{padding-top:24px;padding-bottom:56px}
+  .nb-landing .nb-products-section{padding-top:54px;padding-bottom:56px}
+  .nb-landing .nb-section-head{margin-bottom:22px}
+  .nb-landing .nb-section-head h2{font-size:clamp(29px,7.6vw,35px)}
+  .nb-landing .nb-section-head p{font-size:14px}
+  .nb-landing .nb-products{grid-template-columns:minmax(0,1fr);gap:12px}
+  .nb-landing .nb-product{min-height:0;padding:22px}
+  .nb-landing .nb-product h3{margin-top:17px}
+  .nb-landing .nb-capabilities{padding-top:56px;padding-bottom:56px}
+  .nb-landing .nb-capability-grid{grid-template-columns:minmax(0,1fr);gap:11px}
+  .nb-landing .nb-capability-grid article{padding:22px}
+  .nb-landing .nb-split-inner{padding-top:56px;padding-bottom:56px}
+  .nb-landing .nb-cta{padding:46px 16px 56px}
+}
+@media(max-width:360px){
+  .nb-landing .nb-feature-band,
+  .nb-landing .nb-section,
+  .nb-landing .nb-capabilities,
+  .nb-landing .nb-split-inner{
+    padding-left:14px;
+    padding-right:14px;
+  }
+  .nb-landing .nb-product{padding:19px}
+  .nb-landing .nb-section-head h2{font-size:29px}
+}
+@media(prefers-reduced-motion:reduce){
+  .nb-landing .nb-product{transition:none}
+}
