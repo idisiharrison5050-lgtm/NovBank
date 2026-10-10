@@ -2341,3 +2341,28 @@
   }
 }
 
+/* Focused refinement: ensure existing landing images remain responsive and contained */
+/* Prevent existing decorative and content images from stretching their containers. */
+.nb-landing img{
+  max-width:100%;
+}
+.nb-landing .nb-showcase-grid img,
+.nb-landing .nb-feature-band img,
+.nb-landing .nb-image-story img{
+  display:block;
+  height:auto;
+}
+.nb-landing .nb-showcase-grid figure,
+.nb-landing .nb-feature-band figure,
+.nb-landing .nb-image-story figure{
+  min-width:0;
+  overflow:hidden;
+}
+@media(max-width:480px){
+  .nb-landing .nb-showcase-grid img,
+  .nb-landing .nb-feature-band img,
+  .nb-landing .nb-image-story img{
+    max-width:100%;
+  }
+}
+
