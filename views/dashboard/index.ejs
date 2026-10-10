@@ -28,7 +28,7 @@
         <button type="button" data-action-popup="cards"><span class="nb-balance-action-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 10h18"></path></svg></span><b>Cards</b></button>
         <button type="button" data-action-popup="airtime"><span class="nb-balance-action-icon"><svg viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2"></rect><path d="M10 6h4"></path><circle cx="12" cy="17" r="1"></circle></svg></span><b>Airtime</b></button>
       </div>
-    </div><div class="nb-health-card"><span>ACCOUNT HEALTH</span><div class="nb-health-ring"><b><%= user.kycStatus === 'approved' ? '100%' : user.kycStatus === 'pending' ? '75%' : '50%' %></b></div><strong><%= user.kycStatus === 'approved' ? 'Verification complete' : user.kycStatus === 'pending' ? 'Verification in progress' : 'Complete your profile' %></strong><p><%= user.kycStatus === 'approved' ? 'Your account is fully set up.' : 'Finish the remaining steps to unlock all banking features.' %></p><a href="/kyc">Review account →</a></div></section>
+    </div></section>
 
   <section class="nb-bank-control" aria-label="Banking control center">
     <div class="nb-bank-control-head">
