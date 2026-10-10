@@ -1,0 +1,22 @@
+/* Dashboard shell polish — presentation only. No new features. */
+.nb-sidebar{width:244px;padding:22px 0 16px;background:#fff;border-right:1px solid #e8ecf2;box-shadow:8px 0 28px rgba(16,24,40,.025)}
+.nb-sidebar-brand{display:flex;align-items:center;gap:10px;height:48px;padding:0 20px 18px;margin:0 16px 12px;border-bottom:1px solid #eef1f5;font-size:18px;letter-spacing:-.035em;color:#101828}
+.nb-sidebar-brand img{width:30px;height:30px;border-radius:8px;box-shadow:0 3px 10px rgba(16,24,40,.10)}
+.nb-sidebar-section{padding:0 22px;margin:13px 0 7px;color:#98a2b3;font-size:9px;font-weight:800;letter-spacing:.12em}
+.nb-sidebar-section-spaced{margin-top:20px}
+.nb-sidebar .sidebar-nav{padding:0 12px}
+.nb-sidebar .sidebar-link{position:relative;gap:11px;min-height:42px;margin:2px 0;padding:9px 11px;border:1px solid transparent;border-radius:11px;color:#667085;font-size:12px;font-weight:650;transition:background .18s ease,border-color .18s ease,color .18s ease,transform .18s ease}
+.nb-sidebar .sidebar-link:hover{background:#f7f9fc;border-color:#edf0f5;color:#155eef;transform:translateX(1px)}
+.nb-sidebar .sidebar-link.active{background:#eef4ff;border-color:#dbe7ff;color:#155eef;font-weight:750}
+.nb-sidebar .sidebar-link.active:before{content:"";position:absolute;left:-12px;top:9px;bottom:9px;width:3px;border-radius:0 3px 3px 0;background:#155eef}
+.nb-nav-icon{display:grid;flex:0 0 28px;width:28px;height:28px;place-items:center;border-radius:8px;color:currentColor;background:transparent}
+.nb-nav-icon svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.nb-sidebar .sidebar-link.active .nb-nav-icon{background:#fff;box-shadow:0 2px 6px rgba(21,94,239,.08)}
+.nb-nav-count{display:grid;min-width:20px;height:20px;place-items:center;margin-left:auto;padding:0 5px;border-radius:999px;background:#155eef;color:#fff;font-size:9px;font-style:normal;font-weight:800}
+.nb-sidebar-logout{margin:10px 12px 0;padding:11px;border:1px solid #f0dfe1;border-radius:11px;color:#b42318;background:#fff8f8;transition:background .18s ease,border-color .18s ease,color .18s ease}
+.nb-sidebar-logout:hover{background:#fff1f2;border-color:#f3c7ca;color:#b42318}
+.dashboard-main{margin-left:244px;padding:34px 38px 42px;background:#f6f8fb}
+.dashboard-main:before{opacity:.7}
+@media(max-width:1100px){.nb-sidebar{width:228px}.dashboard-main{margin-left:228px;padding:30px 28px 38px}}
+@media(max-width:768px){.nb-sidebar{display:none}.dashboard-main{margin-left:0;padding:20px 15px 34px}.nb-sidebar-section{padding-left:18px}.nb-sidebar-logout{margin-left:12px;margin-right:12px}}
+@media(prefers-reduced-motion:reduce){.nb-sidebar .sidebar-link,.nb-sidebar-logout{transition:none}}
