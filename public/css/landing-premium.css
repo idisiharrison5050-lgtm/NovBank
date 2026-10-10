@@ -2077,3 +2077,21 @@
 @media(prefers-reduced-motion:reduce){
   .nb-landing .nb-product{transition:none}
 }
+
+
+/* Focused correction: remove legacy CTA image overlay from the refined panel */
+.nb-landing .nb-cta-box{
+  background-image:none;
+  background-color:#f5f7fb;
+}
+.nb-landing .nb-cta-box:before{
+  inset:0 auto auto 0;
+  right:0;
+  bottom:auto;
+  width:auto;
+  height:3px;
+  z-index:0;
+  background:#155eef;
+  opacity:1;
+  pointer-events:none;
+}
