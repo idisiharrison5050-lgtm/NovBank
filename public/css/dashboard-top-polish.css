@@ -377,3 +377,51 @@
  .nb-command-dashboard .nb-command-status{max-width:100%;white-space:normal}
  .nb-command-dashboard .nb-cashflow-legend{align-items:center}
 }
+
+
+/* Balance card sizing refinement — scoped only to the dashboard balance card. */
+.nb-command-dashboard .nb-networth-card{
+  width:100%;
+  padding:22px 24px 20px;
+  border-radius:20px;
+}
+.nb-command-dashboard .nb-networth-card>strong{
+  margin:14px 0 12px;
+  font-size:clamp(29px,3vw,39px);
+}
+.nb-command-dashboard .nb-balance-actions{
+  gap:10px;
+  margin-top:17px;
+  padding-top:15px;
+}
+.nb-command-dashboard .nb-balance-actions button{
+  min-height:72px;
+  padding:10px 7px;
+  gap:8px;
+  border-radius:14px;
+  background:rgba(255,255,255,.075);
+}
+.nb-command-dashboard .nb-balance-action-icon{
+  width:36px;
+  height:36px;
+  border-radius:11px;
+}
+.nb-command-dashboard .nb-balance-action-icon svg{
+  width:19px;
+  height:19px;
+}
+.nb-command-dashboard .nb-balance-actions button b{
+  font-size:11px;
+}
+@media(max-width:650px){
+  .nb-command-dashboard .nb-networth-card{padding:19px 16px 16px}
+  .nb-command-dashboard .nb-networth-card>strong{margin:15px 0 12px}
+  .nb-command-dashboard .nb-balance-actions{gap:8px;margin-top:15px;padding-top:13px}
+  .nb-command-dashboard .nb-balance-actions button{min-height:74px;padding:9px 4px}
+  .nb-command-dashboard .nb-balance-action-icon{width:34px;height:34px}
+}
+@media(max-width:360px){
+  .nb-command-dashboard .nb-networth-card{padding:17px 12px 14px}
+  .nb-command-dashboard .nb-balance-actions{gap:6px}
+  .nb-command-dashboard .nb-balance-actions button{min-height:68px}
+}
