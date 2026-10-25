@@ -96,9 +96,6 @@ app.get('/ready', function (req, res) {
   res.status(ready ? 200 : 503).json({ status: ready ? 'ready' : 'degraded', database: ready ? 'connected' : 'disconnected', timestamp: new Date().toISOString() });
 });
 
-// Sensitive account-access mutations must run before the legacy auth/account handlers.
-app.use('/', require('./routes/account-access-hardening'));
-
 // Routes
 app.use('/', require('./routes/auth'));
 app.use('/dashboard', require('./routes/dashboard'));
