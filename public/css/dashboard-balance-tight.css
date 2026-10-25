@@ -1,28 +1,97 @@
-/* Desktop balance-card spacing polish. Mobile layout remains unchanged. */
-@media (min-width: 951px) {
-  .nb-networth-card {
-    padding-bottom: 14px !important;
+/* Desktop balance-card sizing correction. Mobile rules remain untouched. */
+@media (min-width: 1101px) {
+  .nb-command-dashboard .nb-command-grid {
+    grid-template-columns: minmax(0, 1.3fr) minmax(300px, .7fr) !important;
+    gap: 20px !important;
+    align-items: stretch !important;
   }
 
-  .nb-networth-card > strong {
-    margin-bottom: 12px !important;
+  .nb-command-dashboard .nb-networth-card {
+    min-height: 300px !important;
+    padding: 32px 34px 28px !important;
+    border-radius: 24px !important;
   }
 
-  .nb-balance-actions {
-    margin-top: 15px !important;
-    padding-top: 11px !important;
-    gap: 7px !important;
+  .nb-command-dashboard .nb-networth-top span {
+    font-size: 12px !important;
+    letter-spacing: .12em !important;
   }
 
-  .nb-balance-actions button {
-    min-height: 62px !important;
-    padding-top: 7px !important;
-    padding-bottom: 7px !important;
-    gap: 6px !important;
+  .nb-command-dashboard .nb-networth-top a {
+    font-size: 12px !important;
   }
 
-  .nb-balance-action-icon {
-    width: 28px !important;
-    height: 28px !important;
+  .nb-command-dashboard .nb-networth-card > strong {
+    font-size: clamp(38px, 3.4vw, 52px) !important;
+    line-height: 1.18 !important;
+    margin: 24px 0 18px !important;
+    letter-spacing: -.045em !important;
+  }
+
+  .nb-command-dashboard .nb-networth-meta {
+    gap: 18px !important;
+    font-size: 12px !important;
+  }
+
+  .nb-command-dashboard .nb-balance-actions {
+    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+    gap: 9px !important;
+    margin-top: 26px !important;
+    padding-top: 20px !important;
+  }
+
+  .nb-command-dashboard .nb-balance-actions button {
+    min-height: 82px !important;
+    padding: 11px 6px !important;
+    gap: 9px !important;
+    border-radius: 14px !important;
+  }
+
+  .nb-command-dashboard .nb-balance-action-icon {
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 11px !important;
+  }
+
+  .nb-command-dashboard .nb-balance-action-icon svg {
+    width: 20px !important;
+    height: 20px !important;
+  }
+
+  .nb-command-dashboard .nb-balance-actions button b {
+    font-size: 11px !important;
+  }
+
+  .nb-command-dashboard .nb-activity-panel {
+    padding: 26px !important;
+    border-radius: 24px !important;
+  }
+}
+
+@media (min-width: 951px) and (max-width: 1100px) {
+  .nb-command-dashboard .nb-command-grid {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr) !important;
+    gap: 16px !important;
+  }
+
+  .nb-command-dashboard .nb-networth-card {
+    min-height: 285px !important;
+    padding: 26px 24px 23px !important;
+  }
+
+  .nb-command-dashboard .nb-networth-card > strong {
+    font-size: clamp(34px, 3vw, 42px) !important;
+    margin: 21px 0 16px !important;
+  }
+
+  .nb-command-dashboard .nb-balance-actions {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 9px !important;
+    margin-top: 22px !important;
+    padding-top: 17px !important;
+  }
+
+  .nb-command-dashboard .nb-balance-actions button {
+    min-height: 72px !important;
   }
 }
