@@ -1,92 +1,100 @@
-/* NovBank V1 desktop capability cards */
+/* NovBank V1 — desktop capability cards, final pass */
 @media (min-width: 769px) {
   .nb-capabilities {
-    background: #f5f7fa !important;
-    padding-top: 92px !important;
-    padding-bottom: 104px !important;
+    background: #f6f8fb !important;
+    padding: 96px 0 112px !important;
   }
 
   .nb-capabilities .nb-section-head {
-    max-width: 760px;
-    margin-bottom: 38px;
+    max-width: 760px !important;
+    margin: 0 0 36px !important;
   }
 
   .nb-capabilities .nb-capability-grid {
     display: grid !important;
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-    gap: 18px !important;
-    align-items: stretch;
+    gap: 20px !important;
+    margin: 0 !important;
   }
 
-  .nb-capabilities .nb-capability-grid article {
-    min-width: 0 !important;
+  .nb-capabilities .nb-capability-grid > article {
+    width: auto !important;
+    max-width: none !important;
+    flex: none !important;
     padding: 0 !important;
-    min-height: 0 !important;
+    margin: 0 !important;
     background: transparent !important;
     border: 0 !important;
   }
 
   .nb-capabilities .nb-capability-card {
+    box-sizing: border-box !important;
     position: relative !important;
-    min-height: 250px !important;
-    height: 100% !important;
-    padding: 25px !important;
-    overflow: hidden !important;
     display: flex !important;
     flex-direction: column !important;
-    border: 1px solid #dfe4eb !important;
-    border-radius: 22px !important;
+    min-width: 0 !important;
+    min-height: 268px !important;
+    height: 100% !important;
+    padding: 26px !important;
+    overflow: hidden !important;
+    border: 1px solid #e1e6ee !important;
+    border-radius: 24px !important;
     background: #ffffff !important;
-    color: #0b1220 !important;
-    box-shadow: 0 8px 26px rgba(16, 24, 40, 0.06) !important;
-    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease !important;
+    color: #101828 !important;
+    box-shadow: 0 2px 5px rgba(16,24,40,.025), 0 14px 34px rgba(16,24,40,.055) !important;
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease !important;
   }
 
   .nb-capabilities .nb-capability-card::before {
     content: "" !important;
     position: absolute !important;
-    top: 0 !important;
-    left: 22px !important;
-    right: 22px !important;
-    height: 3px !important;
-    border-radius: 0 0 5px 5px !important;
+    inset: 0 0 auto !important;
+    width: 100% !important;
+    height: 4px !important;
     background: #155eef !important;
   }
 
-  .nb-capabilities .nb-capability-grid article:nth-child(2) .nb-capability-card::before { background: #344054 !important; }
-  .nb-capabilities .nb-capability-grid article:nth-child(3) .nb-capability-card::before { background: #12b76a !important; }
-  .nb-capabilities .nb-capability-grid article:nth-child(4) .nb-capability-card::before { background: #f79009 !important; }
-  .nb-capabilities .nb-capability-grid article:nth-child(5) .nb-capability-card::before { background: #7f56d9 !important; }
-  .nb-capabilities .nb-capability-grid article:nth-child(6) .nb-capability-card::before { background: #039855 !important; }
+  .nb-capabilities .nb-capability-grid > article:nth-child(2) .nb-capability-card::before { background: #344054 !important; }
+  .nb-capabilities .nb-capability-grid > article:nth-child(3) .nb-capability-card::before { background: #12b76a !important; }
+  .nb-capabilities .nb-capability-grid > article:nth-child(4) .nb-capability-card::before { background: #f79009 !important; }
+  .nb-capabilities .nb-capability-grid > article:nth-child(5) .nb-capability-card::before { background: #7f56d9 !important; }
+  .nb-capabilities .nb-capability-grid > article:nth-child(6) .nb-capability-card::before { background: #039855 !important; }
 
   .nb-capabilities .nb-capability-card:hover {
-    transform: translateY(-4px) !important;
-    border-color: #cbd3df !important;
-    box-shadow: 0 18px 42px rgba(16, 24, 40, 0.11) !important;
+    transform: translateY(-6px) !important;
+    border-color: #cfd7e3 !important;
+    box-shadow: 0 18px 42px rgba(16,24,40,.105) !important;
   }
 
   .nb-capabilities .nb-capability-top {
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
-    margin-bottom: 22px !important;
+    gap: 16px !important;
+    margin: 0 0 25px !important;
   }
 
   .nb-capabilities .nb-capability-icon {
-    width: 50px !important;
-    height: 50px !important;
-    flex: 0 0 50px !important;
+    width: 52px !important;
+    height: 52px !important;
+    flex: 0 0 52px !important;
     display: grid !important;
     place-items: center !important;
-    border: 1px solid #dbe5f7 !important;
-    border-radius: 15px !important;
-    background: #f3f6ff !important;
+    border: 1px solid #d9e2f2 !important;
+    border-radius: 16px !important;
+    background: #f7f9fc !important;
     color: #155eef !important;
   }
 
+  .nb-capabilities .nb-capability-grid > article:nth-child(2) .nb-capability-icon { color: #344054 !important; }
+  .nb-capabilities .nb-capability-grid > article:nth-child(3) .nb-capability-icon { color: #039855 !important; }
+  .nb-capabilities .nb-capability-grid > article:nth-child(4) .nb-capability-icon { color: #f79009 !important; }
+  .nb-capabilities .nb-capability-grid > article:nth-child(5) .nb-capability-icon { color: #7f56d9 !important; }
+  .nb-capabilities .nb-capability-grid > article:nth-child(6) .nb-capability-icon { color: #039855 !important; }
+
   .nb-capabilities .nb-capability-icon svg {
-    width: 23px !important;
-    height: 23px !important;
+    width: 24px !important;
+    height: 24px !important;
     fill: none !important;
     stroke: currentColor !important;
     stroke-width: 1.8 !important;
@@ -95,13 +103,14 @@
   }
 
   .nb-capabilities .nb-capability-arrow {
-    width: 34px !important;
-    height: 34px !important;
+    width: 36px !important;
+    height: 36px !important;
+    flex: 0 0 36px !important;
     display: grid !important;
     place-items: center !important;
-    border: 1px solid #e1e6ed !important;
+    border: 1px solid #e3e7ed !important;
     border-radius: 50% !important;
-    background: #fff !important;
+    background: #ffffff !important;
     color: #667085 !important;
     font-size: 15px !important;
   }
@@ -109,29 +118,43 @@
   .nb-capabilities .nb-capability-number {
     align-self: flex-start !important;
     display: inline-flex !important;
-    padding: 5px 8px !important;
-    border: 1px solid #dbe5f7 !important;
-    border-radius: 7px !important;
-    background: #f5f8ff !important;
-    color: #155eef !important;
+    align-items: center !important;
+    min-height: 25px !important;
+    padding: 4px 9px !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    background: #f8fafc !important;
+    color: #475467 !important;
     font-size: 10px !important;
     font-weight: 800 !important;
-    letter-spacing: .04em !important;
+    letter-spacing: .05em !important;
   }
 
   .nb-capabilities .nb-capability-card h3 {
-    margin: 15px 0 9px !important;
-    color: #0b1220 !important;
+    margin: 16px 0 9px !important;
+    color: #101828 !important;
     font-size: 21px !important;
-    line-height: 1.15 !important;
+    font-weight: 750 !important;
+    line-height: 1.18 !important;
     letter-spacing: -.025em !important;
   }
 
   .nb-capabilities .nb-capability-card p {
-    max-width: 340px !important;
+    max-width: 350px !important;
     margin: 0 !important;
     color: #667085 !important;
     font-size: 14px !important;
     line-height: 1.65 !important;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1050px) {
+  .nb-capabilities .nb-capability-card {
+    padding: 22px !important;
+    min-height: 250px !important;
+  }
+
+  .nb-capabilities .nb-capability-card h3 {
+    font-size: 19px !important;
   }
 }
