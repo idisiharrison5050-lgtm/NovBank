@@ -1,0 +1,28 @@
+/* Desktop balance-card spacing polish. Mobile layout remains unchanged. */
+@media (min-width: 951px) {
+  .nb-networth-card {
+    padding-bottom: 14px !important;
+  }
+
+  .nb-networth-card > strong {
+    margin-bottom: 12px !important;
+  }
+
+  .nb-balance-actions {
+    margin-top: 15px !important;
+    padding-top: 11px !important;
+    gap: 7px !important;
+  }
+
+  .nb-balance-actions button {
+    min-height: 62px !important;
+    padding-top: 7px !important;
+    padding-bottom: 7px !important;
+    gap: 6px !important;
+  }
+
+  .nb-balance-action-icon {
+    width: 28px !important;
+    height: 28px !important;
+  }
+}
