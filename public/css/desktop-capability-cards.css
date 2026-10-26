@@ -1,0 +1,46 @@
+/* Match the existing premium capability-card design used by NovBank's landing page. */
+.nb-landing .nb-capabilities { background:#f7f9fc !important; }
+.nb-landing .nb-capabilities .nb-section-head { max-width:740px !important; margin-bottom:34px !important; }
+.nb-landing .nb-capability-grid { display:grid !important; grid-template-columns:repeat(3,minmax(0,1fr)) !important; gap:18px !important; align-items:stretch !important; margin:0 !important; }
+.nb-landing .nb-capability-grid > article { --cap-accent:#155eef; --cap-tint:#f0f5ff; --cap-border:#dbe7ff; position:relative !important; min-width:0 !important; min-height:265px !important; display:flex !important; align-items:stretch !important; width:auto !important; max-width:none !important; padding:27px !important; margin:0 !important; overflow:hidden !important; border:1px solid #e1e7f0 !important; border-radius:22px !important; background:#fff !important; box-shadow:0 5px 18px rgba(16,24,40,.035) !important; transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease !important; }
+.nb-landing .nb-capability-grid > article:nth-child(2) { --cap-accent:#087e8b; --cap-tint:#eaf8f8; --cap-border:#ccebea; }
+.nb-landing .nb-capability-grid > article:nth-child(3) { --cap-accent:#6941c6; --cap-tint:#f3efff; --cap-border:#e0d6ff; }
+.nb-landing .nb-capability-grid > article:nth-child(4) { --cap-accent:#b54708; --cap-tint:#fff4e8; --cap-border:#f5dcc3; }
+.nb-landing .nb-capability-grid > article:nth-child(5) { --cap-accent:#175cd3; --cap-tint:#edf4ff; --cap-border:#d5e4ff; }
+.nb-landing .nb-capability-grid > article:nth-child(6) { --cap-accent:#16794b; --cap-tint:#edf8f2; --cap-border:#cce9dc; }
+.nb-landing .nb-capability-grid > article::before { content:"" !important; position:absolute !important; top:0 !important; left:27px !important; right:27px !important; height:3px !important; background:var(--cap-accent) !important; opacity:.7 !important; }
+.nb-landing .nb-capability-grid .nb-capability-card { width:100% !important; min-width:0 !important; display:flex !important; flex-direction:column !important; align-items:stretch !important; background:transparent !important; border:0 !important; padding:0 !important; min-height:0 !important; box-shadow:none !important; }
+.nb-landing .nb-capability-grid .nb-capability-top { display:flex !important; align-items:center !important; justify-content:space-between !important; gap:14px !important; margin-bottom:22px !important; }
+.nb-landing .nb-capability-grid .nb-capability-icon { width:50px !important; height:50px !important; flex:0 0 50px !important; display:grid !important; place-items:center !important; border:1px solid var(--cap-border) !important; border-radius:16px !important; background:var(--cap-tint) !important; color:var(--cap-accent) !important; }
+.nb-landing .nb-capability-grid .nb-capability-icon svg { display:block !important; width:24px !important; height:24px !important; fill:none !important; stroke:currentColor !important; stroke-width:1.8 !important; stroke-linecap:round !important; stroke-linejoin:round !important; }
+.nb-landing .nb-capability-grid .nb-capability-arrow { width:34px !important; height:34px !important; flex:0 0 34px !important; display:grid !important; place-items:center !important; border:1px solid #e4e7ec !important; border-radius:50% !important; background:#fff !important; color:#667085 !important; font-size:16px !important; }
+.nb-landing .nb-capability-grid .nb-capability-number { display:inline-flex !important; align-items:center !important; align-self:flex-start !important; margin:0 0 7px !important; padding:5px 8px !important; border:1px solid var(--cap-border) !important; border-radius:7px !important; background:var(--cap-tint) !important; color:var(--cap-accent) !important; font-size:10px !important; font-weight:800 !important; line-height:1.2 !important; letter-spacing:.1em !important; }
+.nb-landing .nb-capability-grid h3 { margin:8px 0 10px !important; color:#101828 !important; font-size:20px !important; font-weight:750 !important; line-height:1.25 !important; letter-spacing:-.035em !important; overflow-wrap:anywhere !important; }
+.nb-landing .nb-capability-grid p { max-width:34ch !important; margin:0 !important; color:#667085 !important; font-size:14px !important; line-height:1.75 !important; }
+@media (hover:hover) and (min-width:801px) {
+  .nb-landing .nb-capability-grid > article:hover { transform:translateY(-5px) !important; border-color:var(--cap-border) !important; box-shadow:0 20px 42px rgba(16,24,40,.085) !important; }
+  .nb-landing .nb-capability-grid > article:hover::before { opacity:1 !important; }
+  .nb-landing .nb-capability-grid > article:hover .nb-capability-icon { transform:translateY(-2px) !important; border-color:var(--cap-border) !important; }
+  .nb-landing .nb-capability-grid > article:hover .nb-capability-arrow { transform:translate(2px,-2px) !important; border-color:var(--cap-border) !important; background:var(--cap-tint) !important; color:var(--cap-accent) !important; }
+}
+@media (max-width:800px) {
+  .nb-landing .nb-capabilities { padding-top:66px !important; padding-bottom:66px !important; }
+  .nb-landing .nb-capability-grid { grid-template-columns:1fr !important; gap:13px !important; }
+  .nb-landing .nb-capability-grid > article { min-height:0 !important; padding:23px !important; border-radius:19px !important; }
+  .nb-landing .nb-capability-grid > article::before { left:23px !important; right:23px !important; }
+  .nb-landing .nb-capability-grid .nb-capability-top { margin-bottom:18px !important; }
+  .nb-landing .nb-capability-grid h3 { margin-top:7px !important; font-size:19px !important; }
+  .nb-landing .nb-capability-grid p { max-width:52ch !important; font-size:14px !important; line-height:1.7 !important; }
+}
+@media (max-width:480px) {
+  .nb-landing .nb-capabilities { padding-left:16px !important; padding-right:16px !important; }
+  .nb-landing .nb-capability-grid { gap:11px !important; }
+  .nb-landing .nb-capability-grid > article { padding:20px !important; border-radius:17px !important; }
+  .nb-landing .nb-capability-grid > article::before { left:20px !important; right:20px !important; }
+  .nb-landing .nb-capability-grid .nb-capability-icon { width:46px !important; height:46px !important; flex-basis:46px !important; border-radius:14px !important; }
+  .nb-landing .nb-capability-grid .nb-capability-arrow { width:32px !important; height:32px !important; flex-basis:32px !important; }
+  .nb-landing .nb-capability-grid .nb-capability-top { margin-bottom:16px !important; }
+  .nb-landing .nb-capability-grid .nb-capability-number { font-size:9px !important; }
+  .nb-landing .nb-capability-grid h3 { font-size:18px !important; }
+  .nb-landing .nb-capability-grid p { font-size:13px !important; line-height:1.7 !important; }
+}
