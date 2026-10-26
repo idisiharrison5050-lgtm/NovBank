@@ -2,7 +2,16 @@ var mongoose = require('mongoose');
 
 var NotificationSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
-  type: { type: String, enum: ['transaction', 'security', 'card', 'loan', 'kyc', 'system', 'marketing'], required: true },
+  type: {
+    type: String,
+    enum: ['transaction', 'security', 'card', 'loan', 'kyc', 'system', 'marketing'],
+    set: function (value) {
+      // Older admin transaction flows used "success" as a notification type.
+      // Keep those notifications valid while preserving the current type taxonomy.
+      return value === 'success' ? 'transaction' : value;
+    },
+    required: true
+  },
   title: { type: String, required: true, trim: true },
   message: { type: String, required: true, trim: true },
   severity: { type: String, enum: ['info', 'success', 'warning', 'critical'], default: 'info' },
