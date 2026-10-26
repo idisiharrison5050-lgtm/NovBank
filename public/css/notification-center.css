@@ -11,5 +11,19 @@
 .nb-notification-wrap a:focus-visible,.nb-notification-wrap button:focus-visible,.nb-notification-center a:focus-visible,.nb-notification-center button:focus-visible{outline:3px solid rgba(21,94,239,.22);outline-offset:3px}
 
 @media(max-width:800px){
-  .nb-notification-center{grid-template-columns:1fr;gap:10px}
+  .nb-notification-center{grid-template-columns:1fr;gap:10px;width:100%;min-width:0}
+  .nb-notification{width:100%;box-sizing:border-box;padding:16px;overflow:hidden}
+  .nb-notification-body{width:0;min-width:0;overflow:hidden}
+  .nb-notification-top{display:flex;flex-direction:column;align-items:flex-start;gap:5px}
+  .nb-notification-top b{font-size:13px;line-height:1.4;overflow-wrap:anywhere;word-break:break-word}
+  .nb-notification-top span{font-size:10px;line-height:1.4;white-space:normal}
+  .nb-notification p{font-size:12px;line-height:1.55;overflow-wrap:anywhere;word-break:break-word}
+  .nb-notification-severity{margin-left:0;margin-top:8px}
+  .nb-notification-action{display:inline-flex;margin-top:4px;max-width:100%;white-space:normal;text-align:left}
+}
+
+@media(max-width:420px){
+  .nb-notification{gap:11px;padding:14px;border-radius:14px}
+  .nb-notification-icon{width:34px;height:34px;border-radius:10px}
+  .nb-notification-icon svg{width:16px;height:16px}
 }
