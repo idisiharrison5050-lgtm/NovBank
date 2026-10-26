@@ -12,4 +12,5 @@
 
 @media(max-width:800px){
   .nb-notification-center{grid-template-columns:1fr;gap:10px}
+  .nb-notification-panel{width:calc(100vw - 16px);max-width:none;right:-8px}
 }
