@@ -10,3 +10,7 @@
 .nb-transfer-page.nb-flow-screen .nb-flow-form-card .nb-amount-input{display:flex!important;position:relative!important;align-items:center!important;}
 .nb-transfer-page.nb-flow-screen .nb-flow-form-card .nb-amount-input>span{position:static!important;inset:auto!important;transform:none!important;display:block!important;flex:0 0 auto!important;padding:0 0 0 14px!important;line-height:1!important;}
 .nb-transfer-page.nb-flow-screen .nb-flow-form-card .nb-amount-input>input{position:static!important;flex:1 1 auto!important;width:100%!important;min-width:0!important;padding-left:8px!important;margin:0!important;}
+
+/* The transfer amount uses the label for currency; remove the heavy in-field euro prefix. */
+.nb-transfer-page.nb-flow-screen .nb-flow-form-card .nb-amount-input>span{display:none!important;}
+.nb-transfer-page.nb-flow-screen .nb-flow-form-card .nb-amount-input>input{padding-left:14px!important;}
