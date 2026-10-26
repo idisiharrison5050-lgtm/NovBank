@@ -5,3 +5,8 @@
 /* Keep the currency prefix in the amount field's flex layout; banking-flows.css also styles it as an absolute overlay. */
 .nb-transfer-page .nb-amount-input>span{position:static;left:auto;top:auto;z-index:auto;display:block;flex:0 0 auto;padding:0 0 0 14px;line-height:1;color:#155eef;font-size:15px;font-weight:850}
 .nb-transfer-page .nb-amount-input .form-control{flex:1;min-width:0;padding-left:8px}
+
+/* Transfer amount currency fix: prevent the shared banking-flow absolute-prefix rule from overlapping the input placeholder. */
+.nb-transfer-page.nb-flow-screen .nb-flow-form-card .nb-amount-input{display:flex!important;position:relative!important;align-items:center!important;}
+.nb-transfer-page.nb-flow-screen .nb-flow-form-card .nb-amount-input>span{position:static!important;inset:auto!important;transform:none!important;display:block!important;flex:0 0 auto!important;padding:0 0 0 14px!important;line-height:1!important;}
+.nb-transfer-page.nb-flow-screen .nb-flow-form-card .nb-amount-input>input{position:static!important;flex:1 1 auto!important;width:100%!important;min-width:0!important;padding-left:8px!important;margin:0!important;}
